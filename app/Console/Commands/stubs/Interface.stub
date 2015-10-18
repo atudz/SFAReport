@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Interfaces;
+
+/**
+ *  The interface for {interfacename} objects
+ * @author abner
+ *
+ */
+interface {interfacename}
+{
+	/**
+	 * Add functions below
+	 */
+}

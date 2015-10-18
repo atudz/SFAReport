@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Types;
+
+use App\Core\TypeCore;
+use App\Interfaces\Typeable;
+/**
+ *  The Type class for {classname}
+ * @author abner
+ *
+ */
+class {classname}Type extends TypeCore implements Typeable
+{
+	/**
+	 * Add functions below
+	 */
+}
