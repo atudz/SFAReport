@@ -2,11 +2,11 @@
 
 namespace App\Http\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\ModelCore;
 
 class UserGroupToNav extends ModelCore
 {
-/**
+	/**
 	 * The table name
 	 * @var $table
 	 */

@@ -58,6 +58,7 @@ class MakeModel extends Command
 	        			$contents = file_get_contents($path);
 	        			$contents = str_replace('App', 'App\Http\Models', $contents);
 	      				$contents = str_replace('extends Model', 'extends ModelCore', $contents);
+	      				$contents = str_replace('use Illuminate\Database\Eloquent\Model;', 'use App\Core\ModelCore;', $contents);
 	      				if(false !== file_put_contents($newpath, $contents))
 	      				{
 	      					chmod($newpath,0766);

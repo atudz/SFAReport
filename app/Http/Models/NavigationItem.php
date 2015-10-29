@@ -2,7 +2,7 @@
 
 namespace App\Http\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Core\ModelCore;
 
 class NavigationItem extends ModelCore
 {
