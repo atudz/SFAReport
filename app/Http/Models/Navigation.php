@@ -6,7 +6,7 @@ use App\Core\ModelCore;
 
 class Navigation extends ModelCore
 {
-/**
+	/**
 	 * 
 	 * @var $table The table name
 	 */
