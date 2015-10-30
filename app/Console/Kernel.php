@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\MakeInterface::class,
     	\App\Console\Commands\MakeType::class,
     	\App\Console\Commands\MakeModel::class,
+    	\App\Console\Commands\SyncSfa::class,
     ];
 
     /**
