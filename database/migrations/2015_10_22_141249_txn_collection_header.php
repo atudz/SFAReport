@@ -22,8 +22,10 @@ class TxnCollectionHeader extends Migration
 			$table->dateTime('or_date');
 			$table->decimal('or_amount');
 			$table->decimal('applied_amount');
-			$table->dateTime('modified_at')->nullable();
 			$table->string('status', 2);
+			$table->tinyInteger('remitted');
+			$table->string('remit_reference_num', 50)->index();
+			$table->dateTime('modified_at')->nullable();				
 			$table->primary(['collection_num','or_number']);
 		});
     }

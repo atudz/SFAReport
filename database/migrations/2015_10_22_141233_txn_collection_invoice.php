@@ -21,7 +21,7 @@ class TxnCollectionInvoice extends Migration
 			$table->decimal('applied_amount');
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
-			$table->primary('collection_invoice_num');
+			//$table->primary('collection_invoice_num');
 			//$table->unique(['collection_invoice_num','reference_num','collection_num']);
 		});
     }

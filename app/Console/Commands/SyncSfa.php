@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Factories\LibraryFactory;
 
 class SyncSfa extends Command
 {
@@ -37,6 +38,16 @@ class SyncSfa extends Command
      */
     public function handle()
     {
-        //
+        $lib = LibraryFactory::getInstance('Sync');
+        
+        $this->info('Synchronization started at '.date('Y-m-d H:m:s'));
+        if($lib->sync(true))
+        {
+        	$this->info('Synchronization finished at '.date('Y-m-d H:m:s'));
+        }
+        else
+        {
+        	$this->error('Synchronization failed!');
+        }
     }
 }
