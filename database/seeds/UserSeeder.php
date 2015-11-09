@@ -12,12 +12,13 @@ class UserSeeder extends Seeder
     public function run()
     {
 
-    	DB::table('users')->insert([
+    	DB::table('user')->insert([
     			'created_at' => new DateTime(), 
-    			'user_group_pk_id' => '1', 
-    			'fullname' => 'Accord Admin',		
-    			'email' => 'admin1@accordhk.com',
-    			'password' => bcrypt('ihpadmin'),
+    			'user_group_id' => '1', 
+    			'firstname' => 'Sfa',
+    			'lastname' => 'Admin',
+    			'email' => 'abnertudtud@gmail.com',
+    			'password' => bcrypt('Test1234'),
     			'created_by' => '1'
     	]);
     	

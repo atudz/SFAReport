@@ -13,13 +13,12 @@ class NavigationSeeder extends Seeder
     {
         // Navigation main menu items
         $navigations = [
-        		['name'=>'Administrators','url'=>'/admin','created_at' => new DateTime()],
-        		['name'=>'Physiotherapists','url'=>'/therapist','created_at' => new DateTime()],
-        		['name'=>'Exercises','url'=>'/exercises','created_at' => new DateTime()],
-        		['name'=>'Reports','url'=>'','created_at' => new DateTime()],
-        		['name'=>'Profile','url'=>'/profile','created_at' => new DateTime()],
-        		['name'=>'Patients List','url'=>'/patients','created_at' => new DateTime()],
-        		['name'=>'Notifications','url'=>'/notification','created_at' => new DateTime()],
+        		['name'=>'Sales & Collection','url'=>'/sales','created_at' => new DateTime()],
+        		['name'=>'Unpaid Invoice','url'=>'/invoice','created_at' => new DateTime()],
+        		['name'=>'Van Inventory & History','url'=>'/inventory','created_at' => new DateTime()],
+        		['name'=>'BIR','url'=>'/bir','created_at' => new DateTime()],
+        		['name'=>'Sync Data','url'=>'/sync','created_at' => new DateTime()],
+        		['name'=>'User Management','url'=>'/user','created_at' => new DateTime()],
         		
         ];
     	DB::table('navigation')->insert($navigations);

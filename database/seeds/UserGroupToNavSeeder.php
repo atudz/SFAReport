@@ -13,33 +13,33 @@ class UserGroupToNavSeeder extends Seeder
     {
     	// fetch admin ID
     	$adminID = DB::table('user_group')->where(['name'=>'admin'])->value('id');
-    	$therapistId = DB::table('user_group')->where(['name'=>'physiotherapist'])->value('id');
+    	$userID = DB::table('user_group')->where(['name'=>'user'])->value('id');
     	
     	if($adminID)
     	{
         	//fetch all navigations
-        	$navs = ['Administrators','Physiotherapists','Exercises','Notifications','Reports'];
+        	$navs = ['Sales & Collection','Unpaid Invoice','Van Inventory & History','BIR','Sync Data','User Management'];
         	$mappings = [];
         	foreach($navs as $nav)
         	{
 	        	if($menuId = DB::table('navigation')->where('name','=',$nav)->value('id'))
 	        	{
-	    			$mappings[] = ['navigation_pk_id'=>$menuId,'user_group_pk_id'=>$adminID,'created_at' => new DateTime()];
+	    			$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$adminID,'created_at' => new DateTime()];
 	    		}
         	}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
     	
-    	if($therapistId)
+    	if($userID)
     	{
     		//fetch all navigations
-    		$navs = ['Profile','Patients List'];
+    		$navs = ['Sales & Collection','Unpaid Invoice','Van Inventory & History','BIR','Sync Data'];
     		$mappings = [];
     		foreach($navs as $nav)
     		{
     			if($menuId = DB::table('navigation')->where('name','=',$nav)->value('id'))
     			{
-    				$mappings[] = ['navigation_pk_id'=>$menuId,'user_group_pk_id'=>$therapistId,'created_at' => new DateTime()];
+    				$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$userID,'created_at' => new DateTime()];
     			}
     		}    	
     		DB::table('user_group_to_nav')->insert($mappings);
