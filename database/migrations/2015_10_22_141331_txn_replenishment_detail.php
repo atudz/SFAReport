@@ -18,6 +18,7 @@ class TxnReplenishmentDetail extends Migration
 			$table->string('uom_code', 20)->index();
 			$table->integer('quantity');
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			//$table->unique(['reference_number','item_code','uom_code']);
 		});
     }

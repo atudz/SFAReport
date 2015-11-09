@@ -19,6 +19,7 @@ class TxnStockTransferInDetail extends Migration
 			$table->integer('quantity');
 			$table->string('status', 2)->default('P');
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 		});
     }
 

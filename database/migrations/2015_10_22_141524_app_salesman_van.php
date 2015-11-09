@@ -17,6 +17,7 @@ class AppSalesmanVan extends Migration
 			$table->string('van_code', 20)->index();
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			//$table->unique(['salesman_code','van_code']);
 		});
     }

@@ -17,6 +17,7 @@ class AppSalesman extends Migration
 			$table->string('salesman_name', 50);
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			$table->primary('salesman_code');
 		});
     }

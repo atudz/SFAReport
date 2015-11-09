@@ -25,7 +25,8 @@ class TxnCollectionHeader extends Migration
 			$table->string('status', 2);
 			$table->tinyInteger('remitted');
 			$table->string('remit_reference_num', 50)->index();
-			$table->dateTime('modified_at')->nullable();				
+			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			$table->primary(['collection_num','or_number']);
 		});
     }

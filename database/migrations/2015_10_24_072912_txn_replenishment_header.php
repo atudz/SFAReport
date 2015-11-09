@@ -17,6 +17,7 @@ class TxnReplenishmentHeader extends Migration
 			$table->string('van_code', 20);
 			$table->dateTime('replenishment_date');
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			$table->primary('reference_number');
 		});
     }

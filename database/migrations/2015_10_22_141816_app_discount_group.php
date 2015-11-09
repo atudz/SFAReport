@@ -17,6 +17,7 @@ class AppDiscountGroup extends Migration
 			$table->decimal('discount');
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			$table->primary('discount_group_code');
 		});
     }

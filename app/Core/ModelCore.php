@@ -26,10 +26,15 @@ class ModelCore extends Model
 	public function save(array $options = [])
 	{
 		
-		// Auto populate creator 
-		if($this->__isset('creator_pk_id') && !$this->creator_pk_id && \Auth::user())
+		// Auto populate modified at
+		if($this->__isset('modified_at') && !$this->__isset('created_at'))
 		{
-			$this->setAttribute('creator_pk_id', \Auth::user()->id);
+			$this->setAttribute('modified_at', new \DateTime());
+		}
+		
+		if($this->__isset('modified_by') && \Auth::user())
+		{
+			$this->setAttribute('modified_by', \Auth::user()->id);
 		}
 		
 		return parent::save($options);

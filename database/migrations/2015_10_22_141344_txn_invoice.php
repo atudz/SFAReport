@@ -24,6 +24,7 @@ class TxnInvoice extends Migration
 			$table->string('document_type', 2);
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			$table->primary('invoice_number');
 		});
     }

@@ -28,6 +28,7 @@ class TxnSalesOrderDetail extends Migration
 			$table->string('remarks', 160)->nullable();
 			$table->decimal('discount_rate')->nullable();
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			//$table->unique(['so_number','reference_num','item_code','uom_code']);
 		});
     }

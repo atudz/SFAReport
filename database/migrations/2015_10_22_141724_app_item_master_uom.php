@@ -18,6 +18,7 @@ class AppItemMasterUom extends Migration
 			$table->integer('unit_conversion');
 			$table->string('status', 2);
 			$table->dateTime('modified_at')->nullable();
+			$table->integer('modified_by')->index()->default('0');
 			//$table->unique(['item_code','uom_code']);
 		});
     }
