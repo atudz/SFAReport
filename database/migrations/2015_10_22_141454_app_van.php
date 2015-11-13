@@ -18,8 +18,8 @@ class AppVan extends Migration
 			$table->string('description', 100);
 			$table->decimal('load_limi_amount');
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			$table->primary('van_code');
 		});
     }

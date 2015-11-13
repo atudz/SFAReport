@@ -26,8 +26,8 @@ class TxnSalesOrderHeader extends Migration
 			$table->string('status', 2)->default('P');
 			$table->string('served_status', 2);
 			$table->primary('so_number');
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			//$table->unique(['so_number','reference_num','invoice_number']);
 		});
     }

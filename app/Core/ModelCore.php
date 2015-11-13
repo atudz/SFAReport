@@ -27,12 +27,12 @@ class ModelCore extends Model
 	{
 		
 		// Auto populate modified at
-		if($this->__isset('modified_at') && !$this->__isset('created_at'))
+		if($this->__isset('updated_at') && !$this->__isset('created_at'))
 		{
-			$this->setAttribute('modified_at', new \DateTime());
+			$this->setAttribute('updated_at', new \DateTime());
 		}
 		
-		if($this->__isset('modified_by') && \Auth::user())
+		if($this->__isset('updated_by') && \Auth::user())
 		{
 			$this->setAttribute('modified_by', \Auth::user()->id);
 		}

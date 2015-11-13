@@ -20,8 +20,8 @@ class TxnStockTransferInHeader extends Migration
 			$table->dateTime('transfer_date');
 			$table->string('status', 2)->default('P');
 			$table->primary('stock_transfer_number');
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 		});
     }
 

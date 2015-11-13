@@ -16,8 +16,8 @@ class AppStoretype extends Migration
 			$table->string('storetype_code', 20);
 			$table->string('storetype_name', 50);
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			$table->primary('storetype_code');
 		});
     }

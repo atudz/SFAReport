@@ -4,13 +4,13 @@
 return [
 		
 	// Server IP address
-	'host' => '192.168.0.6',
+	'host' => '192.168.0.7',
 		
 	// Server port
 	'port' => '1433',	
 	
 	// Database name
-	'database' => 'SDB-SFI_TEST',
+	'database' => 'SFA_SFI',
 		
 	// Database user
 	'dbuser' => 'sfa_user',

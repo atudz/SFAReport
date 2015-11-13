@@ -17,8 +17,8 @@ class AppVatpostingSetup extends Migration
 			$table->string('vatposting_name', 50);
 			$table->decimal('vatposting_rate');
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			$table->primary('vatposting_code');
 		});
     }

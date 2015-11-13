@@ -24,8 +24,8 @@ class TxnCollectionDetail extends Migration
 			$table->string('bank', 50)->nullable();
 			$table->string('cm_number', 20)->nullable();
 			$table->string('status', 2)->default('P');
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 		});
     }
 

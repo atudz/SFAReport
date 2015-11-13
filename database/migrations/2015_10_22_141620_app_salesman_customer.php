@@ -17,8 +17,8 @@ class AppSalesmanCustomer extends Migration
 			$table->string('customer_code', 20)->index();
 			$table->string('ship_to_code', 20)->index();
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			//$table->unique(['salesman_code','customer_code','ship_to_code']);
 		});
     }

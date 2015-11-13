@@ -33,8 +33,8 @@ class AppCustomer extends Migration
 			$table->string('ship_to_code', 20)->index();
 			$table->string('customer_price_group', 50);
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			$table->primary('customer_code');
 			//$table->unique('customer_code');
 		});

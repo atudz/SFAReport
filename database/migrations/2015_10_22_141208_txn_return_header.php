@@ -22,8 +22,8 @@ class TxnReturnHeader extends Migration
     		$table->dateTime('return_date'); 
     		$table->string('return_slip_num', 20)->index();
     		$table->string('status', 2)->default('P');
-    		$table->dateTime('modified_at')->nullable();
-    		$table->integer('modified_by')->index()->default('0');
+    		$table->dateTime('updated_at')->nullable();
+    		$table->integer('updated_by')->index()->default('0');
     		$table->primary('return_txn_number');
     		//$table->unique(['return_txn_number','return_slip_num']);
     	});

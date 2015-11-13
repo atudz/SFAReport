@@ -19,8 +19,8 @@ class AppItemMaster extends Migration
 			$table->string('segment_code', 20)->index();
 			$table->string('brand_code', 20)->index();
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			//$table->unique(['item_code','segment_code','brand_code']);
 		});
     }

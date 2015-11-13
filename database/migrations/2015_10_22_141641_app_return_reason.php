@@ -16,8 +16,8 @@ class AppReturnReason extends Migration
 			$table->string('reason_code', 20);
 			$table->string('description', 50);
 			$table->string('status', 2);
-			$table->dateTime('modified_at')->nullable();
-			$table->integer('modified_by')->index()->default('0');
+			$table->dateTime('updated_at')->nullable();
+			$table->integer('updated_by')->index()->default('0');
 			$table->primary('reason_code');
 		});
     }
