@@ -22,9 +22,11 @@ class TxnSalesOrderDetailDiscount extends Migration
 			$table->decimal('discount_order_amount');
 			$table->decimal('discount_served_amount');
 			$table->string('status', 2)->default('P');
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			//$table->unique(['reference_num','item_code','uom_code']);
 		});
     }
 

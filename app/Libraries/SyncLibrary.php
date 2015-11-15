@@ -56,7 +56,7 @@ class SyncLibrary extends LibraryCore
 			{
 				
 				//Delete records from local database
-				\DB::table($table)->whereNull('modified_at')->delete();
+				\DB::table($table)->whereNull('updated_at')->delete();
 				
 				$ids = [];
 				if($keys = $configTables[$table])

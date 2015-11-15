@@ -13,6 +13,7 @@ class TxnCollectionInvoice extends Migration
     public function up()
     {
         Schema::create('txn_collection_invoice', function(Blueprint $table) {
+        	$table->integer('collection_invoice_id');
 			$table->string('collection_invoice_num', 20);
 			$table->string('reference_num', 20)->index();
 			$table->string('collection_num', 20)->index();
@@ -20,10 +21,13 @@ class TxnCollectionInvoice extends Migration
 			$table->string('invoice_number', 20);
 			$table->decimal('applied_amount');
 			$table->string('status', 2);
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
+			$table->string('device_code', 20)->nullable();
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			//$table->primary('collection_invoice_num');
-			//$table->unique(['collection_invoice_num','reference_num','collection_num']);
+			$table->primary('collection_invoice_id');
 		});
     }
 

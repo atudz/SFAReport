@@ -38,9 +38,9 @@ Route::group(['prefix' => 'controller'],function(){
  * Avoid using /controller in the first of the url since
  * this is exclusively used by the controllers only.
  */
-Route::group(['prefix' => 'service'],function(){
+/* Route::group(['prefix' => 'service'],function(){
 	
 	Route::get('/', 'TestWebService@index');
 	
-});
+}); */
 

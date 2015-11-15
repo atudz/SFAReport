@@ -4,7 +4,7 @@
 return [
 		
 	// Server IP address
-	'host' => '192.168.0.7',
+	'host' => '192.168.0.2',
 		
 	// Server port
 	'port' => '1433',	

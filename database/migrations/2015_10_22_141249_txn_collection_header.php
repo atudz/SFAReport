@@ -13,6 +13,7 @@ class TxnCollectionHeader extends Migration
     public function up()
     {
         Schema::create('txn_collection_header', function(Blueprint $table) {
+        	$table->integer('collection_header_id');
 			$table->string('collection_num', 20);
 			$table->string('or_number', 20);
 			$table->string('reference_num', 50)->index();
@@ -22,12 +23,17 @@ class TxnCollectionHeader extends Migration
 			$table->dateTime('or_date');
 			$table->decimal('or_amount');
 			$table->decimal('applied_amount');
+			$table->dateTime('posted_date');
 			$table->string('status', 2);
 			$table->tinyInteger('remitted');
 			$table->string('remit_reference_num', 50)->index();
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
+			$table->string('device_code', 20)->nullable();
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			$table->primary(['collection_num','or_number']);
+			$table->primary('collection_header_id');
 		});
     }
 
