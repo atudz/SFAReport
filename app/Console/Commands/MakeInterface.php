@@ -19,7 +19,7 @@ class MakeInterface extends Command
      *
      * @var string
      */
-    protected $description = 'Command description.';
+    protected $description = 'Create\'s new interface class.';
     
     /**
      * The template name

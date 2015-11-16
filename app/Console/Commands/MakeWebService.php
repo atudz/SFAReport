@@ -20,7 +20,7 @@ class MakeWebService extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Web Service Class.';
+    protected $description = 'Create a new web service class.';
     
     /**
      * The template name

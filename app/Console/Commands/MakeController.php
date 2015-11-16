@@ -20,7 +20,7 @@ class MakeController extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Controller Class.';
+    protected $description = 'Create a new controller class.';
 	
     /**
      * The template name

@@ -20,7 +20,7 @@ class MakeFactory extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Factory Class.';
+    protected $description = 'Create a new factory class.';
 
     /**
      * The template name

@@ -105,6 +105,17 @@ class SyncLibrary extends LibraryCore
 			
 		} catch (PDOException $e) {
 			$this->log('Error :'.$e->getMessage());
+			//$email = config('system.error_email');
+			if($email)
+			{
+				$email = explode(',',$email);
+				$data['email'] = $email;
+				$data['errors'] = $e->getMessage();
+				\Mail::send('emails.error', $data, function ($m) use ($email) {
+					$m->from(config('system.from_email'),config('system.from'));
+					$m->to($email)->subject('Application Error');
+				});
+			}
 			return false;
 		}
 		
