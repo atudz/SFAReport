@@ -11,31 +11,10 @@ class ReportsPresenter extends PresenterCore
      *
      * @return Response
      */
-    public function index()
+    public function dashboard()
     {
-        //
-    	return "It Works!";
+        $this->view->title = 'Dashboard';
+        return $this->view('dashboard');
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 }

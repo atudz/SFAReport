@@ -18,7 +18,25 @@ class UserGroupToNavSeeder extends Seeder
     	if($adminID)
     	{
         	//fetch all navigations
-        	$navs = ['Sales & Collection','Unpaid Invoice','Van Inventory & History','BIR','Sync Data','User Management'];
+        	$navs = [
+            'Sales & Collection',
+            'Unpaid Invoice',
+            'Van Inventory',
+            'BIR',
+            'Sync Data',
+            'Dashboard',
+            'Sales Report',
+            'Sales & Collection Report',
+            'Sales & Collection Posting',
+            'Monthly Summary Sales Report',
+            'Canned & Mixes',
+            'Frozen & Kassel',
+            'Sales Report (Per Material)',
+            'Sales Report (Peso Value)',
+            'Returns (Per Material)',
+            'Returns (Peso Value)',
+            'User Management'
+            ];
         	$mappings = [];
         	foreach($navs as $nav)
         	{
@@ -33,8 +51,25 @@ class UserGroupToNavSeeder extends Seeder
     	if($userID)
     	{
     		//fetch all navigations
-    		$navs = ['Sales & Collection','Unpaid Invoice','Van Inventory & History','BIR','Sync Data'];
-    		$mappings = [];
+    		$navs = [
+            'Sales & Collection',
+            'Unpaid Invoice',
+            'Van Inventory',
+            'BIR',
+            'Sync Data',
+            'Dashboard',
+            'Sales Report',
+            'Sales & Collection Report',
+            'Sales & Collection Posting',
+            'Monthly Summary Sales Report',
+            'Canned & Mixes',
+            'Frozen & Kassel',
+            'Sales Report (Per Material)',
+            'Sales Report (Peso Value)',
+            'Returns (Per Material)',
+            'Returns (Peso Value)'
+            ];
+            $mappings = [];
     		foreach($navs as $nav)
     		{
     			if($menuId = DB::table('navigation')->where('name','=',$nav)->value('id'))

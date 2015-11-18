@@ -16,7 +16,8 @@ class Navigation extends Migration
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('name', 255)->nullable();
-			$table->string('url', 255)->nullable();
+            $table->string('url', 255)->nullable();
+			$table->string('class', 255)->nullable();
 		});
     }
 

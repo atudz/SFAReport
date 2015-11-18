@@ -3,6 +3,7 @@
 namespace App\Http\Presenters;
 
 use App\Core\PresenterCore;
+use App\Factories\PresenterFactory;
 
 class MainPresenter extends PresenterCore
 {
@@ -11,31 +12,13 @@ class MainPresenter extends PresenterCore
      *
      * @return Response
      */
-    public function index()
+    public function home()
     {
-        //
-    	return "It Works!";
+        if (\Auth::check()){
+            return PresenterFactory::getInstance('Reports')->dashboard();
+        } else {
+            return redirect('/');
+        }
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 }

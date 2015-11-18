@@ -26,7 +26,7 @@ class Navigation extends ModelCore
 	 * Navigation relation to navigation_item table
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function item()
+	public function navitems()
 	{
 		return $this->hasMany('App\Http\Models\NavigationItem', 'navigation_id');
 	}

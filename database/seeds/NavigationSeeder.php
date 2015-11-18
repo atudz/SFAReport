@@ -13,13 +13,14 @@ class NavigationSeeder extends Seeder
     {
         // Navigation main menu items
         $navigations = [
-        		['name'=>'Sales & Collection','url'=>'/sales','created_at' => new DateTime()],
-        		['name'=>'Unpaid Invoice','url'=>'/invoice','created_at' => new DateTime()],
-        		['name'=>'Van Inventory & History','url'=>'/inventory','created_at' => new DateTime()],
-        		['name'=>'BIR','url'=>'/bir','created_at' => new DateTime()],
-        		['name'=>'Sync Data','url'=>'/sync','created_at' => new DateTime()],
-        		['name'=>'User Management','url'=>'/user','created_at' => new DateTime()],
-        		
+                ['name'=>'Dashboard','url'=>'/dashboard','class'=>'glyphicon glyphicon-dashboard','created_at' => new DateTime()],
+        		['name'=>'Sales & Collection','url'=>'/sales_collection','class'=>'glyphicon glyphicon-list-alt','created_at' => new DateTime()],
+        		['name'=>'Van Inventory','url'=>'/van','class'=>'glyphicon glyphicon-barcode','created_at' => new DateTime()],
+        		['name'=>'Unpaid Invoice','url'=>'/unpaid','class'=>'glyphicon glyphicon-credit-card','created_at' => new DateTime()],
+                ['name'=>'Sales Report','url'=>'/sales_report','class'=>'glyphicon glyphicon-stats','created_at' => new DateTime()],
+        		['name'=>'BIR','url'=>'/bir','class'=>'glyphicon glyphicon-th-list','created_at' => new DateTime()],
+        		['name'=>'Sync Data','url'=>'/sync','class'=>'glyphicon glyphicon-info-sign','created_at' => new DateTime()],
+        		['name'=>'User Management','url'=>'/user','class'=>'glyphicon glyphicon-tasks','created_at' => new DateTime()],
         ];
     	DB::table('navigation')->insert($navigations);
     }
