@@ -28,6 +28,12 @@ Route::get('/profile', ['as'=>'profile', 'uses'=>'UserPresenter@profile']);
 Route::get('/changepass', ['as'=>'change-pass', 'uses'=>'UserPresenter@changePassword']);
 Route::get('/logout', ['as'=>'userlogout', 'uses'=>'AuthController@logout']);
 
+Route::group(['prefix' => 'reports'],function(){
+	Route::get('/salescollection/{type?}', ['as'=>'sales-collection', 'uses'=>'ReportsPresenter@salesCollection']);
+	Route::get('/vaninventory/{type?}', ['as'=>'van-inventory', 'uses'=>'ReportsPresenter@vanInventory']);
+	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
+	Route::get('/sync', ['as'=>'sync', 'uses'=>'ReportsPresenter@sync']);
+});
 
 /*
  * Add routes to Controller below. The URL should contain /controller 
