@@ -53,8 +53,6 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/', 'TestWebService@index');
 	
 }); */
-
-
 /*
 * Create custom filter below. 
 */
