@@ -13,6 +13,7 @@ class TxnReturnHeader extends Migration
     public function up()
     {
     	Schema::create('txn_return_header', function(Blueprint $table) {
+    		$table->integer('return_header_id');
     		$table->string('return_txn_number', 20);
     		$table->string('reference_num', 50)->index();
     		$table->string('customer_code', 20)->index();
@@ -22,10 +23,13 @@ class TxnReturnHeader extends Migration
     		$table->dateTime('return_date'); 
     		$table->string('return_slip_num', 20)->index();
     		$table->string('status', 2)->default('P');
+    		$table->string('modified_by', 50)->index();
+    		$table->dateTime('modified_date')->nullable();
+    		$table->dateTime('sfa_modified_date')->nullable();
+    		$table->string('device_code', 20)->nullable();
     		$table->dateTime('updated_at')->nullable();
     		$table->integer('updated_by')->index()->default('0');
-    		$table->primary('return_txn_number');
-    		//$table->unique(['return_txn_number','return_slip_num']);
+    		$table->primary('return_header_id');
     	});
     }
 

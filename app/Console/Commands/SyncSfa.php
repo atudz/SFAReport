@@ -19,7 +19,7 @@ class SyncSfa extends Command
      *
      * @var string
      */
-    protected $description = 'Sync sfa database to the system.';
+    protected $description = 'Sync sfa database to local databse.';
 
     /**
      * Create a new command instance.

@@ -13,6 +13,7 @@ class TxnInvoice extends Migration
     public function up()
     {
         Schema::create('txn_invoice', function(Blueprint $table) {
+        	$table->integer('invoice_id');
 			$table->string('invoice_number', 20);
 			$table->string('salesman_code', 20)->index();
 			$table->string('customer_code', 20)->index();
@@ -23,9 +24,13 @@ class TxnInvoice extends Migration
 			$table->dateTime('invoice_due_date')->nullable();
 			$table->string('document_type', 2);
 			$table->string('status', 2);
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
+			$table->bigInteger('version');
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			$table->primary('invoice_number');
+			$table->primary('invoice_id');
 		});
     }
 

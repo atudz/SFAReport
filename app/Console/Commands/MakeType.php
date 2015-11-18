@@ -21,7 +21,7 @@ class MakeType extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Type class.';
+    protected $description = 'Create a new type class.';
     
     /**
      * The template name

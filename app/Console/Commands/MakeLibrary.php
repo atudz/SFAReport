@@ -20,7 +20,7 @@ class MakeLibrary extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Library Class.';
+    protected $description = 'Create a new library class.';
 	
     /**
      * The template name

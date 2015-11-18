@@ -13,6 +13,7 @@ class TxnCollectionDetail extends Migration
     public function up()
     {
         Schema::create('txn_collection_detail', function(Blueprint $table) {
+        	$table->integer('collection_detail_id');
 			$table->string('collection_num', 20)->index();
 			$table->string('reference_num', 50)->index();
 			$table->string('or_number', 20)->index();
@@ -24,8 +25,13 @@ class TxnCollectionDetail extends Migration
 			$table->string('bank', 50)->nullable();
 			$table->string('cm_number', 20)->nullable();
 			$table->string('status', 2)->default('P');
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
+			$table->string('device_code', 20)->nullable();
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
+			$table->primary('collection_detail_id');
 		});
     }
 

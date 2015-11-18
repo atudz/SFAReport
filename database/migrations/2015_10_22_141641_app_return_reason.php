@@ -13,12 +13,17 @@ class AppReturnReason extends Migration
     public function up()
     {
         Schema::create('app_return_reason', function(Blueprint $table) {
+        	$table->integer('return_reason_id');
 			$table->string('reason_code', 20);
 			$table->string('description', 50);
 			$table->string('status', 2);
+			$table->string('modified_by', 50)->index();
+			$table->dateTime('modified_date')->nullable();
+			$table->dateTime('sfa_modified_date')->nullable();
+			$table->bigInteger('version');
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			$table->primary('reason_code');
+			$table->primary('return_reason_id');
 		});
     }
 

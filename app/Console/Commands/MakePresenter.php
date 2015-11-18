@@ -20,7 +20,7 @@ class MakePresenter extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Presenter Class.';
+    protected $description = 'Create a new presenter class.';
     
     /**
      * The template name

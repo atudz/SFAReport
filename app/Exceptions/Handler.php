@@ -27,6 +27,18 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+    	//$email = config('system.error_email');
+    	if($email)
+    	{
+    		$email = explode(',',$email);
+    		$data['email'] = $email;
+    		$data['errors'] = (string)$e;
+    		\Mail::send('emails.error', $data, function ($m) use ($email) {
+    			$m->from(config('system.from_email'),config('system.from'));
+    			$m->to($email)->subject('Application Error');
+    		});
+    	}
+    	
         return parent::report($e);
     }
 
