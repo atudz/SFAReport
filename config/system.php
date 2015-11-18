@@ -17,4 +17,7 @@ return [
 		
 	// System default email
 	'from_email' => 'noreply@sunpride.com',
+		
+	//Password complexity
+	'password_complexity' => ''
 ];
