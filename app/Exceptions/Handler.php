@@ -28,7 +28,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $e)
     {
     	//$email = config('system.error_email');
-    	if($email)
+    	/* if($email)
     	{
     		$email = explode(',',$email);
     		$data['email'] = $email;
@@ -37,7 +37,7 @@ class Handler extends ExceptionHandler
     			$m->from(config('system.from_email'),config('system.from'));
     			$m->to($email)->subject('Application Error');
     		});
-    	}
+    	} */
     	
         return parent::report($e);
     }
