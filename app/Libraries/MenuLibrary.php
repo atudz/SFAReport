@@ -79,7 +79,8 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 			$this->menuList = $user->group->navigations->toArray();
 			// store this to session so that we'll just pull the data from session
 			// and no longer need to Query again
-			app('session')->put('menu_list', $this->menuList); 
+			
+			//app('session')->put('menu_list', $this->menuList); 
 		}
 		
 		$this->prepared = true;

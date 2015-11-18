@@ -21,6 +21,7 @@ class User extends Migration
 			$table->string('middlename', 255)->nullable();
 			$table->string('password', 255);
 			$table->string('email', 255)->unique()->nullable();
+			$table->string('username', 255)->unique()->nullable();
 			$table->integer('age')->index()->nullable();
 			$table->enum('gender', array('0', '1', '2'))->default('0');
 			$table->string('address1', 1000)->nullable();

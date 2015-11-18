@@ -16,7 +16,18 @@
  * at the first url because this is reserved for controllers and webservices
  */
 
-Route::get('/', 'TestPresenter@index');
+Route::group(['after' => 'no-cache'], function()
+{
+    Route::get('/login', ['as' => 'login','uses' => 'AuthPresenter@login']);
+});
+
+
+Route::get('/', ['as'=>'dashboard', 'uses'=>'MainPresenter@home']);
+Route::get('/dashboard', ['as'=>'dashboard 2', 'uses'=>'MainPresenter@home']);
+Route::get('/profile', ['as'=>'profile', 'uses'=>'UserPresenter@profile']);
+Route::get('/changepass', ['as'=>'change-pass', 'uses'=>'UserPresenter@changePassword']);
+Route::get('/logout', ['as'=>'userlogout', 'uses'=>'AuthController@logout']);
+
 
 /*
  * Add routes to Controller below. The URL should contain /controller 
@@ -27,8 +38,7 @@ Route::get('/', 'TestPresenter@index');
 
 // This is only for testing purpose. In actual it should be post
 Route::group(['prefix' => 'controller'],function(){
-	
-	Route::get('/', 'TestController@index');
+	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 });
 
 
@@ -43,4 +53,13 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/', 'TestWebService@index');
 	
 }); */
+/*
+* Create custom filter below. 
+*/
+
+Route::filter('no-cache',function($route, $request, $response){
+    $response->headers->set('Cache-Control','nocache, no-store, max-age=0, must-revalidate');
+    $response->headers->set('Pragma','no-cache');
+    $response->headers->set('Expires','Fri, 01 Jan 1990 00:00:00 GMT');
+});
 

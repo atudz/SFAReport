@@ -17,7 +17,8 @@ class NavigationItem extends Migration
 			$table->timestamps();
 			$table->string('name', 255)->nullable();
 			$table->string('url', 255)->nullable();
-			$table->integer('navigation_id')->index()->default('0');
+            $table->string('class', 255)->nullable();
+            $table->integer('navigation_id')->index()->default('0');
 		});
     }
 
