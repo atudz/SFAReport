@@ -85,22 +85,20 @@ class SyncLibrary extends LibraryCore
 				{
 					foreach(array_chunk($data,$limit,true) as $row)
 					{
-						// Import data to local database
-						
-						$this->log($msg);
-						if($display) echo $msg;
+						// Import data to local database						
 						\DB::table($table)->insert($row);
-					}	
+					}					
 					$msg = "$table : inserted ". count($data)." records.\n";
+					$this->log($msg);
+					if($display) echo $msg;
 				}
 				else
 				{
-					// Import data to local database
-					
-					$this->log($msg);			
-					if($display) echo $msg;
+					// Import data to local database					
 					\DB::table($table)->insert($data);
 					$msg = "$table : inserted ". count($data)." records.\n";
+					$this->log($msg);
+					if($display) echo $msg;
 				}
 				unset($data);
 			}			
