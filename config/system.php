@@ -10,7 +10,7 @@ return [
 		
 	// System default recipient email for errors
 	// Should be comma separated for multiple emails
-	'error_email' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com',
+	'error_email' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com',
 
 	// System default email from
 	'from' => 'Sunpride Admin',
