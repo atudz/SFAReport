@@ -4,37 +4,36 @@
 return [
 		
 	// Server IP address
-	'host' => '192.168.0.12',
+	'host' => '192.168.240.33',
 		
 	// Server port
 	'port' => '1433',	
 	
 	// Database name
-	'database' => 'SFA_SFI',
+	'database' => 'SFA_SFI_TEST',
 		
 	// Database user
-	'dbuser' => 'sfa_user',
+	'dbuser' => 'UATREAD',
 		
 	// Database password
-	'dbpass' => 'sfa_user',
+	'dbpass' => 'U4tR34d',
 		
 	// Synchronize table
 	// table name => [primary keys or foreign keys]
 	'sync_tables' => [
-		'app_customer' => ['customer_code'],
-		'app_salesman' => ['salesman_code'],
-		//'txn_activity_salesman' => [],
-		'txn_sales_order_header' => ['so_number'],
-		//'txn_sales_order_detail' => [],
+		'app_customer' => ['customer_id'],
+		'app_salesman' => ['salesman_id'],
+		//'txn_activity_salesman' => [''],
+		'txn_sales_order_header' => ['sales_order_header_id'],
+		'txn_sales_order_detail' => ['sales_order_detail_id'],
 		//'txn_sales_order_deal' => ['customer_code'],
-		'txn_return_header' => ['return_txn_number'],
-		//'txn_return_detail' => [],
-		'txn_collection_header' => ['collection_num'],
-		//'txn_collection_detail' => [],
-		//'txn_evaluated_objective' => [],
-		//'txn_activity_salesman' => [],
-		//'txn_collection_invoice' => [],
-		'txn_invoice' => ['invoice_number'],
+		'txn_return_header' => ['return_header_id'],
+		'txn_return_detail' => ['return_detail_id'],
+		'txn_collection_header' => ['collection_header_id'],
+		'txn_collection_detail' => ['collection_detail_id'],
+		//'txn_evaluated_objective' => [''],
+		'txn_collection_invoice' => ['collection_invoice_id'],
+		'txn_invoice' => ['invoice_id'],
 	],
 		
 	// synchronization log storage directory
