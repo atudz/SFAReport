@@ -14,6 +14,7 @@ class TxnReturnDetail extends Migration
     {
         Schema::create('txn_return_detail', function(Blueprint $table) {
         	$table->integer('return_detail_id');
+        	$table->string('reference_num', 50)->index();
 			$table->string('return_txn_number', 20)->nullable();
 			$table->string('reason_code', 20)->index();
 			$table->string('item_code', 20)->index();
