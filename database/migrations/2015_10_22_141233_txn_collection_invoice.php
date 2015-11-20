@@ -20,6 +20,7 @@ class TxnCollectionInvoice extends Migration
 			$table->string('or_number', 20);
 			$table->string('invoice_number', 20);
 			$table->decimal('applied_amount');
+			$table->decimal('balance_amount')->nullable();
 			$table->string('status', 2);
 			$table->string('modified_by', 50)->index();
 			$table->dateTime('modified_date')->nullable();
