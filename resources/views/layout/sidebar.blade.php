@@ -11,7 +11,7 @@
                 @foreach($menu as $nav)
                 {{--*/ $counter++ /*--}}
 	            <li @if(count($nav['navitems'])) class="parent" @endif>
-	            <a href="{{$nav['url']}}"><span class="{{$nav['class']}}"></span> 
+	            <a href="#{{$nav['url']}}"><span class="{{$nav['class']}}"></span> 
 	            	{{$nav['name']}} 
 	            	@if(count($nav['navitems'])) 
 	            		<span data-toggle="collapse" href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
@@ -22,7 +22,7 @@
 	            <ul class="children collapse" id="sub-item-{{$counter}}">
 	                @foreach($nav['navitems'] as $item)
 	                	<li>
-	                		<a href="{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
+	                		<a href="#{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
 	                	</li>
 	                @endforeach
 	            </ul>
