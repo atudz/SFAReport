@@ -1,10 +1,9 @@
-<script src="{{ URL::asset('js/plugin/jquery-1.11.1.min.js') }}"></script>
-<script src="{{ URL::asset('js/plugin/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('js/plugin/bootstrap-datepicker.js') }}"></script>
-<script src="{{ URL::asset('js/plugin/bootstrap-table.js') }}"></script>
-<script src="{{ URL::asset('js/plugin/angular/angular.min.js') }}"></script>
-<script src="{{ URL::asset('js/plugin/angular-route/angular-route.min.js') }}"></script>	
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/jquery/dist/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular/angular.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-route/angular-route.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-bootstrap/ui-bootstrap-tpls.min.js') }}"></script>     
 <script src="{{ URL::asset('js/custom-general.js') }}"></script>
+
 @if(auth()->user())
 	<script src="{{ URL::asset('js/app/app.module.js') }}"></script>
 	<script src="{{ URL::asset('js/app/app.routes.js') }}"></script>

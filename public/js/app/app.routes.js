@@ -11,11 +11,11 @@
 				// Append application route list here
 				$routeProvider
 				// Dashboard
-				.when('/dashboard',{
-					templateUrl: 'js/app/views/dashboard.html',
-					//controller: 'SalesCollectionReport'
-					//controllerAs: 'scr'
-				})
+				/*.when('/dashboard',{
+					templateUrl: '/dashboard',
+					controller: 'SalesCollectionReport',
+					controllerAs: 'scr'
+				})*/
 				// Sales & Collection
 				.when('/salescollection.report',{
 					templateUrl: '/reports/salescollection/report',
@@ -77,9 +77,10 @@
 					/*controller: 'Sync',
 					controllerAs: 'sync'*/
 				})	
-				.otherwise({
+				/*.otherwise({
 			        redirectTo: '/dashboard'
-			    });
+			    });*/
 		  }
 	]);
+	
 })();
