@@ -12,7 +12,7 @@
 				$routeProvider
 				// Dashboard
 				.when('/dashboard',{
-					templateUrl: 'js/app/views/dashboard.html',
+					templateUrl: '/dashboard',
 					/*controller: 'SalesCollectionReport',
 					controllerAs: 'scr'*/
 				})
@@ -82,4 +82,5 @@
 			    });
 		  }
 	]);
+	
 })();

@@ -1,0 +1,20 @@
+{
+  "name": "aj@abner",
+  "version": "1.0.0",
+  "homepage": "aj@abner",
+  "authors": [
+    "aj@abner"
+  ],
+  "description": "Front-end packages",
+  "main": "aj@abner",
+  "keywords": [
+    "html5",
+    "css3",
+    "responsive",
+    "site",
+    "mobile",
+    "latest",
+    "js"
+  ],
+  "license": "MIT"
+}
