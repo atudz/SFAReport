@@ -8,34 +8,43 @@ class ReportsController extends ControllerCore
 {
 
 	/**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+	 * Get records
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function getRecords($type)
+	{
+		switch($type)
+		{
+			case 'salescollectionreport';
+				return $this->getSalesCollectionReport();
+				break;
+			case 'salescollectionreport';
+				return $this->getSalesCollectionReport();
+				break;
+			case 'salescollectionreport';
+				return $this->getSalesCollectionReport();
+				break;
+		}
+		return $this->getSalesCollectionReport();	
+	}
+	
+	
+	/**
+	 * Get Sales & Collection Report records
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function getSalesCollectionReport()
+	{
+		//$data['message'] = 'Hello World';
+		$data['records'] = [
+				['Name'=>'Abner','Country'=>'Tudtud'],
+				['Name'=>'Abner','Country'=>'Tudtud'],
+				['Name'=>'Abner','Country'=>'Tudtud'],
+				['Name'=>'Abner','Country'=>'Tudtud'],
+				['Name'=>'Abner','Country'=>'Tudtud'],
+		];
+		return response()->json($data);
+	}
+	
+	
 }

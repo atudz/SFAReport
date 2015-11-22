@@ -13,24 +13,24 @@
 				// Dashboard
 				.when('/dashboard',{
 					templateUrl: 'js/app/views/dashboard.html',
-					/*controller: 'SalesCollectionReport',
-					controllerAs: 'scr'*/
+					//controller: 'SalesCollectionReport'
+					//controllerAs: 'scr'
 				})
 				// Sales & Collection
 				.when('/salescollection.report',{
 					templateUrl: '/reports/salescollection/report',
-					/*controller: 'SalesCollectionReport',
-					controllerAs: 'scr'*/
+					controller: 'SalesCollectionReport'
+					//controllerAs: 'scr'*/
 				})
 				.when('/salescollection.posting',{
 					templateUrl: '/reports/salescollection/posting',
-					/*controller: 'SalesCollectionPosting',
-					controllerAs: 'scp'*/
+					controller: 'SalesCollectionPosting'
+					//controllerAs: 'scp'*/
 				})
 				.when('/salescollection.summary',{
 					templateUrl: '/reports/salescollection/summary',
-					/*controller: 'SalesCollectionPosting',
-					controllerAs: 'scp'*/
+					controller: 'SalesCollectionSummary',
+					//controllerAs: 'scp'*/
 				})
 				// Van Inventory
 				.when('/vaninventory.canned',{

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-ng-app="app" ng-strict-di>
+<html data-ng-app="app">
 <head>
  	<meta name="csrf-token" content="{{ csrf_token() }}" />  
  	@include('layout.assets.head')

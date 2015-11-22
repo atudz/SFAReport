@@ -45,6 +45,7 @@ Route::group(['prefix' => 'reports'],function(){
 // This is only for testing purpose. In actual it should be post
 Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
+	Route::get('/reports/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsController@getRecords']);
 });
 
 
