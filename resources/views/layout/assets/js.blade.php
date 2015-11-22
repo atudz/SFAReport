@@ -9,9 +9,3 @@
 	<script src="{{ URL::asset('js/app/app.module.js') }}"></script>
 	<script src="{{ URL::asset('js/app/app.routes.js') }}"></script>	
 @endif
-
-<script type="text/javascript">
-            $(function () {
-                $('#datetimepicker1').datetimepicker();
-            });
-        </script>
