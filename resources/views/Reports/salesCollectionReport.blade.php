@@ -23,11 +23,15 @@
 					<form class="form-inline">
 					  <div class="form-group">
 					    <label class="sr-only" for="exampleInputEmail3">Email address</label>
-					    <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
+					    <input type="datetime-local" class="form-control" id="exampleInputEmail3" placeholder="Invoice Date">
 					  </div>
 					  <div class="form-group">
 					    <label class="sr-only" for="exampleInputPassword3">Password</label>
-					    <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
+					    <input type="datetime-local" class="form-control" id="exampleInputPassword3" placeholder="Collection Date">
+					  </div>
+					  <div class="form-group">
+					    <label class="sr-only" for="exampleInputPassword3">Password</label>
+					    <input type="datetime-local" class="form-control" id="exampleInputPassword3" placeholder="Posting Date">
 					  </div>
 					</form>
 					<form class="form-inline">
