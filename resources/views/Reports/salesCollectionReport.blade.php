@@ -45,8 +45,8 @@
 			
 			<table>
 			  <tr data-ng-repeat="x in records">
-			    <td>[[ x.Name ]]</td>
-			    <td>[[ x.Country ]]</td>
+			    <td>[[ x.0 ]]</td>
+			    <td>[[ x.1 ]]</td>
 			  </tr>
 			</table>
 		</div>
