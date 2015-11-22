@@ -11,11 +11,11 @@
 				// Append application route list here
 				$routeProvider
 				// Dashboard
-				/*.when('/dashboard',{
-					templateUrl: '/dashboard',
+				.when('/dashboard',{
+					templateUrl: '/js/testing/dashboard.html',
 					controller: 'SalesCollectionReport',
 					controllerAs: 'scr'
-				})*/
+				})
 				// Sales & Collection
 				.when('/salescollection.report',{
 					templateUrl: '/reports/salescollection/report',
