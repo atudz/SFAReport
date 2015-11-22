@@ -76,10 +76,11 @@
 					templateUrl: 'js/app/views/sync.html',
 					/*controller: 'Sync',
 					controllerAs: 'sync'*/
-				})	
-				/*.otherwise({
+				})
+
+				.otherwise({
 			        redirectTo: '/dashboard'
-			    });*/
+			    });
 		  }
 	]);
 	
