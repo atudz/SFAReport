@@ -16,6 +16,8 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
+
+
 				<h5>Filter Options</h5>
 				<div class="filter">
 					<form class="form-inline">
@@ -40,15 +42,79 @@
 					  <button type="submit" class="btn btn-default">Filter</button>
 					</form>
 				</div>
+
+				<div class="clearfix"><br /></div>
+		<div style="width:100%; overflow-x:scroll; overflow-y:hidden;">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<td>Customer Code</td>
+							<td>Customer Name</td>
+							<td>Remarks</td>
+							<td>Invoice Number</td>
+							<td>Invoice Date</td>
+							<td>Total Invoice Gross Amt</td>
+							<td>Invoice Discount Amount 1</td>
+							<td>Invoice Discount Amount 2</td>
+							<td>Total Invoice Amount</td>
+							<td>CM Number</td>
+							<td>Other Deduction Amount</td>
+							<td>Return Slip Number</td>
+							<td>Total Return Amount</td>
+							<td>Return Discount Amount</td>
+							<td>Return net amount</td>
+							<td>Total Invoice Net Amount</td>
+							<td>Collection Date</td>
+							<td>OR Number</td>
+							<td>Cash</td>
+							<td>Cehck Amount</td>
+							<td>Bank Name</td>
+							<td>Check No</td>
+							<td>Check Date</td>
+							<td>CM No</td>
+							<td>CM Date</td>
+							<td>CM Amount</td>
+							<td>Total Collected Amount</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-ng-repeat="x in records">
+						    <td>[[ x.a1 ]]</td>
+						    <td>[[ x.a2 ]]</td>
+						    <td>[[ x.a3 ]]</td>
+						    <td>[[ x.a4 ]]</td>
+						    <td>[[ x.a5 ]]</td>
+						    <td>[[ x.a6 ]]</td>
+						    <td>[[ x.a7 ]]</td>
+						    <td>[[ x.a8 ]]</td>
+						    <td>[[ x.a9 ]]</td>
+						    <td>[[ x.a10 ]]</td>
+						    <td>[[ x.a11 ]]</td>
+						    <td>[[ x.a12 ]]</td>
+						    <td>[[ x.a13 ]]</td>
+						    <td>[[ x.a14 ]]</td>
+						    <td>[[ x.a15 ]]</td>
+						    <td>[[ x.a16 ]]</td>
+						    <td>[[ x.a17 ]]</td>
+						    <td>[[ x.a18 ]]</td>
+						    <td>[[ x.a19 ]]</td>
+						    <td>[[ x.a20 ]]</td>
+						    <td>[[ x.a21 ]]</td>
+						    <td>[[ x.a22 ]]</td>
+						    <td>[[ x.a23 ]]</td>
+						    <td>[[ x.a24 ]]</td>
+						    <td>[[ x.a25 ]]</td>
+						    <td>[[ x.a26 ]]</td>
+						    <td>[[ x.a27 ]]</td>
+				  		</tr>			  
+				  	</tbody>
+				</table>
+			</div>
+
+
+
 			</div>		
-			
-			
-			<table>
-			  <tr data-ng-repeat="x in records">
-			    <td>[[ x.0 ]]</td>
-			    <td>[[ x.1 ]]</td>
-			  </tr>
-			</table>
 		</div>
+		
 	</div>
 </div>
