@@ -30,10 +30,10 @@ class ReportsPresenter extends PresenterCore
     			return $this->view('salesCollectionReport');
     			break;
     		case 'posting':
-    			return $type;
+    			return $this->view('salesCollectionPosting');
     			break;
     		case 'summary':
-    			return $type;
+    			return $this->view('salesCollectionSummary');
     			break;
     	}
     }

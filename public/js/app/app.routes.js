@@ -18,17 +18,17 @@
 				})
 				// Sales & Collection
 				.when('/salescollection.report',{
-					templateUrl: 'js/app/views/salesCollectionReport.html',
+					templateUrl: '/reports/salescollection/report',
 					/*controller: 'SalesCollectionReport',
 					controllerAs: 'scr'*/
 				})
 				.when('/salescollection.posting',{
-					templateUrl: 'js/app/views/salesCollectionPosting.html',
+					templateUrl: '/reports/salescollection/posting',
 					/*controller: 'SalesCollectionPosting',
 					controllerAs: 'scp'*/
 				})
 				.when('/salescollection.summary',{
-					templateUrl: 'js/app/views/salesCollectionSummary.html',
+					templateUrl: '/reports/salescollection/summary',
 					/*controller: 'SalesCollectionPosting',
 					controllerAs: 'scp'*/
 				})
