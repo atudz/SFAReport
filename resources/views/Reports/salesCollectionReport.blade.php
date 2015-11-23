@@ -17,39 +17,10 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 
-
-				<h5>Filter Options</h5>
-				<div class="filter">
-					<form class="form-inline">
-					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputEmail3">Email address</label>
-					    <input type="datetime-local" class="form-control" id="exampleInputEmail3" placeholder="Invoice Date">
-					  </div>
-					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputPassword3">Password</label>
-					    <input type="datetime-local" class="form-control" id="exampleInputPassword3" placeholder="Collection Date">
-					  </div>
-					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputPassword3">Password</label>
-					    <input type="datetime-local" class="form-control" id="exampleInputPassword3" placeholder="Posting Date">
-					  </div>
-					</form>
-					<form class="form-inline">
-					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputEmail3">Salesman</label>
-					    <input type="text" class="form-control" id="exampleInputEmail3" placeholder="Salesman">
-					  </div>
-					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputPassword3">Company Code</label>
-					    <input type="text" class="form-control" id="exampleInputPassword3" placeholder="Company Code">
-					  </div>
-					  <button type="submit" class="btn btn-default">Filter</button>
-					</form>
-				</div>
-
-				<div class="clearfix"><br /></div>
-		<div style="width:100%; overflow-x:scroll; overflow-y:hidden;">
-				<table class="table table-bordered">
+		<div class="table-responsive">
+				<div class="columns btn-group pull-left"><button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button><div class="keep-open btn-group" title="Columns"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button><ul class="dropdown-menu" role="menu"><li><label><input type="checkbox" data-field="id" value="1" checked="checked"> Item ID</label></li><li><label><input type="checkbox" data-field="name" value="2" checked="checked"> Item Name</label></li><li><label><input type="checkbox" data-field="price" value="3" checked="checked"> Item Price</label></li></ul></div></div>
+				<div class="pull-left search"><input class="form-control" type="text" placeholder="Search"></div>				
+				<table st-table="records" class="table table-bordered table-condensed table-striped">
 					<thead>
 						<tr>
 							<td>Customer Code</td>
