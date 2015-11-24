@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="{{ URL::asset('js/components/packages/bootstrap/dist/css/bootstrap.min.css') }}" />
+<link rel="stylesheet" href="{{ URL::asset('js/components/packages/angular-xeditable/dist/css/xeditable.css') }}" />
+
 <link rel="stylesheet" href="{{ URL::asset('css/styles.css') }}" />
 
 <!--[if lt IE 9]>
