@@ -15,7 +15,7 @@
 	function SalesCollectionReport($scope, $http)
 	{
 		var scr = this;
-		$http.get('/controller/reports/getdata/salescollectionreport')
+		$http.get('/reports/getdata/salescollectionreport')
 			.success(function(response){
 				$scope.records = response.records;
 		});

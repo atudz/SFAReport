@@ -19,5 +19,8 @@ return [
 	'from_email' => 'noreply@sunpride.com',
 		
 	//Password complexity
-	'password_complexity' => ''
+	'password_complexity' => '',
+		
+	// Pagination limit default
+	'page_limit' => '25',
 ];
