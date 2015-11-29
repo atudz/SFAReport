@@ -95,13 +95,22 @@ class PresenterCore extends Controller
 	 * @param unknown $columns
 	 * @return \App\Core\PaginatorCore
 	 */
-	public function paginate(Builder $criteria, $columns = ['*'])
+	public function paginate($criteria, $columns = ['*'])
 	{
+		if($criteria instanceof Illuminate\Database\Eloquent\Builder)
+		{
+			$builder = $criteria->getQuery();		
+		}
+		else
+		{
+			$builder = $criteria;
+		}
+		
 		$pageName = 'page';
 		$sortColumn = '';
 		$sortOrder = '';
-		$default = config('storage_directory.pagination_limit');
-		$total = $criteria->getQuery()->getCountForPagination();
+		$default = config('system.page_limit');
+		$total = $builder->getCountForPagination();
 		if(!is_null($this->request) && $this->request->has('limit'))
 		{
 			$perPage = $this->request->has('limit') ? $this->request->get('limit') : $default;
@@ -114,7 +123,7 @@ class PresenterCore extends Controller
 			$perPage = $default;
 		}
 		
-		$criteria->getQuery()->forPage(
+		$builder->forPage(
 				$page = Paginator::resolveCurrentPage($pageName),
 				$perPage
 		);
@@ -122,9 +131,9 @@ class PresenterCore extends Controller
 		if($sortColumn)
 		{
 			$sortOrder = $sortOrder ? $sortOrder : $this->defaultSort;
-			$criteria = $criteria->orderBy($sortColumn,$sortOrder);	
+			$criteria = $builder->orderBy($sortColumn,$sortOrder);	
 		}
-		return new PaginatorCore($criteria->get($columns), $total, $perPage, $page, [
+		return new PaginatorCore($builder->get($columns), $total, $perPage, $page, [
 				'path' => Paginator::resolveCurrentPath(),
 				'pageName' => $pageName,
 				'sortColumn' => $sortColumn,

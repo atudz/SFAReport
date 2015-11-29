@@ -34,6 +34,8 @@ return [
 		'txn_evaluated_objective' => ['evaluated_objective_id'],
 		'txn_collection_invoice' => ['collection_invoice_id'],
 		'txn_invoice' => ['invoice_id'],
+		'txn_sales_order_header_discount' => ['reference_num'],
+		'txn_return_header_discount' => ['reference_num'],
 	],
 		
 	// synchronization log storage directory
