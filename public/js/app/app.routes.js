@@ -13,8 +13,8 @@
 				// Dashboard
 				.when('/dashboard',{
 					templateUrl: '/js/testing/dashboard.html',
-					controller: 'SalesCollectionReport',
-					controllerAs: 'scr'
+					/*controller: 'SalesCollectionReport',
+					controllerAs: 'scr'*/
 				})
 				// Sales & Collection
 				.when('/salescollection.report',{

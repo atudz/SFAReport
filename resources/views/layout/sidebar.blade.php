@@ -2,9 +2,10 @@
 	<form role="search">
 		<div class="form-group">
 			<strong>Main Menu</strong>
+            <div hello-world></div>
 		</div>
 	</form>
-	<ul class="nav menu">
+	<ul class="nav menu" data-collapse-nav>
 	 {{--*/ $counter = 1 /*--}}
 
 	 @if(isset($menu))
