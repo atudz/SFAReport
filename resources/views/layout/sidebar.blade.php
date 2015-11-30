@@ -15,7 +15,7 @@
             <a href="#{{$nav['url']}}"><span class="{{$nav['class']}}"></span> 
             	{{$nav['name']}} 
             	@if(count($nav['navitems'])) 
-            		<span data-toggle="collapse" href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+            		<span href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
             	@endif
             </a>
             

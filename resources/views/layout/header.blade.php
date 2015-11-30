@@ -8,10 +8,10 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" href="#"><span>SFA</span> Reports</a>
-				<ul class="user-menu" uib-dropdown on-toggle="toggled(open)">
+				<ul class="user-menu">
 					<li class="dropdown pull-right">
-						<a href="#" class="dropdown-toggle" uib-dropdown-toggle><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="simple-dropdown">
+						<a href="#" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
 							<li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 							<li><a href="/changepass"><span class="glyphicon glyphicon-cog"></span> Change Password</a></li>
 							<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
