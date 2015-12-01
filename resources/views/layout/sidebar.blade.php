@@ -2,9 +2,10 @@
 	<form role="search">
 		<div class="form-group">
 			<strong>Main Menu</strong>
+            <div hello-world></div>
 		</div>
 	</form>
-	<ul class="nav menu">
+	<ul class="nav menu" data-collapse-nav>
 	 {{--*/ $counter = 1 /*--}}
 
 	 @if(isset($menu))
@@ -14,7 +15,7 @@
             <a href="#{{$nav['url']}}"><span class="{{$nav['class']}}"></span> 
             	{{$nav['name']}} 
             	@if(count($nav['navitems'])) 
-            		<span data-toggle="collapse" href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+            		<span href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
             	@endif
             </a>
             
