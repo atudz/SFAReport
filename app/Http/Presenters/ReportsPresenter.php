@@ -96,27 +96,26 @@ class ReportsPresenter extends PresenterCore
     		case 'salescollectionsummary';
     			return $this->getSalesCollectionSummary();
     		case 'vaninventory';
-    			return $this->getSalesCollectionReport();
+    			return $this->getVanInventory();
     		case 'unpaidinvoice';
-    			return $this->getSalesCollectionPosting();    		
+    			return $this->getUnpaidInvoice();    		
     		case 'bir';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getBir();
 			case 'salesportpermaterial';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getSalesReportMaterial();
     		case 'salesportperpeso';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getSalesReportPeso();
     		case 'returnpermaterial';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getReturnMaterial();
     		case 'returnperpeso';
-    			return $this->getSalesCollectionSummary();
-    		case 'materiallist';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getReturntPeso();
+    		case 'customerlist';
+    			return $this->getCustomerList();
     		case 'salesmanlist';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getSalesmanList();
     		case 'materialpricelist';
-    			return $this->getSalesCollectionSummary();
+    			return $this->getMaterialPriceList();
     	}
-    	return $this->getSalesCollectionReport();
     }
     
     
@@ -447,8 +446,66 @@ class ReportsPresenter extends PresenterCore
     	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
     	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
     
-    	$postingFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
+    	$result = $this->paginate($prepare);
+    
+    	return response()->json($this->dummy());
+    }
+    
+    /**
+     * Get Salesman List
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesmanList()
+    {
+    
+    	$prepare = \DB::table('user');
+    
+    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+    
+    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
+    	$prepare = $areaFilter->addFilter($prepare,'area');
+    
+    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
+    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
+    
+    	$statusFilter = FilterFactory::getInstance('Select','Status',SelectFilter::SINGLE_SELECT);
+    	$prepare = $statusCodeFilter->addFilter($prepare,'status');
+    	
+    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
+    
+    	$result = $this->paginate($prepare);
+    
+    	return response()->json($this->dummy());
+    }
+    
+    /**
+     * Get Material Price List
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMaterialPriceList()
+    {
+    
+    	$prepare = \DB::table('user');
+    
+    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
+    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
+    
+    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
+    	$prepare = $areaFilter->addFilter($prepare,'area');
+    
+    	$segmentCodeFilter = FilterFactory::getInstance('Select','Segement',SelectFilter::SINGLE_SELECT);
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code');
+    	
+    	$materialFilter = FilterFactory::getInstance('Select','Material',SelectFilter::SINGLE_SELECT);
+    	$prepare = $materialFilter->addFilter($prepare,'material');
+    
+    	$statusFilter = FilterFactory::getInstance('Select','Status',SelectFilter::SINGLE_SELECT);
+    	$prepare = $statusCodeFilter->addFilter($prepare,'status');
+    	
+    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
     
     	$result = $this->paginate($prepare);
     
@@ -548,5 +605,82 @@ class ReportsPresenter extends PresenterCore
     
     	];
     	return $data;
+    }
+    
+    /**
+     * Get Table Column Headers
+     * @param unknown $type
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTableColumns($type)
+    {
+    	switch($type)
+    	{
+    		case 'salescollectionreport';
+    			return $this->getSalesCollectionColumns();
+    		case 'salescollectionposting';
+    			return $this->getSalesCollectionPostingColumns();
+    		case 'salescollectionsummary';
+    			return $this->getSalesCollectionSummaryColumns();
+    		case 'vaninventory';
+    			return $this->getVanInventory();
+    		case 'unpaidinvoice';
+    			return $this->getUnpaidInvoice();
+    		case 'bir';
+    			return $this->getBir();
+    		case 'salesportpermaterial';
+    			return $this->getSalesReportMaterial();
+    		case 'salesportperpeso';
+    			return $this->getSalesReportPeso();
+    		case 'returnpermaterial';
+    			return $this->getReturnMaterial();
+    		case 'returnperpeso';
+    			return $this->getReturntPeso();
+    		case 'customerlist';
+    			return $this->getCustomerList();
+    		case 'salesmanlist';
+    			return $this->getSalesmanList();
+    		case 'materialpricelist';
+    			return $this->getMaterialPriceList();
+    	}	
+    }
+    
+    /**
+     * Get Sales Collection Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesCollectionColumns()
+    {    
+    	$headers = [
+    			'Customer Code',
+    			'Customer Name',
+    			'Remarks',
+    			'Invoice Number',
+    			'Invoice Date',
+    			'Total Invoice Gross Amt',
+    			'Invoice Discount Amount 1',
+    			'Invoice Discount Amount 2',
+    			'Total Invoice Amount',
+    			'CM Number',
+    			'Other Deduction Amount',
+    			'Return Slip Number',
+    			'Total Return Amount',
+    			'Return Discount Amount',
+    			'Return net amount',
+    			'Total Invoice Net Amount',
+    			'Collection Date',
+    			'OR Number',
+    			'Cash',
+    			'Cehck Amount',
+    			'Bank Name',
+    			'Check No',
+    			'Check Date',
+    			'CM No',
+    			'CM Date',
+    			'CM Amount',
+    			'Total Collected Amount',
+    	];
+    	
+    	return response()->json($headers);
     }
 }

@@ -34,6 +34,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
 	Route::get('/sync', ['as'=>'sync', 'uses'=>'ReportsPresenter@sync']);
 	Route::get('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
+	Route::get('/getheaders/{type}', ['as'=>'report-getheaders', 'uses'=>'ReportsPresenter@getTableColumns']);
 });
 
 /*
@@ -46,6 +47,7 @@ Route::group(['prefix' => 'reports'],function(){
 // This is only for testing purpose. In actual it should be post
 Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
+	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
 });
 
 

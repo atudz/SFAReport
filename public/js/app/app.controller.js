@@ -12,13 +12,31 @@
 	angular.module('app')
 		.controller('SalesCollectionReport',['$scope','$http','$log',SalesCollectionReport]);
 	
-	function SalesCollectionReport($scope, $http)
+	function SalesCollectionReport($scope, $http, $log)
 	{
-		var scr = this;
 		$http.get('/reports/getdata/salescollectionreport')
 			.success(function(response){
 				$scope.records = response.records;
 		});
+		
+		$scope.update = function(data) {
+			if(confirm('Are you sure you want to delete this record?'))
+			{
+				//var status = false;
+				$http.post('/controller/reports/save',
+							{table:'user', id:'1', column:'firstname', value:'Test123'}
+				).success(function(response){
+					$log.info(response);
+					//status = true;
+				});
+				//alert(status);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
 	}
 	
 	

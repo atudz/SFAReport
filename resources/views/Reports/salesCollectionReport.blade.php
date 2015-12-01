@@ -54,7 +54,7 @@
 					</thead>
 					<tbody>
 						<tr data-ng-repeat="x in records">
-						    <td>[[ x.a1 ]]</td>
+						    <td><a href="#" editable-text="x.a1" onbeforesave="update(this)">[[ x.a1 || 'empty' ]]</a></td>
 						    <td>[[ x.a2 ]]</td>
 						    <td>[[ x.a3 ]]</td>
 						    <td>[[ x.a4 ]]</td>
