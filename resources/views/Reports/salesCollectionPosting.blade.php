@@ -1,16 +1,5 @@
-<div class="row">
-	<ol class="breadcrumb">
-		<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
-		<li class="active">Sales & Collection</li>
-		<li class="active">Posting</li>
-	</ol>
-</div><!--/.row-->
-
-<div class="row">
-	<div class="col-lg-12">
-		<h4 class="page-header">Sales & Collection Posting</h4>
-	</div>
-</div><!--/.row-->
+{!!Html::breadcrumb(['Sales & Collection','Posting'])!!}
+{!!Html::pageheader('Sales & Collection Posting')!!}
 
 <div class="row">
 	<div class="col-lg-12">

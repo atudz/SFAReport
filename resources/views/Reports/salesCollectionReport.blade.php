@@ -1,16 +1,5 @@
-<div class="row">
-	<ol class="breadcrumb">
-		<li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
-		<li class="active">Sales & Collection</li>
-		<li class="active">Report</li>
-	</ol>
-</div><!--/.row-->
-
-<div class="row">
-	<div class="col-lg-12">
-		<h4 class="page-header">Sales & Collection Report</h4>
-	</div>
-</div><!--/.row-->
+{!!Html::breadcrumb(['Sales & Collection','Reports'])!!}
+{!!Html::pageheader('Sales & Collection Report')!!}
 
 <div class="row" data-ng-controller="SalesCollectionReport">
 	<div class="col-lg-12">
