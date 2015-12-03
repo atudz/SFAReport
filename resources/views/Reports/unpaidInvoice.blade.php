@@ -1,11 +1,11 @@
-{!!Html::breadcrumb(['BIR'])!!}
-{!!Html::pageheader('BIR')!!}
+{!!Html::breadcrumb(['Unpaid Invoice'])!!}
+{!!Html::pageheader('Unpaid Invoice')!!}
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				BIR
+				Unpaid Invoice
 			</div>			
 		</div>
 	</div>

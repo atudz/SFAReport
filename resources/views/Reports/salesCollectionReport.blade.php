@@ -2,10 +2,63 @@
 {!!Html::pageheader('Sales & Collection Report')!!}
 
 <div class="row" data-ng-controller="SalesCollectionReport">
-	<div class="col-lg-12">
+	<div class="col-sm-12">
 		<div class="panel panel-default">
-			<div class="panel-body">
-
+		<div class="panel-body">
+		
+		<div class="row">
+			<div class="col-sm-12">
+				<button uib-popover-template="myPopoverTemplate.html" popover-title="Test132" type="button" class="btn btn-default">Popover With Template</button>
+				<button popover-placement="right" uib-popover="On the Right!" type="button" class="btn btn-default">Filter Report</button>
+			</div>
+			
+			<script type="text/ng-template" id="salesCollectionReportFilter.html">
+				<div class="col-sm-12">			
+				<form class="form-horizontal">		  			
+					 <div class="form-group">
+					 	<label for="inputPassword" class="col-sm-2 control-label">Customer Code</label>
+						<div class="col-sm-6">
+							<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+						</div>
+					 </div>
+					 <div class="form-group">
+					    	<label for="salesman" class="col-sm-2 control-label">Salesman</label>
+						    <div class="col-sm-6">
+						      <select class="form-control" id="salesman">
+						      	<option>Man1</option>
+						      	<option>Man2</option>
+						      </select>
+						    </div>
+					 </div>
+					 <div class="form-group">
+					 	<label for="inputPassword" class="col-sm-2 control-label">Invoice Date</label>
+						<div class="col-sm-6">
+							<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+						</div>
+					 </div>
+					 <div class="form-group">
+					 	<label for="inputPassword" class="col-sm-2 control-label">Collection Date</label>
+						<div class="col-sm-6">
+							<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+						</div>
+					 </div>
+					 <div class="form-group">
+					 	<label for="inputPassword" class="col-sm-2 control-label">Posting Date</label>
+						<div class="col-sm-6">
+							<input type="password" class="form-control" id="inputPassword" placeholder="Password">
+						</div>
+					 </div>
+					 <div class="form-group">
+    					<div class="col-sm-offset-2 col-sm-10">
+      						<button type="submit" class="btn btn-default">Submit</button>
+    					</div>
+  					</div>
+				</form>
+			</div>
+</script>
+			
+		</div>
+			
 		<div class="table-responsive">
 				<div class="columns btn-group pull-left"><button class="btn btn-default" type="button" name="refresh" title="Refresh"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button><button class="btn btn-default" type="button" name="toggle" title="Toggle"><i class="glyphicon glyphicon glyphicon-list-alt icon-list-alt"></i></button><div class="keep-open btn-group" title="Columns"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-th icon-th"></i> <span class="caret"></span></button><ul class="dropdown-menu" role="menu"><li><label><input type="checkbox" data-field="id" value="1" checked="checked"> Item ID</label></li><li><label><input type="checkbox" data-field="name" value="2" checked="checked"> Item Name</label></li><li><label><input type="checkbox" data-field="price" value="3" checked="checked"> Item Price</label></li></ul></div></div>
 				<div class="pull-left search"><input class="form-control" type="text" placeholder="Search"></div>				
@@ -82,3 +135,10 @@
 		
 	</div>
 </div>
+
+<script type="text/ng-template" id="myPopoverTemplate.html">
+        <div class="form-group">
+          <label>Popup Title:</label>
+          <input type="text" class="form-control">
+        </div>
+    </script>

@@ -11,8 +11,8 @@
 				// Append application route list here
 				$routeProvider
 				// Dashboard
-				.when('/dashboard',{
-					templateUrl: '/js/testing/dashboard.html',
+				.when('/home',{
+					templateUrl: '/home',
 					/*controller: 'SalesCollectionReport',
 					controllerAs: 'scr'*/
 				})
@@ -34,52 +34,70 @@
 				})
 				// Van Inventory
 				.when('/vaninventory.canned',{
-					templateUrl: 'js/app/views/vanInventoryCanned.html',
+					templateUrl: '/reports/vaninventory/canned',
+					/*controller: 'VanInventoryCanned',
+					controllerAs: 'vic'*/
+				})
+				.when('/vaninventory.frozen',{
+					templateUrl: '/reports/vaninventory/frozen',
 					/*controller: 'VanInventoryCanned',
 					controllerAs: 'vic'*/
 				})
 				// Sales Report
 				.when('/salesreport.permaterial',{
-					templateUrl: 'js/app/views/salesReportPerMaterial.html',
+					templateUrl: '/reports/salesreport/permaterial',
 					/*controller: 'SalesReportPerMaterial',
 					controllerAs: 'srpm'*/
 				})
 				.when('/salesreport.pesovalue',{
-					templateUrl: 'js/app/views/salesReportPesoValue.html',
+					templateUrl: '/reports/salesreport/perpeso',
 					/*controller: 'SalesReportPesoValue',
 					controllerAs: 'srpv'*/
 				})
 				.when('/salesreport.returnpermaterial',{
-					templateUrl: 'js/app/views/salesReportReturnPerMaterial.html',
+					templateUrl: '/reports/salesreport/returnpermaterial',
 					/*controller: 'SalesReportReturnPerMaterial',
 					controllerAs: 'srrpm'*/
 				})
 				.when('/salesreport.returnpesovalue',{
-					templateUrl: 'js/app/views/salesReportReturnPesoValue.html',
+					templateUrl: '/reports/salesreport/returnperpeso',
 					/*controller: 'SalesReportReturnPesoValue',
 					controllerAs: 'srrpv'*/
 				})
 				// Unpaid Invoice
 				.when('/unpaid',{
-					templateUrl: 'js/app/views/unpaid.html',
+					templateUrl: '/reports/unpaidinvoice',
 					/*controller: 'Unpaid',
 					controllerAs: 'up'*/
 				})
 				// bir
 				.when('/bir',{
-					templateUrl: 'js/app/views/bir.html',
+					templateUrl: '/reports/bir',
 					/*controller: 'Bir',
 					controllerAs: 'bir'*/
 				})
 				// Sync 
 				.when('/sync',{
-					templateUrl: 'js/app/views/sync.html',
+					templateUrl: '/reports/sync',
 					/*controller: 'Sync',
 					controllerAs: 'sync'*/
 				})
+				
+				// Sync 
+				.when('/user.list',{
+					templateUrl: '/user/list',
+					/*controller: 'Sync',
+					controllerAs: 'sync'*/
+				})
+				.when('/usergroup.rights',{
+					templateUrl: '/user/group/rights',
+					/*controller: 'Sync',
+					controllerAs: 'sync'*/
+				})
+				
 
 				.otherwise({
-			        redirectTo: '/dashboard'
+			        redirectTo: '/home'
 			    });
 		  }
 	]);

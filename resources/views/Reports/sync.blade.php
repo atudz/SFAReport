@@ -1,11 +1,11 @@
-{!!Html::breadcrumb(['BIR'])!!}
-{!!Html::pageheader('BIR')!!}
+{!!Html::breadcrumb(['Sync Data'])!!}
+{!!Html::pageheader('Sync Data')!!}
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				BIR
+				Sync Data
 			</div>			
 		</div>
 	</div>

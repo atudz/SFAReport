@@ -25,6 +25,9 @@ class NavigationItemsSeeder extends Seeder
                 ['name'=>'Returns (Per Material)','url'=>'salesreport.returnpermaterial','class'=>'glyphicon glyphicon-share-alt','navigation_id'=>'5','created_at' => new DateTime()],
                 ['name'=>'Returns (Peso Value)','url'=>'salesreport.returnpesovalue','class'=>'glyphicon glyphicon-share-alt','navigation_id'=>'5','created_at' => new DateTime()],
         		
+        		['name'=>'User List','url'=>'user.list','class'=>'glyphicon glyphicon-share-alt','navigation_id'=>'8','created_at' => new DateTime()],
+        		['name'=>'User Group Rights','url'=>'usergroup.rights','class'=>'glyphicon glyphicon-share-alt','navigation_id'=>'8','created_at' => new DateTime()],
+        		
         ];
     	DB::table('navigation_item')->insert($navigation_item);
     }

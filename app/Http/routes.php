@@ -23,7 +23,7 @@ Route::group(['after' => 'no-cache'], function()
 
 
 Route::get('/', ['as'=>'dashboard', 'uses'=>'MainPresenter@home']);
-Route::get('/dashboard', ['as'=>'dashboard 2', 'uses'=>'MainPresenter@home']);
+Route::get('/home', ['as'=>'home', 'uses'=>'ReportsPresenter@index']);
 Route::get('/profile', ['as'=>'profile', 'uses'=>'UserPresenter@profile']);
 Route::get('/changepass', ['as'=>'change-pass', 'uses'=>'UserPresenter@changePassword']);
 Route::get('/logout', ['as'=>'userlogout', 'uses'=>'AuthController@logout']);
@@ -31,10 +31,18 @@ Route::get('/logout', ['as'=>'userlogout', 'uses'=>'AuthController@logout']);
 Route::group(['prefix' => 'reports'],function(){
 	Route::get('/salescollection/{type?}', ['as'=>'sales-collection', 'uses'=>'ReportsPresenter@salesCollection']);
 	Route::get('/vaninventory/{type?}', ['as'=>'van-inventory', 'uses'=>'ReportsPresenter@vanInventory']);
+	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
+	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
 	Route::get('/sync', ['as'=>'sync', 'uses'=>'ReportsPresenter@sync']);
 	Route::get('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
 	Route::get('/getheaders/{type}', ['as'=>'report-getheaders', 'uses'=>'ReportsPresenter@getTableColumns']);
+});
+
+
+Route::group(['prefix' => 'user'],function(){
+	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
+	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 });
 
 /*

@@ -14,10 +14,10 @@ class NavigationSeeder extends Seeder
         // Navigation main menu items
         $navigations = [
                 ['name'=>'Dashboard','url'=>'dashboard','class'=>'glyphicon glyphicon-dashboard','created_at' => new DateTime()],
-        		['name'=>'Sales & Collection','url'=>'salescollection.report','class'=>'glyphicon glyphicon-list-alt','created_at' => new DateTime()],
-        		['name'=>'Van Inventory','url'=>'vaninventory.canned','class'=>'glyphicon glyphicon-barcode','created_at' => new DateTime()],
+        		['name'=>'Sales & Collection','url'=>'','class'=>'glyphicon glyphicon-list-alt','created_at' => new DateTime()],
+        		['name'=>'Van Inventory','url'=>'','class'=>'glyphicon glyphicon-barcode','created_at' => new DateTime()],
         		['name'=>'Unpaid Invoice','url'=>'unpaid','class'=>'glyphicon glyphicon-credit-card','created_at' => new DateTime()],
-                ['name'=>'Sales Report','url'=>'salesreport','class'=>'glyphicon glyphicon-stats','created_at' => new DateTime()],
+                ['name'=>'Sales Report','url'=>'','class'=>'glyphicon glyphicon-stats','created_at' => new DateTime()],
         		['name'=>'BIR','url'=>'bir','class'=>'glyphicon glyphicon-th-list','created_at' => new DateTime()],
         		['name'=>'Sync Data','url'=>'sync','class'=>'glyphicon glyphicon-info-sign','created_at' => new DateTime()],
         		['name'=>'User Management','url'=>'user','class'=>'glyphicon glyphicon-tasks','created_at' => new DateTime()],

@@ -1,11 +1,11 @@
-{!!Html::breadcrumb(['BIR'])!!}
-{!!Html::pageheader('BIR')!!}
+{!!Html::breadcrumb(['User Management','User Group Rights'])!!}
+{!!Html::pageheader('User Group Rights')!!}
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				BIR
+				User Group Rights
 			</div>			
 		</div>
 	</div>

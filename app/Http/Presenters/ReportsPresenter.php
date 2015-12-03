@@ -20,6 +20,17 @@ class ReportsPresenter extends PresenterCore
     }
 	
     /**
+     * Display main dashboard
+     *
+     * @return Response
+     */
+    public function index()
+    {
+    	return $this->view('index');
+    }
+    
+    
+    /**
      * Return sales collection view
      * @param string $type
      * @return string The rendered html view
@@ -30,13 +41,30 @@ class ReportsPresenter extends PresenterCore
     	{
     		case 'report':
     			return $this->view('salesCollectionReport');
-    			break;
     		case 'posting':
     			return $this->view('salesCollectionPosting');
-    			break;
     		case 'summary':
     			return $this->view('salesCollectionSummary');
-    			break;
+    	}
+    }
+    
+    /**
+     * Return sales report view
+     * @param string $type
+     * @return string The rendered html view
+     */
+    public function salesReport($type='permaterial')
+    {
+    	switch($type)
+    	{
+    		case 'permaterial':
+    			return $this->view('salesReportPerMaterial');
+    		case 'perpeso':
+    			return $this->view('salesReportPerPeso');
+    		case 'returnpermaterial':
+    			return $this->view('returnsPerMaterial');
+    		case 'returnperpeso':
+    			return $this->view('returnsPerPeso');
     	}
     }
     
@@ -51,11 +79,9 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'canned':
-    			return $type;
-    			break;
-    		case 'forzen':
-    			return $type;
-    			break;
+    			return $this->view('vanInventoryCanned');
+    		case 'frozen':
+    			return $this->view('vanInventoryFrozen');
     	}
     }
     
@@ -66,10 +92,19 @@ class ReportsPresenter extends PresenterCore
      */
     public function bir()
     {
-    	return 'bir';
+    	return $this->view('bir');
     }
     
     
+    /**
+     * Return Unpaid Invoice view
+     * @param string $type
+     * @return string The rendered html view
+     */
+    public function unpaidInvoice()
+    {
+    	return $this->view('unpaidInvoice');
+    }
     /**
      * Return report sync view
      * @param string $type
@@ -77,7 +112,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function sync()
     {
-    	return 'sync';
+    	return $this->view('sync');
     }
     
     
@@ -649,7 +684,7 @@ class ReportsPresenter extends PresenterCore
      * Get Sales Collection Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSalesCollectionColumns()
+    public function getSalesCollectionReportColumns()
     {    
     	$headers = [
     			'Customer Code',
@@ -681,6 +716,101 @@ class ReportsPresenter extends PresenterCore
     			'Total Collected Amount',
     	];
     	
+    	return response()->json($headers);
+    }
+    
+    
+    /**
+     * Get Sales Collection Posting Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesCollectionPostingColumns()
+    {
+    	$headers = [
+    			'Activity Code',
+    			'Salesman Name',
+    			'Customer Code',
+    			'Customer Name',
+    			'Remarks',
+    			'Invoice No',
+    			'Total Invoice Net Amount',
+    			'Invoice Date',
+    			'Invoice Posting Date',
+    			'OR Number',
+    			'OR Amount',
+    			'OR Date',
+    			'Collection Posting Date'
+    	];
+    	 
+    	return response()->json($headers);
+    }
+    
+    
+    /**
+     * Get Sales Collection Posting Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesCollectionSummaryColumns()
+    {
+    	$headers = [
+    			'SCR#',
+    			'Invoice Number',
+    			'Invoice Date',
+    			'Total Collected Amount',
+    			'12% Sales Tax',
+    			'Amount Subject To Commission'
+    	];
+    
+    	return response()->json($headers);
+    }
+    
+    
+    /**
+     * Get Van Inventory Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVanInventoryColumns()
+    {
+    	$headers = [
+    			'Customer',
+    			'Invoice Date',
+    			'Invoice No.',    			 
+    			'Return Slip No.',
+    			'Transaction Date',
+    			'Stock Transfer No.',
+    			'Replenishment Date',
+    			'Replenishment Number.'
+    	];
+    
+    	return response()->json($headers);
+    }
+    
+    /**
+     * Get Bir Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getBirColumns()
+    {
+    	$headers = [
+    			'Document Date',
+    			'Name',
+    			'Customer Address',
+    			'Depot',
+    			'Reference',
+    			'Vat Registration No.',
+    			'Sales-Exempt',
+    			'Sales-0%',
+    			'Sales-12%',
+    			'Total Sales',
+    			'Tax Amount',
+    			'Total Invoice Amount',
+    			'Local Sales',
+    			'Term-Cash',
+    			'Term-on-Account',
+    			'Sales Group',
+    			'Assignment',
+    	];
+    
     	return response()->json($headers);
     }
 }
