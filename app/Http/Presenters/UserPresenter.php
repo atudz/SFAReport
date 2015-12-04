@@ -15,7 +15,15 @@ class UserPresenter extends PresenterCore
 	{
 		return $this->view('users');
 	}
+
 	
+	public function changePassword(){
+		return $this->view('changePassword');
+	}
+	
+	public function profile(){
+		return $this->view('myProfile');
+	}
 	/**
 	 * Return User Group Rights view
 	 * @param string $type

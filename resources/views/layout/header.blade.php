@@ -12,8 +12,8 @@
 					<li class="dropdown pull-right">
 						<a href="#" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-							<li><a href="/changepass"><span class="glyphicon glyphicon-cog"></span> Change Password</a></li>
+							<li><a href="#profile.my"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+							<li><a href="#profile.changepassword"><span class="glyphicon glyphicon-cog"></span> Change Password</a></li>
 							<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 						</ul>
 					</li>

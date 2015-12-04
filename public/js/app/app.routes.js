@@ -83,12 +83,25 @@
 					controllerAs: 'sync'*/
 				})
 				
-				// Sync 
+				// Users 
 				.when('/user.list',{
 					templateUrl: '/user/list',
 					/*controller: 'Sync',
 					controllerAs: 'sync'*/
 				})
+
+				.when('/profile.changepassword',{
+					templateUrl: '/changepass',
+					/*controller: 'Sync',
+					controllerAs: 'sync'*/
+				})
+
+				.when('/profile.my',{
+					templateUrl: '/profile',
+					/*controller: 'Sync',
+					controllerAs: 'sync'*/
+				})
+
 				.when('/usergroup.rights',{
 					templateUrl: '/user/group/rights',
 					/*controller: 'Sync',
