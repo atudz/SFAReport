@@ -20,7 +20,7 @@ class NavigationSeeder extends Seeder
                 ['name'=>'Sales Report','url'=>'','class'=>'glyphicon glyphicon-stats','created_at' => new DateTime()],
         		['name'=>'BIR','url'=>'bir','class'=>'glyphicon glyphicon-th-list','created_at' => new DateTime()],
         		['name'=>'Sync Data','url'=>'sync','class'=>'glyphicon glyphicon-info-sign','created_at' => new DateTime()],
-        		['name'=>'User Management','url'=>'user','class'=>'glyphicon glyphicon-tasks','created_at' => new DateTime()],
+        		['name'=>'User Management','url'=>'','class'=>'glyphicon glyphicon-tasks','created_at' => new DateTime()],
         ];
     	DB::table('navigation')->insert($navigations);
     }
