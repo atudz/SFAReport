@@ -5,7 +5,7 @@
 	<div class="col-sm-12">
 		<div class="panel panel-default">
 		<div class="panel-body">		
-			<!-- Filter -->
+			<!-- Filter -->			
 			{!!Html::fopen('Toggle Filter')!!}
 				<div class="pull-left col-sm-6">
 					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}

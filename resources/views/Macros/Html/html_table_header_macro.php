@@ -1,6 +1,6 @@
 <?php
 
-Html::macro('theader', function(array $headers, $showFilter=true) {
+Html::macro('theader', function(array $headers, $showFilter=false) {
 
 	$html = '<thead>';
 	if($showFilter)

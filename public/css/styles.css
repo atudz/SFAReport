@@ -838,6 +838,11 @@ h1.page-header {
 	height: 50px;
 }
 
+.fixed-table-pagination {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
 .fixed-table-pagination .pagination {
     margin-top: 0px;
     margin-bottom: 10px;
@@ -932,4 +937,8 @@ h5.page-header
 
  .main {
   	font-size: 12px;
+ }
+ 
+ .table-options {
+  	margin-bottom: 10px;
  }
