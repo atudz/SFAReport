@@ -49,7 +49,6 @@
 	
 	function SalesCollectionPosting($scope, $http)
 	{
-		var scr = this;
 		$http.get('/controller/reports/getdata/salescollectionposting')
 			.success(function(response){
 				$scope.records = response.records;
@@ -65,7 +64,6 @@
 	
 	function SalesCollectionSummary($scope, $http)
 	{
-		var scr = this;
 		$http.get('/controller/reports/getdata/salescollectionsummary')
 			.success(function(response){
 				$scope.records = response.records;
@@ -81,29 +79,6 @@
 	function FilterOptions($scope, $http)
 	{
 		$scope.toggleFilter = false;
-
-		$scope.dateFrom = null;
-	    $scope.dateTo = null;
-
-	    // Disable weekend selection
-		$scope.disabled = function(date, mode) {
-		    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-		};
-
-		  
-		$scope.maxDate = new Date(2020, 5, 22);
-
-		$scope.open = function($event, elementId) {
-		    $scope[elementId] = true;
-		};
-
-		$scope.dateOptions = {
-		    formatYear: 'yy',
-		    startingDay: 0
-		};
-
-		$scope.format = 'yyyy/MM/dd';
-			  
 	}
 	
 	/**
@@ -133,5 +108,13 @@
 			  
 	}
 
-	
+	/*app.controller('demoController', demoController);
+	demoController.$inject = ["NgTableParams", "ngTableSimpleList"];
+
+	  function demoController(NgTableParams, simpleList) {
+		  var self = this;
+			var data = [{name: "Moroni", age: 50} ,];
+			self.tableParams = new NgTableParams({}, { dataset: data});
+	  }*/
+	  
 })();
