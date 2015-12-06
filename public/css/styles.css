@@ -839,11 +839,12 @@ h1.page-header {
 }
 
 .fixed-table-pagination .pagination {
-    margin-top: 10px;
-    margin-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
 .fixed-table-pagination .pagination-detail {
-	margin-top: 20px;
+	margin-top: 0px;
+	margin-bottom: 10px;
 }
 
 .pagination > li > a {
