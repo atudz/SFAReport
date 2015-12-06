@@ -42,6 +42,7 @@ class ReportsPresenter extends PresenterCore
     		case 'report':
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
+    			$this->view->tableHeaders = $this->getSalesCollectionReportColumns();
     			return $this->view('salesCollectionReport');
     		case 'posting':
     			$this->view->customerCode = $this->getCustomerCode();
@@ -560,7 +561,7 @@ class ReportsPresenter extends PresenterCore
     
     public function dummy()
     {    	
-    	return ['records' => [
+    /* 	return ['records' => [
     			['name'=>'Abner Tudtud','age'=>'10','money'=>'10'],
     			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
     			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
@@ -601,7 +602,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
     			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
     			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    	]];
+    	]]; */
     	$data['records'] = [
     			['a1'=>'1000_10003574',
     				 'a2' =>'1000_BARDS-Blue Ice Store',
@@ -700,7 +701,7 @@ class ReportsPresenter extends PresenterCore
      * @param unknown $type
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTableColumns($type)
+    public function getTableColumns($type='')
     {
     	switch($type)
     	{
@@ -740,36 +741,36 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionReportColumns()
     {    
     	$headers = [
-    			['name'=>'Customer Code','sortable'=>true],
-    			['name'=>'Customer Name','sortable'=>true],
-    			['name'=>'Remarks','sortable'=>true],
-    			['name'=>'Invoice Number','sortable'=>true],
-    			['name'=>'Invoice Date','sortable'=>true],
-    			['name'=>'Total Invoice Gross Amt','sortable'=>false],
-    			['name'=>'Invoice Discount Amount 1','sortable'=>true],
-    			['name'=>'Invoice Discount Amount 2','sortable'=>true],
-    			['name'=>'Total Invoice Amount','sortable'=>false],
-    			['name'=>'CM Number','sortable'=>true],
-    			['name'=>'Other Deduction Amount','sortable'=>false],
-    			['name'=>'Return Slip Number','sortable'=>true],
-    			['name'=>'Total Return Amount','sortable'=>false],
-    			['name'=>'Return Discount Amount','sortable'=>false],
-    			['name'=>'Return net amount','sortable'=>false],
-    			['name'=>'Total Invoice Net Amount','sortable'=>false],
-    			['name'=>'Collection Date','sortable'=>true],
-    			['name'=>'OR Number','sortable'=>true],
-    			['name'=>'Cash','sortable'=>false],
-    			['name'=>'Check Amount','sortable'=>false],
-    			['name'=>'Bank Name','sortable'=>false],
-    			['name'=>'Check No','sortable'=>false],
-    			['name'=>'Check Date','sortable'=>false],
-    			['name'=>'CM No','sortable'=>false],
-    			['name'=>'CM Date','sortable'=>false],
-    			['name'=>'CM Amount','sortable'=>false],
-    			['name'=>'Total Collected Amount','sortable'=>false],
+    			['name'=>'Customer Code','st-sort'=>'customer_code'],
+    			['name'=>'Customer Name','st-sort'=>'customer_name'],
+    			['name'=>'Remarks','st-sort'=>'remarks'],
+    			['name'=>'Invoice Number','st-sort'=>'invoice_number'],
+    			['name'=>'Invoice Date','st-sort'=>'invoice_date'],
+    			['name'=>'Total Invoice Gross Amt'],
+    			['name'=>'Invoice Discount Amount 1','st-sort'=>'so_total_item_discount'],
+    			['name'=>'Invoice Discount Amount 2','st-sort'=>'so_total_collective_discount'],
+    			['name'=>'Total Invoice Amount','st-sort'=>'so_total_invoice_amount'],
+    			['name'=>'CM Number','st-sort'=>'cm_number'],
+    			['name'=>'Other Deduction Amount'],
+    			['name'=>'Return Slip Number','st-sort'=>'return_slip_num'],
+    			['name'=>'Total Return Amount'],
+    			['name'=>'Return Discount Amount'],
+    			['name'=>'Return net amount'],
+    			['name'=>'Total Invoice Net Amount'],
+    			['name'=>'Collection Date','st-sort'=>'collection_date'],
+    			['name'=>'OR Number','st-sort'=>'or_number'],
+    			['name'=>'Cash'],
+    			['name'=>'Check Amount'],
+    			['name'=>'Bank Name'],
+    			['name'=>'Check No'],
+    			['name'=>'Check Date'],
+    			['name'=>'CM No'],
+    			['name'=>'CM Date'],
+    			['name'=>'CM Amount'],
+    			['name'=>'Total Collected Amount'],
     	];
     	
-    	return response()->json($headers);
+    	return $headers;
     }
     
     
@@ -780,22 +781,22 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionPostingColumns()
     {
     	$headers = [
-    			['name'=>'Activity Code','sortable'=>true],
-    			['name'=>'Salesman Name','sortable'=>true],
-    			['name'=>'Customer Code','sortable'=>true],
-    			['name'=>'Customer Name','sortable'=>true],
-    			['name'=>'Remarks','sortable'=>true],
-    			['name'=>'Invoice No','sortable'=>true],
-    			['name'=>'Total Invoice Net Amount','sortable'=>true],
-    			['name'=>'Invoice Date','sortable'=>true],
-    			['name'=>'Invoice Posting Date','sortable'=>true],
-    			['name'=>'OR Number','sortable'=>true],
-    			['name'=>'OR Amount','sortable'=>true],
-    			['name'=>'OR Date','sortable'=>true],
-    			['name'=>'Collection Posting Date','sortable'=>true]
+    			['name'=>'Activity Code','st-sort'=>'activity_code'],
+    			['name'=>'Salesman Name','st-sort'=>'salesman_name'],
+    			['name'=>'Customer Code','st-sort'=>'customer_code'],
+    			['name'=>'Customer Name','st-sort'=>'customer_name'],
+    			['name'=>'Remarks','st-sort'=>'remarks'],
+    			['name'=>'Invoice Number','st-sort'=>'invoice_number'],
+    			['name'=>'Total Invoice Net Amount'],
+    			['name'=>'Invoice Date'],
+    			['name'=>'Invoice Posting Date'],
+    			['name'=>'OR Number','st-sort'=>'or_number'],
+    			['name'=>'OR Amount'],
+    			['name'=>'OR Date'],
+    			['name'=>'Collection Posting Date']
     	];
     	 
-    	return response()->json($headers);
+    	return $headers;
     }
     
     
@@ -806,15 +807,15 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummaryColumns()
     {
     	$headers = [
-    			['name'=>'SCR#','sortable'=>true],
-    			['name'=>'Invoice Number','sortable'=>true],
-    			['name'=>'Invoice Date','sortable'=>true],
-    			['name'=>'Total Collected Amount','sortable'=>true],
-    			['name'=>'12% Sales Tax','sortable'=>true],
-    			['name'=>'Amount Subject To Commission','sortable'=>true]
+    			['name'=>'SCR#','st-sort'=>'scr_number'],
+    			['name'=>'Invoice Number'],
+    			['name'=>'Invoice Date','st-sort'=>'invoice_date'],
+    			['name'=>'Total Collected Amount'],
+    			['name'=>'12% Sales Tax'],
+    			['name'=>'Amount Subject To Commission']
     	];
     
-    	return response()->json($headers);
+    	return $headers;
     }
     
     
@@ -825,14 +826,14 @@ class ReportsPresenter extends PresenterCore
     public function getVanInventoryColumns()
     {
     	$headers = [
-    			['name'=>'Customer','sortable'=>true],
-    			['name'=>'Invoice Date','sortable'=>true],
-    			['name'=>'Invoice No.','sortable'=>true],    			 
-    			['name'=>'Return Slip No.','sortable'=>true],
-    			['name'=>'Transaction Date','sortable'=>true],
-    			['name'=>'Stock Transfer No.','sortable'=>true],
-    			['name'=>'Replenishment Date','sortable'=>true],
-    			['name'=>'Replenishment Number.','sortable'=>true]
+    			['name'=>'Customer','st-sort'=>true],
+    			['name'=>'Invoice Date','st-sort'=>true],
+    			['name'=>'Invoice No.','st-sort'=>true],    			 
+    			['name'=>'Return Slip No.','st-sort'=>true],
+    			['name'=>'Transaction Date','st-sort'=>true],
+    			['name'=>'Stock Transfer No.','st-sort'=>true],
+    			['name'=>'Replenishment Date','st-sort'=>true],
+    			['name'=>'Replenishment Number.','st-sort'=>true]
     	];
     
     	return response()->json($headers);
@@ -845,23 +846,23 @@ class ReportsPresenter extends PresenterCore
     public function getBirColumns()
     {
     	$headers = [
-    			['name'=>'Document Date','sortable'=>true],
-    			['name'=>'Name','sortable'=>true],
-    			['name'=>'Customer Address','sortable'=>true],
-    			['name'=>'Depot','sortable'=>true],
-    			['name'=>'Reference','sortable'=>true],
-    			['name'=>'Vat Registration No.','sortable'=>true],
-    			['name'=>'Sales-Exempt','sortable'=>true],
-    			['name'=>'Sales-0%','sortable'=>true],
-    			['name'=>'Sales-12%','sortable'=>true],
-    			['name'=>'Total Sales','sortable'=>true],
-    			['name'=>'Tax Amount','sortable'=>true],
-    			['name'=>'Total Invoice Amount','sortable'=>true],
-    			['name'=>'Local Sales','sortable'=>true],
-    			['name'=>'Term-Cash','sortable'=>true],
-    			['name'=>'Term-on-Account','sortable'=>true],
-    			['name'=>'Sales Group','sortable'=>true],
-    			['name'=>'Assignment','sortable'=>true],
+    			['name'=>'Document Date','st-sort'=>true],
+    			['name'=>'Name','st-sort'=>true],
+    			['name'=>'Customer Address','st-sort'=>true],
+    			['name'=>'Depot','st-sort'=>true],
+    			['name'=>'Reference','st-sort'=>true],
+    			['name'=>'Vat Registration No.','st-sort'=>true],
+    			['name'=>'Sales-Exempt','st-sort'=>true],
+    			['name'=>'Sales-0%','st-sort'=>true],
+    			['name'=>'Sales-12%','st-sort'=>true],
+    			['name'=>'Total Sales','st-sort'=>true],
+    			['name'=>'Tax Amount','st-sort'=>true],
+    			['name'=>'Total Invoice Amount','st-sort'=>true],
+    			['name'=>'Local Sales','st-sort'=>true],
+    			['name'=>'Term-Cash','st-sort'=>true],
+    			['name'=>'Term-on-Account','st-sort'=>true],
+    			['name'=>'Sales Group','st-sort'=>true],
+    			['name'=>'Assignment','st-sort'=>true],
     	];
     
     	return response()->json($headers);

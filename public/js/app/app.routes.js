@@ -19,7 +19,7 @@
 				// Sales & Collection
 				.when('/salescollection.report',{
 					templateUrl: '/reports/salescollection/report',
-					controller: 'SalesCollectionReport'
+					//controller: 'SalesCollectionReport'
 					//controllerAs: 'scr'*/
 				})
 				.when('/salescollection.posting',{

@@ -846,6 +846,11 @@ h1.page-header {
 	margin-top: 20px;
 }
 
+.pagination > li > a {
+	font-size: 12px;
+	line-height: 1.3;
+}
+
 
 /*custom css fields*/
 .logo-login {
@@ -923,3 +928,7 @@ h5.page-header
   .st-sort-descent:before{
     content: '\25BC';
   }
+
+ .main {
+  	font-size: 12px;
+ }
