@@ -11,45 +11,49 @@
 					{!!Html::datepicker('collection_date','Collection Date','true')!!}
 				</div>					
 				<div class="pull-right col-sm-6">	
-					{!!Html::select('customer_code','Customer Code', ['Name1','Name2'])!!}
-					{!!Html::select('salesman','Salesman', ['Name1','Name2'])!!}							 			
+					{!!Html::select('customer_code','Customer Code', $customerCode)!!}
+					{!!Html::select('salesman','Salesman', $salesman)!!}							 			
 					{!!Html::datepicker('posting_date','Posting Date','true')!!}
 				</div>			
 			{!!Html::fclose()!!}
 			
-			<div>
-				<div class="col-sm-12">
-					<div class="form-group col-sm-4">
-				        <div class="inner-addon right-addon">
-				          <i class="glyphicon glyphicon-search"></i>
-				          <input type="text" class="form-control" placeholder="Search" />
-				        </div>
-	      			</div>
-	      			
-				</div>
+			<div class="col-sm-12">
+							
+				<table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped table-condensed">
+					<thead>
+					<tr>
+						<th colspan="5">
+							<div class="form-group col-sm-3 filter">
+						        <div class="inner-addon right-addon">
+						          <i class="glyphicon glyphicon-search"></i>
+						          <input type="text" st-search="" class="form-control" placeholder="Search" />
+						        </div>
+			      			</div>
+						</th>
+					</tr>
+					<tr>
+						<th st-sort="firstName">first name</th>
+						<th st-sort="lastName">last name</th>
+						<th st-sort="birthDate">birth date</th>
+						<th st-sort="balance">balance</th>
+					</tr>			
+					</thead>
+					<tbody>
+					<tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="multiple">
+						<td>[[row.firstName]]</td>
+						<td>[[row.lastName]]</td>
+						<td>[[row.birthDate]]</td>
+						<td>[[row.balance]]</td>
+						<td>
+						<button type="button" ng-click="removeItem(row)" class="btn btn-sm btn-danger">
+							<i class="glyphicon glyphicon-remove-circle">
+							</i>
+						</button>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 				
-				<div class="table-responsive">
-				<!-- 	
-					<div ng-controller="demoController as demo">
-    <h2 class="page-header">Loading data - managed array</h2>
-    <div class="bs-callout bs-callout-info">
-      <h4>Overview</h4>
-      <p>When you have the <em>entire</em> dataset available in-memory you can hand this to <code>NgTableParams</code> to manage the filtering, sorting and paging of that array</p>
-    </div>
-    <table ng-table="demo.tableParams" class="table table-condensed table-bordered table-striped">
-      <tr ng-repeat="row in $data">
-        <td data-title="'Name'" filter="{name: 'text'}" sortable="'name'">[[row.name]]</td>
-        <td data-title="'Age'" filter="{age: 'number'}" sortable="'age'">[[row.age]]</td>
-        <td data-title="'Money'" filter="{money: 'number'}" sortable="'money'">[[row.money]]</td>
-      </tr>
-    </table>
-  </div> -->
-  				
-					
-					
-					
-					
-				</div>
 			</div>
 		</div>		
 		</div>		

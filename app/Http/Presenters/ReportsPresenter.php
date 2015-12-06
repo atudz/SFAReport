@@ -40,10 +40,17 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'report':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
     			return $this->view('salesCollectionReport');
     		case 'posting':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
     			return $this->view('salesCollectionPosting');
     		case 'summary':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->area = $this->getArea();
     			return $this->view('salesCollectionSummary');
     	}
     }
@@ -79,8 +86,10 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'canned':
+    			$this->view->salesman = $this->getSalesman();
     			return $this->view('vanInventoryCanned');
     		case 'frozen':
+    			$this->view->salesman = $this->getSalesman();
     			return $this->view('vanInventoryFrozen');
     	}
     }
@@ -92,6 +101,8 @@ class ReportsPresenter extends PresenterCore
      */
     public function bir()
     {
+    	$this->view->salesman = $this->getSalesman();
+    	$this->view->area = $this->getArea();
     	return $this->view('bir');
     }
     
@@ -549,6 +560,48 @@ class ReportsPresenter extends PresenterCore
     
     public function dummy()
     {    	
+    	return ['records' => [
+    			['name'=>'Abner Tudtud','age'=>'10','money'=>'10'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud','age'=>'10','money'=>'10'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
+    	]];
     	$data['records'] = [
     			['a1'=>'1000_10003574',
     				 'a2' =>'1000_BARDS-Blue Ice Store',
@@ -652,17 +705,17 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'salescollectionreport';
-    			return $this->getSalesCollectionColumns();
+    			return $this->getSalesCollectionReportColumns();
     		case 'salescollectionposting';
     			return $this->getSalesCollectionPostingColumns();
     		case 'salescollectionsummary';
     			return $this->getSalesCollectionSummaryColumns();
     		case 'vaninventory';
-    			return $this->getVanInventory();
+    			return $this->getVanInventoryColumns();
     		case 'unpaidinvoice';
-    			return $this->getUnpaidInvoice();
+    			return $this->getVanInventoryColumns();
     		case 'bir';
-    			return $this->getBir();
+    			return $this->getBirColumns();
     		case 'salesportpermaterial';
     			return $this->getSalesReportMaterial();
     		case 'salesportperpeso';
@@ -687,33 +740,33 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionReportColumns()
     {    
     	$headers = [
-    			'Customer Code',
-    			'Customer Name',
-    			'Remarks',
-    			'Invoice Number',
-    			'Invoice Date',
-    			'Total Invoice Gross Amt',
-    			'Invoice Discount Amount 1',
-    			'Invoice Discount Amount 2',
-    			'Total Invoice Amount',
-    			'CM Number',
-    			'Other Deduction Amount',
-    			'Return Slip Number',
-    			'Total Return Amount',
-    			'Return Discount Amount',
-    			'Return net amount',
-    			'Total Invoice Net Amount',
-    			'Collection Date',
-    			'OR Number',
-    			'Cash',
-    			'Cehck Amount',
-    			'Bank Name',
-    			'Check No',
-    			'Check Date',
-    			'CM No',
-    			'CM Date',
-    			'CM Amount',
-    			'Total Collected Amount',
+    			['name'=>'Customer Code','sortable'=>true],
+    			['name'=>'Customer Name','sortable'=>true],
+    			['name'=>'Remarks','sortable'=>true],
+    			['name'=>'Invoice Number','sortable'=>true],
+    			['name'=>'Invoice Date','sortable'=>true],
+    			['name'=>'Total Invoice Gross Amt','sortable'=>false],
+    			['name'=>'Invoice Discount Amount 1','sortable'=>true],
+    			['name'=>'Invoice Discount Amount 2','sortable'=>true],
+    			['name'=>'Total Invoice Amount','sortable'=>false],
+    			['name'=>'CM Number','sortable'=>true],
+    			['name'=>'Other Deduction Amount','sortable'=>false],
+    			['name'=>'Return Slip Number','sortable'=>true],
+    			['name'=>'Total Return Amount','sortable'=>false],
+    			['name'=>'Return Discount Amount','sortable'=>false],
+    			['name'=>'Return net amount','sortable'=>false],
+    			['name'=>'Total Invoice Net Amount','sortable'=>false],
+    			['name'=>'Collection Date','sortable'=>true],
+    			['name'=>'OR Number','sortable'=>true],
+    			['name'=>'Cash','sortable'=>false],
+    			['name'=>'Check Amount','sortable'=>false],
+    			['name'=>'Bank Name','sortable'=>false],
+    			['name'=>'Check No','sortable'=>false],
+    			['name'=>'Check Date','sortable'=>false],
+    			['name'=>'CM No','sortable'=>false],
+    			['name'=>'CM Date','sortable'=>false],
+    			['name'=>'CM Amount','sortable'=>false],
+    			['name'=>'Total Collected Amount','sortable'=>false],
     	];
     	
     	return response()->json($headers);
@@ -727,19 +780,19 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionPostingColumns()
     {
     	$headers = [
-    			'Activity Code',
-    			'Salesman Name',
-    			'Customer Code',
-    			'Customer Name',
-    			'Remarks',
-    			'Invoice No',
-    			'Total Invoice Net Amount',
-    			'Invoice Date',
-    			'Invoice Posting Date',
-    			'OR Number',
-    			'OR Amount',
-    			'OR Date',
-    			'Collection Posting Date'
+    			['name'=>'Activity Code','sortable'=>true],
+    			['name'=>'Salesman Name','sortable'=>true],
+    			['name'=>'Customer Code','sortable'=>true],
+    			['name'=>'Customer Name','sortable'=>true],
+    			['name'=>'Remarks','sortable'=>true],
+    			['name'=>'Invoice No','sortable'=>true],
+    			['name'=>'Total Invoice Net Amount','sortable'=>true],
+    			['name'=>'Invoice Date','sortable'=>true],
+    			['name'=>'Invoice Posting Date','sortable'=>true],
+    			['name'=>'OR Number','sortable'=>true],
+    			['name'=>'OR Amount','sortable'=>true],
+    			['name'=>'OR Date','sortable'=>true],
+    			['name'=>'Collection Posting Date','sortable'=>true]
     	];
     	 
     	return response()->json($headers);
@@ -753,12 +806,12 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummaryColumns()
     {
     	$headers = [
-    			'SCR#',
-    			'Invoice Number',
-    			'Invoice Date',
-    			'Total Collected Amount',
-    			'12% Sales Tax',
-    			'Amount Subject To Commission'
+    			['name'=>'SCR#','sortable'=>true],
+    			['name'=>'Invoice Number','sortable'=>true],
+    			['name'=>'Invoice Date','sortable'=>true],
+    			['name'=>'Total Collected Amount','sortable'=>true],
+    			['name'=>'12% Sales Tax','sortable'=>true],
+    			['name'=>'Amount Subject To Commission','sortable'=>true]
     	];
     
     	return response()->json($headers);
@@ -772,14 +825,14 @@ class ReportsPresenter extends PresenterCore
     public function getVanInventoryColumns()
     {
     	$headers = [
-    			'Customer',
-    			'Invoice Date',
-    			'Invoice No.',    			 
-    			'Return Slip No.',
-    			'Transaction Date',
-    			'Stock Transfer No.',
-    			'Replenishment Date',
-    			'Replenishment Number.'
+    			['name'=>'Customer','sortable'=>true],
+    			['name'=>'Invoice Date','sortable'=>true],
+    			['name'=>'Invoice No.','sortable'=>true],    			 
+    			['name'=>'Return Slip No.','sortable'=>true],
+    			['name'=>'Transaction Date','sortable'=>true],
+    			['name'=>'Stock Transfer No.','sortable'=>true],
+    			['name'=>'Replenishment Date','sortable'=>true],
+    			['name'=>'Replenishment Number.','sortable'=>true]
     	];
     
     	return response()->json($headers);
@@ -792,25 +845,53 @@ class ReportsPresenter extends PresenterCore
     public function getBirColumns()
     {
     	$headers = [
-    			'Document Date',
-    			'Name',
-    			'Customer Address',
-    			'Depot',
-    			'Reference',
-    			'Vat Registration No.',
-    			'Sales-Exempt',
-    			'Sales-0%',
-    			'Sales-12%',
-    			'Total Sales',
-    			'Tax Amount',
-    			'Total Invoice Amount',
-    			'Local Sales',
-    			'Term-Cash',
-    			'Term-on-Account',
-    			'Sales Group',
-    			'Assignment',
+    			['name'=>'Document Date','sortable'=>true],
+    			['name'=>'Name','sortable'=>true],
+    			['name'=>'Customer Address','sortable'=>true],
+    			['name'=>'Depot','sortable'=>true],
+    			['name'=>'Reference','sortable'=>true],
+    			['name'=>'Vat Registration No.','sortable'=>true],
+    			['name'=>'Sales-Exempt','sortable'=>true],
+    			['name'=>'Sales-0%','sortable'=>true],
+    			['name'=>'Sales-12%','sortable'=>true],
+    			['name'=>'Total Sales','sortable'=>true],
+    			['name'=>'Tax Amount','sortable'=>true],
+    			['name'=>'Total Invoice Amount','sortable'=>true],
+    			['name'=>'Local Sales','sortable'=>true],
+    			['name'=>'Term-Cash','sortable'=>true],
+    			['name'=>'Term-on-Account','sortable'=>true],
+    			['name'=>'Sales Group','sortable'=>true],
+    			['name'=>'Assignment','sortable'=>true],
     	];
     
     	return response()->json($headers);
     }
+    
+    /**
+     * Get Salesman 
+     * @return multitype:
+     */
+    public function getSalesman()
+    {
+    	return \DB::table('app_salesman')->lists('salesman_name','salesman_code');
+    }
+    
+    
+    /**
+     * Get Customer Code
+     * @return multitype:
+     */
+    public function getCustomerCode()
+    {
+    	return \DB::table('app_customer')->lists('customer_code','customer_id');
+    }
+    
+	/**
+     * Get Area
+     * @return multitype:
+     */
+    public function getArea()
+    {
+    	return \DB::table('app_area')->lists('area_name','area_code');
+    } 
 }
