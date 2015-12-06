@@ -27,7 +27,7 @@ class ControllerCore extends Controller
 
 	public function __construct()
     {
-        $this->middleware('auth', ['except' => 'authenticate']);
+        $this->middleware('auth', ['except' => ['authenticate','resetPassword']]);
     }
 
 	public static function getControllerDirectory()

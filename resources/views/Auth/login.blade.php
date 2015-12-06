@@ -9,6 +9,12 @@
                 </div>
                 <div class="panel-heading">SFA Reports - LOGIN</div>
                 <div class="panel-body">
+                
+                {{--*/ $msg = session('successMsg') ?  session('successMsg') : ''; /*--}}
+
+                @if($msg)
+                    <div class="alert-success no-padding">{{$msg}}</div>
+                @endif
 
                 <div class="alert-danger no-padding">
                 @foreach($errors->all() as $error)
@@ -29,6 +35,10 @@
                                     <input name="remember" type="checkbox" value="Remember Me">Remember Me
                                 </label>
                             </div>
+                            <div class="checkbox">
+                                <a href="/forgotpass">Forgot password?</a>
+                            </div>
+
                             <input type="submit" class="btn btn-primary" value="Login">
                         </fieldset>
                     {!!Form::close()!!}

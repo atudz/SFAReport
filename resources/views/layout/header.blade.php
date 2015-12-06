@@ -7,7 +7,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#"><span>SFA</span> Reports</a>
+				<a class="navbar-brand"><span>SFA</span> Reports</a>
 				<ul class="user-menu">
 					<li class="dropdown pull-right">
 						<a href="#" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>

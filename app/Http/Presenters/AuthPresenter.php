@@ -19,9 +19,9 @@ class AuthPresenter extends PresenterCore
         
         return $this->view('login');
     }
-    
-    /**
-     * Display forgot password form
+
+     /**
+     * Display login form
      * @return \Illuminate\View\View
      */
     public function forgotPassword()
@@ -31,7 +31,7 @@ class AuthPresenter extends PresenterCore
             return redirect('/');
         }
         
-        return $this->view('forgotPassword');
+        return $this->view('forgot');
     }
 
 }
