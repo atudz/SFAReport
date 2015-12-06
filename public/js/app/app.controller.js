@@ -10,26 +10,31 @@
 	 */
 	var app = angular.module('app');
 	
-	app.controller('SalesCollectionReport',['$scope','$http','$log',SalesCollectionReport]);
+	app.controller('SalesCollectionReport',['$scope','$resource','$log',SalesCollectionReport]);
 	
-	function SalesCollectionReport($scope, $http, $log)
-	{
-		$http.get('/reports/getdata/salescollectionreport')
-			.success(function(response){
-				$scope.records = response.records;
-		});
-		
-		
+	function SalesCollectionReport($scope, $resource, $log)
+	{	    
+	    
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/salescollectionreport').query().$promise.then(function(data){
+	    	$scope.tableHeaders = data;	    
+	    });
+	    
+	    $scope.records = {};
+	    $resource('/reports/getdata/salescollectionreport').get().$promise.then(function(data){
+	    	$scope.records = data.records;
+	    });
+	    
 		$scope.update = function(data) {
 			if(confirm('Are you sure you want to delete this record?'))
 			{
 				//var status = false;
-				$http.post('/controller/reports/save',
+				/*$http.post('/controller/reports/save',
 							{table:'user', id:'1', column:'firstname', value:'Test123'}
 				).success(function(response){
 					$log.info(response);
 					//status = true;
-				});
+				});*/
 				//alert(status);
 				return true;
 			}
@@ -108,13 +113,17 @@
 			  
 	}
 
-	/*app.controller('demoController', demoController);
-	demoController.$inject = ["NgTableParams", "ngTableSimpleList"];
-
-	  function demoController(NgTableParams, simpleList) {
-		  var self = this;
-			var data = [{name: "Moroni", age: 50} ,];
-			self.tableParams = new NgTableParams({}, { dataset: data});
-	  }*/
-	  
+	
+	app.controller('ReportTable',ReportTable);
+	ReportTable.$inject = ['$scope','GetTableHeaders','$log'];
+	
+	function ReportTable($scope, GetTableHeaders, $log)
+	{
+		GetTableHeaders.query().$promise.then(function(data){
+	    	$scope.tableHeaders = data;
+	    	//$log.info($scope.tableHeaders);
+	    });
+		$log.info($scope.tableHeaders);
+	}
+		  
 })();
