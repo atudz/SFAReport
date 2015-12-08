@@ -815,7 +815,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Amount Subject To Commission']
     	];
     
-    	return $headers;
+    	return headers;
     }
     
     

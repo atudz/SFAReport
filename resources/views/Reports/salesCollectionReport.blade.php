@@ -22,7 +22,7 @@
 			{!!Html::topen(['st-table'=>'records'])!!}
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
-				<tr ng-repeat="record in records" st-select-row="row" st-select-mode="multiple">
+				<tr ng-repeat="record in records|filter:query">
 					<td>[[record.a1]]</td>
 					<td>[[record.a2]]</td>
 					<td>[[record.a3]]</td>

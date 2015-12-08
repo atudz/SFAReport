@@ -35,7 +35,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
 	Route::get('/sync', ['as'=>'sync', 'uses'=>'ReportsPresenter@sync']);
-	Route::get('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
+	Route::post('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
 	Route::get('/getheaders/{type?}', ['as'=>'report-getheaders', 'uses'=>'ReportsPresenter@getTableColumns']);
 });
 

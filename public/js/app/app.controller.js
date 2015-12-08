@@ -14,17 +14,98 @@
 	
 	function SalesCollectionReport($scope, $resource, $log)
 	{	    
-	    
+	    // Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
 	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salescollectionreport').query().$promise.then(function(data){
-	    	$scope.tableHeaders = data;	    
+	    $resource('/reports/getheaders/salescollectionreport').query({}, function(data){
+	    	$scope.tableHeaders = data;
 	    });
 	    
-	    $scope.records = {};
-	    $resource('/reports/getdata/salescollectionreport').get().$promise.then(function(data){
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/salescollectionreport');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
 	    	$scope.records = data.records;
-	    });
+	    	$log.info($scope.records);
+	    });	    
 	    
+	    
+	    // Filter table records
+	    $scope.filter = function(){
+	    	
+	    	params = {
+	    		customer_code: $('#customer_code').val(),
+	    		invoice_date_from: $('#invoice_date_from').val(),
+	    		invoice_date_to: $('#invoice_date_to').val(),
+	    		collection_date_from: $('#collection_date_from').val(),
+	    		collection_date_to: $('#collection_date_to').val(),
+	    		posting_date_from: $('#posting_date_from').val(),
+	    		posting_date_to: $('#posting_date_to').val(),
+	    		page:$scope.page,
+	    		page_limit:$scope.perpage
+	    	};
+	    	API.save(params,function(data){
+	    		$log.info(data);
+		    	$scope.records = data.records;		    	
+		    	$scope.toggleFilter = true;
+		    });
+	    	
+	    }
+	    
+	    // Paginate table records
+	    $scope.page = 1;
+	    $scope.perpage = 10;
+	    $scope.total = 100;
+	    $scope.paginate = function(page) {
+			$scope.perpage = page;
+			$scope.page = 1;
+			$('#limit'+page).parent().parent().find('.active').removeClass('active');
+			$('#limit'+page).parent().addClass('active');
+			
+			params = {page:$scope.page,page_limit:$scope.perpage};
+			API.save(params, function(data){
+				$log.info(data);
+				$scope.records = data.records;		    	
+		    	$scope.toggleFilter = true;
+			});
+		}
+	    
+	    // Pager table records
+	    $scope.pager = function(increment,first,last) {
+	    	var request = false;
+	    	if(first)
+	    	{
+	    		$scope.page = 1;
+	    		request = true;
+	    	}
+	    	else if(last)
+	    	{
+	    		$scope.page = $scope.total/$scope.perpage;
+	    		request = true;
+	    	}
+	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
+	    			|| (increment < 0 && $scope.page > 1))
+	    	{
+	    		$scope.page = $scope.page + increment;
+	    		request = true;
+	    	}	
+	    	if(request)
+	    	{
+	    		params = {page:$scope.page,page_limit:$scope.perpage};
+				API.save(params, function(data){
+					$log.info(data);
+					$scope.records = data.records;		    	
+			    	$scope.toggleFilter = true;
+				});
+	    	}
+		}
+	    
+	    // Update table records
 		$scope.update = function(data) {
 			if(confirm('Are you sure you want to delete this record?'))
 			{
@@ -117,13 +198,31 @@
 	app.controller('ReportTable',ReportTable);
 	ReportTable.$inject = ['$scope','GetTableHeaders','$log'];
 	
+	/**
+	 * Reports Table Controller
+	 */
 	function ReportTable($scope, GetTableHeaders, $log)
 	{
 		GetTableHeaders.query().$promise.then(function(data){
 	    	$scope.tableHeaders = data;
 	    	//$log.info($scope.tableHeaders);
 	    });
-		$log.info($scope.tableHeaders);
+		//$log.info($scope.tableHeaders);
 	}
-		  
+	
+	/*app.controller('Pagination',['$scope','$log',Pagination]);
+	
+	*//**
+	 * Pagination Controller
+	 *//*
+	function Pagination($scope, $log)
+	{
+		$scope.paginate = function(page) {
+			angular.element($('#perpage')).val(page);
+			$log.info($('#perpage'));
+			$log.info(angular.element($('#perpage')).val());
+		}
+	}
+*/	
+	
 })();

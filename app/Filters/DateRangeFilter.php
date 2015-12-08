@@ -41,7 +41,7 @@ class DateRangeFilter extends FilterCore
 	{
 
 		$this->setName($name);
-		$this->value = $this->get();
+		//$this->value = $this->get();
 		
 		if(!$this->request->has($name) && !$this->getValue())
 		{
@@ -53,13 +53,13 @@ class DateRangeFilter extends FilterCore
 			if(!is_array($value))
 			{
 				$value = [
-					'from' => $this->request->get($name),
+					'from' => $this->request->get($name.'_from'),
 					'to' => $this->request->get($name.'_to')
 				];
 			}
 			
 			$this->setValue($value);
-			$this->store();
+			//$this->store();
 		}
 		
 		if($model instanceof Model)

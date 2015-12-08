@@ -2,7 +2,7 @@
 
 Html::macro('fopen', function($label, $controller='Filter') {
 	
-	$html = '<div class="col-sm-12" data-ng-controller="'.$controller.'">
+	$html = '<div class="col-sm-12">
 			 <button type="button" class="btn btn-info btn-sm" ng-click="toggleFilter = !toggleFilter">'.$label.'</button>
 			 <hr>
 			 <div uib-collapse="toggleFilter">

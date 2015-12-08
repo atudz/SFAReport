@@ -7,7 +7,7 @@ Html::macro('topen', function(array $options) {
 				<div class="pull-left">
 					<div class="inner-addon left-addon">
 					<i class="glyphicon glyphicon-search"></i>
-						<input type="text" st-search="" class="form-control input-sm" placeholder="Search" />
+						<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
 					</div>
 		      	</div>
 		      	<div class="pull-right">

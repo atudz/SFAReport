@@ -38,7 +38,7 @@ class SelectFilter extends FilterCore
 	{
 
 		$this->setName($name);
-		$this->value = $this->get();
+		//$this->value = $this->get();
 		
 		if(!$this->request->has($name) && !$this->getValue())
 		{
@@ -53,7 +53,7 @@ class SelectFilter extends FilterCore
 			}
 			
 			$this->setValue($value);
-			$this->store();
+			//$this->store();
 		}
 		
 		if($model instanceof Model)

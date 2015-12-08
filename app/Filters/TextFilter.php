@@ -16,7 +16,7 @@ class TextFilter extends FilterCore
 	public function addFilter($model, $name, $scope='')
 	{
 		$this->setName($name);
-		$this->value = $this->get();
+		//$this->value = $this->get();
 		
 		if(!$this->request->has($name) && !$this->getValue())
 		{
@@ -25,7 +25,7 @@ class TextFilter extends FilterCore
 		elseif($this->request->get($name))
 		{
 			$this->setValue($this->request->get($name));
-			$this->store();
+			//$this->store();
 		}
 		
 		if($model instanceof Model)

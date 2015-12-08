@@ -3,7 +3,8 @@
 Html::macro('select', function($name, $label, $list=[], $default='All') {
 
 	$options = [
-		'class' => 'form-control'	
+		'class' => 'form-control',	
+		'id' => $name
 	];
 	
 	$list = array_merge([$default], $list);
