@@ -19,7 +19,7 @@
 			{!!Html::fclose()!!}
 			<!-- End Filter -->
 			
-			{!!Html::topen(['st-table'=>'records'])!!}
+			{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
 				<tr ng-repeat="record in records|filter:query">

@@ -1,7 +1,7 @@
 {!!Html::breadcrumb(['Sales & Collection','Posting'])!!}
 {!!Html::pageheader('Sales & Collection Posting')!!}
 
-<div class="row">
+<div class="row" data-ng-controller="SalesCollectionPosting">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -18,6 +18,14 @@
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
+				
+				{!!Html::topen()!!}
+				{!!Html::theader($tableHeaders)!!}
+					<tbody>
+					
+					</tbody>
+				{!!Html::tclose()!!}				
+				
 			</div>			
 		</div>
 	</div>

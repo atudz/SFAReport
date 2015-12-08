@@ -1,6 +1,6 @@
 <?php
 
-Html::macro('topen', function(array $options) {
+Html::macro('topen', function($options=[]) {
 
 	$html = '
 			<div class="col-sm-12 table-options">

@@ -47,11 +47,13 @@ class ReportsPresenter extends PresenterCore
     		case 'posting':
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
+    			$this->view->tableHeaders = $this->getSalesCollectionPostingColumns();
     			return $this->view('salesCollectionPosting');
     		case 'summary':
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->area = $this->getArea();
+    			$this->view->tableHeaders = $this->getSalesCollectionSummaryColumns();
     			return $this->view('salesCollectionSummary');
     	}
     }
@@ -88,9 +90,11 @@ class ReportsPresenter extends PresenterCore
     	{
     		case 'canned':
     			$this->view->salesman = $this->getSalesman();
+    			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			return $this->view('vanInventoryCanned');
     		case 'frozen':
     			$this->view->salesman = $this->getSalesman();
+    			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			return $this->view('vanInventoryFrozen');
     	}
     }
@@ -104,6 +108,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$this->view->salesman = $this->getSalesman();
     	$this->view->area = $this->getArea();
+    	$this->view->tableHeaders = $this->getBirColumns();
     	return $this->view('bir');
     }
     
@@ -815,7 +820,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Amount Subject To Commission']
     	];
     
-    	return headers;
+    	return $headers;
     }
     
     
@@ -833,10 +838,10 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Transaction Date','st-sort'=>true],
     			['name'=>'Stock Transfer No.','st-sort'=>true],
     			['name'=>'Replenishment Date','st-sort'=>true],
-    			['name'=>'Replenishment Number.','st-sort'=>true]
+    			['name'=>'Replenishment Number','st-sort'=>true]
     	];
     
-    	return response()->json($headers);
+    	return $headers;
     }
     
     /**
@@ -865,7 +870,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Assignment','st-sort'=>true],
     	];
     
-    	return response()->json($headers);
+    	return $headers;
     }
     
     /**

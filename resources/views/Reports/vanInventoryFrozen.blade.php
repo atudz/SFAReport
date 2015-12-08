@@ -17,6 +17,13 @@
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
+				
+				{!!Html::topen()!!}
+				{!!Html::theader($tableHeaders)!!}
+					<tbody>
+					</tbody>
+				{!!Html::tclose()!!}
+				
 			</div>			
 		</div>
 	</div>

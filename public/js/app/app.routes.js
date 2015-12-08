@@ -19,7 +19,7 @@
 				// Sales & Collection
 				.when('/salescollection.report',{
 					templateUrl: '/reports/salescollection/report',
-					//controller: 'SalesCollectionReport'
+					controller: 'SalesCollectionReport'
 					//controllerAs: 'scr'*/
 				})
 				.when('/salescollection.posting',{
@@ -35,13 +35,13 @@
 				// Van Inventory
 				.when('/vaninventory.canned',{
 					templateUrl: '/reports/vaninventory/canned',
-					/*controller: 'VanInventoryCanned',
-					controllerAs: 'vic'*/
+					controller: 'VanInventoryCanned',
+					//controllerAs: 'vic'*/
 				})
 				.when('/vaninventory.frozen',{
 					templateUrl: '/reports/vaninventory/frozen',
-					/*controller: 'VanInventoryCanned',
-					controllerAs: 'vic'*/
+					controller: 'VanInventoryFrozen',
+					//controllerAs: 'vic'*/
 				})
 				// Sales Report
 				.when('/salesreport.permaterial',{
@@ -73,8 +73,8 @@
 				// bir
 				.when('/bir',{
 					templateUrl: '/reports/bir',
-					/*controller: 'Bir',
-					controllerAs: 'bir'*/
+					controller: 'Bir',
+					//controllerAs: 'bir'*/
 				})
 				// Sync 
 				.when('/sync',{
