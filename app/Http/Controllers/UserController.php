@@ -7,6 +7,11 @@ use App\Core\ControllerCore;
 class UserController extends ControllerCore
 {
 
+
+    public function changePassword(){
+
+    }
+
 	/**
      * Store a newly created resource in storage.
      *

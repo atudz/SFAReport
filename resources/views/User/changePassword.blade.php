@@ -5,7 +5,8 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-			<form>
+
+			{!!Form::open(['url'=>'/controller/changepassword','class'=>'changepassword-form'])!!}
 				<div class="form-group row">
 					<label class="col-sm-2" for="old_password">Old Password</label>
 					<div class="col-sm-5">
@@ -29,7 +30,8 @@
 				      <button type="submit" class="btn btn-primary">Submit</button>
 				    </div>
 			 	</div>
-		      </form>
+		    </form>
+		    {!!Form::close()!!}
 			</div>
 		</div>
 	</div>

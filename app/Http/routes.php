@@ -19,8 +19,8 @@
 Route::group(['after' => 'no-cache'], function()
 {
     Route::get('/login', ['as' => 'login','uses' => 'AuthPresenter@login']);
+    Route::get('/forgotpass', ['as'=>'forgot', 'uses'=>'AuthPresenter@forgotPassword']);
 });
-
 
 Route::get('/', ['as'=>'dashboard', 'uses'=>'MainPresenter@home']);
 Route::get('/home', ['as'=>'home', 'uses'=>'ReportsPresenter@index']);
@@ -56,6 +56,9 @@ Route::group(['prefix' => 'user'],function(){
 Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
+
+	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
+	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 });
 
 
