@@ -746,24 +746,24 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionReportColumns()
     {    
     	$headers = [
-    			['name'=>'Customer Code','st-sort'=>'customer_code'],
-    			['name'=>'Customer Name','st-sort'=>'customer_name'],
-    			['name'=>'Remarks','st-sort'=>'remarks'],
-    			['name'=>'Invoice Number','st-sort'=>'invoice_number'],
-    			['name'=>'Invoice Date','st-sort'=>'invoice_date'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Invoice Number','sort'=>'invoice_number'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Total Invoice Gross Amt'],
-    			['name'=>'Invoice Discount Amount 1','st-sort'=>'so_total_item_discount'],
-    			['name'=>'Invoice Discount Amount 2','st-sort'=>'so_total_collective_discount'],
-    			['name'=>'Total Invoice Amount','st-sort'=>'so_total_invoice_amount'],
-    			['name'=>'CM Number','st-sort'=>'cm_number'],
+    			['name'=>'Invoice Discount Amount 1','sort'=>'so_total_item_discount'],
+    			['name'=>'Invoice Discount Amount 2','sort'=>'so_total_collective_discount'],
+    			['name'=>'Total Invoice Amount','sort'=>'so_total_invoice_amount'],
+    			['name'=>'CM Number','sort'=>'cm_number'],
     			['name'=>'Other Deduction Amount'],
-    			['name'=>'Return Slip Number','st-sort'=>'return_slip_num'],
+    			['name'=>'Return Slip Number','sort'=>'return_slip_num'],
     			['name'=>'Total Return Amount'],
     			['name'=>'Return Discount Amount'],
     			['name'=>'Return net amount'],
     			['name'=>'Total Invoice Net Amount'],
-    			['name'=>'Collection Date','st-sort'=>'collection_date'],
-    			['name'=>'OR Number','st-sort'=>'or_number'],
+    			['name'=>'Collection Date','sort'=>'collection_date'],
+    			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'Cash'],
     			['name'=>'Check Amount'],
     			['name'=>'Bank Name'],
@@ -786,16 +786,16 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionPostingColumns()
     {
     	$headers = [
-    			['name'=>'Activity Code','st-sort'=>'activity_code'],
-    			['name'=>'Salesman Name','st-sort'=>'salesman_name'],
-    			['name'=>'Customer Code','st-sort'=>'customer_code'],
-    			['name'=>'Customer Name','st-sort'=>'customer_name'],
-    			['name'=>'Remarks','st-sort'=>'remarks'],
-    			['name'=>'Invoice Number','st-sort'=>'invoice_number'],
+    			['name'=>'Activity Code','sort'=>'activity_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Total Invoice Net Amount'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Posting Date'],
-    			['name'=>'OR Number','st-sort'=>'or_number'],
+    			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'OR Amount'],
     			['name'=>'OR Date'],
     			['name'=>'Collection Posting Date']
@@ -812,9 +812,9 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummaryColumns()
     {
     	$headers = [
-    			['name'=>'SCR#','st-sort'=>'scr_number'],
+    			['name'=>'SCR#','sort'=>'scr_number'],
     			['name'=>'Invoice Number'],
-    			['name'=>'Invoice Date','st-sort'=>'invoice_date'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Total Collected Amount'],
     			['name'=>'12% Sales Tax'],
     			['name'=>'Amount Subject To Commission']
@@ -831,14 +831,14 @@ class ReportsPresenter extends PresenterCore
     public function getVanInventoryColumns()
     {
     	$headers = [
-    			['name'=>'Customer','st-sort'=>true],
-    			['name'=>'Invoice Date','st-sort'=>true],
-    			['name'=>'Invoice No.','st-sort'=>true],    			 
-    			['name'=>'Return Slip No.','st-sort'=>true],
-    			['name'=>'Transaction Date','st-sort'=>true],
-    			['name'=>'Stock Transfer No.','st-sort'=>true],
-    			['name'=>'Replenishment Date','st-sort'=>true],
-    			['name'=>'Replenishment Number','st-sort'=>true]
+    			['name'=>'Customer','sort'=>true],
+    			['name'=>'Invoice Date','sort'=>true],
+    			['name'=>'Invoice No.','sort'=>true],    			 
+    			['name'=>'Return Slip No.','sort'=>true],
+    			['name'=>'Transaction Date','sort'=>true],
+    			['name'=>'Stock Transfer No.','sort'=>true],
+    			['name'=>'Replenishment Date','sort'=>true],
+    			['name'=>'Replenishment Number','sort'=>true]
     	];
     
     	return $headers;
@@ -851,23 +851,23 @@ class ReportsPresenter extends PresenterCore
     public function getBirColumns()
     {
     	$headers = [
-    			['name'=>'Document Date','st-sort'=>true],
-    			['name'=>'Name','st-sort'=>true],
-    			['name'=>'Customer Address','st-sort'=>true],
-    			['name'=>'Depot','st-sort'=>true],
-    			['name'=>'Reference','st-sort'=>true],
-    			['name'=>'Vat Registration No.','st-sort'=>true],
-    			['name'=>'Sales-Exempt','st-sort'=>true],
-    			['name'=>'Sales-0%','st-sort'=>true],
-    			['name'=>'Sales-12%','st-sort'=>true],
-    			['name'=>'Total Sales','st-sort'=>true],
-    			['name'=>'Tax Amount','st-sort'=>true],
-    			['name'=>'Total Invoice Amount','st-sort'=>true],
-    			['name'=>'Local Sales','st-sort'=>true],
-    			['name'=>'Term-Cash','st-sort'=>true],
-    			['name'=>'Term-on-Account','st-sort'=>true],
-    			['name'=>'Sales Group','st-sort'=>true],
-    			['name'=>'Assignment','st-sort'=>true],
+    			['name'=>'Document Date','sort'=>true],
+    			['name'=>'Name','sort'=>true],
+    			['name'=>'Customer Address','sort'=>true],
+    			['name'=>'Depot','sort'=>true],
+    			['name'=>'Reference','sort'=>true],
+    			['name'=>'Vat Registration No.','sort'=>true],
+    			['name'=>'Sales-Exempt','sort'=>true],
+    			['name'=>'Sales-0%','sort'=>true],
+    			['name'=>'Sales-12%','sort'=>true],
+    			['name'=>'Total Sales','sort'=>true],
+    			['name'=>'Tax Amount','sort'=>true],
+    			['name'=>'Total Invoice Amount','sort'=>true],
+    			['name'=>'Local Sales','sort'=>true],
+    			['name'=>'Term-Cash','sort'=>true],
+    			['name'=>'Term-on-Account','sort'=>true],
+    			['name'=>'Sales Group','sort'=>true],
+    			['name'=>'Assignment','sort'=>true],
     	];
     
     	return $headers;

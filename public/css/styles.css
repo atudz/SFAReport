@@ -942,3 +942,8 @@ h5.page-header
  .table-options {
   	margin-bottom: 10px;
  }
+ 
+ .sortable{cursor: pointer;}
+ .sortable:hover{color:black;}
+ .sorted{background-color:#d9edf7}
+ 

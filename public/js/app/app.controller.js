@@ -47,7 +47,9 @@
 	    		posting_date_from: $('#posting_date_from').val(),
 	    		posting_date_to: $('#posting_date_to').val(),
 	    		page:$scope.page,
-	    		page_limit:$scope.perpage
+	    		page_limit:$scope.perpage,
+    			sort:$scope.sortColumn,
+    			order:$scope.sortDirection
 	    	};
 	    	API.save(params,function(data){
 	    		$log.info(data);
@@ -67,7 +69,19 @@
 			$('#limit'+page).parent().parent().find('.active').removeClass('active');
 			$('#limit'+page).parent().addClass('active');
 			
-			params = {page:$scope.page,page_limit:$scope.perpage};
+			params = {
+		    		customer_code: $('#customer_code').val(),
+		    		invoice_date_from: $('#invoice_date_from').val(),
+		    		invoice_date_to: $('#invoice_date_to').val(),
+		    		collection_date_from: $('#collection_date_from').val(),
+		    		collection_date_to: $('#collection_date_to').val(),
+		    		posting_date_from: $('#posting_date_from').val(),
+		    		posting_date_to: $('#posting_date_to').val(),
+		    		page:$scope.page,
+		    		page_limit:$scope.perpage,
+	    			sort:$scope.sortColumn,
+	    			order:$scope.sortDirection
+		    };
 			API.save(params, function(data){
 				$log.info(data);
 				$scope.records = data.records;		    	
@@ -96,7 +110,19 @@
 	    	}	
 	    	if(request)
 	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
+	    		params = {
+	    	    		customer_code: $('#customer_code').val(),
+	    	    		invoice_date_from: $('#invoice_date_from').val(),
+	    	    		invoice_date_to: $('#invoice_date_to').val(),
+	    	    		collection_date_from: $('#collection_date_from').val(),
+	    	    		collection_date_to: $('#collection_date_to').val(),
+	    	    		posting_date_from: $('#posting_date_from').val(),
+	    	    		posting_date_to: $('#posting_date_to').val(),
+	    	    		page:$scope.page,
+	    	    		page_limit:$scope.perpage,
+	        			sort:$scope.sortColumn,
+	        			order:$scope.sortDirection
+	    	    };
 				API.save(params, function(data){
 					$log.info(data);
 					$scope.records = data.records;		    	
@@ -124,6 +150,52 @@
 				return false;
 			}
 		};
+		
+		
+		// Sort table records
+		$scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		$scope.sort = function(col) {
+			$scope.sortColumn = col;
+			var el = $('#'+col);
+			
+			el.parent().find('th').removeClass('sorted');
+			el.parent().find('th>i').removeClass('fa-sort-asc');
+			el.parent().find('th>i').removeClass('fa-sort-desc');
+			el.parent().find('th>i').addClass('fa-sort');
+			
+			if($scope.sortDirection == 'desc')
+			{					
+				el.addClass('sorted');
+				el.find('i').addClass('fa-sort-asc');				
+				$scope.sortDirection = 'asc';
+			}
+			else
+			{				
+				el.addClass('sorted');
+				el.find('i').addClass('fa-sort-desc');
+				$scope.sortDirection = 'desc';
+			}			
+			
+			params = {
+		    		customer_code: $('#customer_code').val(),
+		    		invoice_date_from: $('#invoice_date_from').val(),
+		    		invoice_date_to: $('#invoice_date_to').val(),
+		    		collection_date_from: $('#collection_date_from').val(),
+		    		collection_date_to: $('#collection_date_to').val(),
+		    		posting_date_from: $('#posting_date_from').val(),
+		    		posting_date_to: $('#posting_date_to').val(),
+		    		page:$scope.page,
+		    		page_limit:$scope.perpage,
+	    			sort:$scope.sortColumn,
+	    			order:$scope.sortDirection
+		    };
+			API.save(params, function(data){
+				$log.info(data);
+				$scope.records = data.records;		    	
+		    	$scope.toggleFilter = true;
+			});
+		}
 	}
 	
 	
