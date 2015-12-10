@@ -23,33 +23,33 @@
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
 				<tr ng-repeat="record in records|filter:query">
-					<td>[[record.a1]]</td>
-					<td>[[record.a2]]</td>
-					<td>[[record.a3]]</td>
-					<td>[[record.a4]]</td>
-					<td>[[record.a5]]</td>
-					<td>[[record.a6]]</td>
-					<td>[[record.a7]]</td>
-					<td>[[record.a8]]</td>
-					<td>[[record.a9]]</td>
-					<td>[[record.a10]]</td>
-					<td>[[record.a11]]</td>
-					<td>[[record.a12]]</td>
-					<td>[[record.a13]]</td>
-					<td>[[record.a14]]</td>
-					<td>[[record.a15]]</td>
-					<td>[[record.a16]]</td>
-					<td>[[record.a17]]</td>
-					<td>[[record.a18]]</td>
-					<td>[[record.a19]]</td>
-					<td>[[record.a20]]</td>
-					<td>[[record.a21]]</td>
-					<td>[[record.a22]]</td>
-					<td>[[record.a23]]</td>
-					<td>[[record.a24]]</td>
-					<td>[[record.a25]]</td>
-					<td>[[record.a26]]</td>
-					<td>[[record.a27]]</td>									
+					<td>[[record.customer_code]]</td>
+					<td>[[record.customer_name]]</td>
+					<td>[[record.remarks]]</td>
+					<td>[[record.invoice_number]]</td>
+					<td>[[record.invoice_date]]</td>
+					<td>[[record.so_total_served]]</td>
+					<td>[[record.so_total_item_discount]]</td>
+					<td>[[record.so_total_collective_discount]]</td>
+					<td>[[record.total_invoice_amount]]</td>
+					<td>[[record.cm_number]]</td>
+					<td>[[record.other_deduction_slip_number]]</td>
+					<td>[[record.return_slip_num]]</td>
+					<td>[[record.RTN_total_gross]]</td>
+					<td>[[record.RTN_total_collective_discount]]</td>
+					<td>[[record.RTN_net_amount]]</td>
+					<td>[[record.total_invoice_net_amount]]</td>
+					<td>[[record.or_date]]</td>
+					<td>[[record.or_number]]</td>
+					<td>[[record.cash_amount]]</td>
+					<td>[[record.check_amount]]</td>
+					<td>[[record.bank]]</td>
+					<td>[[record.check_number]]</td>
+					<td>[[record.check_date]]</td>
+					<td>[[record.cm_number]]</td>
+					<td>[[record.cm_date]]</td>
+					<td>[[record.credit_amount]]</td>
+					<td>[[record.total_collected_amount]]</td>									
 				</tr>
 				</tbody>
 			{!!Html::tclose()!!}
