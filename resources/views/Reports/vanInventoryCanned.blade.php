@@ -21,6 +21,14 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
+						<tr ng-repeat="record in records|filter:query">
+							<td>[[record.customer_name]]</td>
+							<td>[[record.invoice_date]]</td>
+							<td>[[record.invoice_number]]</td>
+							<td>[[record.return_slip_num]]</td>
+							<td>[[record.replenishment_date]]</td>
+							<td>[[record.replenishment_number]]</td>
+						</tr>						
 					</tbody>
 				{!!Html::tclose()!!}
 				

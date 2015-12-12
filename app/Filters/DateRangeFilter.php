@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Core\FilterCore;
+use Illuminate\Database\Query\Builder;
 
 class DateRangeFilter extends FilterCore
 {
@@ -18,7 +19,7 @@ class DateRangeFilter extends FilterCore
 	 * @param unknown $label
 	 * @param string $column
 	 */
-	public function __construct($label,$column='')
+	public function __construct($label='',$column='')
 	{
 		$this->column = $column;
 		parent::__construct($label);
@@ -43,20 +44,17 @@ class DateRangeFilter extends FilterCore
 		$this->setName($name);
 		//$this->value = $this->get();
 		
-		if(!$this->request->has($name) && !$this->getValue())
+		if(!$this->request->has($name.'_from') || !$this->request->get($name.'_from'))
 		{
 			return $model;
 		}
-		elseif($this->request->get($name))
+		elseif($this->request->get($name.'_from'))
 		{
-			$value = $this->request->get($name);
-			if(!is_array($value))
-			{
-				$value = [
-					'from' => $this->request->get($name.'_from'),
-					'to' => $this->request->get($name.'_to')
-				];
-			}
+			$to = $this->request->get($name.'_to');
+			$value = [
+				'from' => $this->request->get($name.'_from'),
+				'to' => $to ? $to : '9999-12-31'
+			];
 			
 			$this->setValue($value);
 			//$this->store();
@@ -66,12 +64,21 @@ class DateRangeFilter extends FilterCore
 		{
 			$name = $model->getTable().'.'.$name;
 		}
+		elseif($model instanceof Builder)
+		{
+			$name = $model->from.'.'.$name;
+		}
 		else
 		{
 			$name = $model->getModel()->getTable().'.'.$name;
 		}
 		
-		return $scope ? $this->$scope($model) : $model->whereBetween($name,'=',$this->getValue());
+		if($scope instanceof \Closure)
+		{
+			return $scope($this,$model);	
+		}
+				
+		return $scope ? $this->$scope($model) : $model->whereBetween($name,$this->getValue());
 	}
 	
 	/**

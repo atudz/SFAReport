@@ -46,8 +46,8 @@
 				// Sales Report
 				.when('/salesreport.permaterial',{
 					templateUrl: '/reports/salesreport/permaterial',
-					/*controller: 'SalesReportPerMaterial',
-					controllerAs: 'srpm'*/
+					controller: 'SalesReportPerMaterial',
+					//controllerAs: 'srpm'*/
 				})
 				.when('/salesreport.pesovalue',{
 					templateUrl: '/reports/salesreport/perpeso',

@@ -18,7 +18,7 @@ class TextFilter extends FilterCore
 		$this->setName($name);
 		//$this->value = $this->get();
 		
-		if(!$this->request->has($name) && !$this->getValue())
+		if(!$this->request->has($name) || !$this->request->get($name))
 		{
 			return $model;
 		}
@@ -32,9 +32,18 @@ class TextFilter extends FilterCore
 		{
 			$name = $model->getTable().'.'.$name;
 		}
+		elseif($model instanceof \Illuminate\Database\Query\Builder)
+		{
+			$name = $model->from.'.'.$name;
+		}
 		else
 		{
 			$name = $model->getModel()->getTable().'.'.$name;
+		}
+		
+		if($scope instanceof \Closure)
+		{
+			return $scope($this,$model);	
 		}
 		
 		return $scope ? $this->$scope($model) : $model->where($name,'=',$this->getValue());

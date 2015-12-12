@@ -22,7 +22,21 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					
+						<tr ng-repeat="record in records|filter:query">
+							<td>[[record.activity_code]]</td>
+							<td>[[record.salesman_name]]</td>
+							<td>[[record.customer_code]]</td>
+							<td>[[record.customer_name]]</td>
+							<td>[[record.remarks]]</td>
+							<td>[[record.invoice_number]]</td>
+							<td>[[record.total_invoice_net_amount]]</td>
+							<td>[[record.invoice_date]]</td>
+							<td>[[record.invoice_posting_date]]</td>
+							<td>[[record.or_number]]</td>
+							<td>[[record.or_amount]]</td>
+							<td>[[record.check_date]]</td>
+							<td>[[record.collection_posting_date]]</td>									
+						</tr>					
 					</tbody>
 				{!!Html::tclose()!!}				
 				

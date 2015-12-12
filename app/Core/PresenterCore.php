@@ -111,9 +111,9 @@ class PresenterCore extends Controller
 		$sortOrder = '';
 		$default = config('system.page_limit');
 		$total = $builder->getCountForPagination();
-		if(!is_null($this->request) && $this->request->has('limit'))
+		if(!is_null($this->request) && $this->request->has('page_limit'))
 		{
-			$perPage = $this->request->has('limit') ? $this->request->get('limit') : $default;
+			$perPage = $this->request->has('page_limit') ? $this->request->get('page_limit') : $default;
 			$page = $this->request->has($pageName) ? $this->request->get($pageName) : null;
 			$sortColumn = $this->request->has('sort') ? $this->request->get('sort') : '';
 			$sortOrder = $this->request->has('order') ? $this->request->get('order') : '';

@@ -68,6 +68,12 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'permaterial':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->items = $this->getItems();
+    			$this->view->segments = $this->getItemSegmentCode();
+    			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();    			 
     			return $this->view('salesReportPerMaterial');
     		case 'perpeso':
     			return $this->view('salesReportPerPeso');
@@ -395,7 +401,155 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesCollectionPosting()
     {
-    
+    	$query = ' 
+    			select 
+	tas.activity_code,
+	aps.salesman_name,
+	tas.customer_code, 
+	CONCAT(ac.customer_name,ac.customer_name2) customer_name,					
+	(select remarks from txn_evaluated_objective teo where teo.reference_num = tas.reference_num order by teo.sfa_modified_date desc limit 1) remarks,
+	sotbl.invoice_number,
+	(sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,	
+	sotbl.so_date invoice_date,
+	sotbl.sfa_modified_date invoice_posting_date,
+	coltbl.or_number,
+	coltbl.or_amount,
+	coltbl.check_date,
+	coltbl.sfa_modified_date collection_posting_date
+	
+from txn_activity_salesman tas 
+left join app_salesman aps on aps.salesman_code = tas.salesman_code
+left join app_customer ac on ac.customer_code = tas.customer_code
+left join				
+-- SALES ORDER SUBTABLE
+(
+	select 
+		all_so.reference_num,  
+		all_so.salesman_code, 
+		all_so.customer_code,
+		all_so.so_date,
+		all_so.invoice_number,
+		all_so.sfa_modified_date,
+		sum(all_so.total_served) as so_total_served,
+		sum(all_so.total_discount) as so_total_item_discount,
+		sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction
+	from (
+			select 
+				tsoh.so_number, 
+				tsoh.reference_num, 
+				tsoh.salesman_code, 
+				tsoh.customer_code,
+				tsoh.so_date,
+				tsoh.sfa_modified_date,
+				tsoh.invoice_number,
+				sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
+				sum(tsod.discount_amount) as total_discount
+			from txn_sales_order_header tsoh
+			inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
+			group by tsoh.so_number, 
+				tsoh.reference_num, 
+				tsoh.salesman_code, 
+				tsoh.customer_code,
+				tsoh.so_date,
+				tsoh.sfa_modified_date,
+				tsoh.invoice_number
+
+			union all
+
+			select 
+				tsoh.so_number, 
+				tsoh.reference_num, 
+				tsoh.salesman_code, 
+				tsoh.customer_code,
+				tsoh.so_date,
+				tsoh.sfa_modified_date,
+				tsoh.invoice_number,
+				sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
+				0.00 as total_discount
+			from txn_sales_order_header tsoh
+			inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
+			group by tsoh.so_number, 
+				tsoh.reference_num, 
+				tsoh.salesman_code, 
+				tsoh.customer_code,
+				tsoh.so_date,
+				tsoh.sfa_modified_date,
+				tsoh.invoice_number
+																
+	) all_so
+
+						
+	left join
+	(
+		select 
+			reference_num,
+			sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount			
+		from txn_sales_order_header_discount
+		group by reference_num
+	) tsohd on all_so.reference_num = tsohd.reference_num
+
+											
+	group by all_so.so_number, 
+		all_so.reference_num, 
+		all_so.salesman_code, 
+		all_so.customer_code,
+		all_so.so_date,
+		all_so.invoice_number	
+						
+) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
+
+left join 
+-- RETURN SUBTABLE
+(
+	select 
+		trh.reference_num, 
+		trh.salesman_code, 
+		trh.customer_code,
+		sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
+						- sum(trhd.collective_discount_amount)
+						as rtn_net_amount
+	from txn_return_header trh
+	inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by 					
+	left join
+	(
+		select 
+			reference_num, 
+			sum(coalesce(deduction_amount,0)) as collective_discount_amount
+		from txn_return_header_discount
+		group by reference_num
+	) trhd on trh.reference_num = trhd.reference_num					
+	group by 
+		trh.return_txn_number,
+		trh.reference_num, 
+		trh.salesman_code, 
+		trh.customer_code									
+) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
+
+-- COLLECTION SUBTABLE
+left join
+(
+	select 	
+		tch.reference_num,
+		tch.salesman_code,
+		tch.or_number,
+		tch.or_amount,
+		tch.sfa_modified_date,
+		tcd.check_date
+	from txn_collection_header tch
+	inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums				
+	left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
+) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+
+WHERE tas.activity_code like \'%SO%\'	
+ORDER BY tas.reference_num ASC, 
+ 		 tas.salesman_code ASC, 
+		 tas.customer_code ASC		
+    			
+    			';
+    	 
+    	$data = \DB::select($query);
+    	return response()->json(['records'=>$data]);
+    	
     	$prepare = \DB::table('user');
     	 
     	$codeFilter = FilterFactory::getInstance('Text','Company Code');
@@ -453,9 +607,26 @@ class ReportsPresenter extends PresenterCore
      */
     public function getVanInventory()
     {
-    
-    	$prepare = \DB::table('user');
-    
+
+    	$select = 'app_customer.customer_name,
+				   txn_sales_order_header.so_date invoice_date,
+				   txn_sales_order_header.invoice_number,
+				   txn_return_header.return_slip_num,
+				   txn_replenishment_header.replenishment_date,
+				   txn_replenishment_header.reference_number replenishment_number';
+    	
+    	$prepare = \DB::table('txn_sales_order_header')
+    				->selectRaw($select)
+    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+    				->leftJoin('txn_return_header', function ($join){
+    					$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
+    						 ->where('txn_sales_order_header.salesman_code','=','txn_return_header.salesman_code');
+    				})
+    				->leftJoin('txn_replenishment_header','txn_sales_order_header.reference_num','=','txn_replenishment_header.reference_number');
+    				//->orderBy('reference_num');
+    				//->orderBy('salesman_code')
+    				//->orderBy('customer_code');
+		
     	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
     	$prepare = $salesmanFilter->addFilter($prepare,'area');
     	
@@ -469,8 +640,10 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $postingFilter->addFilter($prepare,'posting_date');
     	
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    	return response()->json($data);
     }
     
     
@@ -531,35 +704,96 @@ class ReportsPresenter extends PresenterCore
     public function getSalesReportMaterial()
     {
     
-    	$prepare = \DB::table('user');
+    	$select = 'txn_sales_order_header.so_number,
+			  	   txn_sales_order_header.reference_num,
+				   txn_activity_salesman.activity_code,
+				   txn_sales_order_header.customer_code,
+				   app_customer.customer_name,
+				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+				   txn_sales_order_header.van_code,
+				   txn_sales_order_header.device_code,
+				   txn_sales_order_header.salesman_code,
+				   app_salesman.salesman_name,
+				   app_area.area_name area,
+				   txn_sales_order_header.invoice_number,
+				   txn_sales_order_header.so_date invoice_date,
+				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
+				   app_item_master.segment_code,
+				   app_item_master.item_code,
+				   app_item_master.description,
+				   txn_return_detail.quantity,
+				   txn_return_detail.condition_code,
+				   txn_return_detail.uom_code,
+				   txn_sales_order_detail.gross_served_amount,
+				   txn_sales_order_detail.vat_amount,
+				   txn_sales_order_detail.discount_rate,
+				   txn_sales_order_detail.discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+    	
+    	$prepare = \DB::table('txn_sales_order_header')
+    				->selectRaw($select)
+    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    				->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
+    				->leftJoin('txn_activity_salesman', function($join){
+    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
+    						 ->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    				})
+    				->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
+    				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+    				->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+    				->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
     
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+		$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
     	
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
     	
-    	$customerFilter = FilterFactory::getInstance('Select','Customer',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerFilter->addFilter($prepare,'customer');
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    					 function($self, $model){
+    						return $model->where('app_item_master.item_code','=',$self->getValue());	 	
+    				});
     	
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
+    	$segmentCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
+    					function($self, $model){
+    						return $model->where('app_item_master.segment_code','=',$self->getValue());
+    				});
     
-    	$itemCodeFilter = FilterFactory::getInstance('Select','Item Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code');
-    	
-    	$segmentCodeFilter = FilterFactory::getInstance('Select','Segement Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code');
-    
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',	
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    				});
     	 
-    	$postingFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    			});
     	
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    	return response()->json($data);
     }
     
     /**
@@ -910,7 +1144,7 @@ class ReportsPresenter extends PresenterCore
     		case 'bir';
     			return $this->getBirColumns();
     		case 'salesportpermaterial';
-    			return $this->getSalesReportMaterial();
+    			return $this->getSalesReportMaterialColumns();
     		case 'salesportperpeso';
     			return $this->getSalesReportPeso();
     		case 'returnpermaterial';
@@ -1022,8 +1256,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Date','sort'=>true],
     			['name'=>'Invoice No.','sort'=>true],    			 
     			['name'=>'Return Slip No.','sort'=>true],
-    			['name'=>'Transaction Date','sort'=>true],
-    			['name'=>'Stock Transfer No.','sort'=>true],
+    			//['name'=>'Transaction Date','sort'=>true],
+    			//['name'=>'Stock Transfer No.','sort'=>true],
     			['name'=>'Replenishment Date','sort'=>true],
     			['name'=>'Replenishment Number','sort'=>true]
     	];
@@ -1061,12 +1295,59 @@ class ReportsPresenter extends PresenterCore
     }
     
     /**
+     * Get Sales Report Material Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesReportMaterialColumns()
+    {
+    	$headers = [
+    			['name'=>'SO number'],
+    			['name'=>'Reference number'],
+    			['name'=>'Activity Code','sort'=>'activity_code'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'Device Code','sort'=>'device_code'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area','sort'=>'area'],
+    			['name'=>'Invoice No/ Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
+    			['name'=>'Invoice/Return Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Segment Code','sort'=>'segment_code'],
+    			['name'=>'Item Code','sort'=>'item_code'],
+    			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Quantity','sort'=>'quantity'],
+    			['name'=>'Condition Code','sort'=>'condition_code'],
+    			['name'=>'Uom Code'],
+    			['name'=>'Gross Amount'],
+    			['name'=>'Vat Amount'],
+    			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
+    			['name'=>'Discount Amount Per Item'],
+    			['name'=>'Collective Discount Rate'],
+    			['name'=>'Collective Discount Amount'],
+    			['name'=>'Reference No.','sort'=>'discount_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Collective Deduction Rate'],
+    			['name'=>'Collective Deduction Amount'],
+    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Total Invoice/Return Net amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
      * Get Salesman 
      * @return multitype:
      */
     public function getSalesman()
     {
-    	return \DB::table('app_salesman')->lists('salesman_name','salesman_code');
+    	return \DB::table('app_salesman')
+    				->orderBy('salesman_name')
+    				->lists('salesman_name','salesman_code');
     }
     
     
@@ -1076,7 +1357,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function getCustomerCode()
     {
-    	return \DB::table('app_customer')->lists('customer_code','customer_id');
+    	return \DB::table('app_customer')
+    				->orderBy('customer_code')
+    				->lists('customer_code','customer_id');
     }
     
 	/**
@@ -1085,6 +1368,28 @@ class ReportsPresenter extends PresenterCore
      */
     public function getArea()
     {
-    	return \DB::table('app_area')->lists('area_name','area_code');
-    } 
+    	return \DB::table('app_area')
+    			->orderBy('area_name')
+    			->lists('area_name','area_code');
+    }
+
+    /**
+     * Get Item Lists
+     */
+    public function getItems()
+    {
+    	return \DB::table('app_item_master')
+    			->orderBy('description')
+    			->lists('description','item_code');
+    }
+    
+    /**
+     * Get Item Segment Codes
+     */
+    public function getItemSegmentCode()
+    {
+    	return \DB::table('app_item_segment')
+    			->orderBy('segment_code')
+    			->lists('segment_code','item_segment_id');
+    }
 }

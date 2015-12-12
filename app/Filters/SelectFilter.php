@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Core\FilterCore;
+use Illuminate\Database\Query\Builder;
 
 class SelectFilter extends FilterCore
 {
@@ -24,7 +25,7 @@ class SelectFilter extends FilterCore
 	 */
 	protected $selectType = self::SINGLE_SELECT;
 	
-	public function __construct($label,$type)
+	public function __construct($label='',$type='')
 	{
 		$this->selectType = $type;
 		parent::__construct($label);	
@@ -40,7 +41,7 @@ class SelectFilter extends FilterCore
 		$this->setName($name);
 		//$this->value = $this->get();
 		
-		if(!$this->request->has($name) && !$this->getValue())
+		if(!$this->request->has($name) || !$this->request->get($name))
 		{
 			return $model;
 		}
@@ -60,9 +61,18 @@ class SelectFilter extends FilterCore
 		{
 			$name = $model->getTable().'.'.$name;
 		}
+		elseif($model instanceof Builder)
+		{
+			$name = $model->from.'.'.$name;
+		}
 		else
 		{
 			$name = $model->getModel()->getTable().'.'.$name;
+		}
+		
+		if($scope instanceof \Closure)
+		{
+			return $scope($this,$model);	
 		}
 		
 		return $scope ? $this->$scope($model) : $model->where($name,'=',$this->getValue());
