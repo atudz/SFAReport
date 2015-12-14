@@ -76,11 +76,46 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();    			 
     			return $this->view('salesReportPerMaterial');
     		case 'perpeso':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->tableHeaders = $this->getSalesReportPesoColumns();
     			return $this->view('salesReportPerPeso');
     		case 'returnpermaterial':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->items = $this->getItems();
+    			$this->view->segments = $this->getItemSegmentCode();
+    			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
     			return $this->view('returnsPerMaterial');
     		case 'returnperpeso':
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();    			
     			return $this->view('returnsPerPeso');
+    		case 'customerlist':
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->statuses = $this->getCustomerStatus();
+    			$this->view->tableHeaders = $this->getCustomerListColumns();
+    			return $this->view('customerList');
+    		case 'salesmanlist':
+    			$this->view->salesman = $this->getSalesman();
+    			$this->view->areas = $this->getArea();
+    			$this->view->statuses = $this->getCustomerStatus();
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->tableHeaders = $this->getSalesmanListColumns();
+    			return $this->view('salesmanList');
+    		case 'materialpricelist':
+    			$this->view->segmentCodes = $this->getItemSegmentCode();
+    			$this->view->items = $this->getItems(); 
+    			$this->view->areas = $this->getArea();
+    			$this->view->statuses = $this->getCustomerStatus();
+    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->tableHeaders = $this->getMaterialPriceListColumns();
+    			return $this->view('materialPriceList');
     	}
     }
     
@@ -159,9 +194,9 @@ class ReportsPresenter extends PresenterCore
     			return $this->getUnpaidInvoice();    		
     		case 'bir';
     			return $this->getBir();
-			case 'salesportpermaterial';
+			case 'salesreportpermaterial';
     			return $this->getSalesReportMaterial();
-    		case 'salesportperpeso';
+    		case 'salesreportperpeso';
     			return $this->getSalesReportPeso();
     		case 'returnpermaterial';
     			return $this->getReturnMaterial();
@@ -802,30 +837,96 @@ ORDER BY tas.reference_num ASC,
      */
     public function getSalesReportPeso()
     {
-    
-    	$prepare = \DB::table('user');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+    	$select = 'txn_sales_order_header.so_number,
+			  	   txn_sales_order_header.reference_num,
+				   txn_activity_salesman.activity_code,
+				   txn_sales_order_header.customer_code,
+				   app_customer.customer_name,
+				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+				   txn_sales_order_header.van_code,
+				   txn_sales_order_header.device_code,
+				   txn_sales_order_header.salesman_code,
+				   app_salesman.salesman_name,
+				   app_area.area_name area,
+				   txn_sales_order_header.invoice_number,
+				   txn_sales_order_header.so_date invoice_date,
+				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
+				   app_item_master.segment_code,
+				   app_item_master.item_code,
+				   app_item_master.description,
+				   txn_return_detail.quantity,
+				   txn_return_detail.condition_code,
+				   txn_return_detail.uom_code,
+				   txn_sales_order_detail.gross_served_amount,
+				   txn_sales_order_detail.vat_amount,
+				   txn_sales_order_detail.discount_rate,
+				   txn_sales_order_detail.discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+    	 
+    	$prepare = \DB::table('txn_sales_order_header')
+				    	->selectRaw($select)
+				    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+				    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
+				    	->leftJoin('txn_activity_salesman', function($join){
+				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
+				    		->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
+				    	})
+				    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
+				    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+				    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+				    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
     	
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('app_area.area_code','=',$self->getValue());
+    			});
     	 
-    	$customerFilter = FilterFactory::getInstance('Select','Customer',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerFilter->addFilter($prepare,'customer');
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
     	 
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
-    
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
-    
-    	$postingFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    			function($self, $model){
+    				return $model->where('app_item_master.item_code','=',$self->getValue());
+    			});
     	 
+    	$segmentCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
+    			function($self, $model){
+    				return $model->where('app_item_master.segment_code','=',$self->getValue());
+    			});
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
+    			function($self, $model){
+    				return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    			});
+    	
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    			function($self, $model){
+    				return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    			});
+    	 
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
-    
-    	return response()->json($this->dummy());
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    	
+    	return response()->json($data);
     }
     
     /**
@@ -835,35 +936,100 @@ ORDER BY tas.reference_num ASC,
     public function getReturnMaterial()
     {
     
-    	$prepare = \DB::table('user');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    	 
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
-    
-    	$customerFilter = FilterFactory::getInstance('Select','Customer',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerFilter->addFilter($prepare,'customer');
-    
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
-    
-    	$itemCodeFilter = FilterFactory::getInstance('Select','Item Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code');
-    	 
-    	$segmentCodeFilter = FilterFactory::getInstance('Select','Segement Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code');
+    	$select = '
+    			txn_return_header.return_txn_number,
+				txn_return_header.reference_num,
+				txn_activity_salesman.activity_code,
+				txn_return_header.customer_code,
+				app_customer.customer_name,
+				(select remarks from txn_evaluated_objective teo where reference_num = txn_return_header.reference_num order by teo.sfa_modified_date desc limit 1) AS remarks,
+			    txn_return_header.van_code,
+			    txn_return_header.device_code,
+				txn_return_header.salesman_code,
+				app_salesman.salesman_name,
+				app_area.area_name area,
+				txn_return_header.return_slip_num,
+				txn_return_header.return_date,
+				txn_return_header.sfa_modified_date return_posting_date,
+				app_item_master.segment_code,
+				app_item_master.item_code,
+				app_item_master.description,
+				txn_return_detail.condition_code,
+				txn_return_detail.quantity,
+				txn_return_detail.uom_code,
+				txn_sales_order_detail.gross_served_amount,
+				txn_return_detail.vat_amount,
+				txn_sales_order_detail.discount_rate,
+				txn_sales_order_detail.discount_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+    			';
     	
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
+    	$prepare = \DB::table('txn_return_header')
+    				->selectRaw($select)
+    				->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
+    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
+    				->leftJoin('txn_activity_salesman', function($join){
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
+    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    				})
+    				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
+    				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+    				->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+    				->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
     
-    	$postingFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
+    	
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    					 function($self, $model){
+    						return $model->where('app_item_master.item_code','=',$self->getValue());	 	
+    				});
+    	
+    	$segmentCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
+    					function($self, $model){
+    						return $model->where('app_item_master.segment_code','=',$self->getValue());
+    				});
     
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',	
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    				});
+    	 
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    			});
+    	
+    	
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    
+    	return response()->json($data);
     }
     
     /**
@@ -873,29 +1039,88 @@ ORDER BY tas.reference_num ASC,
     public function getReturntPeso()
     {
     
-    	$prepare = \DB::table('user');
+    	$select = '
+    			txn_return_header.return_txn_number,
+				txn_return_header.reference_num,
+				txn_activity_salesman.activity_code,
+				txn_return_header.customer_code,
+				app_customer.customer_name,
+				(select remarks from txn_evaluated_objective teo where reference_num = txn_return_header.reference_num order by teo.sfa_modified_date desc limit 1) AS remarks,
+			    txn_return_header.van_code,
+			    txn_return_header.device_code,
+				txn_return_header.salesman_code,
+				app_salesman.salesman_name,
+				app_area.area_name area,
+				txn_return_header.return_slip_num,
+				txn_return_header.return_date,
+				txn_return_header.sfa_modified_date return_posting_date,
+				app_item_master.segment_code,
+				app_item_master.item_code,
+				app_item_master.description,
+				txn_return_detail.condition_code,
+				txn_return_detail.quantity,
+				txn_return_detail.uom_code,
+				txn_sales_order_detail.gross_served_amount,
+				txn_return_detail.vat_amount,
+				txn_sales_order_detail.discount_rate,
+				txn_sales_order_detail.discount_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+    			';
+    	
+    	$prepare = \DB::table('txn_return_header')
+    				->selectRaw($select)
+    				->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
+    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
+    				->leftJoin('txn_activity_salesman', function($join){
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
+    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    				})
+    				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
+    				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+    				->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+    				->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
     
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',	
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    				});
     	 
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
-    
-    	$customerFilter = FilterFactory::getInstance('Select','Customer',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerFilter->addFilter($prepare,'customer');
-    
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
-    
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
-    
-    	$postingFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
-    
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    			});
+    	
+    	
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    
+    	return response()->json($data);
     }
     
     /**
@@ -905,23 +1130,62 @@ ORDER BY tas.reference_num ASC,
     public function getCustomerList()
     {
     
-    	$prepare = \DB::table('user');
+    	$select = '
+    			app_customer.customer_code,
+				app_customer.customer_name,
+				app_customer.address_1 address,
+				app_customer.area_code,
+				app_area.area_name,
+				app_customer.storetype_code,
+				app_storetype.storetype_name,
+				app_customer.vatposting_code,
+				app_customer.vat_ex_flag,
+				app_customer.customer_price_group,
+				app_salesman.salesman_code,
+				app_salesman.salesman_name,
+				app_salesman_van.van_code,
+				app_customer.sfa_modified_date,
+				IF(app_customer.status=\'A\',\'Active\',IF(app_customer.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
+    	
+    	$prepare = \DB::table('app_customer')
+    				->selectRaw($select)
+    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    				->leftJoin('app_storetype','app_customer.storetype_code','=','app_storetype.storetype_code')
+    				->leftJoin('app_salesman_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+    				->leftJoin('app_salesman','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
+    				->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
     
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
-    
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
-    
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
-    
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
+    					function($self,$model){
+    						return $model->where('app_salesman.salesman_code','=',$self->getValue());    		
+    				});
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
+    	
+    	$statusFilter = FilterFactory::getInstance('Select');
+    	$prepare = $statusFilter->addFilter($prepare,'status');
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	 
+    	
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    
+    	return response()->json($data);
+    	
     }
     
     /**
@@ -931,26 +1195,53 @@ ORDER BY tas.reference_num ASC,
     public function getSalesmanList()
     {
     
-    	$prepare = \DB::table('user');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
-    
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
-    
-    	$statusFilter = FilterFactory::getInstance('Select','Status',SelectFilter::SINGLE_SELECT);
-    	$prepare = $statusCodeFilter->addFilter($prepare,'status');
+    	$select = '
+    			app_salesman.salesman_code,
+    			app_salesman.salesman_name,
+    			app_customer.area_code,
+				app_area.area_name,
+    			app_salesman_van.van_code,
+    			app_salesman.sfa_modified_date,
+				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
     	
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
+    	$prepare = \DB::table('app_salesman')
+    				->selectRaw($select)
+    				->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
+    				->leftJoin('app_customer','app_salesman_customer.customer_code','=','app_customer.customer_code')
+    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    				->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
     
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
+    	
+    	$statusFilter = FilterFactory::getInstance('Select');
+    	$prepare = $statusFilter->addFilter($prepare,'status');
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code', 
+    					function($self, $model){
+    						return $model->where('app_customer.customer_code','=',$self->getValue());
+    				});
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	 
+    	
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    
+    	return response()->json($data);
+    	
     }
     
     /**
@@ -960,30 +1251,60 @@ ORDER BY tas.reference_num ASC,
     public function getMaterialPriceList()
     {
     
-    	$prepare = \DB::table('user');
+    	$select = '
+    			app_item_master.item_code,
+    			app_item_master.description,
+    			app_item_master_uom.uom_code,
+				app_item_master.segment_code,
+    			app_item_price.unit_price,
+    			app_item_price.customer_price_group,
+    			app_item_price.effective_date_from,
+    			app_item_price.effective_date_to,
+    			app_area.area_name,
+    			app_item_master.sfa_modified_date,
+				IF(app_item_master.status=\'A\',\'Active\',IF(app_item_master.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
+    	 
+    	$prepare = \DB::table('app_item_master')
+    					->selectRaw($select)
+				    	->leftJoin('app_item_master_uom','app_item_master.item_code','=','app_item_master_uom.item_code')
+				    	->leftJoin('app_item_price','app_item_master.item_code','=','app_item_price.item_code')
+				    	->leftJoin('app_customer','app_item_price.customer_price_group','=','app_customer.customer_price_group')
+				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
     
-    	$customerCodeFilter = FilterFactory::getInstance('Select','Customer Code',SelectFilter::SINGLE_SELECT);
-    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('app_area.area_code','=',$self->getValue());
+    			});
+    	 
+    	$statusFilter = FilterFactory::getInstance('Select');
+    	$prepare = $statusFilter->addFilter($prepare,'status');
+    	 
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
+    			function($self, $model){
+    				return $model->where('app_customer.customer_code','=',$self->getValue());
+    			});
+    	 
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     
-    	$segmentCodeFilter = FilterFactory::getInstance('Select','Segement',SelectFilter::SINGLE_SELECT);
-    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code');
-    	
-    	$materialFilter = FilterFactory::getInstance('Select','Material',SelectFilter::SINGLE_SELECT);
-    	$prepare = $materialFilter->addFilter($prepare,'material');
-    
-    	$statusFilter = FilterFactory::getInstance('Select','Status',SelectFilter::SINGLE_SELECT);
-    	$prepare = $statusCodeFilter->addFilter($prepare,'status');
-    	
-    	$transactionFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
-    
+    	 
+    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    
+    	return response()->json($data);
+    	 
     }
+    
+    
     
     public function dummy()
     {    	
@@ -1152,11 +1473,11 @@ ORDER BY tas.reference_num ASC,
     		case 'returnperpeso';
     			return $this->getReturntPeso();
     		case 'customerlist';
-    			return $this->getCustomerList();
+    			return $this->getCustomerListColumns();
     		case 'salesmanlist';
-    			return $this->getSalesmanList();
+    			return $this->getSalesmanListColumns();
     		case 'materialpricelist';
-    			return $this->getMaterialPriceList();
+    			return $this->getMaterialPriceListColumns();
     	}	
     }
     
@@ -1340,6 +1661,190 @@ ORDER BY tas.reference_num ASC,
     }
     
     /**
+     * Get Sales Report Material Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesReportPesoColumns()
+    {
+    	$headers = [
+    			['name'=>'SO number'],
+    			['name'=>'Reference number'],
+    			['name'=>'Activity Code','sort'=>'activity_code'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'Device Code','sort'=>'device_code'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area','sort'=>'area'],
+    			['name'=>'Invoice No/ Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
+    			['name'=>'Invoice/Return Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Gross Amount'],
+    			['name'=>'Vat Amount'],
+    			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
+    			['name'=>'Discount Amount Per Item'],
+    			['name'=>'Collective Discount Rate'],
+    			['name'=>'Collective Discount Amount'],
+    			['name'=>'Reference No.','sort'=>'discount_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Collective Deduction Rate'],
+    			['name'=>'Collective Deduction Amount'],
+    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Total Invoice/Return Net amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Get Return Report Material Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getReturnReportMaterialColumns()
+    {
+    	$headers = [
+    			['name'=>'Return Transaction Number'],
+    			['name'=>'Reference number'],
+    			['name'=>'Activity Code','sort'=>'activity_code'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'Device Code','sort'=>'device_code'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area','sort'=>'area'],
+    			['name'=>'Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Return Date','sort'=>'invoice_date'],
+    			['name'=>'Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Segment Code','sort'=>'segment_code'],
+    			['name'=>'Item Code','sort'=>'item_code'],
+    			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Quantity','sort'=>'quantity'],
+    			['name'=>'Condition Code','sort'=>'condition_code'],
+    			['name'=>'Uom Code'],
+    			['name'=>'Gross Amount'],
+    			['name'=>'Vat Amount'],
+    			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
+    			['name'=>'Discount Amount Per Item'],
+    			['name'=>'Collective Discount Rate','sort'=>'collective_discount_rate'],
+    			['name'=>'Collective Discount Amount'],
+    			['name'=>'Reference No.','sort'=>'discount_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Total Invoice/Return Net amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Get Return Report Per Peso Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getReturnReportPerPesoColumns()
+    {
+    	$headers = [
+    			['name'=>'Return Transaction Number'],
+    			['name'=>'Reference number'],
+    			['name'=>'Activity Code','sort'=>'activity_code'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'Device Code','sort'=>'device_code'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area','sort'=>'area'],
+    			['name'=>'Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Return Date','sort'=>'invoice_date'],
+    			['name'=>'Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Gross Amount'],
+    			['name'=>'Vat Amount'],
+    			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
+    			['name'=>'Discount Amount Per Item'],
+    			['name'=>'Collective Discount Rate','sort'=>'collective_discount_rate'],
+    			['name'=>'Collective Discount Amount'],
+    			['name'=>'Reference No.','sort'=>'discount_reference_num'],
+    			['name'=>'Remarks'],
+    			['name'=>'Total Invoice/Return Net amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Get Customer List Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCustomerListColumns()
+    {
+    	$headers = [
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Address','sort'=>'address'],
+    			['name'=>'Area Code','sort'=>'area_code'],
+    			['name'=>'Area Name','sort'=>'area_name'],
+    			['name'=>'Storetype Code','sort'=>'storetype_code'],
+    			['name'=>'Storetype Name','sort'=>'storetype_name'],
+    			['name'=>'Vatposting Code','sort'=>'vatposting_code'],
+    			['name'=>'Vat ex flag','sort'=>'vat_ex_flag'],
+    			['name'=>'Customer Price Group','sort'=>'customer_price_group'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'SFA Modified Date','sort'=>'sfa_modified_date'],
+    			['name'=>'Status','sort'=>'status'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Get Customer List Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSalesmanListColumns()
+    {
+    	$headers = [
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area Code','sort'=>'area_code'],
+    			['name'=>'Area Name','sort'=>'area_name'],    			 
+    			['name'=>'Van Code','sort'=>'van_code'],
+    			['name'=>'SFA Modified Date','sort'=>'sfa_modified_date'],
+    			['name'=>'Status','sort'=>'status'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Get Customer List Table Headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMaterialPriceListColumns()
+    {
+    	$headers = [
+    			['name'=>'Item Code','sort'=>'item_code'],
+    			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Uom Code','sort'=>'uom_code'],
+    			['name'=>'Segment Code','sort'=>'segment_code'],
+    			['name'=>'Unit Price','sort'=>'unit_price'],
+    			['name'=>'Customer Price Group','sort'=>'custom_price_group'],
+    			['name'=>'Effective date from','sort'=>'effective_date_from'],
+    			['name'=>'Effective date to','sort'=>'effective_date_to'],
+    			['name'=>'Area','sort'=>'area_name'],
+    			['name'=>'SFA Modified Date','sort'=>'sfa_modified_date'],
+    			['name'=>'Status','sort'=>'status'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
      * Get Salesman 
      * @return multitype:
      */
@@ -1391,5 +1896,14 @@ ORDER BY tas.reference_num ASC,
     	return \DB::table('app_item_segment')
     			->orderBy('segment_code')
     			->lists('segment_code','item_segment_id');
+    }
+    
+    /**
+     * Get Customer Statuses
+     */
+    public function getCustomerStatus()
+    {    	
+    	$statusList = ['A'=>'Active','D'=>'Deleted','I'=>'Inactive',];    	
+    	return $statusList;
     }
 }

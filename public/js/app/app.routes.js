@@ -51,19 +51,36 @@
 				})
 				.when('/salesreport.pesovalue',{
 					templateUrl: '/reports/salesreport/perpeso',
-					/*controller: 'SalesReportPesoValue',
-					controllerAs: 'srpv'*/
+					controller: 'SalesReportPerPeso',
+					//controllerAs: 'srpv'*/
 				})
 				.when('/salesreport.returnpermaterial',{
 					templateUrl: '/reports/salesreport/returnpermaterial',
-					/*controller: 'SalesReportReturnPerMaterial',
-					controllerAs: 'srrpm'*/
+					controller: 'ReturnReportPerMaterial',
+					//controllerAs: 'srrpm'*/
 				})
 				.when('/salesreport.returnpesovalue',{
 					templateUrl: '/reports/salesreport/returnperpeso',
-					/*controller: 'SalesReportReturnPesoValue',
-					controllerAs: 'srrpv'*/
+					controller: 'ReturnReportPerPeso',
+					//controllerAs: 'srrpv'*/
 				})
+				.when('/salesreport.customerlist',{
+					templateUrl: '/reports/salesreport/customerlist',
+					controller: 'CustomerList',
+					//controllerAs: 'srrpv'*/
+				})
+				.when('/salesreport.salesmanlist',{
+					templateUrl: '/reports/salesreport/salesmanlist',
+					controller: 'SalesmanList',
+					//controllerAs: 'srrpv'*/
+				})
+				.when('/salesreport.materialpricelist',{
+					templateUrl: '/reports/salesreport/materialpricelist',
+					controller: 'MaterialPriceList',
+					//controllerAs: 'srrpv'*/
+				})
+				
+				
 				// Unpaid Invoice
 				.when('/unpaid',{
 					templateUrl: '/reports/unpaidinvoice',
