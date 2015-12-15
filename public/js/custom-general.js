@@ -19,9 +19,14 @@
 			$('#sidebar-collapse').slideToggle().toggleClass('show');
 		}); 
 
-		$(document).on("click",".dropdown-toggle", function(){		  
+		$(document).on("click",".dropdown-toggle", function(e){
+			e.stopPropagation();		  
 			$(this).parent().toggleClass('open')
 		}); 
+
+		$(document).click(function(){
+		   $('.dropdown-toggle').parent().removeClass('open');
+		});
 
 	  	}
 	  };

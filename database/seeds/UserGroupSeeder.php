@@ -12,8 +12,10 @@ class UserGroupSeeder extends Seeder
     public function run()
     {
     	DB::table('user_group')->insert([
-    			['name'=>'admin','created_at' => new DateTime()],
-    			['name'=>'user','created_at' => new DateTime()]
+    			['name'=>'Admin','created_at' => new DateTime()],
+                ['name'=>'Auditor','created_at' => new DateTime()],
+                ['name'=>'Accounting in charge','created_at' => new DateTime()],
+    			['name'=>'Van Salesman','created_at' => new DateTime()]
     	]);
     }
 }

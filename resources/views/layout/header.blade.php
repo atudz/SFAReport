@@ -10,7 +10,7 @@
 				<a class="navbar-brand"><span>SFA</span> Reports</a>
 				<ul class="user-menu">
 					<li class="dropdown pull-right">
-						<a href="#" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
+						<a href="" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#profile.my"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 							<li><a href="#profile.changepassword"><span class="glyphicon glyphicon-cog"></span> Change Password</a></li>
