@@ -653,10 +653,307 @@
 	    // Filter table records	    
 	    filterSubmit($scope,API,params,$log);
 		
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 25;
-	    $scope.total = 0;
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+
+	/**
+	 * Sales Report Per Peso
+	 */
+	app.controller('SalesReportPerPeso',['$scope','$resource','$log',SalesReportPerPeso]);
+	
+	function SalesReportPerPeso($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/salesportperpeso').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/salesportperpeso');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'posting_date_from',
+		          'posting_date_to',
+		          'return_date_from',
+		          'return_date_to',
+		          'salesman_code',
+		          'area',
+		          'customer_code'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+	
+	
+	/**
+	 * Return Report Per Material
+	 */
+	app.controller('ReturnReportPerMaterial',['$scope','$resource','$log',ReturnReportPerMaterial]);
+	
+	function ReturnReportPerMaterial($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/returnreportpermaterial').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/returnreportpermaterial');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'posting_date_from',
+		          'posting_date_to',
+		          'return_date_from',
+		          'return_date_to',
+		          'salesman_code',
+		          'area',
+		          'customer_code',
+		          'material',
+		          'segment'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+	
+	
+	/**
+	 * Return Report Per Peso
+	 */
+	app.controller('ReturnReportPerPeso',['$scope','$resource','$log',ReturnReportPerPeso]);
+	
+	function ReturnReportPerPeso($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/returnreportperpeso').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/returnreportperpeso');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'posting_date_from',
+		          'posting_date_to',
+		          'return_date_from',
+		          'return_date_to',
+		          'salesman_code',
+		          'area',
+		          'customer_code',
+		          'material',
+		          'segment'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+	
+	/**
+	 * Customer List
+	 */
+	app.controller('CustomerList',['$scope','$resource','$log',CustomerList]);
+	
+	function CustomerList($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/customerlist').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/customerlist');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'salesman_code',
+		          'area',
+		          'status',
+		          'sfa_modified_date'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+	
+	
+	/**
+	 * Salesman List
+	 */
+	app.controller('SalesmanList',['$scope','$resource','$log',SalesmanList]);
+	
+	function SalesmanList($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/salesmanlist').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/salesmanlist');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'salesman_code',
+		          'area',
+		          'status',
+		          'sfa_modified_date'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	}
+	
+	/**
+	 * Material Price List
+	 */
+	app.controller('MaterialPriceList',['$scope','$resource','$log',MaterialPriceList]);
+	
+	function MaterialPriceList($scope, $resource, $log)
+	{
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    $scope.tableHeaders = {};
+	    $resource('/reports/getheaders/materialpricelist').query({}, function(data){
+	    	$scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    $scope.records = {};	    
+	    
+	    var API = $resource('/reports/getdata/materialpricelist');
+	    var params = {page:'1',page_limit:'10'};
+	    
+	    API.save(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info($scope.records);
+	    });	    
+	    
+	    params = [
+		          'customer_code',
+		          'area',
+		          'segment_code',
+		          'item_code',
+		          'status',
+		          'sfa_modified_date'
+		];
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
 	    pagination($scope,API,params,$log);
 	}
 	
@@ -871,6 +1168,10 @@
 	{
 		var params  = {};
 		
+		scope.page = 1;
+	    scope.perpage = 25;
+	    scope.total = 0;
+	    
 		// Paginate table records	    
 	    scope.paginate = function(page) {
 			scope.perpage = page;
