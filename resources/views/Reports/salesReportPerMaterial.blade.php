@@ -11,11 +11,12 @@
 					<div class="pull-left col-sm-6">
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}
 						{!!Html::datepicker('invoice_date','Return Date',true)!!}
+						{!!Html::select('customer_code','Company', $customerCode)!!}
 					</div>					
 					<div class="pull-right col-sm-6">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
-						{!!Html::select('customer_code','Customer Code', $customerCode)!!}													 			
+						{!!Html::select('customer','Customer', $customers)!!}													 			
 						{!!Html::select('material','Material', $items)!!}
 						{!!Html::select('segment','Segment', $segments)!!}
 					</div>			
