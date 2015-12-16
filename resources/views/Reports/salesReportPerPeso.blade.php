@@ -29,21 +29,27 @@
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
-						<td>[[record.remarks]]</td>
+						<td>
+							<a href="#" editable-text="record.remarks" onbeforesave="update($data)">
+    							[[ record.remarks ]]
+  							</a>
+						</td>
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>
 						<td>[[record.salesman_code]]</td>
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
-						<td>[[record.invoice_number]]</td>
-						<td>[[record.invoice_date]]</td>
+						<td>
+							<a href="#" editable-text="record.invoice_number" onbeforesave="update($data)">
+    							[[ record.invoice_number ]]
+  							</a>
+						</td>
+						<td>
+							<a href="#" editable-bsdate="record.invoice_date|date:'yyyy/MM/dd'" e-datepicker-popup="yyyy/MM/dd" onbeforesave="update($data)">
+    							[[ record.invoice_date | date:"yyyy/MM/dd" ]]
+  							</a>
+						</td>
 						<td>[[record.invoice_posting_date]]</td>
-						<td>[[record.segment_code]]</td>
-						<td>[[record.item_code]]</td>
-						<td>[[record.description]]</td>
-						<td>[[record.quantity]]</td>
-						<td>[[record.condition_code]]</td>
-						<td>[[record.uom_code]]</td>
 						<td>[[record.gross_seved_amount]]</td>
 						<td>[[record.vat_amount]]</td>
 						<td>[[record.discount_rate]]</td>

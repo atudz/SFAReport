@@ -409,6 +409,27 @@
 		
 	    // Paginate table records	    
 	    pagination($scope,API,params,$log);
+	    
+		 // Update table records
+		$scope.update = function(data) {
+			if(confirm('Is this correct?'))
+			{
+				$log.info(data);
+				//var status = false;
+				/*$http.post('/controller/reports/save',
+							{table:'user', id:'1', column:'firstname', value:'Test123'}
+				).success(function(response){
+					$log.info(response);
+					//status = true;
+				});*/
+				//alert(status);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
 	}
 	
 	

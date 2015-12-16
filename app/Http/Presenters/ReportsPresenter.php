@@ -861,12 +861,6 @@ ORDER BY tas.reference_num ASC,
 				   txn_sales_order_header.invoice_number,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   app_item_master.segment_code,
-				   app_item_master.item_code,
-				   app_item_master.description,
-				   txn_return_detail.quantity,
-				   txn_return_detail.condition_code,
-				   txn_return_detail.uom_code,
 				   txn_sales_order_detail.gross_served_amount,
 				   txn_sales_order_detail.vat_amount,
 				   txn_sales_order_detail.discount_rate,
@@ -890,8 +884,6 @@ ORDER BY tas.reference_num ASC,
 				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
 				    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 				    	})
-				    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-				    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
 				    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
 				    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
     	
