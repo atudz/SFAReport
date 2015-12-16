@@ -27,9 +27,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
@@ -100,9 +100,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionposting');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
@@ -152,9 +152,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
@@ -202,9 +202,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -254,9 +254,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
@@ -305,10 +305,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salesreportpermaterial');
-	    var params = {page:'1',page_limit:'10'};
-	    params = {};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info(data);
@@ -322,6 +321,7 @@
 		          'salesman_code',
 		          'area',
 		          'customer_code',
+		          'customer',
 		          'material',
 		          'segment'
 		];
@@ -336,6 +336,28 @@
 		
 	    // Paginate table records	    
 	    pagination($scope,API,params,$log);
+	    
+	    
+	 // Update table records
+		$scope.update = function(data) {
+			if(confirm('Are you sure you want to delete this record?'))
+			{
+				$log.info(data);
+				//var status = false;
+				/*$http.post('/controller/reports/save',
+							{table:'user', id:'1', column:'firstname', value:'Test123'}
+				).success(function(response){
+					$log.info(response);
+					//status = true;
+				});*/
+				//alert(status);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
 	}
 
 	/**
@@ -358,9 +380,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salesreportperpeso');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -373,7 +395,8 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code'
+		          'customer_code',
+		          'customer'
 		];
 	    
 	    //Sort table records
@@ -409,9 +432,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/returnreportpermaterial');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -462,9 +485,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/returnreportperpeso');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -514,9 +537,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/customerlist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -562,9 +585,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salesmanlist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -609,9 +632,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/materialpricelist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -659,9 +682,9 @@
 	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
@@ -733,6 +756,26 @@
 			
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
+			});
+			log.info(filter);
+			
+	    	API.save(params,function(data){
+	    		log.info(data);
+		    	scope.records = data.records;		    	
+		    	scope.toggleFilter = true;
+		    });
+	    	
+	    }
+		
+		scope.reset = function(){
+	    	
+			params['page'] = scope.page;
+			params['page_limit'] = scope.perpage;
+			params['sort'] = scope.sortColumn;
+			params['order'] = scope.sortDirection;
+			
+			$.each(filter, function(key,val){
+				params[val] = '';
 			});
 			log.info(filter);
 			

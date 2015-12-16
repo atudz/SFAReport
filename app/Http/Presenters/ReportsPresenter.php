@@ -772,7 +772,10 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+    				
+    			   	
+    			';
     	
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
@@ -780,8 +783,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -884,8 +887,8 @@ ORDER BY tas.reference_num ASC,
 				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
 				    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
 				    	->leftJoin('txn_activity_salesman', function($join){
-				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
-				    		->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
+				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+				    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 				    	})
 				    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
 				    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -985,8 +988,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -1088,8 +1091,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
