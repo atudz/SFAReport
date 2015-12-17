@@ -10,6 +10,7 @@
 
 @if(auth()->user())
 	<script src="{{ URL::asset('js/app/app.module.js') }}"></script>
+	<script src="{{ URL::asset('js/app/app.config.js') }}"></script>
 	<script src="{{ URL::asset('js/app/app.routes.js') }}"></script>
 	<script src="{{ URL::asset('js/app/app.factory.js') }}"></script>
 	<script src="{{ URL::asset('js/app/app.controller.js') }}"></script>

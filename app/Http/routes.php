@@ -38,6 +38,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::post('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
 	Route::get('/getdata/{type}', ['as'=>'report-getdata', 'uses'=>'ReportsPresenter@getRecords']);
 	Route::get('/getheaders/{type?}', ['as'=>'report-getheaders', 'uses'=>'ReportsPresenter@getTableColumns']);
+	Route::get('/export/{type}/{report}', ['as'=>'report-export', 'uses'=>'ReportsPresenter@export']);
 });
 
 

@@ -2,6 +2,9 @@
 
 Html::macro('topen', function($options=[]) {
 
+	$xlsUrl = isset($options['xls_url']) ? $options['xls_url'] : '#';
+	$pdfUrl = isset($options['pdf_url']) ? $options['pdf_url'] : '#';
+	
 	$html = '
 			<div class="col-sm-12 table-options">
 				<div class="pull-left">
@@ -16,8 +19,8 @@ Html::macro('topen', function($options=[]) {
 					        Download <span class="caret"></span>
 					      </button>
 					      <ul class="uib-dropdown-menu" role="menu" aria-labelledby="btn-append-to-body">
-					        <li role="menuitem"><a href="#">Excel</a></li>
-					        <li role="menuitem"><a href="#">Print to PDF</a></li>					      
+					        <li role="menuitem"><a href="'.$xlsUrl.'">Excel</a></li>
+					        <li role="menuitem"><a href="'.$pdfUrl.'">Print to PDF</a></li>					      
 					      </ul>
     				</div>
 		      	</div>

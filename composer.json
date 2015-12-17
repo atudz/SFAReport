@@ -8,7 +8,9 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
         "laravelcollective/html": "5.1.*",
-        "maatwebsite/excel": "~2.0.0"
+        "dompdf/dompdf": "0.6.*",
+        "mpdf/mpdf": "5.7.*",
+        "maatwebsite/excel": "2.0.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

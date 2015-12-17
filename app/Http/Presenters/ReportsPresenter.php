@@ -5,9 +5,17 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\FilterFactory;
 use App\Filters\SelectFilter;
+use Illuminate\Database\Query\Builder;
 
 class ReportsPresenter extends PresenterCore
 {
+	
+	/**
+	 * Valid excel export types
+	 * @var unknown
+	 */
+	protected $validExportTypes = ['xls','pdf'];
+	
     /**
      * Display main dashboard
      *
@@ -740,57 +748,8 @@ ORDER BY tas.reference_num ASC,
     public function getSalesReportMaterial()
     {
     
-    	$select = 'txn_sales_order_header.so_number,
-			  	   txn_sales_order_header.reference_num,
-				   txn_activity_salesman.activity_code,
-				   txn_sales_order_header.customer_code,
-				   app_customer.customer_name,
-				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
-				   txn_sales_order_header.van_code,
-				   txn_sales_order_header.device_code,
-				   txn_sales_order_header.salesman_code,
-				   app_salesman.salesman_name,
-				   app_area.area_name area,
-				   txn_sales_order_header.invoice_number,
-				   txn_sales_order_header.so_date invoice_date,
-				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   app_item_master.segment_code,
-				   app_item_master.item_code,
-				   app_item_master.description,
-				   txn_return_detail.quantity,
-				   txn_return_detail.condition_code,
-				   txn_return_detail.uom_code,
-				   txn_sales_order_detail.gross_served_amount,
-				   txn_sales_order_detail.vat_amount,
-				   txn_sales_order_detail.discount_rate,
-				   txn_sales_order_detail.discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
-    				
-    			   	
-    			';
+    	$prepare = $this->getPreparedSalesReportPerMaterial(); 
     	
-    	$prepare = \DB::table('txn_sales_order_header')
-    				->selectRaw($select)
-    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
-    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-    				->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
-    				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
-    					$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
-    				})
-    				->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-    				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-    				->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-    				->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
-    
 		$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	    	
@@ -839,6 +798,66 @@ ORDER BY tas.reference_num ASC,
     	$data['total'] = $result->total();
     
     	return response()->json($data);
+    }
+    
+    /**
+     * Returns the prepared statement for Sales Report Per Material
+     * @return Builder 
+     */
+    public function getPreparedSalesReportPerMaterial()
+    {
+    	$select = 'txn_sales_order_header.so_number,
+			  	   txn_sales_order_header.reference_num,
+				   txn_activity_salesman.activity_code,
+				   txn_sales_order_header.customer_code,
+				   app_customer.customer_name,
+				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+				   txn_sales_order_header.van_code,
+				   txn_sales_order_header.device_code,
+				   txn_sales_order_header.salesman_code,
+				   app_salesman.salesman_name,
+				   app_area.area_name area,
+				   txn_sales_order_header.invoice_number,
+				   txn_sales_order_header.so_date invoice_date,
+				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
+				   app_item_master.segment_code,
+				   app_item_master.item_code,
+				   app_item_master.description,
+				   txn_return_detail.quantity,
+				   txn_return_detail.condition_code,
+				   txn_return_detail.uom_code,
+				   txn_sales_order_detail.gross_served_amount,
+				   txn_sales_order_detail.vat_amount,
+				   txn_sales_order_detail.discount_rate,
+				   txn_sales_order_detail.discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+    	
+    		
+    			';
+    	 
+    	$prepare = \DB::table('txn_sales_order_header')
+			    	->selectRaw($select)
+			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+			    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
+			    	->leftJoin('txn_activity_salesman', function($join){
+			    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
+			    	})
+			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
+			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	
+		return $prepare;	    	
     }
     
     /**
@@ -1779,5 +1798,99 @@ ORDER BY tas.reference_num ASC,
     {    	
     	$statusList = ['A'=>'Active','D'=>'Deleted','I'=>'Inactive',];    	
     	return $statusList;
+    }
+    
+    /**
+     * Export report to xls or pdf
+     * @param unknown $type
+     * @param unknown $report
+     */
+    public function export($type, $report)
+    {
+    	if(!in_array($type, $this->validExportTypes))
+    	{
+    		return;
+    	}
+    	
+    	switch($report)
+    	{
+    		case 'salescollectionreport';
+    			return $this->getSalesCollectionReport();
+    		case 'salescollectionposting';
+    			return $this->getSalesCollectionPosting();
+    		case 'salescollectionsummary';
+    			return $this->getSalesCollectionSummary();
+    		case 'vaninventory';
+    			return $this->getVanInventory();
+    		case 'unpaidinvoice';
+    			return $this->getUnpaidInvoice();
+    		case 'bir';
+    			return $this->getBir();
+    		case 'salesreportpermaterial';
+    			$columns = $this->getTableColumns('salesreportpermaterial');
+    			$prepare = $this->getPreparedSalesReportPerMaterial();
+    			$records = $prepare->get();
+    			//$this->view->columns = $columns;
+    			$rows = [
+    					'so_number',
+    					'reference_num',
+    					'activity_code',
+    					'customer_code',
+    					'customer_name',
+    					'remarks',
+    					'van_code',
+    					'device_code',
+    					'salesman_code',
+    					'salesman_name',
+    					'area',
+    					'invoice_number',
+    					'invoice_date',    						
+    					'invoice_posting_date',
+    					'segment_code',
+    					'item_code',
+    					'description',
+    					'quantity',
+    					'condition_code',
+    					'uom_code',
+    					'gross_served_amount',
+    					'vat_amount',    					
+    					'discount_rate',
+    					'discount_amount',
+    					'collective_discount_rate',
+    					'collective_discount_amount',
+    					'discount_reference_num',
+    					'discount_remarks',
+    					'collective_deduction_rate',
+    					'collective_deduction_amount',
+    					'deduction_reference_num',
+    					'deduction_remarks',
+    					'total_invoice',    					
+    			];
+    			//$this->view->rows = $rows;
+    			//$this->view->records = $records;
+    			\Excel::create('Sales Reprot(Per Material)', function($excel) use ($columns,$rows,$records){
+    				$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
+    					$data['columns'] = $columns;
+    					$data['rows'] = $rows;
+    					$data['records'] = $records;
+    					$sheet->loadView('Reports.export', $data);    				
+    				});
+    				
+    			})->export('xlsx');
+    			//return $this->view('export');
+    			//dd($prepare->get());
+    		case 'salesreportperpeso';
+    			return $this->getSalesReportPeso();
+    		case 'returnpermaterial';
+    			return $this->getReturnMaterial();
+    		case 'returnperpeso';
+    			return $this->getReturntPeso();
+    		case 'customerlist';
+    			return $this->getCustomerList();
+    		case 'salesmanlist';
+    			return $this->getSalesmanList();
+    		case 'materialpricelist';
+    			return $this->getMaterialPriceList();
+    	}	
     }
 }
