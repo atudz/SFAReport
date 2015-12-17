@@ -12,8 +12,12 @@ class VerifyCsrfToken extends BaseVerifier
      * @var array
      */
     protected $except = [
+		'reports/getdata/salescollectionreport',
+    	'reports/getdata/salescollectionposting',
+    	'reports/getdata/salescollectionsummary',    		
+    	'reports/getdata/vaninventory',
         'reports/getdata/salesreportpermaterial',
-    	'reports/getdata/salesreportpermaterial',
+    	'reports/getdata/salesreportperpeso',
     	'reports/getdata/returnpermaterial',
     	'reports/getdata/returnperpeso',
     	'reports/getdata/customerlist',

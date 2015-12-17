@@ -24,112 +24,37 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
 	    
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage,
-    			sort:$scope.sortColumn,
-    			order:$scope.sortDirection
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    });
-	    	
-	    }
+	    params = [
+		          'customer_code',
+		          'invoice_date_from',
+		          'invoice_date_to',
+		          'collection_date_from',
+		          'collection_date_to',
+		          'posting_date_from',
+		          'posting_date_to'
+		];
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {
-		    		customer_code: $('#customer_code').val(),
-		    		invoice_date_from: $('#invoice_date_from').val(),
-		    		invoice_date_to: $('#invoice_date_to').val(),
-		    		collection_date_from: $('#collection_date_from').val(),
-		    		collection_date_to: $('#collection_date_to').val(),
-		    		posting_date_from: $('#posting_date_from').val(),
-		    		posting_date_to: $('#posting_date_to').val(),
-		    		page:$scope.page,
-		    		page_limit:$scope.perpage,
-	    			sort:$scope.sortColumn,
-	    			order:$scope.sortDirection
-		    };
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {
-	    	    		customer_code: $('#customer_code').val(),
-	    	    		invoice_date_from: $('#invoice_date_from').val(),
-	    	    		invoice_date_to: $('#invoice_date_to').val(),
-	    	    		collection_date_from: $('#collection_date_from').val(),
-	    	    		collection_date_to: $('#collection_date_to').val(),
-	    	    		posting_date_from: $('#posting_date_from').val(),
-	    	    		posting_date_to: $('#posting_date_to').val(),
-	    	    		page:$scope.page,
-	    	    		page_limit:$scope.perpage,
-	        			sort:$scope.sortColumn,
-	        			order:$scope.sortDirection
-	    	    };
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-				});
-	    	}
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
 	    
 	    // Update table records
 		$scope.update = function(data) {
@@ -151,51 +76,6 @@
 			}
 		};
 		
-		
-		// Sort table records
-		$scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		$scope.sort = function(col) {
-			$scope.sortColumn = col;
-			var el = $('#'+col);
-			
-			el.parent().find('th').removeClass('sorted');
-			el.parent().find('th>i').removeClass('fa-sort-asc');
-			el.parent().find('th>i').removeClass('fa-sort-desc');
-			el.parent().find('th>i').addClass('fa-sort');
-			
-			if($scope.sortDirection == 'desc')
-			{					
-				el.addClass('sorted');
-				el.find('i').addClass('fa-sort-asc');				
-				$scope.sortDirection = 'asc';
-			}
-			else
-			{				
-				el.addClass('sorted');
-				el.find('i').addClass('fa-sort-desc');
-				$scope.sortDirection = 'desc';
-			}			
-			
-			params = {
-		    		customer_code: $('#customer_code').val(),
-		    		invoice_date_from: $('#invoice_date_from').val(),
-		    		invoice_date_to: $('#invoice_date_to').val(),
-		    		collection_date_from: $('#collection_date_from').val(),
-		    		collection_date_to: $('#collection_date_to').val(),
-		    		posting_date_from: $('#posting_date_from').val(),
-		    		posting_date_to: $('#posting_date_to').val(),
-		    		page:$scope.page,
-		    		page_limit:$scope.perpage,
-	    			sort:$scope.sortColumn,
-	    			order:$scope.sortDirection
-		    };
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
 	}
 	
 	
@@ -217,86 +97,37 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionposting');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
 	    
+	    params = [
+		          'customer_code',
+		          'invoice_date_from',
+		          'invoice_date_to',
+		          'collection_date_from',
+		          'collection_date_to',
+		          'posting_date_from',
+		          'posting_date_to'
+		];
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    });
-	    	
-	    }
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {page:$scope.page,page_limit:$scope.perpage};
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
-	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-				});
-	    	}
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	   
 	}
 	
 	
@@ -318,86 +149,36 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
 	    
+	    params = [
+		          'customer_code',
+		          'invoice_date_from',
+		          'invoice_date_to',
+		          'collection_date_from',
+		          'collection_date_to',
+		          'posting_date_from',
+		          'posting_date_to'
+		];
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    });
-	    	
-	    }
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {page:$scope.page,page_limit:$scope.perpage};
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
-	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-				});
-	    	}
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
 	}
 	
 	/**
@@ -418,90 +199,38 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
 	    });	    
 	    
+	    params = [
+		          'customer_code',
+		          'invoice_date_from',
+		          'invoice_date_to',
+		          'collection_date_from',
+		          'collection_date_to',
+		          'posting_date_from',
+		          'posting_date_to'
+		];
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    	$scope.total = data.total;
-		    });
-	    	
-	    }
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {page:$scope.page,page_limit:$scope.perpage};
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    	$scope.total = data.total;
-			});
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
 	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-			    	$scope.total = data.total;
-				});
-	    	}
-		}
 	}
 	
 	/**
@@ -522,86 +251,37 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
 	    
+	    params = [
+		          'customer_code',
+		          'invoice_date_from',
+		          'invoice_date_to',
+		          'collection_date_from',
+		          'collection_date_to',
+		          'posting_date_from',
+		          'posting_date_to'
+		];
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    });
-	    	
-	    }
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {page:$scope.page,page_limit:$scope.perpage};
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
-	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-				});
-	    	}
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log); 
+
 	}
 	
 	
@@ -617,20 +297,20 @@
 		
 		// Fetch table headers from server
 	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salesportpermaterial').query({}, function(data){
+	    $resource('/reports/getheaders/salesreportpermaterial').query({}, function(data){
 	    	$scope.tableHeaders = data;
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
-	    var API = $resource('/reports/getdata/salesportpermaterial');
-	    var params = {page:'1',page_limit:'10'};
+	    var API = $resource('/reports/getdata/salesreportpermaterial');
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
-	    	$log.info($scope.records);
+	    	$log.info(data);
 	    });	    
 	    
 	    params = [
@@ -641,6 +321,7 @@
 		          'salesman_code',
 		          'area',
 		          'customer_code',
+		          'customer',
 		          'material',
 		          'segment'
 		];
@@ -655,6 +336,28 @@
 		
 	    // Paginate table records	    
 	    pagination($scope,API,params,$log);
+	    
+	    
+	 // Update table records
+		$scope.update = function(data) {
+			if(confirm('Are you sure you want to delete this record?'))
+			{
+				$log.info(data);
+				//var status = false;
+				/*$http.post('/controller/reports/save',
+							{table:'user', id:'1', column:'firstname', value:'Test123'}
+				).success(function(response){
+					$log.info(response);
+					//status = true;
+				});*/
+				//alert(status);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
 	}
 
 	/**
@@ -669,17 +372,17 @@
 		
 		// Fetch table headers from server
 	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salesportperpeso').query({}, function(data){
+	    $resource('/reports/getheaders/salesreportperpeso').query({}, function(data){
 	    	$scope.tableHeaders = data;
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
-	    var API = $resource('/reports/getdata/salesportperpeso');
-	    var params = {page:'1',page_limit:'10'};
+	    var API = $resource('/reports/getdata/salesreportperpeso');
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -692,7 +395,8 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code'
+		          'customer_code',
+		          'customer'
 		];
 	    
 	    //Sort table records
@@ -705,6 +409,27 @@
 		
 	    // Paginate table records	    
 	    pagination($scope,API,params,$log);
+	    
+		 // Update table records
+		$scope.update = function(data) {
+			if(confirm('Is this correct?'))
+			{
+				$log.info(data);
+				//var status = false;
+				/*$http.post('/controller/reports/save',
+							{table:'user', id:'1', column:'firstname', value:'Test123'}
+				).success(function(response){
+					$log.info(response);
+					//status = true;
+				});*/
+				//alert(status);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
 	}
 	
 	
@@ -725,12 +450,12 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/returnreportpermaterial');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -778,12 +503,12 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/returnreportperpeso');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -830,12 +555,12 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/customerlist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -878,12 +603,12 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salesmanlist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -925,12 +650,12 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/materialpricelist');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
 	    	$log.info($scope.records);
@@ -975,86 +700,36 @@
 	    });
 	    
 	    // Fetch table data from server
-	    $scope.records = {};	    
+	    $scope.records = [];	    
 	    
 	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {page:'1',page_limit:'10'};
+	    var params = {};
 	    
-	    API.save(params,function(data){
+	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$log.info($scope.records);
 	    });	    
 	    
 	    
-	    // Filter table records
-	    $scope.filter = function(){
-	    	
-	    	params = {
-	    		customer_code: $('#customer_code').val(),
-	    		invoice_date_from: $('#invoice_date_from').val(),
-	    		invoice_date_to: $('#invoice_date_to').val(),
-	    		collection_date_from: $('#collection_date_from').val(),
-	    		collection_date_to: $('#collection_date_to').val(),
-	    		posting_date_from: $('#posting_date_from').val(),
-	    		posting_date_to: $('#posting_date_to').val(),
-	    		page:$scope.page,
-	    		page_limit:$scope.perpage
-	    	};
-	    	API.save(params,function(data){
-	    		$log.info(data);
-		    	$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-		    });
-	    	
-	    }
+	    params = [
+		          'customer_code',
+		          'area',
+		          'segment_code',
+		          'item_code',
+		          'status',
+		          'sfa_modified_date'
+		];
 	    
-	    // Paginate table records
-	    $scope.page = 1;
-	    $scope.perpage = 10;
-	    $scope.total = 100;
-	    $scope.paginate = function(page) {
-			$scope.perpage = page;
-			$scope.page = 1;
-			$('#limit'+page).parent().parent().find('.active').removeClass('active');
-			$('#limit'+page).parent().addClass('active');
-			
-			params = {page:$scope.page,page_limit:$scope.perpage};
-			API.save(params, function(data){
-				$log.info(data);
-				$scope.records = data.records;		    	
-		    	$scope.toggleFilter = true;
-			});
-		}
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
 	    
-	    // Pager table records
-	    $scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		$scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		$scope.page = $scope.total/$scope.perpage;
-	    		request = true;
-	    	}
-	    	else if(($scope.page + increment > 0 && $scope.page!=($scope.total/$scope.perpage))
-	    			|| (increment < 0 && $scope.page > 1))
-	    	{
-	    		$scope.page = $scope.page + increment;
-	    		request = true;
-	    	}	
-	    	if(request)
-	    	{
-	    		params = {page:$scope.page,page_limit:$scope.perpage};
-				API.save(params, function(data){
-					$log.info(data);
-					$scope.records = data.records;		    	
-			    	$scope.toggleFilter = true;
-				});
-	    	}
-		}
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
 	}
 
 	
@@ -1102,6 +777,26 @@
 			
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
+			});
+			log.info(filter);
+			
+	    	API.save(params,function(data){
+	    		log.info(data);
+		    	scope.records = data.records;		    	
+		    	scope.toggleFilter = true;
+		    });
+	    	
+	    }
+		
+		scope.reset = function(){
+	    	
+			params['page'] = scope.page;
+			params['page_limit'] = scope.perpage;
+			params['sort'] = scope.sortColumn;
+			params['order'] = scope.sortDirection;
+			
+			$.each(filter, function(key,val){
+				params[val] = '';
 			});
 			log.info(filter);
 			

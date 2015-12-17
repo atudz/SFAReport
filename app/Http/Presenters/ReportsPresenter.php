@@ -68,6 +68,7 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'permaterial':
+    			$this->view->customers = $this->getCustomer();
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->areas = $this->getArea();
@@ -771,7 +772,10 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+    				
+    			   	
+    			';
     	
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
@@ -779,8 +783,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -796,8 +800,14 @@ ORDER BY tas.reference_num ASC,
     						return $model->where('app_area.area_code','=',$self->getValue());
     				});
     	
+    	$customerCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerCodeFilter->addFilter($prepare,'customer_code');
+    	
     	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
+    	$prepare = $customerFilter->addFilter($prepare,'customer',
+    					function($self, $model){
+    						return $model->where('txn_sales_order_header.customer_code','=',$self->getValue());
+    					});
     	
     	$itemCodeFilter = FilterFactory::getInstance('Select');
     	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
@@ -851,12 +861,6 @@ ORDER BY tas.reference_num ASC,
 				   txn_sales_order_header.invoice_number,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   app_item_master.segment_code,
-				   app_item_master.item_code,
-				   app_item_master.description,
-				   txn_return_detail.quantity,
-				   txn_return_detail.condition_code,
-				   txn_return_detail.uom_code,
 				   txn_sales_order_detail.gross_served_amount,
 				   txn_sales_order_detail.vat_amount,
 				   txn_sales_order_detail.discount_rate,
@@ -877,11 +881,9 @@ ORDER BY tas.reference_num ASC,
 				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
 				    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
 				    	->leftJoin('txn_activity_salesman', function($join){
-				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num')
-				    		->where('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
+				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+				    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 				    	})
-				    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-				    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
 				    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
 				    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
     	
@@ -978,8 +980,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -1081,8 +1083,8 @@ ORDER BY tas.reference_num ASC,
     				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
     				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
     				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num')
-    						 ->where('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
+    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
+    					$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
     				})
     				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
     				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
@@ -1303,146 +1305,7 @@ ORDER BY tas.reference_num ASC,
     	return response()->json($data);
     	 
     }
-    
-    
-    
-    public function dummy()
-    {    	
-    /* 	return ['records' => [
-    			['name'=>'Abner Tudtud','age'=>'10','money'=>'10'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud','age'=>'10','money'=>'10'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    			['name'=>'Abner Tudtud1','age'=>'11','money'=>'101'],
-    	]]; */
-    	$data['records'] = [
-    			['a1'=>'1000_10003574',
-    				 'a2' =>'1000_BARDS-Blue Ice Store',
-    				 'a3' =>'',
-    				 'a4' => 'CBA0011',
-    				 'a5' => '08/03/2015',
-    				 'a6' => '1,562.50',
-    				 'a7' => '',
-    				 'a8' => '31.25',
-    				 'a9' => '1,531.25',
-    				 'a10' => '',
-    				 'a11' => '-',
-    				 'a12' => 'MBA0001',
-    				 'a13' => '107.8',
-    				 'a14' => '(2.16)',
-    				 'a15' => '105.64',
-    				 'a16' => '08/03/2015',
-    				 'a17' => 'CBA0011',
-    				 'a18' => '423.45',
-    				 'a19' => ' 1,000.00',
-    				 'a20' => 'MBTC Lahug',
-    				 'a21' => '133455',
-    				 'a22' => '08/15/2015',
-    				 'a23' => '',
-    				 'a24' => '',
-    				 'a25' => '',
-    				 'a26' => '',
-    				 'a27' => '1,423.45'
-    			],
-    
-    			['a1'=>'1000_10003615',
-    					'a2' =>'1000_BARDS-Dela Peña Store ',
-    					'a3' =>'',
-    					'a4' => 'CBA0012',
-    					'a5' => '08/03/2015',
-    					'a6' => '1,562.50',
-    					'a7' => '',
-    					'a8' => '31.25',
-    					'a9' => '1,531.25',
-    					'a10' => '',
-    					'a11' => '-',
-    					'a12' => 'MBA0002',
-    					'a13' => '210.70',
-    					'a14' => '(4.21)',
-    					'a15' => '206.49',
-    					'a16' => '08/03/2015',
-    					'a17' => 'CBA0012',
-    					'a18' => '423.45',
-    					'a19' => '1000<br>320.55',
-    					'a20' => 'BPI Carcar<br>BPI Pacific Mall',
-    					'a21' => '133455',
-    					'a22' => '08/15/2015',
-    					'a23' => '',
-    					'a24' => '',
-    					'a25' => '',
-    					'a26' => '',
-    					'a27' => '1,423.45'
-    			],
-    
-    
-    			['a1'=>'Total',
-    					'a2' =>'',
-    					'a3' =>'',
-    					'a4' => '',
-    					'a5' => '',
-    					'a6' => ' 3,125.00',
-    					'a7' => '',
-    					'a8' => '62.50',
-    					'a9' => ' 3,062.50',
-    					'a10' => '-',
-    					'a11' => '-',
-    					'a12' => '-',
-    					'a13' => ' 318.50',
-    					'a14' => ' (6.37)',
-    					'a15' => ' 312.13',
-    					'a16' => ' ',
-    					'a17' => '',
-    					'a18' => '-',
-    					'a19' => ' 423.45',
-    					'a20' => ' 2,320.55',
-    					'a21' => '',
-    					'a22' => '',
-    					'a23' => '',
-    					'a24' => '',
-    					'a25' => '',
-    					'a26' => '',
-    					'a27' => ' 2,744.00'
-    			],
-    
-    	];
-    	return $data;
-    }
-    
+        
     /**
      * Get Table Column Headers
      * @param unknown $type
@@ -1464,9 +1327,9 @@ ORDER BY tas.reference_num ASC,
     			return $this->getVanInventoryColumns();
     		case 'bir';
     			return $this->getBirColumns();
-    		case 'salesportpermaterial';
+    		case 'salesreportpermaterial';
     			return $this->getSalesReportMaterialColumns();
-    		case 'salesportperpeso';
+    		case 'salesreportperpeso';
     			return $this->getSalesReportPeso();
     		case 'returnpermaterial';
     			return $this->getReturnMaterial();
@@ -1855,6 +1718,17 @@ ORDER BY tas.reference_num ASC,
     				->lists('salesman_name','salesman_code');
     }
     
+    
+    /**
+     * Get Customers
+     * @return multitype:
+     */
+    public function getCustomer()
+    {
+    	return \DB::table('app_customer')
+    	->orderBy('customer_name')
+    	->lists('customer_name','customer_code');
+    }
     
     /**
      * Get Customer Code
