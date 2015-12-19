@@ -393,6 +393,46 @@ a.bg-danger:hover {
 	border-bottom-right-radius: 4px;
 }
 
+.rs-mini-toolbar {
+    position: fixed;
+    right: -115px;
+    top: 250px;
+    width: 150px;
+    padding: 0px 2px;
+    border: 1px solid #f1f1f1;
+    background: #f5f5f5;
+    z-index: 5000;
+}
+
+.rs-mini-toolbar .button-primary {
+    display: block;
+    height: 35px !important;
+    line-height: 35px !important;
+    padding: 0px 10px 1px;
+    color:#fff;
+    font-weight: bold;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    -ms-transition: all 0.2s ease-out;
+}
+
+.rs-mini-toolbar .button-primary i{
+	font-size: 18px;
+	padding-right: 10px;
+}
+
+.rs-mini-toolbar .button-primary:hover {
+    -webkit-transform: translateX(-110px);
+    transform: translateX(-110px);
+    -moz-transform: translateX(-110px);
+    text-decoration: none;
+}
+
+.revgreen {
+	background-color: #27ae60;
+}
+
 @media (max-width: 768px) {
 	.widget-right {
 	width: 100%;
