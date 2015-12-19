@@ -63,7 +63,7 @@
   							</a>
 						</td>
 						<td>
-							<a href="#" editable-text="record.condition_code" onbeforesave="update($data)">
+							<a href="#" editable-select="record.condition_code" onshow="conditionCodes()" e-ng-options="code.id as code.text for code in codes">
     							[[record.condition_code]]
   							</a>
 						</td>
@@ -83,6 +83,7 @@
 						<td>[[record.total_invoice]]</td>
 					</tr>
 					</tbody>
+					{!!Html::tfooter(true,33)!!}					
 				{!!Html::tclose()!!}
 			</div>			
 		</div>

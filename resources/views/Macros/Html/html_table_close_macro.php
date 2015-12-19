@@ -6,7 +6,7 @@ Html::macro('tclose', function($paginate=true) {
 
 	if($paginate)
 	{
-		$html .= '<div class="col-sm-12 fixed-table-pagination">
+		$html .= '<div class="col-sm-12 fixed-table-pagination" id="pagination_div">
 					<div class="pull-left pagination-detail">
 					<span class="pagination-info">Showing [[((perpage*page)-perpage)+1]] to [[perpage*page]] of [[total]] rows&nbsp;</span>
 					<span class="page-list">

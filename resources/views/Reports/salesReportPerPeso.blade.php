@@ -65,6 +65,7 @@
 						<td>[[record.total_invoice]]</td>
 					</tr>
 					</tbody>
+					{!!Html::tfooter(true,27)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			

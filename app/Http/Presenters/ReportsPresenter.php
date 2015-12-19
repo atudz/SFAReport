@@ -216,7 +216,9 @@ class ReportsPresenter extends PresenterCore
     		case 'salesmanlist';
     			return $this->getSalesmanList();
     		case 'materialpricelist';
-    			return $this->getMaterialPriceList();
+    			return $this->getMaterialPriceList();    			
+    		case 'conditioncodes';
+    			return $this->getConditionCodes();
     	}
     }
     
@@ -1798,6 +1800,18 @@ ORDER BY tas.reference_num ASC,
     {    	
     	$statusList = ['A'=>'Active','D'=>'Deleted','I'=>'Inactive',];    	
     	return $statusList;
+    }
+    
+    /**
+     * Get Condition Codes
+     */
+    public function getConditionCodes()
+    {
+    	$codes = [
+    		['id'=>'GOOD','text'=>'GOOD'],
+    		['id'=>'BAD','text'=>'BAD'],
+    	];
+    	return response()->json($codes);
     }
     
     /**

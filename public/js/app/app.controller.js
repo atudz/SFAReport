@@ -13,29 +13,8 @@
 	app.controller('SalesCollectionReport',['$scope','$resource','$log',SalesCollectionReport]);
 	
 	function SalesCollectionReport($scope, $resource, $log)
-	{	    
-	    // Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salescollectionreport').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    
-	    params = [
+	{	    	
+	    var params = [
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
@@ -45,16 +24,8 @@
 		          'posting_date_to'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller codes
+	    reportController($scope,$resource,'salescollectionreport',params,$log);
 	    
 	    // Update table records
 		$scope.update = function(data) {
@@ -86,28 +57,8 @@
 	app.controller('SalesCollectionPosting',['$scope','$resource','$log',SalesCollectionPosting]);
 	
 	function SalesCollectionPosting($scope, $resource, $log)
-	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salescollectionposting').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salescollectionposting');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	{		
+	    var params = [
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
@@ -117,17 +68,8 @@
 		          'posting_date_to'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
-	   
+	    // main controller 
+	    reportController($scope,$resource,'salescollectionposting',params,$log);	   
 	}
 	
 	
@@ -139,27 +81,7 @@
 	
 	function SalesCollectionSummary($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salescollectionreport').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	    var params = [
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
@@ -169,16 +91,8 @@
 		          'posting_date_to'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller 
+	    reportController($scope,$resource,'salescollectionsummary',params,$log);
 	}
 	
 	/**
@@ -188,29 +102,8 @@
 	app.controller('VanInventoryCanned',['$scope','$resource','$log',VanInventoryCanned]);
 	
 	function VanInventoryCanned($scope, $resource, $log)
-	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/vaninventory').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	{	
+	    var params = [
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
@@ -220,16 +113,8 @@
 		          'posting_date_to'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller
+	    reportController($scope,$resource,'vaninventory',params,$log);
 	    
 	}
 	
@@ -240,28 +125,8 @@
 	app.controller('VanInventoryFrozen',['$scope','$resource','$log',VanInventoryFrozen]);
 	
 	function VanInventoryFrozen($scope, $resource, $log)
-	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/vaninventory').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/vaninventory');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	{	        
+	    var params = [
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
@@ -271,16 +136,8 @@
 		          'posting_date_to'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log); 
+	    // main controller
+	    reportController($scope,$resource,'vaninventory',params,$log); 
 
 	}
 	
@@ -292,28 +149,7 @@
 	
 	function SalesReportPerMaterial($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salesreportpermaterial').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salesreportpermaterial');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info(data);
-	    });	    
-	    
-	    params = [
+		var params = [
 		          'posting_date_from',
 		          'posting_date_to',
 		          'return_date_from',
@@ -326,23 +162,22 @@
 		          'segment'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
+	    // main controller codes
+	    reportController($scope,$resource,'salesreportpermaterial',params,$log);
 	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    $scope.conditionCodes = function(){
+	    	API = $resource('/reports/getdata/conditioncodes');
+	    	API.get({},function(data){
+		    	$scope.codes = data;
+		    	$log.info(data);
+		    });
+	    }
 	    
-	    
-	 // Update table records
-		$scope.update = function(data) {
+	    // Update table records
+		$scope.update = function(data,object) {
 			if(confirm('Is this correct?'))
 			{
-				$log.info(data);
+				$log.info(object);
 				//var status = false;
 				/*$http.post('/controller/reports/save',
 							{table:'user', id:'1', column:'firstname', value:'Test123'}
@@ -367,28 +202,7 @@
 	
 	function SalesReportPerPeso($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salesreportperpeso').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salesreportperpeso');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+		var params = [
 		          'posting_date_from',
 		          'posting_date_to',
 		          'return_date_from',
@@ -399,16 +213,8 @@
 		          'customer'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller codes
+	    reportController($scope,$resource,'salesreportperpeso',params,$log);
 	    
 		 // Update table records
 		$scope.update = function(data) {
@@ -440,28 +246,7 @@
 	
 	function ReturnReportPerMaterial($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/returnreportpermaterial').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/returnreportpermaterial');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	    var params = [
 		          'posting_date_from',
 		          'posting_date_to',
 		          'return_date_from',
@@ -473,16 +258,8 @@
 		          'segment'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller codes
+	    reportController($scope,$resource,'returnreportpermaterial',params,$log);
 	}
 	
 	
@@ -493,28 +270,7 @@
 	
 	function ReturnReportPerPeso($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/returnreportperpeso').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/returnreportperpeso');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	    var params = [
 		          'posting_date_from',
 		          'posting_date_to',
 		          'return_date_from',
@@ -526,16 +282,8 @@
 		          'segment'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller codes
+	    reportController($scope,$resource,'returnreportperpeso',params,$log);
 	}
 	
 	/**
@@ -544,45 +292,16 @@
 	app.controller('CustomerList',['$scope','$resource','$log',CustomerList]);
 	
 	function CustomerList($scope, $resource, $log)
-	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/customerlist').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/customerlist');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	{	    	    
+	    var params = [
 		          'salesman_code',
 		          'area',
 		          'status',
 		          'sfa_modified_date'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller
+	    reportController($scope,$resource,'customerlist',params,$log);
 	}
 	
 	
@@ -593,44 +312,16 @@
 	
 	function SalesmanList($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salesmanlist').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salesmanlist');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+		var params = [
 		          'salesman_code',
 		          'area',
 		          'status',
 		          'sfa_modified_date'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
+	    // main controller
+	    reportController($scope,$resource,'salesmanlist',params,$log);
 	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
 	}
 	
 	/**
@@ -639,29 +330,8 @@
 	app.controller('MaterialPriceList',['$scope','$resource','$log',MaterialPriceList]);
 	
 	function MaterialPriceList($scope, $resource, $log)
-	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/materialpricelist').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/materialpricelist');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    params = [
+	{	
+	    var params = [
 		          'customer_code',
 		          'area',
 		          'segment_code',
@@ -670,16 +340,9 @@
 		          'sfa_modified_date'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller
+	    reportController($scope,$resource,'materialpricelist',params,$log);
+	 
 	}
 	
 	/**
@@ -690,28 +353,8 @@
 	
 	function Bir($scope, $resource, $log)
 	{
-		// Filter flag
-		$scope.toggleFilter = true;
-		
-		// Fetch table headers from server
-	    $scope.tableHeaders = {};
-	    $resource('/reports/getheaders/salescollectionreport').query({}, function(data){
-	    	$scope.tableHeaders = data;
-	    });
-	    
-	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
-	    var API = $resource('/reports/getdata/salescollectionreport');
-	    var params = {};
-	    
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$log.info($scope.records);
-	    });	    
-	    
-	    
-	    params = [
+			    
+	    var params = [
 		          'customer_code',
 		          'area',
 		          'segment_code',
@@ -720,16 +363,8 @@
 		          'sfa_modified_date'
 		];
 	    
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
-	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    // main controller
+	    reportController($scope,$resource,'bir',params,$log);
 	}
 
 	
@@ -780,10 +415,13 @@
 			});
 			log.info(filter);
 			
+			scope.toggleFilter = true;
+			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		log.info(data);
-		    	scope.records = data.records;		    	
-		    	scope.toggleFilter = true;
+	    		togglePagination(data.total);
+		    	scope.records = data.records;
+		    	toggleLoading();
 		    });
 	    	
 	    }
@@ -800,10 +438,13 @@
 			});
 			log.info(filter);
 			
+			scope.toggleFilter = true;
+			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		log.info(data);
-		    	scope.records = data.records;		    	
-		    	scope.toggleFilter = true;
+	    		togglePagination(data.total);
+		    	scope.records = data.records;		    			    	
+		    	toggleLoading();
 		    });
 	    	
 	    }
@@ -848,10 +489,13 @@
 			});
 			log.info(params);
 
+			scope.toggleFilter = true;
+			toggleLoading(true);
 			API.save(params, function(data){
 				log.info(data);
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
+		    	toggleLoading();
 			});
 		}
 	}
@@ -883,10 +527,13 @@
 				params[val] = $('#'+val).val();
 			});
 			log.info(params);
+			
+			toggleLoading(true);
 			API.save(params, function(data){
 				log.info(data);
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
+		    	toggleLoading();
 			});
 		}
 	    
@@ -911,13 +558,93 @@
 	    	}	
 	    	if(request)
 	    	{
+	    		toggleLoading(true);
 	    		params = {page:scope.page,page_limit:scope.perpage};
 				API.save(params, function(data){
 					log.info(data);
-					scope.records = data.records;		    	
+					scope.records = data.records;					
 			    	scope.toggleFilter = true;
+			    	toggleLoading();
 				});
 	    	}
+		}
+	}
+	
+	/**
+	 * Centralized controller codes
+	 */
+	function reportController(scope, resource, report, filter, log)
+	{
+		// Filter flag
+		scope.toggleFilter = true;
+		
+		// Fetch table headers from server
+	    scope.tableHeaders = {};
+	    resource('/reports/getheaders/'+report).query({}, function(data){
+	    	scope.tableHeaders = data;
+	    });
+	    
+	    // Fetch table data from server
+	    scope.records = [];	    
+	    
+	    var API = resource('/reports/getdata/'+report);
+	    var params = {};
+	    
+	    toggleLoading(true);
+	    API.get(params,function(data){
+	    	scope.records = data.records;
+	    	scope.total = data.total;
+	    	log.info(data);
+	    	toggleLoading();
+	    });	    	    
+	    
+	    params = filter;
+	    
+	    //Sort table records
+	    scope.sortColumn = '';
+		scope.sortDirection = 'asc';
+		sortColumn(scope,API,params,log);
+	    
+	    // Filter table records	    
+	    filterSubmit(scope,API,params,log);
+		
+	    // Paginate table records	    
+	    pagination(scope,API,params,log);
+	}
+	
+	/**
+	 * Toggle pagination div
+	 */
+	function togglePagination(show)
+	{
+		if(show)
+		{
+			$('#pagination_div').removeClass('hidden');
+		    $('#pagination_div').addClass('show');
+		}
+		else
+		{
+			$('#pagination_div').removeClass('show');
+		    $('#pagination_div').addClass('hidden');
+		    
+		}
+		$('#no_records_div').toggle();
+	}
+	
+	/**
+	 * Toggle loading div
+	 */
+	function toggleLoading(show)
+	{
+		if(show)
+		{
+			$('#loading_div').removeClass('hidden');
+		    $('#loading_div').addClass('show');
+		}
+		else
+		{
+			$('#loading_div').removeClass('show');
+		    $('#loading_div').addClass('hidden');
 		}
 	}
 	

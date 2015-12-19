@@ -12,7 +12,7 @@ Html::macro('topen', function($options=[]) {
 					<i class="glyphicon glyphicon-search"></i>
 						<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
 					</div>
-		      	</div>
+		      	</div>				
 		      	<div class="pull-right">					
 		      		<div class="btn-group" uib-dropdown dropdown-append-to-body>
 					      <button id="btn-append-to-body" type="button" class="btn btn-success btn-sm" uib-dropdown-toggle>
@@ -24,8 +24,10 @@ Html::macro('topen', function($options=[]) {
 					      </ul>
     				</div>
 		      	</div>
-			</div>
-			
+				<div class="col-sm-7 col-sm-offset-5 show" id="loading_div">
+					<span><i class="fa fa-spinner fa-lg fa-pulse"></i> Loading..</span>
+				</div>				
+			</div>			
 			<div class="col-sm-12 table-responsive">							
 			<table class="table table-striped table-condensed table-bordered"'.Html::attributes($options).'>';
 

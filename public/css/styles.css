@@ -939,7 +939,8 @@ h4.page-header,
 h5.page-header
 {
 	margin-top: 20px;
-	margin-bottom: 10px;
+	padding-bottom: 0px;
+	margin-bottom: 5px;
 	border-bottom: 0;
 }
 
