@@ -13,10 +13,10 @@ Html::macro('topen', function($options=[]) {
 						<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
 					</div>
 		      	</div>
-		      	<div class="pull-right">
+		      	<div class="pull-right">					
 		      		<div class="btn-group" uib-dropdown dropdown-append-to-body>
 					      <button id="btn-append-to-body" type="button" class="btn btn-success btn-sm" uib-dropdown-toggle>
-					        Download <span class="caret"></span>
+					        <i class="fa fa-download"></i> Download <span class="caret"></span>
 					      </button>
 					      <ul class="uib-dropdown-menu" role="menu" aria-labelledby="btn-append-to-body">
 					        <li role="menuitem"><a href="'.$xlsUrl.'">Excel</a></li>

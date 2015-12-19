@@ -58,7 +58,7 @@
 	    
 	    // Update table records
 		$scope.update = function(data) {
-			if(confirm('Are you sure you want to delete this record?'))
+			if(confirm('Is this correct?'))
 			{
 				//var status = false;
 				/*$http.post('/controller/reports/save',
@@ -340,7 +340,7 @@
 	    
 	 // Update table records
 		$scope.update = function(data) {
-			if(confirm('Are you sure you want to delete this record?'))
+			if(confirm('Is this correct?'))
 			{
 				$log.info(data);
 				//var status = false;
