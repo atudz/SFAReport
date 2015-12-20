@@ -40,6 +40,12 @@ class PresenterCore extends Controller
 	protected $view;
 		
 	/**
+	 * Valid excel export types
+	 * @var unknown
+	 */
+	protected $validExportTypes = ['xls','xlsx','pdf'];
+	
+	/**
 	 * Returns the Presenter Classes directory
 	 * @return string
 	 */
@@ -139,5 +145,31 @@ class PresenterCore extends Controller
 				'sortColumn' => $sortColumn,
 				'sortOrder' => $sortOrder,
 		]);
+	}
+	
+	/**
+	 * Export report excel or pdf file
+	 * @param unknown $type
+	 * @param unknown $filename
+	 * @param array $columns
+	 * @param array $rows
+	 * @param array $data
+	 */
+	public function export($type,$filename,array $columns, array $rows, array $data)
+	{
+		if(!in_array($type, $this->validExportTypes))
+		{
+			return;
+		}
+		
+		\Excel::create($filename, function($excel) use ($columns,$rows,$data){
+			$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$data){
+				$params['columns'] = $columns;
+				$params['rows'] = $rows;
+				$params['records'] = $data;
+				$sheet->loadView('Reports.export', $params);
+			});
+		
+		})->export($type);
 	}
 }

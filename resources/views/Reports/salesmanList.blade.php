@@ -33,6 +33,7 @@
 							<td>[[record.status]]</td>									
 						</tr>
 					</tbody>
+					{!!Html::tfooter(true,7)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			

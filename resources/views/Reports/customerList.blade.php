@@ -41,6 +41,7 @@
 						</tr>
 	
 					</tbody>
+					{!!Html::tfooter(true,15)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			

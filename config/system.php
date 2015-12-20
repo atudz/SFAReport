@@ -23,4 +23,7 @@ return [
 		
 	// Pagination limit default
 	'page_limit' => '25',
+		
+	// Report limit data export
+	'report_limit' => '5000',
 ];

@@ -10,9 +10,9 @@
 	 */
 	var app = angular.module('app');
 	
-	app.controller('SalesCollectionReport',['$scope','$resource','$log',SalesCollectionReport]);
+	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log',SalesCollectionReport]);
 	
-	function SalesCollectionReport($scope, $resource, $log)
+	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log)
 	{	    	
 	    var params = [
 		          'customer_code',
@@ -25,7 +25,7 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,'salescollectionreport',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log);
 	    
 	    // Update table records
 		$scope.update = function(data) {
@@ -54,9 +54,9 @@
 	 * Sales & Collection Posting controller
 	 */
 
-	app.controller('SalesCollectionPosting',['$scope','$resource','$log',SalesCollectionPosting]);
+	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log',SalesCollectionPosting]);
 	
-	function SalesCollectionPosting($scope, $resource, $log)
+	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log)
 	{		
 	    var params = [
 		          'customer_code',
@@ -69,7 +69,7 @@
 		];
 	    
 	    // main controller 
-	    reportController($scope,$resource,'salescollectionposting',params,$log);	   
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log);	   
 	}
 	
 	
@@ -77,9 +77,9 @@
 	 * Sales & Collection Summary controller
 	 */
 
-	app.controller('SalesCollectionSummary',['$scope','$resource','$log',SalesCollectionSummary]);
+	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log',SalesCollectionSummary]);
 	
-	function SalesCollectionSummary($scope, $resource, $log)
+	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
 		          'customer_code',
@@ -92,16 +92,16 @@
 		];
 	    
 	    // main controller 
-	    reportController($scope,$resource,'salescollectionsummary',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log);
 	}
 	
 	/**
 	 * Van & Inventory (Canned) controller
 	 */
 
-	app.controller('VanInventoryCanned',['$scope','$resource','$log',VanInventoryCanned]);
+	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log',VanInventoryCanned]);
 	
-	function VanInventoryCanned($scope, $resource, $log)
+	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log)
 	{	
 	    var params = [
 		          'customer_code',
@@ -114,7 +114,7 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'vaninventory',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'vaninventory',params,$log);
 	    
 	}
 	
@@ -122,9 +122,9 @@
 	 * Van & Inventory (Frozen) controller
 	 */
 
-	app.controller('VanInventoryFrozen',['$scope','$resource','$log',VanInventoryFrozen]);
+	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log',VanInventoryFrozen]);
 	
-	function VanInventoryFrozen($scope, $resource, $log)
+	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
 	{	        
 	    var params = [
 		          'customer_code',
@@ -137,7 +137,7 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'vaninventory',params,$log); 
+	    reportController($scope,$resource,$uibModal,$window,'vaninventory',params,$log); 
 
 	}
 	
@@ -145,9 +145,9 @@
 	/**
 	 * Sales Report Per Material
 	 */
-	app.controller('SalesReportPerMaterial',['$scope','$resource','$log',SalesReportPerMaterial]);
+	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',SalesReportPerMaterial]);
 	
-	function SalesReportPerMaterial($scope, $resource, $log)
+	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
 		          'posting_date_from',
@@ -163,8 +163,9 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,'salesreportpermaterial',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log);
 	    
+	    var API = '';
 	    $scope.conditionCodes = function(){
 	    	API = $resource('/reports/getdata/conditioncodes');
 	    	API.get({},function(data){
@@ -192,15 +193,18 @@
 			{
 				return false;
 			}
-		};
+		};	
+		
+		// Export report
+		downloadReport($scope, $uibModal,$resource, $window, 'salesreportpermaterial', $log);
 	}
 
 	/**
 	 * Sales Report Per Peso
 	 */
-	app.controller('SalesReportPerPeso',['$scope','$resource','$log',SalesReportPerPeso]);
+	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log',SalesReportPerPeso]);
 	
-	function SalesReportPerPeso($scope, $resource, $log)
+	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
 		          'posting_date_from',
@@ -214,7 +218,7 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,'salesreportperpeso',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
 	    
 		 // Update table records
 		$scope.update = function(data) {
@@ -242,9 +246,9 @@
 	/**
 	 * Return Report Per Material
 	 */
-	app.controller('ReturnReportPerMaterial',['$scope','$resource','$log',ReturnReportPerMaterial]);
+	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerMaterial]);
 	
-	function ReturnReportPerMaterial($scope, $resource, $log)
+	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
 		          'posting_date_from',
@@ -259,16 +263,16 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,'returnreportpermaterial',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'returnreportpermaterial',params,$log);
 	}
 	
 	
 	/**
 	 * Return Report Per Peso
 	 */
-	app.controller('ReturnReportPerPeso',['$scope','$resource','$log',ReturnReportPerPeso]);
+	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerPeso]);
 	
-	function ReturnReportPerPeso($scope, $resource, $log)
+	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
 		          'posting_date_from',
@@ -283,15 +287,15 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,'returnreportperpeso',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'returnreportperpeso',params,$log);
 	}
 	
 	/**
 	 * Customer List
 	 */
-	app.controller('CustomerList',['$scope','$resource','$log',CustomerList]);
+	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log',CustomerList]);
 	
-	function CustomerList($scope, $resource, $log)
+	function CustomerList($scope, $resource, $uibModal, $window, $log)
 	{	    	    
 	    var params = [
 		          'salesman_code',
@@ -301,16 +305,16 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'customerlist',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log);
 	}
 	
 	
 	/**
 	 * Salesman List
 	 */
-	app.controller('SalesmanList',['$scope','$resource','$log',SalesmanList]);
+	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log',SalesmanList]);
 	
-	function SalesmanList($scope, $resource, $log)
+	function SalesmanList($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
 		          'salesman_code',
@@ -320,16 +324,16 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'salesmanlist',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log);
 	    
 	}
 	
 	/**
 	 * Material Price List
 	 */
-	app.controller('MaterialPriceList',['$scope','$resource','$log',MaterialPriceList]);
+	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log',MaterialPriceList]);
 	
-	function MaterialPriceList($scope, $resource, $log)
+	function MaterialPriceList($scope, $resource, $uibModal, $window, $log)
 	{	
 	    var params = [
 		          'customer_code',
@@ -341,7 +345,7 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'materialpricelist',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log);
 	 
 	}
 	
@@ -349,9 +353,9 @@
 	 * Bir controller
 	 */
 
-	app.controller('Bir',['$scope','$resource','$log',Bir]);
+	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log',Bir]);
 	
-	function Bir($scope, $resource, $log)
+	function Bir($scope, $resource, $uibModal, $window, $log)
 	{
 			    
 	    var params = [
@@ -364,7 +368,7 @@
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,'bir',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'bir',params,$log);
 	}
 
 	
@@ -571,9 +575,49 @@
 	}
 	
 	/**
+	 * Export report
+	 */
+	function downloadReport(scope, modal, resource, window, report, log)
+	{
+		scope.download = function(type){
+			
+			var API = resource('/reports/getcount/'+report);
+			API.get({}, function(data){
+			
+				log.info(data);
+				if(data.max_limit)
+				{
+					scope.params = {
+							chunks: data.staggered,
+							title: 'Export ' + angular.uppercase(type),
+							limit: data.limit,
+							exportType: type,
+							report: report
+					};
+		
+					var modalInstance = modal.open({
+						 	animation: true,
+							templateUrl: 'exportModal',
+							controller: 'ExportReport',
+							resolve: {
+								params: function () {
+									return scope.params;
+							    }
+							}
+					});
+				 }
+				 else
+				 {
+					 window.location.href = '/reports/export/'+type+'/'+report;
+				}
+			});
+		}	
+	}
+	
+	/**
 	 * Centralized controller codes
 	 */
-	function reportController(scope, resource, report, filter, log)
+	function reportController(scope, resource, modal, window, report, filter, log)
 	{
 		// Filter flag
 		scope.toggleFilter = true;
@@ -596,6 +640,7 @@
 	    	scope.total = data.total;
 	    	log.info(data);
 	    	toggleLoading();
+	    	togglePagination(data.total);
 	    });	    	    
 	    
 	    params = filter;
@@ -610,6 +655,9 @@
 		
 	    // Paginate table records	    
 	    pagination(scope,API,params,log);
+	    
+	    // Download report
+	    downloadReport(scope, modal, resource, window, report, log)
 	}
 	
 	/**
@@ -621,14 +669,14 @@
 		{
 			$('#pagination_div').removeClass('hidden');
 		    $('#pagination_div').addClass('show');
+		    $('#no_records_div').hide();
 		}
 		else
 		{
 			$('#pagination_div').removeClass('show');
 		    $('#pagination_div').addClass('hidden');
-		    
-		}
-		$('#no_records_div').toggle();
+		    $('#no_records_div').show();
+		}		
 	}
 	
 	/**
@@ -647,5 +695,31 @@
 		    $('#loading_div').addClass('hidden');
 		}
 	}
+	
+	
+	/**
+	 * Export report controller
+	 */
+	app.controller('ExportReport',['$scope','$uibModalInstance','$window','params','$log', ExportReport]);
+	
+	function ExportReport($scope, $uibModalInstance, $window, params, $log) {
+
+		$scope.params = params;
+
+	  $scope.offset = 0;
+	  
+	  $scope.selectItem = function(range){
+		 $scope.offset = range;
+	  }
+	  
+	  $scope.download = function () {
+	    $uibModalInstance.close(true);
+		$window.location.href = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
+	  };
+
+	  $scope.cancel = function () {
+	    $uibModalInstance.dismiss('cancel');
+	  };
+	};
 	
 })();

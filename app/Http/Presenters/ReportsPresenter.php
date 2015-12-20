@@ -9,12 +9,12 @@ use Illuminate\Database\Query\Builder;
 
 class ReportsPresenter extends PresenterCore
 {
-	
 	/**
 	 * Valid excel export types
 	 * @var unknown
 	 */
-	protected $validExportTypes = ['xls','pdf'];
+	
+	protected $validExportTypes = ['xls','xlsx','pdf']; 
 	
     /**
      * Display main dashboard
@@ -750,7 +750,7 @@ ORDER BY tas.reference_num ASC,
     public function getSalesReportMaterial()
     {
     
-    	$prepare = $this->getPreparedSalesReportPerMaterial(); 
+    	$prepare = $this->getPreparedSalesReportMaterial(); 
     	
 		$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -806,7 +806,7 @@ ORDER BY tas.reference_num ASC,
      * Returns the prepared statement for Sales Report Per Material
      * @return Builder 
      */
-    public function getPreparedSalesReportPerMaterial()
+    public function getPreparedSalesReportMaterial()
     {
     	$select = 'txn_sales_order_header.so_number,
 			  	   txn_sales_order_header.reference_num,
@@ -862,51 +862,15 @@ ORDER BY tas.reference_num ASC,
 		return $prepare;	    	
     }
     
+    
+    
     /**
      * Get Sales Report Per Peso
      * @return \Illuminate\Http\JsonResponse
      */
     public function getSalesReportPeso()
     {
-    	$select = 'txn_sales_order_header.so_number,
-			  	   txn_sales_order_header.reference_num,
-				   txn_activity_salesman.activity_code,
-				   txn_sales_order_header.customer_code,
-				   app_customer.customer_name,
-				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
-				   txn_sales_order_header.van_code,
-				   txn_sales_order_header.device_code,
-				   txn_sales_order_header.salesman_code,
-				   app_salesman.salesman_name,
-				   app_area.area_name area,
-				   txn_sales_order_header.invoice_number,
-				   txn_sales_order_header.so_date invoice_date,
-				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   txn_sales_order_detail.gross_served_amount,
-				   txn_sales_order_detail.vat_amount,
-				   txn_sales_order_detail.discount_rate,
-				   txn_sales_order_detail.discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
-    	 
-    	$prepare = \DB::table('txn_sales_order_header')
-				    	->selectRaw($select)
-				    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
-				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-				    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
-				    	->leftJoin('txn_activity_salesman', function($join){
-				    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
-				    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
-				    	})
-				    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-				    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+    	$prepare = $this->getPreparedSalesReportPeso();
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -950,6 +914,55 @@ ORDER BY tas.reference_num ASC,
     	$data['total'] = $result->total();
     	
     	return response()->json($data);
+    }
+    
+    /**
+     * Return Sales Report per peso prepared statement
+     * @return unknown
+     */
+    public function getPreparedSalesReportPeso()
+    {
+    	$select = 'txn_sales_order_header.so_number,
+			  	   txn_sales_order_header.reference_num,
+				   txn_activity_salesman.activity_code,
+				   txn_sales_order_header.customer_code,
+				   app_customer.customer_name,
+				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+				   txn_sales_order_header.van_code,
+				   txn_sales_order_header.device_code,
+				   txn_sales_order_header.salesman_code,
+				   app_salesman.salesman_name,
+				   app_area.area_name area,
+				   txn_sales_order_header.invoice_number,
+				   txn_sales_order_header.so_date invoice_date,
+				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
+				   txn_sales_order_detail.gross_served_amount,
+				   txn_sales_order_detail.vat_amount,
+				   txn_sales_order_detail.discount_rate,
+				   txn_sales_order_detail.discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
+				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+    	 
+    	$prepare = \DB::table('txn_sales_order_header')
+			    	->selectRaw($select)
+			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+			    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
+			    	->leftJoin('txn_activity_salesman', function($join){
+			    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
+			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
+			    	})
+			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	
+		return $prepare;
     }
     
     /**
@@ -1153,32 +1166,8 @@ ORDER BY tas.reference_num ASC,
     public function getCustomerList()
     {
     
-    	$select = '
-    			app_customer.customer_code,
-				app_customer.customer_name,
-				app_customer.address_1 address,
-				app_customer.area_code,
-				app_area.area_name,
-				app_customer.storetype_code,
-				app_storetype.storetype_name,
-				app_customer.vatposting_code,
-				app_customer.vat_ex_flag,
-				app_customer.customer_price_group,
-				app_salesman.salesman_code,
-				app_salesman.salesman_name,
-				app_salesman_van.van_code,
-				app_customer.sfa_modified_date,
-				IF(app_customer.status=\'A\',\'Active\',IF(app_customer.status=\'I\',\'Inactive\',\'Deleted\')) status
-    			';
+    	$prepare = $this->getPreparedCustomerList();
     	
-    	$prepare = \DB::table('app_customer')
-    				->selectRaw($select)
-    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-    				->leftJoin('app_storetype','app_customer.storetype_code','=','app_storetype.storetype_code')
-    				->leftJoin('app_salesman_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
-    				->leftJoin('app_salesman','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
-    				->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
-    
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
     					function($self,$model){
@@ -1212,28 +1201,47 @@ ORDER BY tas.reference_num ASC,
     }
     
     /**
+     * Get Customer List prepared statement
+     */
+    public function getPreparedCustomerList()
+    {
+    	$select = '
+    			app_customer.customer_code,
+				app_customer.customer_name,
+				app_customer.address_1 address,
+				app_customer.area_code,
+				app_area.area_name,
+				app_customer.storetype_code,
+				app_storetype.storetype_name,
+				app_customer.vatposting_code,
+				app_customer.vat_ex_flag,
+				app_customer.customer_price_group,
+				app_salesman.salesman_code,
+				app_salesman.salesman_name,
+				app_salesman_van.van_code,
+				app_customer.sfa_modified_date,
+				IF(app_customer.status=\'A\',\'Active\',IF(app_customer.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
+    	 
+    	$prepare = \DB::table('app_customer')
+		    	->selectRaw($select)
+		    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+		    	->leftJoin('app_storetype','app_customer.storetype_code','=','app_storetype.storetype_code')
+		    	->leftJoin('app_salesman_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+		    	->leftJoin('app_salesman','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
+		    	->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
+    	
+    	return $prepare;
+    }
+    
+    /**
      * Get Salesman List
      * @return \Illuminate\Http\JsonResponse
      */
     public function getSalesmanList()
     {
     
-    	$select = '
-    			app_salesman.salesman_code,
-    			app_salesman.salesman_name,
-    			app_customer.area_code,
-				app_area.area_name,
-    			app_salesman_van.van_code,
-    			app_salesman.sfa_modified_date,
-				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
-    			';
-    	
-    	$prepare = \DB::table('app_salesman')
-    				->selectRaw($select)
-    				->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
-    				->leftJoin('app_customer','app_salesman_customer.customer_code','=','app_customer.customer_code')
-    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-    				->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
+    	$prepare = $this->getPreparedSalesmanList();
     
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1265,6 +1273,31 @@ ORDER BY tas.reference_num ASC,
     
     	return response()->json($data);
     	
+    }
+    
+    /**
+     * Return Salesman List prepared statement
+     * @return unknown
+     */
+    public function getPreparedSalesmanList()
+    {
+    	$select = '
+    			app_salesman.salesman_code,
+    			app_salesman.salesman_name,
+    			app_customer.area_code,
+				app_area.area_name,
+    			app_salesman_van.van_code,
+    			app_salesman.sfa_modified_date,
+				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
+    	 
+    	$prepare = \DB::table('app_salesman')
+		    	->selectRaw($select)
+		    	->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
+		    	->leftJoin('app_customer','app_salesman_customer.customer_code','=','app_customer.customer_code')
+		    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+		    	->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
+    	return $prepare;
     }
     
     /**
@@ -1351,11 +1384,11 @@ ORDER BY tas.reference_num ASC,
     		case 'salesreportpermaterial';
     			return $this->getSalesReportMaterialColumns();
     		case 'salesreportperpeso';
-    			return $this->getSalesReportPeso();
+    			return $this->getSalesReportPesoColumns();
     		case 'returnpermaterial';
-    			return $this->getReturnMaterial();
+    			return $this->getReturnReportMaterialColumns();
     		case 'returnperpeso';
-    			return $this->getReturntPeso();
+    			return $this->getReturnReportPerPesoColumns();
     		case 'customerlist';
     			return $this->getCustomerListColumns();
     		case 'salesmanlist';
@@ -1819,12 +1852,18 @@ ORDER BY tas.reference_num ASC,
      * @param unknown $type
      * @param unknown $report
      */
-    public function export($type, $report)
-    {
+    public function exportReport($type, $report, $page='')
+    {    	
     	if(!in_array($type, $this->validExportTypes))
     	{
     		return;
     	}
+    	
+    	$records = [];
+    	$columns = [];
+    	$rows = [];
+    	$filename = 'Report';
+    	$prepare = '';
     	
     	switch($report)
     	{
@@ -1842,69 +1881,364 @@ ORDER BY tas.reference_num ASC,
     			return $this->getBir();
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns('salesreportpermaterial');
-    			$prepare = $this->getPreparedSalesReportPerMaterial();
-    			$records = $prepare->get();
-    			//$this->view->columns = $columns;
-    			$rows = [
-    					'so_number',
-    					'reference_num',
-    					'activity_code',
-    					'customer_code',
-    					'customer_name',
-    					'remarks',
-    					'van_code',
-    					'device_code',
-    					'salesman_code',
-    					'salesman_name',
-    					'area',
-    					'invoice_number',
-    					'invoice_date',    						
-    					'invoice_posting_date',
-    					'segment_code',
-    					'item_code',
-    					'description',
-    					'quantity',
-    					'condition_code',
-    					'uom_code',
-    					'gross_served_amount',
-    					'vat_amount',    					
-    					'discount_rate',
-    					'discount_amount',
-    					'collective_discount_rate',
-    					'collective_discount_amount',
-    					'discount_reference_num',
-    					'discount_remarks',
-    					'collective_deduction_rate',
-    					'collective_deduction_amount',
-    					'deduction_reference_num',
-    					'deduction_remarks',
-    					'total_invoice',    					
-    			];
-    			//$this->view->rows = $rows;
-    			//$this->view->records = $records;
-    			\Excel::create('Sales Reprot(Per Material)', function($excel) use ($columns,$rows,$records){
-    				$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
-    					$data['columns'] = $columns;
-    					$data['rows'] = $rows;
-    					$data['records'] = $records;
-    					$sheet->loadView('Reports.export', $data);    				
-    				});
-    				
-    			})->export('xlsx');
-    			//return $this->view('export');
-    			//dd($prepare->get());
+    			$prepare = $this->getPreparedSalesReportMaterial();
+    			$rows = $this->getSalesReportMaterialSelectColumns();
+    			$filename = 'Sales Report(Per Material)';
+    			break;
     		case 'salesreportperpeso';
-    			return $this->getSalesReportPeso();
+    			$columns = $this->getTableColumns('salesreportperpeso');
+    			$prepare = $this->getPreparedSalesReportPeso();
+    			$rows = $this->getSalesReportPesoSelectColumns();
+    			$filename = 'Sales Report(Per Peso)';
+    			break;
     		case 'returnpermaterial';
-    			return $this->getReturnMaterial();
+    			$columns = $this->getTableColumns('salesreportperpeso');
+    			$prepare = $this->getPreparedSalesReportPeso();
+    			$rows = $this->getReturnReportMaterialSelectColumns();
+    			$filename = 'Return Report(Per Peso)';
+    			break;
     		case 'returnperpeso';
-    			return $this->getReturntPeso();
+    			$columns = $this->getTableColumns('salesreportperpeso');
+    			$prepare = $this->getPreparedSalesReportPeso();
+    			$rows = $this->getReturnReportPesoSelectColumns();
+    			$filename = 'Return Report(Per Peso)';
+    			break;
     		case 'customerlist';
-    			return $this->getCustomerList();
+    			$columns = $this->getTableColumns('customerlist');
+    			$prepare = $this->getPreparedCustomerList();
+    			$rows = $this->getCustomerSelectColumns();
+    			$filename = 'Customer List';
+    			break;
     		case 'salesmanlist';
-    			return $this->getSalesmanList();
+    			$columns = $this->getTableColumns('salesmanlist');    			
+    			$prepare = $this->getPreparedSalesmanList();
+    			$rows = $this->getSalesmanSelectColumns();
+    			$filename = 'Salesman List';
+    			break;
     		case 'materialpricelist';
-    			return $this->getMaterialPriceList();
+    			$columns = $this->getTableColumns('materialpricelist');
+    			$prepare = $this->getPreparedSalesReportPeso();
+    			$rows = $this->getMaterialPriceSelectColumns();
+    			$filename = 'Sales Report(Per Peso)';
+    			break;
+    		default:
+    			return;
     	}	
+    	
+    	$total = $prepare->getCountForPagination();
+    	if(!$total)
+    	{
+    		
+    	}
+    	
+    	
+    	$limit = config('system.report_limit');
+    	if($limit < $total)
+    	{
+    		$prepare = $prepare->take($limit);
+    	}
+    	
+    	$records = $prepare->get();
+    	//dd($rows);
+    	//dd($records);
+    	//$this->view->columns = $columns;    	    
+    	//$this->view->rows = $rows;
+    	//$this->view->records = $records;
+    	//return $this->view('export');
+    	    
+    	\Excel::create($filename, function($excel) use ($columns,$rows,$records){
+    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
+    			$params['columns'] = $columns;
+    			$params['rows'] = $rows;
+    			$params['records'] = $records;
+    			$sheet->loadView('Reports.export', $params);
+    		});
+    	
+    	})->export($type);
+    }
+    
+    /**
+     * Return sales material select columns
+     * @return multitype:string
+     */
+    public function getSalesReportMaterialSelectColumns()
+    {
+    	return [
+    		'so_number',
+    		'reference_num',
+    		'activity_code',
+    		'customer_code',
+    		'customer_name',
+    		'remarks',
+    		'van_code',
+    		'device_code',
+    		'salesman_code',
+    		'salesman_name',
+    		'area',
+    		'invoice_number',
+    		'invoice_date',    						
+    		'invoice_posting_date',
+    		'segment_code',
+    		'item_code',
+    		'description',
+    		'quantity',
+    		'condition_code',
+    		'uom_code',
+    		'gross_served_amount',
+    		'vat_amount',    					
+    		'discount_rate',
+    		'discount_amount',
+    		'collective_discount_rate',
+    		'collective_discount_amount',
+    		'discount_reference_num',
+    		'discount_remarks',
+    		'collective_deduction_rate',
+    		'collective_deduction_amount',
+    		'deduction_reference_num',
+    		'deduction_remarks',
+    		'total_invoice',    					
+    	]; 
+    }
+    
+    
+    /**
+     * Get return  material select columns
+     * @return multitype:string
+     */
+    public function getReturnReportMaterialSelectColumns()
+    {
+    	return [
+    			'return_txn_number',
+    			'reference_num',
+    			'activity_code',
+    			'customer_code',
+    			'customer_name',
+    			'remarks',
+    			'van_code',
+    			'device_code',
+    			'salesman_code',
+    			'salesman_name',
+    			'area',
+    			'return_slip_num',
+    			'return_date',
+    			'return_posting_date',
+    			'segment_code',
+    			'item_code',
+    			'description',
+    			'condition_code',
+    			'quantity',    			 
+    			'uom_code',    			
+    			'gross_served_amount',
+    			'vat_amount',
+    			'discount_rate',
+    			'discount_amount',
+    			'collective_discount_rate',
+    			'collective_discount_amount',
+    			'discount_reference_num',
+    			'discount_remarks',
+    			'total_invoice',
+    	];
+    }
+    
+    /**
+     * Get return  peso select columns
+     * @return multitype:string
+     */
+    public function getReturnReportPesoSelectColumns()
+    {
+    	return [
+    			'return_txn_number',
+    			'reference_num',
+    			'activity_code',
+    			'customer_code',
+    			'customer_name',
+    			'remarks',
+    			'van_code',
+    			'device_code',
+    			'salesman_code',
+    			'salesman_name',
+    			'area',
+    			'return_slip_num',
+    			'return_date',
+    			'return_posting_date',
+    			'gross_served_amount',
+    			'vat_amount',
+    			'discount_rate',
+    			'discount_amount',
+    			'collective_discount_rate',
+    			'collective_discount_amount',
+    			'discount_reference_num',
+    			'discount_remarks',
+    			'total_invoice',
+    	];
+    }
+    
+    /**
+     * Return sales material select columns
+     * @return multitype:string
+     */
+    public function getSalesReportPesoSelectColumns()
+    {
+    	return [
+    			'so_number',
+    			'reference_num',
+    			'activity_code',
+    			'customer_code',
+    			'customer_name',
+    			'remarks',
+    			'van_code',
+    			'device_code',
+    			'salesman_code',
+    			'salesman_name',
+    			'area',
+    			'invoice_number',
+    			'invoice_date',
+    			'invoice_posting_date',    			
+    			'gross_served_amount',
+    			'vat_amount',
+    			'discount_rate',
+    			'discount_amount',
+    			'collective_discount_rate',
+    			'collective_discount_amount',
+    			'discount_reference_num',
+    			'discount_remarks',
+    			'collective_deduction_rate',
+    			'collective_deduction_amount',
+    			'deduction_reference_num',
+    			'deduction_remarks',
+    			'total_invoice',
+    	];
+    }
+    
+    
+    /**
+     * Return customer list select columns
+     * @return multitype:string
+     */
+    public function getCustomerSelectColumns()
+    {
+    	return [
+    			'customer_code',
+    			'customer_name',
+    			'address',
+    			'area_code',
+    			'area_name',
+    			'storetype_code',
+    			'storetype_name',
+    			'vatposting_code',
+    			'vat_ex_flag',
+    			'customer_price_group',
+    			'salesman_code',
+    			'salesman_name',
+    			'van_code',
+    			'sfa_modified_date',
+    			'status',
+    	];
+    }
+    
+    
+    /**
+     * Return salesman list select columns
+     * @return multitype:string
+     */
+    public function getSalesmanSelectColumns()
+    {
+    	return [
+    			'salesman_code',
+    			'salesman_name',    			 
+    			'area_code',
+    			'area_name',
+    			'van_code',
+    			'sfa_modified_date',
+    			'status',
+    	];
+    }
+    
+    
+    /**
+     * Return material price list select columns
+     * @return multitype:string
+     */
+    public function getMaterialPriceSelectColumns()
+    {
+    	return [
+    			'item_code',
+    			'item_description',
+    			'uom_code',
+    			'segment_code',
+    			'unit_price',
+    			'customer_price_group',
+    			'effective_date_from',
+    			'effective_date_to',
+    			'area_name',
+    			'sfa_modified_date',
+    			'status',
+    	];
+    }
+    
+    
+    /**
+     * Get report data count
+     * @param string $report
+     * @return JSON the data count
+     */
+    public function getDataCount($report)
+    {
+    	$data = [];
+    	$prepare = '';
+    	switch($report)
+    	{
+    		case 'salesreportpermaterial':
+    			$prepare = $this->getPreparedSalesReportMaterial();
+    			break;
+    		case 'salesreportperpeso':
+    			$prepare = $this->getPreparedSalesReportPeso();
+    			break;
+    		case 'returnpermaterial':
+    			//$prepare = $this->get
+    			break;
+    		case 'returnperpeso':
+    			break;
+    		case 'customerlist':
+    			$prepare = $this->getPreparedCustomerList();
+    			break;
+    		case 'salesmanlist':
+    			$prepare = $this->getPreparedSalesmanList();
+    			break;
+    		case 'materialpricelist':
+    			break;
+    		default:
+    			return;
+    	}
+    	
+    	$total = $prepare->getCountForPagination();
+    	$limit = config('system.report_limit');
+    	$data['total'] = $total;
+    	$data['limit'] = $limit;
+    	if($total > $limit)
+    	{
+    		$data['max_limit'] = true;
+    		$counter = 0;
+    		$staggered = [];
+    		for($i=0;$i < floor($total/$limit);$i++)
+    		{
+    			$from = $counter + 1;
+    			$to = $counter + $limit;
+    			$staggered[]  = ['from'=>$from,'to'=>$to];
+    			$counter = $to;
+    		}
+    		if($counter < $total)
+    		{
+    			$staggered[] = ['from'=>$counter+1,'to'=>$counter+($total-$counter)];
+    		}
+    		$data['staggered'] = $staggered;
+    	}
+    	else 
+    	{
+    		$data['max_limit'] = false;
+    		$data['staggered'] = [];
+    	}
+    	
+    	return response()->json($data);
     }
 }
