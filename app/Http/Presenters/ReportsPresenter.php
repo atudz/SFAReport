@@ -1852,7 +1852,7 @@ ORDER BY tas.reference_num ASC,
      * @param unknown $type
      * @param unknown $report
      */
-    public function exportReport($type, $report, $page='')
+    public function exportReport($type, $report, $offset=1)
     {    	
     	if(!in_array($type, $this->validExportTypes))
     	{
@@ -1925,36 +1925,43 @@ ORDER BY tas.reference_num ASC,
     			return;
     	}	
     	
-    	$total = $prepare->getCountForPagination();
-    	if(!$total)
-    	{
-    		
-    	}
-    	
-    	
-    	$limit = config('system.report_limit');
-    	if($limit < $total)
-    	{
-    		$prepare = $prepare->take($limit);
-    	}
+    	if(in_array($type,['xls','xlsx']))
+    		$limit = config('system.report_limit_xls');
+    	else 
+    		$limit = config('system.report_limit_pdf');
+    	$prepare = $prepare->skip($offset)->take($limit);    	
     	
     	$records = $prepare->get();
     	//dd($rows);
     	//dd($records);
-    	//$this->view->columns = $columns;    	    
-    	//$this->view->rows = $rows;
-    	//$this->view->records = $records;
-    	//return $this->view('export');
-    	    
-    	\Excel::create($filename, function($excel) use ($columns,$rows,$records){
-    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
-    			$params['columns'] = $columns;
-    			$params['rows'] = $rows;
-    			$params['records'] = $records;
-    			$sheet->loadView('Reports.export', $params);
-    		});
-    	
-    	})->export($type);
+    	/* $this->view->columns = $columns;    	    
+    	$this->view->rows = $rows;
+    	$this->view->records = $records;
+    	return $this->view('exportPdf'); */
+    	if(in_array($type,['xls','xlsx']))
+    	{    
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
+	    			$params['columns'] = $columns;
+	    			$params['rows'] = $rows;
+	    			$params['records'] = $records;
+	    			$sheet->loadView('Reports.exportXls', $params);
+	    		});
+	    	
+	    	})->export($type);
+    	}
+    	elseif($type == 'pdf')
+    	{
+    		\Excel::create($filename, function($excel) use ($columns,$rows,$records){
+    			$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
+    				$params['columns'] = $columns;
+    				$params['rows'] = $rows;
+    				$params['records'] = $records;
+    				$sheet->loadView('Reports.exportPdf', $params);
+    			});
+    		
+    		})->export($type);
+    	}
     }
     
     /**
@@ -2182,7 +2189,7 @@ ORDER BY tas.reference_num ASC,
      * @param string $report
      * @return JSON the data count
      */
-    public function getDataCount($report)
+    public function getDataCount($report, $type='xls')
     {
     	$data = [];
     	$prepare = '';
@@ -2212,7 +2219,10 @@ ORDER BY tas.reference_num ASC,
     	}
     	
     	$total = $prepare->getCountForPagination();
-    	$limit = config('system.report_limit');
+    	if(in_array($type,['xls','xlsx']))
+    		$limit = config('system.report_limit_xls');
+    	else
+    		$limit = config('system.report_limit_pdf');
     	$data['total'] = $total;
     	$data['limit'] = $limit;
     	if($total > $limit)

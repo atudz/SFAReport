@@ -195,8 +195,6 @@
 			}
 		};	
 		
-		// Export report
-		downloadReport($scope, $uibModal,$resource, $window, 'salesreportpermaterial', $log);
 	}
 
 	/**
@@ -581,7 +579,7 @@
 	{
 		scope.download = function(type){
 			
-			var API = resource('/reports/getcount/'+report);
+			var API = resource('/reports/getcount/'+report+'/'+type);
 			API.get({}, function(data){
 			
 				log.info(data);
@@ -705,21 +703,20 @@
 	function ExportReport($scope, $uibModalInstance, $window, params, $log) {
 
 		$scope.params = params;
-
-	  $scope.offset = 0;
+		$scope.offset = 0;
 	  
-	  $scope.selectItem = function(range){
-		 $scope.offset = range;
-	  }
+		$scope.selectItem = function(range){
+			$scope.offset = range;
+		}
 	  
-	  $scope.download = function () {
-	    $uibModalInstance.close(true);
-		$window.location.href = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
-	  };
+		$scope.download = function () {
+			$uibModalInstance.close(true);
+			$window.location.href = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
+		};
 
-	  $scope.cancel = function () {
-	    $uibModalInstance.dismiss('cancel');
-	  };
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
 	};
 	
 })();
