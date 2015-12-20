@@ -18,7 +18,7 @@
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 				
-				{!!Html::topen()!!}
+				{!!Html::topen(['no_download'=>true])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<tr ng-repeat="record in records|filter:query">

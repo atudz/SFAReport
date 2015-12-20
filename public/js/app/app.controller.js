@@ -583,7 +583,11 @@
 			API.get({}, function(data){
 			
 				log.info(data);
-				if(data.max_limit)
+				if(!data.total)
+				{
+					window.alert('No data to export.');
+				}
+				else if(data.max_limit)
 				{
 					scope.params = {
 							chunks: data.staggered,

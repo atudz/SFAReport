@@ -972,6 +972,60 @@ ORDER BY tas.reference_num ASC,
     public function getReturnMaterial()
     {
     
+    	$prepare = $this->getPreparedReturnMaterial();
+    	
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());
+    				});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
+    	
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    					 function($self, $model){
+    						return $model->where('app_item_master.item_code','=',$self->getValue());	 	
+    				});
+    	
+    	$segmentCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
+    					function($self, $model){
+    						return $model->where('app_item_master.segment_code','=',$self->getValue());
+    				});
+    
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',	
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    				});
+    	 
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    					function($self, $model){
+    						return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    				});
+    	
+    	
+    	//dd($prepare->toSql());
+    	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    
+    
+    	return response()->json($data);
+    }
+    
+    /**
+     * Return prepared statemen for return material
+     * @return unknown
+     */
+    public function getPreparedReturnMaterial()
+    {
     	$select = '
     			txn_return_header.return_txn_number,
 				txn_return_header.reference_num,
@@ -1007,65 +1061,23 @@ ORDER BY tas.reference_num ASC,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
 				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
     			';
-    	
-    	$prepare = \DB::table('txn_return_header')
-    				->selectRaw($select)
-    				->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
-    				->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-    				->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
-    				->leftJoin('txn_activity_salesman', function($join){
-    					$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
-    					$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');	
-    				})
-    				->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
-    				->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-    				->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-    				->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
-    	    	
-    	$areaFilter = FilterFactory::getInstance('Select');
-    	$prepare = $areaFilter->addFilter($prepare,'area',
-    					function($self, $model){
-    						return $model->where('app_area.area_code','=',$self->getValue());
-    				});
-    	
-    	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code');
-    	
-    	$itemCodeFilter = FilterFactory::getInstance('Select');
-    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
-    					 function($self, $model){
-    						return $model->where('app_item_master.item_code','=',$self->getValue());	 	
-    				});
-    	
-    	$segmentCodeFilter = FilterFactory::getInstance('Select');
-    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
-    					function($self, $model){
-    						return $model->where('app_item_master.segment_code','=',$self->getValue());
-    				});
-    
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',	
-    					function($self, $model){
-    						return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
-    				});
     	 
-    	$postingFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
-    					function($self, $model){
-    						return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
-    			});
+    	$prepare = \DB::table('txn_return_header')
+			    	->selectRaw($select)
+			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
+			    	->leftJoin('txn_activity_salesman', function($join){
+			    		$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
+			    		$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');
+			    	})
+			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
+			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+			    	->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	
+		return $prepare;	    	
     	
-    	
-    	//dd($prepare->toSql());
-    	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
-    	$data['total'] = $result->total();
-    
-    
-    	return response()->json($data);
     }
     
     /**
@@ -1306,28 +1318,8 @@ ORDER BY tas.reference_num ASC,
      */
     public function getMaterialPriceList()
     {
-    
-    	$select = '
-    			app_item_master.item_code,
-    			app_item_master.description,
-    			app_item_master_uom.uom_code,
-				app_item_master.segment_code,
-    			app_item_price.unit_price,
-    			app_item_price.customer_price_group,
-    			app_item_price.effective_date_from,
-    			app_item_price.effective_date_to,
-    			app_area.area_name,
-    			app_item_master.sfa_modified_date,
-				IF(app_item_master.status=\'A\',\'Active\',IF(app_item_master.status=\'I\',\'Inactive\',\'Deleted\')) status
-    			';
-    	 
-    	$prepare = \DB::table('app_item_master')
-    					->selectRaw($select)
-				    	->leftJoin('app_item_master_uom','app_item_master.item_code','=','app_item_master_uom.item_code')
-				    	->leftJoin('app_item_price','app_item_master.item_code','=','app_item_price.item_code')
-				    	->leftJoin('app_customer','app_item_price.customer_price_group','=','app_customer.customer_price_group')
-				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
-    
+    	$prepare = $this->getPrepareMaterialPriceList();
+    	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     
@@ -1355,11 +1347,39 @@ ORDER BY tas.reference_num ASC,
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
     
-    
     	return response()->json($data);
     	 
     }
-        
+
+    /**
+     * Return prepared statement for material price list
+     * @return unknown
+     */
+    public function getPrepareMaterialPriceList()
+    {
+    	$select = '
+    			app_item_master.item_code,
+    			app_item_master.description,
+    			app_item_master_uom.uom_code,
+				app_item_master.segment_code,
+    			app_item_price.unit_price,
+    			app_item_price.customer_price_group,
+    			app_item_price.effective_date_from,
+    			app_item_price.effective_date_to,
+    			app_area.area_name,
+    			app_item_master.sfa_modified_date,
+				IF(app_item_master.status=\'A\',\'Active\',IF(app_item_master.status=\'I\',\'Inactive\',\'Deleted\')) status
+    			';
+    	
+    	$prepare = \DB::table('app_item_master')
+			    	->selectRaw($select)
+			    	->leftJoin('app_item_master_uom','app_item_master.item_code','=','app_item_master_uom.item_code')
+			    	->leftJoin('app_item_price','app_item_master.item_code','=','app_item_price.item_code')
+			    	->leftJoin('app_customer','app_item_price.customer_price_group','=','app_customer.customer_price_group')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
+    	return $prepare;
+    }
+    
     /**
      * Get Table Column Headers
      * @param unknown $type
@@ -2202,7 +2222,7 @@ ORDER BY tas.reference_num ASC,
     			$prepare = $this->getPreparedSalesReportPeso();
     			break;
     		case 'returnpermaterial':
-    			//$prepare = $this->get
+    			$prepare = $this->getPreparedReturnMaterial();
     			break;
     		case 'returnperpeso':
     			break;
@@ -2213,6 +2233,7 @@ ORDER BY tas.reference_num ASC,
     			$prepare = $this->getPreparedSalesmanList();
     			break;
     		case 'materialpricelist':
+    			$prepare = $this->getPrepareMaterialPriceList();
     			break;
     		default:
     			return;
