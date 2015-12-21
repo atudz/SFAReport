@@ -48,7 +48,7 @@ class SelectFilter extends FilterCore
 		elseif($this->request->get($name))
 		{
 			$value = $this->request->get($name);
-			if(!is_array($value))
+			if(!is_array($value) && self::MULTIPLE_SELECT == $this->selectType)
 			{
 				$value = array($value);
 			}

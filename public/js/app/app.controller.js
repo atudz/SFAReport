@@ -110,7 +110,8 @@
 		          'collection_date_from',
 		          'collection_date_to',
 		          'posting_date_from',
-		          'posting_date_to'
+		          'posting_date_to',
+		          'inventory_type'
 		];
 	    
 	    // main controller
@@ -156,7 +157,7 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code',
+		          'company_code',
 		          'customer',
 		          'material',
 		          'segment'
@@ -211,7 +212,7 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code',
+		          'company_code',
 		          'customer'
 		];
 	    
@@ -255,7 +256,7 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code',
+		          'company_code',
 		          'material',
 		          'segment'
 		];
@@ -279,7 +280,7 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
-		          'customer_code',
+		          'company_code',
 		          'material',
 		          'segment'
 		];
@@ -299,6 +300,7 @@
 		          'salesman_code',
 		          'area',
 		          'status',
+		          'company_code',
 		          'sfa_modified_date'
 		];
 	    
@@ -318,6 +320,7 @@
 		          'salesman_code',
 		          'area',
 		          'status',
+		          'company_code',
 		          'sfa_modified_date'
 		];
 	    
@@ -334,7 +337,7 @@
 	function MaterialPriceList($scope, $resource, $uibModal, $window, $log)
 	{	
 	    var params = [
-		          'customer_code',
+		          'company_code',
 		          'area',
 		          'segment_code',
 		          'item_code',
@@ -423,6 +426,7 @@
 	    		log.info(data);
 	    		togglePagination(data.total);
 		    	scope.records = data.records;
+		    	scope.total = data.total;
 		    	toggleLoading();
 		    });
 	    	
@@ -575,17 +579,28 @@
 	/**
 	 * Export report
 	 */
-	function downloadReport(scope, modal, resource, window, report, log)
+	function downloadReport(scope, modal, resource, window, report, filter, log)
 	{
 		scope.download = function(type){
 			
-			var API = resource('/reports/getcount/'+report+'/'+type);
+			var url = '/reports/getcount/'+report+'/'+type;
+			var delimeter = '?';
+			var query = '';
+			$.each(filter, function(index,val){
+				if(index > 0)
+					delimeter = '&';
+				query += delimeter + val + '=' + $('#'+val).val();				
+			});
+			url += query;
+			log.info(url);
+			
+			var API = resource(url);
 			API.get({}, function(data){
 			
 				log.info(data);
 				if(!data.total)
 				{
-					window.alert('No data to export.');
+					window.alert('No records to export.');
 				}
 				else if(data.max_limit)
 				{
@@ -594,7 +609,8 @@
 							title: 'Export ' + angular.uppercase(type),
 							limit: data.limit,
 							exportType: type,
-							report: report
+							report: report,
+							filter: filter
 					};
 		
 					var modalInstance = modal.open({
@@ -610,7 +626,7 @@
 				 }
 				 else
 				 {
-					 window.location.href = '/reports/export/'+type+'/'+report;
+					 window.location.href = '/reports/export/'+type+'/'+report+query;
 				}
 			});
 		}	
@@ -659,7 +675,7 @@
 	    pagination(scope,API,params,log);
 	    
 	    // Download report
-	    downloadReport(scope, modal, resource, window, report, log)
+	    downloadReport(scope, modal, resource, window, report, filter, log);
 	}
 	
 	/**
@@ -715,7 +731,16 @@
 	  
 		$scope.download = function () {
 			$uibModalInstance.close(true);
-			$window.location.href = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
+			
+			var url = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
+			var delimeter = '?';
+			$.each(params.filter, function(index,val){
+				if(index > 0)
+					delimeter = '&';
+				url += delimeter + val + '=' + $('#'+val).val();				
+			});
+			$log.info(url);
+			$window.location.href = url;
 		};
 
 		$scope.cancel = function () {

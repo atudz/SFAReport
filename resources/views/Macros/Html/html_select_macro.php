@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 Html::macro('select', function($name, $label, $list=[], $default='All') {
 
 	$options = [
@@ -7,7 +8,11 @@ Html::macro('select', function($name, $label, $list=[], $default='All') {
 		'id' => $name
 	];
 	
-	$list = array_merge([$default], $list);
+	if($list instanceof  Collection)
+		$list = $list->prepend($default);
+	else
+		$list = [$default] + $list;
+	
 	$html = '<div class="form-group form-group-sm">
 			 	<label for="'.$name.'" class="col-sm-3 control-label">'.$label.'</label>
 			 	<div class="col-sm-6">'.

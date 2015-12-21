@@ -9,7 +9,7 @@
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
-						{!!Html::select('customer_code','Company Code', $customerCode)!!}
+						{!!Html::select('company_code','Company', $companyCode)!!}
 						{!!Html::select('area','Area', $areas)!!}						
 						{!!Html::select('segment_code','Segment', $segmentCodes)!!}
 						{!!Html::select('item_code','Material', $items)!!}

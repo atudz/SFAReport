@@ -11,10 +11,11 @@
 					<div class="pull-left col-sm-6">
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
-						{!!Html::select('status','Status', $statuses)!!}
+						{!!Html::select('status','Status', $statuses)!!}						
 					</div>					
 					<div class="pull-right col-sm-6">	
-						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}																			 		
+						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}
+						{!!Html::select('company_code','Company', $companyCode)!!}																			 		
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

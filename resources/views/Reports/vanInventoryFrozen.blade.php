@@ -31,7 +31,7 @@
 						</tr>
 					</tbody>
 				{!!Html::tclose()!!}
-				
+				<input type="hidden" id="inventory_type" value="canned">
 			</div>			
 		</div>
 	</div>

@@ -11,7 +11,7 @@
 					<div class="pull-left col-sm-6">
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
-						{!!Html::select('customer_code','Customer Code', $customerCode)!!}
+						{!!Html::select('company_code','Company', $companyCode)!!}
 					</div>					
 					<div class="pull-right col-sm-6">	
 						{!!Html::datepicker('sfa_modified_date','SFA Modified date',true)!!}
