@@ -171,6 +171,10 @@ class ReportsPresenter extends PresenterCore
      */
     public function unpaidInvoice()
     {
+    	$this->view->salesman = $this->getSalesman();
+    	$this->view->customers = $this->getCustomer();
+    	$this->view->companyCode = $this->getCompanyCode();
+    	$this->view->tableHeaders = $this->getUnpaidColumns();
     	return $this->view('unpaidInvoice');
     }
     /**
@@ -1514,6 +1518,25 @@ ORDER BY tas.reference_num ASC,
     }
     
     
+    /**
+     * Return unpaid columns
+     * @return multitype:multitype:string
+     */
+    public function getUnpaidColumns()
+    {
+    	$headers = [
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area Name','sort'=>'area_name'],
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Invoice Number','sort'=>'invoice_number'],
+    			['name'=>'Original Amount'],
+    			['name'=>'Balance Amount', 'sort'=>'balance_amount']
+    	];
+    	
+    	return $headers;
+    }
     /**
      * Get Sales Collection Posting Table Headers
      * @return \Illuminate\Http\JsonResponse

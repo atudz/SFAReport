@@ -13,6 +13,7 @@ class TxnReplenishmentHeader extends Migration
     public function up()
     {
         Schema::create('txn_replenishment_header', function(Blueprint $table) {
+        	$table->integer('replenishment_header_id');
 			$table->string('reference_number', 20);
 			$table->string('van_code', 20);
 			$table->dateTime('replenishment_date');
@@ -23,7 +24,7 @@ class TxnReplenishmentHeader extends Migration
 			$table->string('status', 2);
 			$table->dateTime('updated_at')->nullable();
 			$table->integer('updated_by')->index()->default('0');
-			$table->primary('reference_number');
+			$table->primary('replenishment_header_id');
 		});
     }
 

@@ -84,8 +84,8 @@
 				// Unpaid Invoice
 				.when('/unpaid',{
 					templateUrl: '/reports/unpaidinvoice',
-					/*controller: 'Unpaid',
-					controllerAs: 'up'*/
+					controller: 'Unpaid',
+					//controllerAs: 'up'*/
 				})
 				// bir
 				.when('/bir',{

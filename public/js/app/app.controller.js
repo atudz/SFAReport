@@ -144,6 +144,25 @@
 	
 	
 	/**
+	 * Unpaid Report
+	 */
+	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log',Unpaid]);
+	
+	function Unpaid($scope, $resource, $uibModal, $window, $log)
+	{
+		var params = [
+			          'company_code',
+			          'invoice_date_from',
+			          'invoice_date_to',
+			          'salesman',
+			          'customer'
+			];
+		    
+		    // main controller
+		    reportController($scope,$resource,$uibModal,$window,'unpaid',params,$log);
+	}
+	
+	/**
 	 * Sales Report Per Material
 	 */
 	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',SalesReportPerMaterial]);

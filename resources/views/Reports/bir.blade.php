@@ -21,8 +21,8 @@
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 					</tbody>
-				{!!Html::tclose()!!}
-				
+					{!!Html::tfooter(true,17)!!}
+				{!!Html::tclose()!!}				
 			</div>			
 		</div>
 	</div>
