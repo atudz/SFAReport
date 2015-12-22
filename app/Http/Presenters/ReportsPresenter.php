@@ -102,7 +102,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->areas = $this->getArea();
-    			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();    			
+    			$this->view->tableHeaders = $this->getReturnReportPerPesoColumns();    			
     			return $this->view('returnsPerPeso');
     		case 'customerlist':
     			$this->view->salesman = $this->getSalesman();
@@ -1841,7 +1841,8 @@ ORDER BY tas.reference_num ASC,
     public function getSalesman()
     {
     	return \DB::table('app_salesman')
-    				->orderBy('salesman_name')
+    				->where('status','=','A')
+    				->orderBy('salesman_name')    				
     				->lists('salesman_name','salesman_code');
     }
     
@@ -1853,6 +1854,7 @@ ORDER BY tas.reference_num ASC,
     public function getCustomer()
     {
     	return \DB::table('app_customer')
+    	->where('status','=','A')
     	->orderBy('customer_name')
     	->lists('customer_name','customer_code');
     }
@@ -1887,6 +1889,7 @@ ORDER BY tas.reference_num ASC,
     public function getArea()
     {
     	return \DB::table('app_area')
+    			->where('status','=','A')
     			->orderBy('area_name')
     			->lists('area_name','area_code');
     }
@@ -1897,6 +1900,7 @@ ORDER BY tas.reference_num ASC,
     public function getItems()
     {
     	return \DB::table('app_item_master')
+    			->where('status','=','A')
     			->orderBy('description')
     			->lists('description','item_code');
     }
@@ -1907,6 +1911,7 @@ ORDER BY tas.reference_num ASC,
     public function getItemSegmentCode()
     {
     	return \DB::table('app_item_segment')
+    			->where('status','=','A')
     			->orderBy('segment_code')
     			->lists('segment_code','item_segment_id');
     }

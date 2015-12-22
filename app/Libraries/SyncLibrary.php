@@ -80,6 +80,8 @@ class SyncLibrary extends LibraryCore
 				$stmt->execute();
 				$data = $stmt->fetchAll(PDO::FETCH_ASSOC);		
 				
+				$data = $this->formatData($data);
+				
 				$count = count($data);
 				if($count > $limit)
 				{
@@ -134,6 +136,26 @@ class SyncLibrary extends LibraryCore
 	{
 		$filename = date('Y-m-d') . '.log';
 		return file_put_contents(config('sync.dir').$filename, $message, FILE_APPEND);		
+	}
+	
+	/**
+	 * Format data to correct type
+	 * @param unknown $data
+	 * @return multitype:
+	 */
+	public function formatData($data)
+	{
+		foreach($data as $key=>$value)
+		{
+			foreach($value as $col=>$val)
+			{
+				if(false !== strpos($col, 'date'))
+				{
+					$data[$key][$col] = new \DateTime($val);
+				}
+			}
+		}
+		return $data;
 	}
 }
 

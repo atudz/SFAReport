@@ -281,7 +281,7 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'returnreportpermaterial',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log);
 	}
 	
 	
@@ -305,7 +305,7 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'returnreportperpeso',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log);
 	}
 	
 	/**

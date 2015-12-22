@@ -26,7 +26,7 @@
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 					<tr ng-repeat="record in records|filter:query">
-						<td>[[record.so_number]]</td>
+						<td>[[record.return_txn_number]]</td>
 						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
@@ -37,14 +37,14 @@
 						<td>[[record.salesman_code]]</td>
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
-						<td>[[record.invoice_number]]</td>
-						<td>[[record.invoice_date]]</td>
-						<td>[[record.invoice_posting_date]]</td>
+						<td>[[record.return_slip_num]]</td>
+						<td>[[record.return_date]]</td>
+						<td>[[record.return_posting_date]]</td>
 						<td>[[record.segment_code]]</td>
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
-						<td>[[record.quantity]]</td>
 						<td>[[record.condition_code]]</td>
+						<td>[[record.quantity]]</td>						
 						<td>[[record.uom_code]]</td>
 						<td>[[record.gross_seved_amount]]</td>
 						<td>[[record.vat_amount]]</td>
@@ -53,11 +53,7 @@
 						<td>[[record.collective_discount_rate]]</td>
 						<td>[[record.collective_discount_amount]]</td>
 						<td>[[record.discount_reference_num]]</td>
-						<td>[[record.discount_remarks]]</td>
-						<td>[[record.collective_deduction_rate]]</td>
-						<td>[[record.collective_deduction_amount]]</td>
-						<td>[[record.deduction_reference_num]]</td>
-						<td>[[record.deduction_remarks]]</td>
+						<td>[[record.discount_remarks]]</td>						
 						<td>[[record.total_invoice]]</td>
 					</tr>
 					</tbody>

@@ -26,6 +26,8 @@
 							<td>[[record.invoice_date]]</td>
 							<td>[[record.invoice_number]]</td>
 							<td>[[record.return_slip_num]]</td>
+							<td></td>
+							<td></td>
 							<td>[[record.replenishment_date]]</td>
 							<td>[[record.replenishment_number]]</td>
 						</tr>
