@@ -865,13 +865,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
 			    			});
 			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
 			    			});
 
 		return $prepare;	    	
@@ -971,13 +971,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
 			    			});
 			    	 
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
 			    			});			    	
 		return $prepare;
     }
@@ -1086,13 +1086,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
 			    			});
 			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
 			    			});
 			    	
 		return $prepare;	    	
@@ -1191,13 +1191,13 @@ ORDER BY tas.reference_num ASC,
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
     			function($self, $model){
-    				return $model->whereBetween('txn_sales_order_header.so_date',$self->getValue());
+    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
     			});
     	
     	$postingFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $postingFilter->addFilter($prepare,'posting_date',
     			function($self, $model){
-    				return $model->whereBetween('txn_sales_order_header.sfa_modified_date',$self->getValue());
+    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
     			});
     	
     	return $prepare;
@@ -1982,13 +1982,13 @@ ORDER BY tas.reference_num ASC,
     			$filename = 'Sales Report(Per Peso)';
     			break;
     		case 'returnpermaterial';
-    			$columns = $this->getTableColumns('salesreportperpeso');
-    			$prepare = $this->getPreparedSalesReportPeso();
+    			$columns = $this->getTableColumns('returnpermaterial');
+    			$prepare = $this->getPreparedReturnMaterial();
     			$rows = $this->getReturnReportMaterialSelectColumns();
-    			$filename = 'Return Report(Per Peso)';
+    			$filename = 'Return Report(Per Material)';
     			break;
     		case 'returnperpeso';
-    			$columns = $this->getTableColumns('salesreportperpeso');
+    			$columns = $this->getTableColumns('returnperpeso');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getReturnReportPesoSelectColumns();
     			$filename = 'Return Report(Per Peso)';
@@ -2297,6 +2297,7 @@ ORDER BY tas.reference_num ASC,
     			$prepare = $this->getPreparedReturnMaterial();
     			break;
     		case 'returnperpeso':
+    			$prepare = $this->getPreparedReturnPeso();
     			break;
     		case 'customerlist':
     			$prepare = $this->getPreparedCustomerList();

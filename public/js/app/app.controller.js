@@ -320,7 +320,8 @@
 		          'area',
 		          'status',
 		          'company_code',
-		          'sfa_modified_date'
+		          'sfa_modified_date_from',
+		          'sfa_modified_date_to',
 		];
 	    
 	    // main controller
@@ -340,7 +341,8 @@
 		          'area',
 		          'status',
 		          'company_code',
-		          'sfa_modified_date'
+		          'sfa_modified_date_from',
+		          'sfa_modified_date_to'
 		];
 	    
 	    // main controller
@@ -361,7 +363,8 @@
 		          'segment_code',
 		          'item_code',
 		          'status',
-		          'sfa_modified_date'
+		          'sfa_modified_date_from',
+		          'sfa_modified_date_to'
 		];
 	    
 	    // main controller
@@ -384,7 +387,8 @@
 		          'segment_code',
 		          'item_code',
 		          'status',
-		          'sfa_modified_date'
+		          'sfa_modified_date_from',
+		          'sfa_modified_date_to'
 		];
 	    
 	    // main controller
