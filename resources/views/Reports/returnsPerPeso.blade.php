@@ -22,7 +22,7 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					<tr ng-repeat="record in records|filter:query">
+					<tr ng-repeat="record in records|filter:query" class=[[record.updated]]>
 						<td>[[record.return_txn_number]]</td>
 						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>

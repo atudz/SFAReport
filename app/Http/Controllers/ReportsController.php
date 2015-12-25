@@ -23,12 +23,16 @@ class ReportsController extends ControllerCore
 		$id = $request->get('id');
 		
 		$syncTables = config('sync.sync_tables');
-		
-		if($pk = $syncTables[$table])
+		if($pk = array_shift($syncTables[$table]))
 		{
-			return \DB::table($table)->where($pk,$id)->update([$column => $value]);	
+			\DB::table($table)->where($pk,$id)->update([
+					$column => $value,
+					'updated_at' => new \DateTime(),
+					'updated_by' => auth()->user()->id,
+			]);	
 		}
 		
-		return true;	
+		$data['success'] = true;
+		return response()->json($data);	
 	}
 }

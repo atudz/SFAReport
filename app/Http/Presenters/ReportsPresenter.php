@@ -777,7 +777,8 @@ ORDER BY tas.reference_num ASC,
      */
     public function getPreparedSalesReportMaterial()
     {
-    	$select = 'txn_sales_order_header.so_number,
+    	$select = 'txn_sales_order_header.sales_order_header_id,
+    			   txn_sales_order_header.so_number,
 			  	   txn_sales_order_header.reference_num,
 				   txn_activity_salesman.activity_code,
 				   txn_sales_order_header.customer_code,
@@ -794,6 +795,7 @@ ORDER BY tas.reference_num ASC,
 				   app_item_master.segment_code,
 				   app_item_master.item_code,
 				   app_item_master.description,
+    			   txn_return_detail.return_detail_id,
 				   txn_return_detail.quantity,
 				   txn_return_detail.condition_code,
 				   txn_return_detail.uom_code,
@@ -809,9 +811,24 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
-    	
-    		
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+     			   IF(txn_sales_order_header.updated_by,\'modified\',
+    					IF(app_customer.updated_by,\'modified\',
+    						IF(app_area.updated_by,\'modified\',
+    							IF(app_salesman.updated_by,\'modified\',
+    								IF(txn_activity_salesman.updated_by,\'modified\',
+    									IF(txn_return_detail.updated_by,\'modified\',
+    										IF(app_item_master.updated_by,\'modified\',
+    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
+    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
+    											   )
+    										   )
+    									  )
+    								  )
+    							)
+    						 )
+    				    )
+    			  ) updated  		
     			';
     	 
     	$prepare = \DB::table('txn_sales_order_header')
@@ -927,7 +944,21 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice';
+				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+	    			IF(txn_sales_order_header.updated_by,\'modified\',
+	    					IF(app_customer.updated_by,\'modified\',
+	    						IF(app_area.updated_by,\'modified\',
+	    							IF(app_salesman.updated_by,\'modified\',
+	    								IF(txn_activity_salesman.updated_by,\'modified\',
+	    									IF(txn_sales_order_header_discount.updated_by,\'modified\',
+	    										IF(txn_sales_order_detail.updated_by,\'modified\',\'\')	    											 
+	    									  )
+	    								  )
+	    							)
+	    						 )
+	    				    )
+	    			  ) updated
+    			';
     	 
     	$prepare = \DB::table('txn_sales_order_header')
 			    	->selectRaw($select)
@@ -1039,7 +1070,24 @@ ORDER BY tas.reference_num ASC,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+    			IF(txn_return_header.updated_by,\'modified\',
+    					IF(app_customer.updated_by,\'modified\',
+    						IF(app_area.updated_by,\'modified\',
+    							IF(app_salesman.updated_by,\'modified\',
+    								IF(txn_activity_salesman.updated_by,\'modified\',
+    									IF(txn_return_detail.updated_by,\'modified\',
+    										IF(app_item_master.updated_by,\'modified\',
+    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
+    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
+    											   )
+    										   )
+    									  )
+    								  )
+    							)
+    						 )
+    				    )
+    			  ) updated 
     			';
     	 
     	$prepare = \DB::table('txn_return_header')
@@ -1156,7 +1204,24 @@ ORDER BY tas.reference_num ASC,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice
+				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+    			IF(txn_return_header.updated_by,\'modified\',
+    					IF(app_customer.updated_by,\'modified\',
+    						IF(app_area.updated_by,\'modified\',
+    							IF(app_salesman.updated_by,\'modified\',
+    								IF(txn_activity_salesman.updated_by,\'modified\',
+    									IF(txn_return_detail.updated_by,\'modified\',
+    										IF(app_item_master.updated_by,\'modified\',
+    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
+    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
+    											   )
+    										   )
+    									  )
+    								  )
+    							)
+    						 )
+    				    )
+    			  ) updated
     			';
     	 
     	$prepare = \DB::table('txn_return_header')
@@ -1931,8 +1996,10 @@ ORDER BY tas.reference_num ASC,
     public function getConditionCodes()
     {
     	$codes = [
-    		['id'=>'GOOD','text'=>'GOOD'],
-    		['id'=>'BAD','text'=>'BAD'],
+    		'GOOD' => 'GOOD',
+    		'BAD' => 'BAD'	
+    		/* ['id'=>'GOOD','text'=>'GOOD'],
+    		['id'=>'BAD','text'=>'BAD'], */
     	];
     	return response()->json($codes);
     }

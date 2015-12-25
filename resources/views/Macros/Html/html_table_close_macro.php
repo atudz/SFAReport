@@ -4,6 +4,54 @@ Html::macro('tclose', function($paginate=true) {
 
 	$html = '</table>';
 
+	$html .= '
+			<script type="text/ng-template" id="EditColumnText">
+        		<div class="modal-body">				
+					<form class="form-inline">
+				         <div class="form-group">
+							<input type="text" ng-model="params.value" class="form-control input-sm">
+						 </div>
+						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
+						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
+					</form>   										 					
+				</div>			    			
+    		</script>
+			
+			<script type="text/ng-template" id="EditColumnSelect">
+        		<div class="modal-body">				
+					<form class="form-inline">
+				         <div class="form-group">
+							<select class="form-control" ng-model="params.value">
+							  <option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+							</select>
+						 </div>
+						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
+						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
+					</form>   										 					
+				</div>			    			
+    		</script>
+
+			<script type="text/ng-template" id="EditColumnDate">
+        		<div class="modal-body">				
+					<form class="form-inline">
+				         <div class="form-group">
+							<div class="col-sm-8" data-ng-controller="Calendar">
+							 	<p class="input-group">
+									<input type="hidden" id="default_value" ng-model="params.value">	
+							 		<input type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" />
+							 		<span class="input-group-btn">
+							 			<button type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
+							 		</span>
+							 	</p>
+						 	</div>
+						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
+						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
+					</form>   										 					
+				</div>			    			
+    		</script>
+			
+			
+			';
 	if($paginate)
 	{
 		$html .= '<div class="col-sm-12 fixed-table-pagination" id="pagination_div">

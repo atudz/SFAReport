@@ -194,27 +194,10 @@
 		    });
 	    }
 	    
-	    // Update table records
-		$scope.update = function(data,object) {
-			if(confirm('Is this correct?'))
-			{
-				$log.info(object);
-				//var status = false;
-				/*$http.post('/controller/reports/save',
-							{table:'user', id:'1', column:'firstname', value:'Test123'}
-				).success(function(response){
-					$log.info(response);
-					//status = true;
-				});*/
-				//alert(status);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		};	
-		
+	    //Edit table records
+	    //var selectAPI = '/reports/getdata/conditioncodes';
+	    var options = {GOOD:'GOOD',BAD:'BAD'};
+	    editTable($scope, $uibModal, $resource, $window, options, $log);
 	}
 
 	/**
@@ -238,26 +221,7 @@
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
 	    
-		 // Update table records
-		$scope.update = function(data) {
-			if(confirm('Is this correct?'))
-			{
-				$log.info(data);
-				//var status = false;
-				/*$http.post('/controller/reports/save',
-							{table:'user', id:'1', column:'firstname', value:'Test123'}
-				).success(function(response){
-					$log.info(response);
-					//status = true;
-				});*/
-				//alert(status);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		};
+	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 	
 	
@@ -401,10 +365,14 @@
 	 */
 	app.controller('Calendar',['$scope','$http','$log', Calendar]);
 	
-	function Calendar($scope, $http)
+	function Calendar($scope, $http, $log)
 	{
-		$scope.dateFrom = null;
+		if($('#default_value'))
+			$scope.dateFrom = new Date($('#default_value').val());
+		else			
+			$scope.dateFrom = null;
 	    $scope.dateTo = null;
+	    $log.info($('#default_value').val());
 
 		$scope.maxDate = new Date(2020, 5, 22);
 
@@ -599,6 +567,74 @@
 		}
 	}
 	
+	
+	/**
+	 * Edit table records
+	 */
+	function editTable(scope, modal, resource, window, options, log)
+	{
+		
+		scope.editColumn = function(type, table, column, id, value, index){
+			
+			var selectOptions = options;
+			/*if(selectAPI)
+			{
+				log.info(selectAPI);
+				var API = resource(selectAPI);
+				API.get({},function(data){
+					log.info(data);
+					selectOptions = data.options;
+				});
+			}*/
+			
+			log.info(selectOptions);
+			var params = {
+					table: table,
+					column: column,
+					id: id,
+					value: value,
+					selectOptions: selectOptions,
+					index: index
+			};
+			
+			var template = '';
+			switch(type)
+			{
+				case 'date':
+					template = 'EditColumnDate';
+					break;
+				case 'select':
+					template = 'EditColumnSelect';
+					break;
+				default:	
+					template = 'EditColumnText';
+					break;	
+			}
+			
+			var modalInstance = modal.open({
+			 	animation: true,
+			 	scope: scope,
+				templateUrl: template,
+				controller: 'EditTableRecord',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+		}		
+		
+		
+	    // @Function
+	    // Description  : Triggered while displaying expiry date in Customer Details screen.
+	    scope.formatDate = function(date){
+	          var dateOut = new Date(date);
+	          return dateOut;
+	    };
+	}
+	
 	/**
 	 * Export report
 	 */
@@ -698,7 +734,8 @@
 	    pagination(scope,API,params,log);
 	    
 	    // Download report
-	    downloadReport(scope, modal, resource, window, report, filter, log);
+	    downloadReport(scope, modal, resource, window, report, filter, log);	    
+
 	}
 	
 	/**
@@ -769,6 +806,41 @@
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
+	};
+	
+	
+	/**
+	 * Edit Table record controller
+	 */
+	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', EditTableRecord]);
+	
+	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log) {
+
+		$scope.params = params;		
+		$log.info($scope.$parent);
+		
+		$scope.save = function () {
+			var API = $resource('controller/reports/save')
+			$log.info($scope.params);
+			API.save($scope.params, function(data){
+				$log.info(data);
+				$log.info($scope.params.value);
+				$scope.$parent.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+				$('#'+$scope.params.index).addClass('modified');
+				$log.info($('#'+$scope.params.index));
+			});
+			
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+		/*$scope.getDate = function(date){
+	          var dateOut = new Date(date);
+	          return dateOut;
+	    };*/
 	};
 	
 })();

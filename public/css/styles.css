@@ -992,3 +992,23 @@ h5.page-header
  	color: 
  }
  
+ a.editable-click {
+ 	cursor:pointer;
+    text-decoration: none;
+    color: #428bca;
+    border-bottom: dashed 1px #428bca;
+}
+ .center-modal {
+    position: fixed;
+    top: 15%;
+    left: 18.5%;
+    z-index: 1050;
+    width: 80%;
+    height: 80%;
+    margin-left: -10%;
+}
+
+tr.modified {
+	background-color: #FCF8E3 !important;
+}
+ 

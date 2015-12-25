@@ -22,5 +22,8 @@ class VerifyCsrfToken extends BaseVerifier
     	'reports/getdata/returnperpeso',
     	'reports/getdata/customerlist',
     	'reports/getdata/materialpricelist',
+    		
+    		
+    	'/controller/reports/save',
     ];
 }

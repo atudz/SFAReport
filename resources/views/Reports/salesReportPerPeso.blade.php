@@ -23,7 +23,7 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					<tr ng-repeat="record in records|filter:query">
+					<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 						<td>[[record.so_number]]</td>
 						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
@@ -40,16 +40,20 @@
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>
-							<a href="#" editable-text="record.invoice_number" onbeforesave="update($data)">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index)">
     							[[ record.invoice_number ]]
   							</a>
 						</td>
 						<td>
-							<a href="#" editable-bsdate="record.invoice_date|date:'yyyy/MM/dd'" e-datepicker-popup="yyyy/MM/dd" onbeforesave="update($data)">
-    							[[ record.invoice_date | date:"yyyy/MM/dd" ]]
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index)">
+    							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
-						<td>[[record.invoice_posting_date]]</td>
+						<td>
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index)">
+    							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+  							</a>
+						</td>
 						<td>[[record.gross_seved_amount]]</td>
 						<td>[[record.vat_amount]]</td>
 						<td>[[record.discount_rate]]</td>
