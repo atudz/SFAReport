@@ -44,17 +44,17 @@
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index)">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice No/Return Slip No')">
     							[[ record.invoice_number ]]
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index)">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date')">
     							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index)">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date')">
     							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
@@ -62,12 +62,12 @@
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_detail','quantity',record.return_detail_id,record.quantity,$index)">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_detail','quantity',record.return_detail_id,record.quantity,$index,'Quantity')">
     							[[record.quantity]]
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('select','txn_return_detail','condition_code',record.return_detail_id,record.condition_code,$index)">
+							<a href="" class="editable-click" ng-click="editColumn('select','txn_return_detail','condition_code',record.return_detail_id,record.condition_code,$index,'Condition Code')">
     							[[record.condition_code]]
   							</a>
 						</td>

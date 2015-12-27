@@ -4,14 +4,19 @@ Html::macro('topen', function($options=[]) {
 
 	$no_download = isset($options['no_download']);
 	
-	$html = '
-			<div class="col-sm-12 table-options">
-				<div class="pull-left">
-					<div class="inner-addon left-addon">
-					<i class="glyphicon glyphicon-search"></i>
-						<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
-					</div>
-		      	</div>';
+	$no_search = isset($options['no_search']);
+	$html = '<div class="col-sm-12 table-options">';
+	
+	if(!$no_search)
+	{
+		$html .= '				
+					<div class="pull-left">
+						<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-search"></i>
+							<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
+						</div>
+			      	</div>';
+	}
 	if(!$no_download)
 	{						
 		$html.= '<div class="pull-right">					

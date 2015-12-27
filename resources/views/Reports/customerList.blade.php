@@ -37,7 +37,9 @@
 							<td>[[record.salesman_code]]</td>
 							<td>[[record.salesman_name]]</td>
 							<td>[[record.van_code]]</td>
-							<td>[[record.sfa_modified_date]]</td>
+							<td>
+								<span ng-bind="formatDate(record.sfa_modified_date) | date:'MM/dd/yyyy'"></span>
+							</td>
 							<td>[[record.status]]</td>									
 						</tr>
 	

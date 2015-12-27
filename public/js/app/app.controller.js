@@ -107,15 +107,14 @@
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
-		          'collection_date_from',
-		          'collection_date_to',
+		          'transaction_date',		          
 		          'posting_date_from',
 		          'posting_date_to',
 		          'inventory_type'
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'vaninventory',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'vaninventorycanned',params,$log);
 	    
 	}
 	
@@ -131,14 +130,15 @@
 		          'customer_code',
 		          'invoice_date_from',
 		          'invoice_date_to',
-		          'collection_date_from',
-		          'collection_date_to',
+		          'transaction_date_from',
+		          'transaction_date_to',
 		          'posting_date_from',
-		          'posting_date_to'
+		          'posting_date_to',
+		          'inventory_type'
 		];
 	    
 	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'vaninventory',params,$log); 
+	    reportController($scope,$resource,$uibModal,$window,'vaninventoryfrozen',params,$log); 
 
 	}
 	
@@ -366,11 +366,8 @@
 	app.controller('Calendar',['$scope','$http','$log', Calendar]);
 	
 	function Calendar($scope, $http, $log)
-	{
-		if($('#default_value'))
-			$scope.dateFrom = new Date($('#default_value').val());
-		else			
-			$scope.dateFrom = null;
+	{					
+		$scope.dateFrom = null;
 	    $scope.dateTo = null;
 	    $log.info($('#default_value').val());
 
@@ -418,6 +415,15 @@
 	    		togglePagination(data.total);
 		    	scope.records = data.records;
 		    	scope.total = data.total;
+		    	if(data.hasOwnProperty('stocks')){
+		    		scope.stocks = data.stocks;
+		    	}
+		    	if(data.hasOwnProperty('replenishment')){
+		    		scope.replenishment = data.replenishment;
+		    	}
+		    	if(data.hasOwnProperty('stock_on_hand')){
+		    		scope.stock_on_hand = data.stock_on_hand;
+		    	}
 		    	toggleLoading();
 		    });
 	    	
@@ -574,7 +580,7 @@
 	function editTable(scope, modal, resource, window, options, log)
 	{
 		
-		scope.editColumn = function(type, table, column, id, value, index){
+		scope.editColumn = function(type, table, column, id, value, index, name){
 			
 			var selectOptions = options;
 			/*if(selectAPI)
@@ -594,7 +600,9 @@
 					id: id,
 					value: value,
 					selectOptions: selectOptions,
-					index: index
+					index: index,
+					type: type,
+					name: name
 			};
 			
 			var template = '';
@@ -626,13 +634,6 @@
 			});
 		}		
 		
-		
-	    // @Function
-	    // Description  : Triggered while displaying expiry date in Customer Details screen.
-	    scope.formatDate = function(date){
-	          var dateOut = new Date(date);
-	          return dateOut;
-	    };
 	}
 	
 	/**
@@ -716,6 +717,12 @@
 	    	scope.records = data.records;
 	    	scope.total = data.total;
 	    	log.info(data);
+	    	if(data.hasOwnProperty('stocks')){
+	    		scope.stocks = data.stocks;
+	    	}
+	    	if(data.hasOwnProperty('replenishment')){
+	    		scope.replenishment = data.replenishment;
+	    	}
 	    	toggleLoading();
 	    	togglePagination(data.total);
 	    });	    	    
@@ -735,7 +742,13 @@
 	    
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, filter, log);	    
-
+	    
+	 // @Function
+	    // Description  : Triggered while displaying expiry date in Customer Details screen.
+	    scope.formatDate = function(date){
+	          var dateOut = new Date(date);
+	          return dateOut;
+	    };
 	}
 	
 	/**
@@ -820,14 +833,19 @@
 		$log.info($scope.$parent);
 		
 		$scope.save = function () {
-			var API = $resource('controller/reports/save')
+			var API = $resource('controller/reports/save');
+			if($scope.params.type == 'date')
+			{
+				var val = $scope.params.value;
+				//$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
+				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
+			}
 			$log.info($scope.params);
 			API.save($scope.params, function(data){
 				$log.info(data);
 				$log.info($scope.params.value);
 				$scope.$parent.records[$scope.params.index][$scope.params.column] = $scope.params.value;
-				$('#'+$scope.params.index).addClass('modified');
-				$log.info($('#'+$scope.params.index));
+				$('#'+$scope.params.index).addClass('modified');				
 			});
 			
 			$uibModalInstance.dismiss('cancel');

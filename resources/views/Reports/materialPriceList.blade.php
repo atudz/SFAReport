@@ -31,10 +31,16 @@
 						<td>[[record.segment_code]]</td>
 						<td>[[record.unit_price]]</td>
 						<td>[[record.customer_price_group]]</td>
-						<td>[[record.effective_date_from]]</td>
-						<td>[[record.effective_date_to]]</td>
+						<td>
+							<span ng-bind="formatDate(record.effective_date_from) | date:'MM/dd/yyyy'"></span>
+						</td>
+						<td>
+							<span ng-bind="formatDate(record.effective_date_to) | date:'MM/dd/yyyy'"></span>
+						</td>
 						<td>[[record.area_name]]</td>
-						<td>[[record.sfa_modified_date]]</td>
+						<td>
+							<span ng-bind="formatDate(record.sfa_modified_date) | date:'MM/dd/yyyy'"></span>
+						</td>
 						<td>[[record.status]]</td>
 					</tr>
 					</tbody>

@@ -6,7 +6,8 @@ Html::macro('tclose', function($paginate=true) {
 
 	$html .= '
 			<script type="text/ng-template" id="EditColumnText">
-        		<div class="modal-body">				
+        		<div class="modal-body">			
+					<p>[[params.name]]</p>	
 					<form class="form-inline">
 				         <div class="form-group">
 							<input type="text" ng-model="params.value" class="form-control input-sm">
@@ -18,7 +19,8 @@ Html::macro('tclose', function($paginate=true) {
     		</script>
 			
 			<script type="text/ng-template" id="EditColumnSelect">
-        		<div class="modal-body">				
+        		<div class="modal-body">
+					<p>[[params.name]]</p>					
 					<form class="form-inline">
 				         <div class="form-group">
 							<select class="form-control" ng-model="params.value">
@@ -32,10 +34,11 @@ Html::macro('tclose', function($paginate=true) {
     		</script>
 
 			<script type="text/ng-template" id="EditColumnDate">
-        		<div class="modal-body">				
+        		<div class="modal-body">		
+					<p>[[params.name]]</p>			
 					<form class="form-inline">
 				         <div class="form-group">
-							<div class="col-sm-8" data-ng-controller="Calendar">
+							<div class="col-sm-8" data-ng-controller="Calendar" style="padding-left:0px;margin-left:0px;">
 							 	<p class="input-group">
 									<input type="hidden" id="default_value" ng-model="params.value">	
 							 		<input type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" />

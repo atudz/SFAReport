@@ -142,10 +142,12 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
+    			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
     			return $this->view('vanInventoryCanned');
     		case 'frozen':
     			$this->view->salesman = $this->getSalesman();
-    			$this->view->tableHeaders = $this->getVanInventoryColumns();
+    			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
+    			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
     			return $this->view('vanInventoryFrozen');
     	}
     }
@@ -196,33 +198,34 @@ class ReportsPresenter extends PresenterCore
     {
     	switch($type)
     	{
-    		case 'salescollectionreport';
+    		case 'salescollectionreport':
     			return $this->getSalesCollectionReport();
-    		case 'salescollectionposting';
+    		case 'salescollectionposting':
     			return $this->getSalesCollectionPosting();
-    		case 'salescollectionsummary';
+    		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummary();
-    		case 'vaninventory';
+    		case 'vaninventoryfrozen':    			
+    		case 'vaninventorycanned':
     			return $this->getVanInventory();
-    		case 'unpaidinvoice';
+    		case 'unpaidinvoice':
     			return $this->getUnpaidInvoice();    		
-    		case 'bir';
+    		case 'bir':
     			return $this->getBir();
-			case 'salesreportpermaterial';
+			case 'salesreportpermaterial':
     			return $this->getSalesReportMaterial();
-    		case 'salesreportperpeso';
+    		case 'salesreportperpeso':
     			return $this->getSalesReportPeso();
-    		case 'returnpermaterial';
+    		case 'returnpermaterial':
     			return $this->getReturnMaterial();
-    		case 'returnperpeso';
+    		case 'returnperpeso':
     			return $this->getReturnPeso();
-    		case 'customerlist';
+    		case 'customerlist':
     			return $this->getCustomerList();
-    		case 'salesmanlist';
+    		case 'salesmanlist':
     			return $this->getSalesmanList();
     		case 'materialpricelist';
     			return $this->getMaterialPriceList();    			
-    		case 'conditioncodes';
+    		case 'conditioncodes':
     			return $this->getConditionCodes();
     	}
     }
@@ -438,7 +441,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$postingDateFilter = FilterFactory::getInstance('DateRange','Posting Date');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date');
-    	dd($prepare);
+    	//dd($prepare);
     	$result = $this->paginate($prepare);
     	
     	
@@ -658,11 +661,95 @@ ORDER BY tas.reference_num ASC,
      */
     public function getVanInventory()
     {
-    	$prepare = $this->getPreparedVanInventory();
+    	$itemCodes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');
+    	$stockOnHand = [];
     	
-    	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
-    	$data['total'] = $result->total();
+    	$prepare = \DB::table('txn_stock_transfer_in_header')
+    						->selectRaw('modified_date transaction_date,stock_transfer_number');
+    	
+    	$transactionFilter = FilterFactory::getInstance('Date');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+    					function($self, $model){
+    						return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.sfa_modified_date)'),'=',$self->getValue());
+    					});
+    	$prepare = $prepare->where('txn_stock_transfer_in_header.stock_transfer_number','like','sr9%');
+    	$stocks = $prepare->first();
+    	
+    	$codes = [];
+    	foreach($itemCodes as $item)
+    	{
+    		$codes[] = $item->item_code;    		
+    	}
+    	$stockItems = \DB::table('txn_stock_transfer_in_detail')
+			    	->select(['item_code','quantity'])
+			    	->whereIn('item_code',$codes)
+    				->get();
+    	
+    	foreach($stockItems as $item)
+    	{
+    		$stocks->{'code_'.$item->item_code} = $item->quantity;
+    		if(!isset($stockOnHand['code_'.$item->item_code]))
+    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
+    		else
+    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+    	}
+    	$data['stocks'] = $stocks;
+    	
+    	
+    	$prepare = \DB::table('txn_replenishment_header')
+    					->select(['replenishment_date','reference_number']);
+    	 
+    	$transactionFilter = FilterFactory::getInstance('Date');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+		    			function($self, $model){
+		    				return $model->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$self->getValue());		    				
+		    			});
+    	$replenishment = $prepare->first();    			     	
+    	$replenishmentItems = \DB::table('txn_replenishment_detail')
+			    			->select(['item_code','quantity'])
+			    			->whereIn('item_code',$codes)
+			    			->get();
+    			 
+    	foreach($replenishmentItems as $item)
+    	{
+    		$replenishment->{'code_'.$item->item_code} = $item->quantity;
+    		if(!isset($stockOnHand['code_'.$item->item_code]))
+    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
+    		else
+    		{
+    			var_dump('code_'.$item->item_code . ': '. $stockOnHand['code_'.$item->item_code].' +  '.$item->quantity);
+    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+    		}
+    	}
+    	dd($stockOnHand);
+    	 
+    	$data['replenishment'] = $replenishment;
+    	
+    	$prepare = $this->getPreparedVanInventory();    	
+    	$results = $this->paginate($prepare);    	
+
+    	$records = [];
+    	foreach($results->items() as $result)
+    	{
+    		foreach($itemCodes as $item)
+    		{
+    			$sales = \DB::table('txn_sales_order_detail')
+    							->select('served_qty')
+    							->where('so_number','=',$result->so_number)
+    							->where('item_code','=',$item->item_code)
+    							->first();    			
+    			$result->{'code_'.$item->item_code} = ($sales) ? '-'.$sales->served_qty : '';
+    			if($sales)
+    				$stockOnHand['code_'.$item->item_code] -= $sales->served_qty;
+    		}	
+    		$records[] = $result;
+    	}
+    	
+    	//dd($records);
+    	$data['records'] = $records;
+    	$data['stock_on_hand'] = $stockOnHand;
+    	    	
+    	$data['total'] = $results->total();
     
     	return response()->json($data);
     }
@@ -673,33 +760,56 @@ ORDER BY tas.reference_num ASC,
      */
     public function getPreparedVanInventory()
     {
-    	$select = 'app_customer.customer_name,
+    	$select = '
+    			   app_customer.customer_name,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
-				   txn_return_header.return_slip_num,
-				   txn_replenishment_header.replenishment_date,
-				   txn_replenishment_header.reference_number replenishment_number';
+    			   txn_sales_order_header.so_number,    			   	
+				   txn_return_header.return_slip_num';				 
     	 
     	$prepare = \DB::table('txn_sales_order_header')
-			    	->selectRaw($select)
+    				->selectRaw($select)
+    				->distinct()    				
 			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
 			    	->leftJoin('txn_return_header', function ($join){
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
 			    		->where('txn_sales_order_header.salesman_code','=','txn_return_header.salesman_code');
 			    	})
-			    	->leftJoin('txn_replenishment_header','txn_sales_order_header.reference_num','=','txn_replenishment_header.reference_number');
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'area');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
     	 
-    	$transactionFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date');
+    	/* $transactionFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date'); */
+    	$transactionFilter = FilterFactory::getInstance('Date');
+    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+    			function($self, $model){
+    				return $model->where(\DB::raw('DATE(txn_sales_order_header.so_date)'),'=',$self->getValue());
+    			});
     	 
     	$invoiceFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date');
     	 
     	$postingFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $postingFilter->addFilter($prepare,'posting_date');
+    	/* $prepare = $postingFilter->addFilter($prepare,'posting_date',
+	    				function($self, $model){
+	    						return $model->where(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),'=',$self->getValue());	
+    				});
+    	 */
+    	/* $typeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $typeFilter->addFilter($prepare,'type',
+    					function($self, $model){
+    						return $model->where('app_area.area_code','=',$self->getValue());	
+    				}); */
+    	
+    	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');
+    	$codes = [];
+    	foreach($item_codes as $item)
+    	{
+    		$codes[] = $item->item_code;
+    	}
+    	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes);    	
     	
     	return $prepare;
     }
@@ -1488,31 +1598,33 @@ ORDER BY tas.reference_num ASC,
     {
     	switch($type)
     	{
-    		case 'salescollectionreport';
+    		case 'salescollectionreport':
     			return $this->getSalesCollectionReportColumns();
-    		case 'salescollectionposting';
+    		case 'salescollectionposting':
     			return $this->getSalesCollectionPostingColumns();
-    		case 'salescollectionsummary';
+    		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummaryColumns();
-    		case 'vaninventory';
+    		case 'vaninventorycanned':
     			return $this->getVanInventoryColumns();
-    		case 'unpaidinvoice';
+    		case 'vaninventoryfrozen':
+    			return $this->getVanInventoryColumns('frozen');
+    		case 'unpaidinvoice':
     			return $this->getVanInventoryColumns();
-    		case 'bir';
+    		case 'bir':
     			return $this->getBirColumns();
-    		case 'salesreportpermaterial';
+    		case 'salesreportpermaterial':
     			return $this->getSalesReportMaterialColumns();
-    		case 'salesreportperpeso';
+    		case 'salesreportperpeso':
     			return $this->getSalesReportPesoColumns();
-    		case 'returnpermaterial';
+    		case 'returnpermaterial':
     			return $this->getReturnReportMaterialColumns();
-    		case 'returnperpeso';
+    		case 'returnperpeso':
     			return $this->getReturnReportPerPesoColumns();
-    		case 'customerlist';
+    		case 'customerlist':
     			return $this->getCustomerListColumns();
-    		case 'salesmanlist';
+    		case 'salesmanlist':
     			return $this->getSalesmanListColumns();
-    		case 'materialpricelist';
+    		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
     	}	
     }
@@ -1620,12 +1732,39 @@ ORDER BY tas.reference_num ASC,
     	return $headers;
     }
     
-    
+    /**
+     * Get list of van inventory items
+     * @param unknown $type
+     * @param string $select
+     */
+    public function getVanInventoryItems($type, $select='description')
+    {
+    	$prepare = \DB::table('app_item_master')
+    					->selectRaw($select);
+    	
+    	if($type == 'frozen')
+    	{
+    		$prepare = $prepare->whereRaw('
+			    			(segment_code LIKE  \'%FROZEN\' OR segment_code LIKE  \'%KASSEL\' )
+								AND STATUS =  \'A\'
+								AND item_code LIKE  \'200%\'
+    						');    	    				
+    	}
+    	else
+    	{
+    		$prepare = $prepare->whereRaw('
+			    			(segment_code LIKE  \'%CANNED\' OR segment_code LIKE  \'%MIXES\' )
+								AND STATUS =  \'A\'
+								AND item_code LIKE  \'100%\'
+    						');    	
+    	}
+    	return $prepare->orderBy('item_code')->get();
+    }
     /**
      * Get Van Inventory Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getVanInventoryColumns()
+    public function getVanInventoryColumns($type='canned')
     {
     	$headers = [
     			['name'=>'Customer'],
@@ -1637,7 +1776,13 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Replenishment Date','sort'=>'replenishment_date'],
     			['name'=>'Replenishment Number','sort'=>'replenishment_number']
     	];
-    
+    	
+    	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name');
+    	foreach($items as $item)
+    	{
+    		$headers[] = ['name'=>$item->name];
+    	}
+    	
     	return $headers;
     }
     
@@ -2024,17 +2169,15 @@ ORDER BY tas.reference_num ASC,
     	
     	switch($report)
     	{
-    		case 'salescollectionreport';
+    		case 'salescollectionreport':
     			return $this->getSalesCollectionReport();
-    		case 'salescollectionposting';
+    		case 'salescollectionposting':
     			return $this->getSalesCollectionPosting();
-    		case 'salescollectionsummary';
+    		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummary();
-    		case 'vaninventory';
-    			return $this->getVanInventory();
     		case 'unpaidinvoice';
     			return $this->getUnpaidInvoice();
-    		case 'bir';
+    		case 'bir':
     			return $this->getBir();
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns('salesreportpermaterial');
@@ -2042,37 +2185,37 @@ ORDER BY tas.reference_num ASC,
     			$rows = $this->getSalesReportMaterialSelectColumns();
     			$filename = 'Sales Report(Per Material)';
     			break;
-    		case 'salesreportperpeso';
+    		case 'salesreportperpeso':
     			$columns = $this->getTableColumns('salesreportperpeso');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getSalesReportPesoSelectColumns();
     			$filename = 'Sales Report(Per Peso)';
     			break;
-    		case 'returnpermaterial';
+    		case 'returnpermaterial':
     			$columns = $this->getTableColumns('returnpermaterial');
     			$prepare = $this->getPreparedReturnMaterial();
     			$rows = $this->getReturnReportMaterialSelectColumns();
     			$filename = 'Return Report(Per Material)';
     			break;
-    		case 'returnperpeso';
+    		case 'returnperpeso':
     			$columns = $this->getTableColumns('returnperpeso');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getReturnReportPesoSelectColumns();
     			$filename = 'Return Report(Per Peso)';
     			break;
-    		case 'customerlist';
+    		case 'customerlist':
     			$columns = $this->getTableColumns('customerlist');
     			$prepare = $this->getPreparedCustomerList();
     			$rows = $this->getCustomerSelectColumns();
     			$filename = 'Customer List';
     			break;
-    		case 'salesmanlist';
+    		case 'salesmanlist':
     			$columns = $this->getTableColumns('salesmanlist');    			
     			$prepare = $this->getPreparedSalesmanList();
     			$rows = $this->getSalesmanSelectColumns();
     			$filename = 'Salesman List';
     			break;
-    		case 'materialpricelist';
+    		case 'materialpricelist':
     			$columns = $this->getTableColumns('materialpricelist');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getMaterialPriceSelectColumns();

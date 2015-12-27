@@ -35,8 +35,12 @@
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>[[record.return_slip_num]]</td>
-						<td>[[record.return_date]]</td>
-						<td>[[record.return_posting_date]]</td>
+						<td>
+							<span ng-bind="formatDate(record.return_date) | date:'MM/dd/yyyy'"></span>
+						</td>
+						<td>
+							<span ng-bind="formatDate(record.return_posting_date) | date:'MM/dd/yyyy'"></span>
+						</td>
 						<td>[[record.gross_seved_amount]]</td>
 						<td>[[record.vat_amount]]</td>
 						<td>[[record.discount_rate]]</td>

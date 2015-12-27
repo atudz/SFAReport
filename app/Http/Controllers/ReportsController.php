@@ -19,7 +19,10 @@ class ReportsController extends ControllerCore
 	{
 		$table = $request->get('table');
 		$column = $request->get('column');
-		$value = $request->get('value');
+		if(false === strpos($column,'date'))
+			$value = $request->get('value');
+		else 
+			$value = new \DateTime($request->get('value'));
 		$id = $request->get('id');
 		
 		$syncTables = config('sync.sync_tables');
