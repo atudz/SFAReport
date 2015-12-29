@@ -519,9 +519,10 @@
 		    	scope.stocks = data.stocks;
 		    	scope.replenishment = data.replenishment;
 		    	scope.stock_on_hand = data.stock_on_hand;
+		    	scope.short_over_stocks = data.short_over_stocks;
 		    	toggleLoading();
 		    	log.info(data);	    	
-		    	scope.showBody = data.total;
+		    	scope.showBody = true;
 		    	scope.showReplenishment = data.replenishment.total;
 		    });
 	    	

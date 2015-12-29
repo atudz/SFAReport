@@ -693,15 +693,15 @@ ORDER BY tas.reference_num ASC,
 				    	->whereIn('item_code',$codes)
 				    	->where('stock_transfer_number','=',$stocks->stock_transfer_number)
 	    				->get();
-    	}
-    	
-    	foreach($stockItems as $item)
-    	{
-    		$stocks->{'code_'.$item->item_code} = $item->quantity;
-    		if(!isset($stockOnHand['code_'.$item->item_code]))
-    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
-    		else
-    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+	    	
+	    	foreach($stockItems as $item)
+	    	{
+	    		$stocks->{'code_'.$item->item_code} = $item->quantity;
+	    		if(!isset($stockOnHand['code_'.$item->item_code]))
+	    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
+	    		else
+	    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+	    	}
     	}
     	$data['stocks'] = $stocks;
     	
@@ -724,28 +724,26 @@ ORDER BY tas.reference_num ASC,
 				    			->whereIn('item_code',$codes)
 				    			->where('reference_number','=',$replenishment->reference_number)
 				    			->get();
-    	}
-    	
-    	//dd($stockOnHand);
-    	foreach($replenishmentItems as $item)
+	    	//dd($stockOnHand);
+	    	foreach($replenishmentItems as $item)
+	    	{
+	    		$replenishment->{'code_'.$item->item_code} = $item->quantity;
+	    		if(!isset($stockOnHand['code_'.$item->item_code]))
+	    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
+	    		else
+	    		{
+	    			//var_dump('code_'.$item->item_code . ': '. $stockOnHand['code_'.$item->item_code].' +  '.$item->quantity);
+	    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+	    		}
+	    	}	    	 
+	    	$replenishment->total = 1;
+    	}        	
+    	else
     	{
-    		$replenishment->{'code_'.$item->item_code} = $item->quantity;
-    		if(!isset($stockOnHand['code_'.$item->item_code]))
-    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
-    		else
-    		{
-    			//var_dump('code_'.$item->item_code . ': '. $stockOnHand['code_'.$item->item_code].' +  '.$item->quantity);
-    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
-    		}
-    	}
-    	
-    	if($replenishment)
-    		$replenishment->total = 1;
-    	else     	
     		$replenishment['total'] = 0;
+    	}
     	
     	//dd($replenishmentItems);
-    	// dd($stockOnHand);
     	$data['replenishment'] = $replenishment;
     	
     	$prepare = $this->getPreparedVanInventory();    	
@@ -762,15 +760,33 @@ ORDER BY tas.reference_num ASC,
     							->where('item_code','=',$item->item_code)
     							->first();    			
     			$result->{'code_'.$item->item_code} = ($sales) ? '-'.$sales->served_qty : '';
-    			//if($sales)
-    				//$stockOnHand['code_'.$item->item_code] -= $sales->served_qty;
+    			if($sales)
+    			{
+    				if(isset($stockOnHand['code_'.$item->item_code]))
+    					$stockOnHand['code_'.$item->item_code] -= $sales->served_qty;
+    				else
+    					$stockOnHand['code_'.$item->item_code] = -$sales->served_qty;
+    			}
     		}	
     		$records[] = $result;
     	}
     	
-    	//dd($records);
     	$data['records'] = $records;
     	$data['stock_on_hand'] = $stockOnHand;
+    	
+    	$shortOverStocks = [];
+    	foreach($stockOnHand as $code => $stock)
+    	{
+    		if($replenishment && isset($replenishment->{$code}))
+    		{    			
+    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? ($replenishment->{$code}-$stockOnHand[$code]) : $replenishment->{$code}; 
+    		}
+    		else
+    		{
+    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : '';
+    		}
+    	}
+    	$data['short_over_stocks'] = $shortOverStocks;
     	    	
     	$data['total'] = $results->total();
     

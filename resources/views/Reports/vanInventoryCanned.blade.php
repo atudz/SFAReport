@@ -128,7 +128,7 @@
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+								<th>[[short_over_stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 						
