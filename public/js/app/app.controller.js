@@ -103,18 +103,74 @@
 	
 	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log)
 	{	
-	    var params = [
-		          'customer_code',
-		          'invoice_date_from',
-		          'invoice_date_to',
+	    var today = new Date();
+	    $scope.dateValue = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
+	    $scope.dateFilter = [$scope.dateValue]; 
+	    
+	    // Filter flag
+		$scope.toggleFilter = true;
+		
+		var report = 'vaninventorycanned';
+		
+		// Fetch table data from server
+	    $scope.records = [];	    
+	    
+	    var API = $resource('/reports/getdata/'+report);
+	    /*var filterDate = defaultDate;
+	    if($('#transaction_date').val()){
+	    	filterDate = $('#transaction_date').val();
+	    }*/	    
+	    
+	    var params = {
+	    		salesman: $('#salesman_code').val(),
+	    		transaction_date: $scope.dateValue,
+	    		status: $('#status').val(),
+	    		inventory_type: $('#inventory_type').val()
+	    };
+	    $log.info(params);
+	    
+	    toggleLoading(true);
+	    API.get(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$scope.stocks = data.stocks;
+	    	$scope.replenishment = data.replenishment;
+	    	$log.info(data);	    	
+	    	toggleLoading();
+	    	togglePagination(data.total);
+	    	$scope.showBody = data.total;
+	    	$scope.showReplenishment = data.replenishment.total;
+	    	
+	    });	    	    
+	    
+	    params = [
+		          'salesman_code',
 		          'transaction_date',		          
-		          'posting_date_from',
-		          'posting_date_to',
+		          'status',
 		          'inventory_type'
 		];
 	    
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'vaninventorycanned',params,$log);
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    		
+		filterSubmitVanInventory($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);
+	    
+	    // Download report
+	    downloadReport($scope, $uibModal, $resource, $window, report, params, $log);	    
+	    
+	 // @Function
+	    // Description  : Triggered while displaying expiry date in Customer Details screen.
+	    $scope.formatDate = function(date){
+	    	  if(!date) return '';
+	          var dateOut = new Date(date);
+	          return dateOut;
+	    };
 	    
 	}
 	
@@ -126,16 +182,12 @@
 	
 	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
 	{	        
-	    var params = [
-		          'customer_code',
-		          'invoice_date_from',
-		          'invoice_date_to',
-		          'transaction_date_from',
-		          'transaction_date_to',
-		          'posting_date_from',
-		          'posting_date_to',
-		          'inventory_type'
-		];
+		var params = [
+			          'salesman',
+			          'transaction_date',		          
+			          'status',
+			          'inventory_type'
+			];
 	    
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'vaninventoryfrozen',params,$log); 
@@ -392,6 +444,116 @@
 	/**
 	 * Centralized filter function
 	 */
+	function filterSubmitVanInventory(scope, API, filter, log)
+	{
+		var params = {};
+		
+		scope.filter = function(){
+	    	
+			params['page'] = scope.page;
+			params['page_limit'] = scope.perpage;
+			params['sort'] = scope.sortColumn;
+			params['order'] = scope.sortDirection;
+			
+			var dateFrom = new Date($('#transaction_date_from').val());
+			var dateTo = new Date($('#transaction_date_to').val());
+			
+			var dateRanges = getDates(dateFrom,dateTo);
+			scope.dateFilter = dateRanges;
+			scope.dateValue = getDates(dateFrom,dateTo).shift();
+			log.info(scope.dateValue);
+			
+			$.each(filter, function(key,val){
+				if(val == 'transaction_date')
+					params[val] = scope.dateValue;
+				else
+					params[val] = $('#'+val).val();
+			});			
+			log.info(params);
+			
+			
+			scope.toggleFilter = true;
+			toggleLoading(true);
+	    	API.save(params,function(data){
+	    		togglePagination(data.total);
+		    	scope.records = data.records;
+		    	scope.total = data.total;
+		    	scope.stocks = data.stocks;
+		    	scope.replenishment = data.replenishment;
+		    	scope.stock_on_hand = data.stock_on_hand;
+		    	toggleLoading();
+		    	log.info(data);	    	
+		    	
+		    	scope.showBody = data.total;
+		    	scope.showReplenishment = data.replenishment.total;
+		    	
+		    });
+	    	
+	    }
+		
+		scope.filterDate = function(){
+	    	
+			params['page'] = scope.page;
+			params['page_limit'] = scope.perpage;
+			params['sort'] = scope.sortColumn;
+			params['order'] = scope.sortDirection;
+			
+			scope.dateValue = $('#transaction_date').val();
+			log.info(scope.dateValue);
+			
+			$.each(filter, function(key,val){
+				if(val == 'transaction_date')
+					params[val] = scope.dateValue;
+				else
+					params[val] = $('#'+val).val();
+			});			
+			log.info(params);
+			
+			
+			scope.toggleFilter = true;
+			toggleLoading(true);
+	    	API.save(params,function(data){
+	    		togglePagination(data.total);
+		    	scope.records = data.records;
+		    	scope.total = data.total;
+		    	scope.stocks = data.stocks;
+		    	scope.replenishment = data.replenishment;
+		    	scope.stock_on_hand = data.stock_on_hand;
+		    	toggleLoading();
+		    	log.info(data);	    	
+		    	scope.showBody = data.total;
+		    	scope.showReplenishment = data.replenishment.total;
+		    });
+	    	
+	    }
+		
+		scope.reset = function(){
+	    	
+			params['page'] = scope.page;
+			params['page_limit'] = scope.perpage;
+			params['sort'] = scope.sortColumn;
+			params['order'] = scope.sortDirection;
+			
+			$.each(filter, function(key,val){
+				params[val] = '';
+			});
+			log.info(filter);
+			
+			scope.toggleFilter = true;
+			toggleLoading(true);
+	    	API.save(params,function(data){
+	    		log.info(data);
+	    		togglePagination(data.total);
+		    	scope.records = data.records;		    			    	
+		    	toggleLoading();
+		    });
+	    	
+	    }
+	}
+	
+	/**
+	 * Centralized filter function
+	 */
 	function filterSubmit(scope, API, filter, log)
 	{
 		var params = {};
@@ -415,15 +577,6 @@
 	    		togglePagination(data.total);
 		    	scope.records = data.records;
 		    	scope.total = data.total;
-		    	if(data.hasOwnProperty('stocks')){
-		    		scope.stocks = data.stocks;
-		    	}
-		    	if(data.hasOwnProperty('replenishment')){
-		    		scope.replenishment = data.replenishment;
-		    	}
-		    	if(data.hasOwnProperty('stock_on_hand')){
-		    		scope.stock_on_hand = data.stock_on_hand;
-		    	}
 		    	toggleLoading();
 		    });
 	    	
@@ -561,9 +714,18 @@
 	    	}	
 	    	if(request)
 	    	{
+	    		params['page'] = scope.page;
+				params['page_limit'] = scope.perpage;
+				params['sort'] = scope.sortColumn;
+				params['order'] = scope.sortDirection;
+				
+	    		$.each(filter, function(key,val){
+					params[val] = $('#'+val).val();
+				});
+				log.info(params);
+				
 	    		toggleLoading(true);
-	    		params = {page:scope.page,page_limit:scope.perpage};
-				API.save(params, function(data){
+	    		API.save(params, function(data){
 					log.info(data);
 					scope.records = data.records;					
 			    	scope.toggleFilter = true;
@@ -701,10 +863,10 @@
 		scope.toggleFilter = true;
 		
 		// Fetch table headers from server
-	    scope.tableHeaders = {};
+	    /*scope.tableHeaders = {};
 	    resource('/reports/getheaders/'+report).query({}, function(data){
 	    	scope.tableHeaders = data;
-	    });
+	    });*/
 	    
 	    // Fetch table data from server
 	    scope.records = [];	    
@@ -716,13 +878,7 @@
 	    API.get(params,function(data){
 	    	scope.records = data.records;
 	    	scope.total = data.total;
-	    	log.info(data);
-	    	if(data.hasOwnProperty('stocks')){
-	    		scope.stocks = data.stocks;
-	    	}
-	    	if(data.hasOwnProperty('replenishment')){
-	    		scope.replenishment = data.replenishment;
-	    	}
+	    	log.info(data);	    	
 	    	toggleLoading();
 	    	togglePagination(data.total);
 	    });	    	    
@@ -746,6 +902,7 @@
 	 // @Function
 	    // Description  : Triggered while displaying expiry date in Customer Details screen.
 	    scope.formatDate = function(date){
+	    	  if(!date) return '';	
 	          var dateOut = new Date(date);
 	          return dateOut;
 	    };
@@ -861,4 +1018,27 @@
 	    };*/
 	};
 	
+	
+	/**
+	 * Get date ranges base from parameters
+	 */
+	function getDates(startDate, stopDate) {
+	    var dateArray = new Array();
+	    var currentDate = startDate;
+	    while (currentDate <= stopDate) {
+	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+	    	dateArray.push( formatted )
+	    	currentDate = currentDate.addDays(1);	        	        	       
+	    }
+	    return dateArray;
+	}
+	
+	/**
+	 * Add days
+	 */
+	Date.prototype.addDays = function(days) {
+	    var dat = new Date(this.valueOf())
+	    dat.setDate(dat.getDate() + days);
+	    return dat;
+	}
 })();

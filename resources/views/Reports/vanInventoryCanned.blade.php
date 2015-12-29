@@ -8,39 +8,42 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
-						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}
-						{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
+						{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
+						{!!Html::select('status','Status', $statuses,'')!!}
 					</div>					
-					<div class="pull-right col-sm-6">	
-						{!!Html::select('salesman','Salesman', $salesman)!!}							 			
-						{!!Html::datepicker('posting_date','Posting Date','true')!!}
+					<div class="pull-right col-sm-6">
+						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}						
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 			
 				<div class="col-sm-12">
-					<div class="pull-left">
 						<form class="form-inline">
-							<div class="form-group">
-								<div class="inner-addon left-addon">
-									<i class="glyphicon glyphicon-search"></i>
-									<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
+							<div class="pull-left">
+						
+								<div class="form-group">
+									<div class="inner-addon left-addon">
+										<i class="glyphicon glyphicon-search"></i>
+										<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
+									</div>
 								</div>
-							</div>
-							<div class="form-group">
-								<select id="transaction_date" class="form-control">
-										<option value="2015/11/09">2015/11/09</option>
-										<option value="2015/11/10">2015/11/10</option>
-								</select>
-							</div>
+								</div>
+							<div class="pull-right">
+								<div class="form-group form-group-sm">
+									<label>Date Filter&nbsp;</label>
+									<select id="transaction_date" class="form-control" ng-model="dateValue" ng-change="filterDate()">
+										<option ng-repeat="date in dateFilter" value=[[date]]>[[date]]</option>											
+									</select>
+								</div>
+							</div>	
 						</form>
-				    </div>				    
+				    				    
 			    </div>			    
 				{!!Html::topen(['no_download'=>true,'no_search'=>true])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-						<tr style="background-color:#ccccff;">
-							<th><strong>ACTUAL COUNT</strong></th>
+						<tr style="background-color:#ccccff;" ng-show="showBody">
+							<th>Actual Count</th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -48,12 +51,13 @@
 							<th></th>
 							<th>
 								<span ng-bind="formatDate(replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
-							<td>[[replenishment.reference_number]]</td>
+							</th>
+							<th>[[replenishment.reference_number]]</th>
 							@foreach($itemCodes as $item)
 								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
-						<tr>
+						<tr ng-show="showBody">
 							<th></th>
 							<th></th>
 							<th></th>
@@ -68,7 +72,7 @@
 								<th>[[stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
-						<tr ng-repeat="record in records|filter:query">
+						<tr ng-repeat="record in records|filter:query" ng-show="showBody">
 							<td>[[record.customer_name]]</td>
 							<td>
 								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>							
@@ -84,8 +88,8 @@
 							@endforeach
 						</tr>
 						
-						<tr style="background-color: #ccffcc">
-							<th>STOCK ONHAND</th>
+						<tr style="background-color: #ccffcc" ng-show="showBody">
+							<th>Stock Onhand</th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -96,8 +100,53 @@
 							@foreach($itemCodes as $item)
 								<th>[[stock_on_hand.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
-						</tr>						
+						</tr>
+						
+						<tr style="background-color:#ccccff;" ng-show="showBody">
+							<th>Actual Count</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>
+								<span ng-bind="formatDate(replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
+							</th>
+							<th>[[replenishment.reference_number]]</th>
+							@foreach($itemCodes as $item)
+								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+							@endforeach
+						</tr>	
+						
+						<tr style="background-color:#edc4c4;" ng-show="showBody">
+							<th>Short Over Stocks</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							@foreach($itemCodes as $item)
+								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+							@endforeach
+						</tr>
+						
+						<tr ng-show="showBody">
+							<th>Beginning Balance</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							@foreach($itemCodes as $item)
+								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+							@endforeach
+						</tr>					
 					</tbody>
+					{!!Html::tfooter(true,(8+count($itemCodes)))!!}
 				{!!Html::tclose()!!}
 				<input type="hidden" id="inventory_type" value="canned">
 			</div>			

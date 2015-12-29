@@ -140,12 +140,14 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'canned':
-    			$this->view->salesman = $this->getSalesman();
+    			$this->view->salesman = $this->getSalesman(true);
+    			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
     			return $this->view('vanInventoryCanned');
     		case 'frozen':
-    			$this->view->salesman = $this->getSalesman();
+    			$this->view->salesman = $this->getSalesman(true);
+    			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
     			return $this->view('vanInventoryFrozen');
@@ -672,7 +674,9 @@ ORDER BY tas.reference_num ASC,
     					function($self, $model){
     						return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.sfa_modified_date)'),'=',$self->getValue());
     					});
-    	$prepare = $prepare->where('txn_stock_transfer_in_header.stock_transfer_number','like','sr9%');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	
     	$stocks = $prepare->first();
     	
     	$codes = [];
@@ -680,10 +684,16 @@ ORDER BY tas.reference_num ASC,
     	{
     		$codes[] = $item->item_code;    		
     	}
-    	$stockItems = \DB::table('txn_stock_transfer_in_detail')
-			    	->select(['item_code','quantity'])
-			    	->whereIn('item_code',$codes)
-    				->get();
+    	
+    	$stockItems = [];
+    	if($stocks)
+    	{
+	    	$stockItems = \DB::table('txn_stock_transfer_in_detail')
+				    	->select(['item_code','quantity'])
+				    	->whereIn('item_code',$codes)
+				    	->where('stock_transfer_number','=',$stocks->stock_transfer_number)
+	    				->get();
+    	}
     	
     	foreach($stockItems as $item)
     	{
@@ -704,12 +714,19 @@ ORDER BY tas.reference_num ASC,
 		    			function($self, $model){
 		    				return $model->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$self->getValue());		    				
 		    			});
-    	$replenishment = $prepare->first();    			     	
-    	$replenishmentItems = \DB::table('txn_replenishment_detail')
-			    			->select(['item_code','quantity'])
-			    			->whereIn('item_code',$codes)
-			    			->get();
-    			 
+    	$replenishment = $prepare->first();  
+    	
+    	$replenishmentItems = [];
+    	if($replenishment)
+    	{	  			     	
+	    	$replenishmentItems = \DB::table('txn_replenishment_detail')
+				    			->select(['item_code','quantity'])
+				    			->whereIn('item_code',$codes)
+				    			->where('reference_number','=',$replenishment->reference_number)
+				    			->get();
+    	}
+    	
+    	//dd($stockOnHand);
     	foreach($replenishmentItems as $item)
     	{
     		$replenishment->{'code_'.$item->item_code} = $item->quantity;
@@ -717,12 +734,18 @@ ORDER BY tas.reference_num ASC,
     			$stockOnHand['code_'.$item->item_code] = $item->quantity;
     		else
     		{
-    			var_dump('code_'.$item->item_code . ': '. $stockOnHand['code_'.$item->item_code].' +  '.$item->quantity);
+    			//var_dump('code_'.$item->item_code . ': '. $stockOnHand['code_'.$item->item_code].' +  '.$item->quantity);
     			$stockOnHand['code_'.$item->item_code] += $item->quantity;
     		}
     	}
-    	dd($stockOnHand);
-    	 
+    	
+    	if($replenishment)
+    		$replenishment->total = 1;
+    	else     	
+    		$replenishment['total'] = 0;
+    	
+    	//dd($replenishmentItems);
+    	// dd($stockOnHand);
     	$data['replenishment'] = $replenishment;
     	
     	$prepare = $this->getPreparedVanInventory();    	
@@ -739,8 +762,8 @@ ORDER BY tas.reference_num ASC,
     							->where('item_code','=',$item->item_code)
     							->first();    			
     			$result->{'code_'.$item->item_code} = ($sales) ? '-'.$sales->served_qty : '';
-    			if($sales)
-    				$stockOnHand['code_'.$item->item_code] -= $sales->served_qty;
+    			//if($sales)
+    				//$stockOnHand['code_'.$item->item_code] -= $sales->served_qty;
     		}	
     		$records[] = $result;
     	}
@@ -778,25 +801,23 @@ ORDER BY tas.reference_num ASC,
 			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	 
-    	/* $transactionFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date'); */
     	$transactionFilter = FilterFactory::getInstance('Date');
     	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
     			function($self, $model){
     				return $model->where(\DB::raw('DATE(txn_sales_order_header.so_date)'),'=',$self->getValue());
     			});
     	 
-    	$invoiceFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date');
+    	/* $invoiceFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date'); */
     	 
-    	$postingFilter = FilterFactory::getInstance('DateRange');
-    	/* $prepare = $postingFilter->addFilter($prepare,'posting_date',
+    	/* $postingFilter = FilterFactory::getInstance('DateRange');
+    	 $prepare = $postingFilter->addFilter($prepare,'posting_date',
 	    				function($self, $model){
 	    						return $model->where(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),'=',$self->getValue());	
     				});
-    	 */
+    	 */ 
     	/* $typeFilter = FilterFactory::getInstance('Select');
     	$prepare = $typeFilter->addFilter($prepare,'type',
     					function($self, $model){
@@ -2048,12 +2069,19 @@ ORDER BY tas.reference_num ASC,
      * Get Salesman 
      * @return multitype:
      */
-    public function getSalesman()
+    public function getSalesman($withCode=false)
     {
+    	$select = 'salesman_code, salesman_name name';
+    	if($withCode)
+    	{
+    		$select = 'salesman_code, CONCAT(salesman_code,\' - \',salesman_name) name';
+    	}
+    	
     	return \DB::table('app_salesman')
+    				->selectRaw($select)
     				->where('status','=','A')
-    				->orderBy('salesman_name')    				
-    				->lists('salesman_name','salesman_code');
+    				->orderBy('name')    				
+    				->lists('name','salesman_code');
     }
     
     
