@@ -144,13 +144,15 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
-    			return $this->view('vanInventoryCanned');
+    			$this->view->type = 'canned';
+    			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->salesman = $this->getSalesman(true);
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
-    			return $this->view('vanInventoryFrozen');
+    			$this->view->type = 'frozen';
+    			return $this->view('vanInventory');
     	}
     }
     

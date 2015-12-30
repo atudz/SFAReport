@@ -103,43 +103,58 @@
 	
 	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log)
 	{	
-	    var today = new Date();
-	    $scope.dateValue = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
-	    $scope.dateFilter = [$scope.dateValue]; 
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log);
+	}
+	
+	/**
+	 * Van & Inventory (Frozen) controller
+	 */
+
+	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log',VanInventoryFrozen]);
+	
+	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
+	{	        
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log);
+	}
+	
+	
+	/**
+	 * Van Inventory Controller
+	 */
+	function vanInventoryController(scope, resource, modal, window, reportType, log)
+	{
+		var today = new Date();
+	    scope.dateValue = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
+	    scope.dateFilter = [scope.dateValue]; 
 	    
 	    // Filter flag
-		$scope.toggleFilter = true;
+		scope.toggleFilter = true;
 		
-		var report = 'vaninventorycanned';
+		var report = reportType;
 		
 		// Fetch table data from server
-	    $scope.records = [];	    
+	    scope.records = [];	    
 	    
-	    var API = $resource('/reports/getdata/'+report);
-	    /*var filterDate = defaultDate;
-	    if($('#transaction_date').val()){
-	    	filterDate = $('#transaction_date').val();
-	    }*/	    
-	    
+	    var API = resource('/reports/getdata/'+report);	    
 	    var params = {
 	    		salesman: $('#salesman_code').val(),
-	    		transaction_date: $scope.dateValue,
+	    		transaction_date: scope.dateValue,
 	    		status: $('#status').val(),
 	    		inventory_type: $('#inventory_type').val()
 	    };
-	    $log.info(params);
+	    log.info(params);
 	    
 	    toggleLoading(true);
 	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	$scope.stocks = data.stocks;
-	    	$scope.replenishment = data.replenishment;
-	    	$log.info(data);	    	
+	    	scope.records = data.records;
+	    	scope.total = data.total;
+	    	scope.stocks = data.stocks;
+	    	scope.replenishment = data.replenishment;
+	    	log.info(data);	    	
 	    	toggleLoading();
 	    	togglePagination(data.total);
-	    	$scope.showBody = data.total;
-	    	$scope.showReplenishment = data.replenishment.total;
+	    	scope.showBody = data.total;
+	    	scope.showReplenishment = data.replenishment.total;
 	    	
 	    });	    	    
 	    
@@ -151,50 +166,27 @@
 		];
 	    
 	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
+	    scope.sortColumn = '';
+		scope.sortDirection = 'asc';
+		sortColumn(scope,API,params,log);
 	    
 	    // Filter table records	    		
-		filterSubmitVanInventory($scope,API,params,$log);
+		filterSubmitVanInventory(scope,API,params,log);
 		
 	    // Paginate table records	    
-	    pagination($scope,API,params,$log);
+	    pagination(scope,API,params,log);
 	    
 	    // Download report
-	    downloadReport($scope, $uibModal, $resource, $window, report, params, $log);	    
+	    downloadReport(scope, modal, resource, window, report, params, log);	    
 	    
-	 // @Function
+	    // @Function
 	    // Description  : Triggered while displaying expiry date in Customer Details screen.
-	    $scope.formatDate = function(date){
+	    scope.formatDate = function(date){
 	    	  if(!date) return '';
 	          var dateOut = new Date(date);
 	          return dateOut;
 	    };
-	    
 	}
-	
-	/**
-	 * Van & Inventory (Frozen) controller
-	 */
-
-	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log',VanInventoryFrozen]);
-	
-	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
-	{	        
-		var params = [
-			          'salesman',
-			          'transaction_date',		          
-			          'status',
-			          'inventory_type'
-			];
-	    
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'vaninventoryfrozen',params,$log); 
-
-	}
-	
-	
 	/**
 	 * Unpaid Report
 	 */
@@ -482,8 +474,7 @@
 		    	scope.replenishment = data.replenishment;
 		    	scope.stock_on_hand = data.stock_on_hand;
 		    	toggleLoading();
-		    	log.info(data);	    	
-		    	
+		    	log.info(data);	 
 		    	scope.showBody = data.total;
 		    	scope.showReplenishment = data.replenishment.total;
 		    	
@@ -522,7 +513,7 @@
 		    	scope.short_over_stocks = data.short_over_stocks;
 		    	toggleLoading();
 		    	log.info(data);	    	
-		    	scope.showBody = true;
+		    	scope.showBody = data.total;
 		    	scope.showReplenishment = data.replenishment.total;
 		    });
 	    	
@@ -660,7 +651,7 @@
 	/**
 	 * Centralized pagination function
 	 */
-	function pagination(scope, API, filter, log)
+	function pagination(scope, API, filter, log, vaninventory)
 	{
 		var params  = {};
 		
