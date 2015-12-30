@@ -155,7 +155,7 @@
 	    	togglePagination(data.total);
 	    	scope.showBody = data.total;
 	    	scope.showReplenishment = data.replenishment.total;
-	    	
+	    	scope.short_over_stocks = data.short_over_stocks;	    	
 	    });	    	    
 	    
 	    params = [

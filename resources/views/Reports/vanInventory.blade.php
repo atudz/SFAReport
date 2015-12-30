@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Van Inventory','Canned & Mixes'])!!}
-{!!Html::pageheader('Canned & Mixes')!!}
+{!!Html::breadcrumb(['Van Inventory',$title])!!}
+{!!Html::pageheader($title)!!}
 
 <div class="row">
 	<div class="col-lg-12">
@@ -17,29 +17,17 @@
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 			
-				<div class="col-sm-12">
+				<div class="col-sm-12 col-sm-offset-4">
 						<form class="form-inline">
-							<div class="pull-left">
-						
-								<div class="form-group">
-									<div class="inner-addon left-addon">
-										<i class="glyphicon glyphicon-search"></i>
-										<input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
-									</div>
-								</div>
-								</div>
-							<div class="pull-right">
-								<div class="form-group form-group-sm">
-									<label>Date Filter&nbsp;</label>
-									<select id="transaction_date" class="form-control" ng-model="dateValue" ng-change="filterDate()">
-										<option ng-repeat="date in dateFilter" value=[[date]]>[[date]]</option>											
-									</select>
-								</div>
+							<div class="form-group form-group-sm">
+								<label>Date Filter&nbsp;</label>
+								<select id="transaction_date" class="form-control" ng-model="dateValue" ng-change="filterDate()">
+									<option ng-repeat="date in dateFilter" value=[[date]]>[[date]]</option>											
+								</select>							
 							</div>	
-						</form>
-				    				    
+						</form>				    				    
 			    </div>			    
-				{!!Html::topen(['no_download'=>true,'no_search'=>true])!!}
+				{!!Html::topen(['no_pdf'=>true])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<tr style="background-color:#ccccff;" ng-show="showBody">

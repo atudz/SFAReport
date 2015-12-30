@@ -7,13 +7,19 @@
 		<tbody>
 			<tr>
 				@foreach($columns as $column)
-					<th>{{$column['name']}}</th>
+					<th>{!!$column['name']!!}</th>
 				@endforeach
 			</tr>
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
-						<td>{{$record->$row}}</td>
+						<td>
+							@if(is_object($record) && isset($record->$row))
+								{!!$record->$row!!}
+							@elseif(is_array($record) && isset($record[$row]))
+								{!!$record[$row]!!}	
+							@endif
+						</td>
 					@endforeach
 				</tr>
 			@endforeach				

@@ -32,7 +32,13 @@
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
-						<td>{{$record->$row}}</td>
+						<td>
+							@if(is_object($record) && isset($record->$row))
+								{!!$record->$row!!}
+							@elseif(is_array($record) && isset($record[$row]))
+								{!!$record[$row]!!}	
+							@endif
+						</td>
 					@endforeach
 				</tr>
 			@endforeach				
