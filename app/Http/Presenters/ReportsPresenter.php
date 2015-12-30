@@ -1807,13 +1807,17 @@ ORDER BY tas.reference_num ASC,
     {
     	$headers = [
     			['name'=>'Customer'],
-    			['name'=>'Invoice Date','sort'=>'invoice_date'],
+    			//['name'=>'Invoice Date','sort'=>'invoice_date'],
+    			['name'=>'Invoice Date'],
     			['name'=>'Invoice No.','sort'=>'invoice_number'],    			 
-    			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
+    			//['name'=>'Return Slip No.','sort'=>'return_slip_num'],
+    			['name'=>'Return Slip No.'],
     			['name'=>'Transaction Date'],
     			['name'=>'Stock Transfer No.'],
-    			['name'=>'Replenishment Date','sort'=>'replenishment_date'],
-    			['name'=>'Replenishment Number','sort'=>'replenishment_number']
+    			//['name'=>'Replenishment Date','sort'=>'replenishment_date'],
+    			['name'=>'Replenishment Date'],
+    			['name'=>'Replenishment Number']
+    			//['name'=>'Replenishment Number','sort'=>'replenishment_number']
     	];
     	
     	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name');
