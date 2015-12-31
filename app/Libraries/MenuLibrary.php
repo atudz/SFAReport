@@ -75,8 +75,10 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 		{
 			$userId = \Auth::user()->id;
 			$userModel = ModelFactory::getInstance('User');
-			$user = $userModel->with('group.navigations.navitems')->find($userId);
-			$this->menuList = $user->group->navigations->toArray();
+			$user = $userModel->with('group.navigations.navitems')->find($userId);			
+			$this->menuList = $user->group->navigations->sortBy(function($navs) {
+									return $navs->id;
+								})->toArray();			
 			// store this to session so that we'll just pull the data from session
 			// and no longer need to Query again
 			
