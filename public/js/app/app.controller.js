@@ -959,7 +959,7 @@
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log) {
 
 		$scope.params = params;		
-		$log.info($scope.$parent);
+		//$log.info($scope.$parent);
 		
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
@@ -973,7 +973,7 @@
 			API.save($scope.params, function(data){
 				$log.info(data);
 				$log.info($scope.params.value);
-				$scope.$parent.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+				$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
 				$('#'+$scope.params.index).addClass('modified');				
 			});
 			
