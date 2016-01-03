@@ -26,27 +26,7 @@
 	    
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log);
-	    
-	    // Update table records
-		$scope.update = function(data) {
-			if(confirm('Is this correct?'))
-			{
-				//var status = false;
-				/*$http.post('/controller/reports/save',
-							{table:'user', id:'1', column:'firstname', value:'Test123'}
-				).success(function(response){
-					$log.info(response);
-					//status = true;
-				});*/
-				//alert(status);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		};
-		
+	    		
 	}
 	
 	
@@ -1033,4 +1013,200 @@
 	    dat.setDate(dat.getDate() + days);
 	    return dat;
 	}
+	
+	
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('UserList',['$scope','$resource','$log', UserList]);
+	
+	function UserList($scope, $resource, $log) {
+
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+	    // Fetch table data from server
+	    $scope.records = [];	    
+	    
+	    var API = $resource('/reports/getdata/userlist');
+	    var params = {};
+	    
+	    toggleLoading(true);
+	    API.get(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info(data);	    	
+	    	toggleLoading();
+	    	togglePagination(data.total);
+	    });	    	    
+	    
+	    params = {
+	    	fullname: 'fullname',
+	    	user_group_id: 'user_group_id',
+	    	created_at_from: 'created_at_from',
+	    	created_at_to: 'created_at_to'
+	    };
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);	    	    
+
+	};
+	
+	function formateDate(scope) {
+		
+		// @Function
+	    // Description  : Triggered while displaying expiry date in Customer Details screen.
+	    scope.formatDate = function(date){
+	    	  if(!date) return '';	
+	          var dateOut = new Date(date);
+	          return dateOut;
+	    };
+	}
+	
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('UserAdd',['$scope','$resource','$location','$log', UserAdd]);
+	
+	function UserAdd($scope, $resource, $location, $log) {
+
+		$scope.personalInfoError = false;
+		$scope.locationInfoError = false;
+		$scope.success = false;
+		
+		$scope.save = function(){
+			
+			var personalInfoErrors = [];
+			var personalInfoErrorList = '';
+			
+			// validate personal info
+			if(!$('#fname').val())
+			{
+				personalInfoErrors.push('First Name is a required field.');
+			}
+			if(!$('#email').val())
+			{
+				personalInfoErrors.push('Email is a required field.');
+			}
+			if(!$('#password').val())
+			{
+				personalInfoErrors.push('Password is a required field.');
+			}
+			if(!$('#confirm_pass').val())
+			{
+				personalInfoErrors.push('Confirm password is a required field.');
+			}
+			
+			if($('#password').val() && $('#confirm_pass').val() && $('#password').val() != $('#confirm_pass').val())
+			{
+				personalInfoErrors.push('Password don\'t match.')
+			}
+			
+			if(personalInfoErrors.length > 0)
+			{
+				var i = 0;
+				personalInfoErrorList = '<ul>';
+				for(i = 0; i < personalInfoErrors.length; i++)
+				{
+					personalInfoErrorList += '<li>'+personalInfoErrors[i]+'</li>';
+				}
+				personalInfoErrorList += '</ul>';
+				$('#error_list_personal').html(personalInfoErrorList);
+				$scope.personalInfoError = true;
+				$scope.success = false;
+			}
+			else
+			{
+				$scope.personalInfoError = false;
+			}
+			
+			
+			var locationErrors = [];
+			var locationErrorList = '';
+			
+			// validate personal info
+			if(!$('#role').val())
+			{
+				locationErrors.push('Role is a required field.')
+			}
+			if(!$('#area').val())
+			{
+				locationErrors.push('Area is a required field.')
+			}
+			if(!$('#status').val())
+			{
+				locationErrors.push('Status is a required field.')
+			}
+			if(!$('#assignment_type').val())
+			{
+				locationErrors.push('Assignment is a required field.')
+			}			
+			if(!$('#assignment_date_from').val())
+			{
+				locationErrors.push('Date from is a required field.')
+			}
+			if(!$('#assignment_date_to').val())
+			{
+				locationErrors.push('Date to is a required field.')
+			}
+			
+			if(locationErrors.length > 0)
+			{
+				var i = 0;
+				locationErrorList = '<ul>';
+				for(i = 0; i < locationErrors.length; i++)
+				{
+					locationErrorList += '<li>'+locationErrors[i]+'</li>';
+				}
+				locationErrorList += '</ul>';
+				$('#error_list_location').html(locationErrorList);
+				$scope.locationInfoError = true;
+				$scope.success = false;
+			}
+			else
+			{
+				$scope.locationInfoError = false;
+			}
+			
+			if(!$scope.locationInfoError && !$scope.personalInfoError)
+			{
+				var params = {
+				       fname: $('#fname').val(),
+				       lname: $('#lname').val(),
+				       mname: $('#mname').val(),
+				       email: $('#email').val(),
+				       username: $('#username').val(),
+				       password: $('#password').val(),
+				       address: $('#address').val(),
+				       telephone: $('#telephone').val(),
+				       mobile: $('#mobile').val(),
+				       role: $('#role').val(),
+				       area: $('#area').val(),
+				       status: $('#status').val(),
+				       assignment_type: $('#assignment_type').val(),
+				       assignment_date_from: $('#assignment_date_from').val(),
+				       assignment_date_to: $('#assignment_date_to').val()
+				};
+				
+				var API = $resource('controller/user/save');				
+				$log.info(params);
+				API.save(params, function(data){
+					$log.info(data);
+					//$scope.success = true;
+					$location.path('user.list');
+				});
+			}
+		}
+	};
+
 })();

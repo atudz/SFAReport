@@ -103,8 +103,13 @@
 				// Users 
 				.when('/user.list',{
 					templateUrl: '/user/list',
-					/*controller: 'Sync',
-					controllerAs: 'sync'*/
+					controller: 'UserList'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/user.add',{
+					templateUrl: '/user/addEdit',
+					controller: 'UserAdd'
+					/*controllerAs: 'sync'*/
 				})
 
 				.when('/profile.changepassword',{

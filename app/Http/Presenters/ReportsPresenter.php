@@ -6,6 +6,7 @@ use App\Core\PresenterCore;
 use App\Factories\FilterFactory;
 use App\Filters\SelectFilter;
 use Illuminate\Database\Query\Builder;
+use App\Factories\PresenterFactory;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -233,6 +234,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getMaterialPriceList();    			
     		case 'conditioncodes':
     			return $this->getConditionCodes();
+    		case 'userlist':
+    			return PresenterFactory::getInstance('User')->getUsers();	
     	}
     }
     
@@ -676,11 +679,7 @@ ORDER BY tas.reference_num ASC,
 					    	->get();
     	return $stockItems;
     }
-    
-    /**
-     * Get Van & Inventory records
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     /**
      * Get Van & Inventory records
      * @param string $reports
@@ -2163,9 +2162,9 @@ ORDER BY tas.reference_num ASC,
     public function getCustomer()
     {
     	return \DB::table('app_customer')
-    	->where('status','=','A')
-    	->orderBy('customer_name')
-    	->lists('customer_name','customer_code');
+			    	->where('status','=','A')
+			    	->orderBy('customer_name')
+			    	->lists('customer_name','customer_code');
     }
     
     /**
@@ -2198,9 +2197,9 @@ ORDER BY tas.reference_num ASC,
     public function getArea()
     {
     	return \DB::table('app_area')
-    			->where('status','=','A')
-    			->orderBy('area_name')
-    			->lists('area_name','area_code');
+		    			->where('status','=','A')
+		    			->orderBy('area_name')
+		    			->lists('area_name','area_code');
     }
 
     /**
@@ -2209,9 +2208,9 @@ ORDER BY tas.reference_num ASC,
     public function getItems()
     {
     	return \DB::table('app_item_master')
-    			->where('status','=','A')
-    			->orderBy('description')
-    			->lists('description','item_code');
+		    			->where('status','=','A')
+		    			->orderBy('description')
+		    			->lists('description','item_code');
     }
     
     /**
@@ -2230,7 +2229,12 @@ ORDER BY tas.reference_num ASC,
      */
     public function getCustomerStatus()
     {    	
-    	$statusList = ['A'=>'Active','D'=>'Deleted','I'=>'Inactive',];    	
+    	$statusList = [
+    			'A'=>'Active',
+    			'D'=>'Deleted',
+    			'I'=>'Inactive'    			
+    	];    	
+    	
     	return $statusList;
     }
     

@@ -45,6 +45,7 @@ Route::group(['prefix' => 'reports'],function(){
 
 Route::group(['prefix' => 'user'],function(){
 	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
+	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 });
 
@@ -60,6 +61,7 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
 
+	Route::post('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 });

@@ -26,5 +26,6 @@ class VerifyCsrfToken extends BaseVerifier
     		
     		
     	'/controller/reports/save',
+    	'/controller/user/save',
     ];
 }

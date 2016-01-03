@@ -30,6 +30,8 @@
 				{!!Html::topen(['no_pdf'=>true])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
+					
+						<!-- Actual Count -->
 						<tr style="background-color:#ccccff;" ng-show="showBody">
 							<th>Actual Count</th>
 							<th></th>
@@ -45,6 +47,8 @@
 								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
+						
+						<!-- Stock count -->
 						<tr ng-show="showBody">
 							<th></th>
 							<th></th>
@@ -60,6 +64,8 @@
 								<th>[[stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
+						
+						<!-- Record list -->
 						<tr ng-repeat="record in records|filter:query" ng-show="showBody">
 							<td>[[record.customer_name]]</td>
 							<td>
@@ -81,6 +87,7 @@
 							</td>
 						</tr>
 						
+						<!-- Stock on Hand -->
 						<tr style="background-color: #ccffcc" ng-show="showBody">
 							<th>Stock Onhand</th>
 							<th></th>
@@ -95,6 +102,7 @@
 							@endforeach
 						</tr>
 						
+						<!-- Actual count -->
 						<tr style="background-color:#ccccff;" ng-show="showBody">
 							<th>Actual Count</th>
 							<th></th>
@@ -111,6 +119,7 @@
 							@endforeach
 						</tr>	
 						
+						<!-- Short over stocks -->
 						<tr style="background-color:#edc4c4;" ng-show="showBody">
 							<th>Short Over Stocks</th>
 							<th></th>
@@ -125,6 +134,7 @@
 							@endforeach
 						</tr>
 						
+						<!-- Beginning balance -->
 						<tr ng-show="showBody">
 							<th>Beginning Balance</th>
 							<th></th>
@@ -137,7 +147,8 @@
 							@foreach($itemCodes as $item)
 								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
-						</tr>					
+						</tr>											
+						
 					</tbody>					
 				{!!Html::tclose()!!}
 				<input type="hidden" id="inventory_type" value="{{$type}}">

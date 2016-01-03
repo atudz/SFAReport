@@ -1011,4 +1011,9 @@ h5.page-header
 tr.modified {
 	background-color: #FCF8E3 !important;
 }
+
+.form-input-field {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
  

@@ -4,7 +4,7 @@
 return [
 		
 	// Server IP address
-	'host' => '192.168.240.33',
+	'host' => '192.168.1.52',
 		
 	// Server port
 	'port' => '1433',	
@@ -13,10 +13,10 @@ return [
 	'database' => 'SFA_SFI_TEST',
 		
 	// Database user
-	'dbuser' => 'UATREAD',
+	'dbuser' => 'sfa_test',
 		
 	// Database password
-	'dbpass' => 'U4tR34d',
+	'dbpass' => 'sfa_test',
 		
 	// Synchronize table
 	// table name => [primary keys or foreign keys]
