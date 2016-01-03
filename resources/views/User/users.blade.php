@@ -10,9 +10,11 @@
 					<div class="pull-left col-sm-6">
 						{!!Html::input('text','fullname','Full Name')!!}
 						{!!Html::select('user_group_id','Role', $roles)!!}
+						{!!Html::select('location_assignment_code','Branch', $areas)!!}						
 					</div>					
 					<div class="pull-right col-sm-6">
-						{!!Html::datepicker('created_at','Date Created',true)!!}						
+						{!!Html::datepicker('created_at','Date Created',true)!!}		
+						{!!Html::select('location_assignment_type','Assignment', $assignmentOptions)!!}				
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
@@ -36,6 +38,8 @@
 						<tr ng-repeat="record in records|filter:query">
 							<td>[[record.fullname]]</td>
 							<td>[[record.role]]</td>
+							<td>[[record.area_name]]</td>
+							<td>[[record.assignment]]</td>
 							<td>[[record.created_at]]</td>
 							<td>
 								<a href=""><i class="fa fa-pencil-square-o fa-lg"></i></a>
@@ -44,7 +48,7 @@
 							</td>
 						</tr>						
 					</tbody>
-					{!!Html::tfooter(true,4)!!}					
+					{!!Html::tfooter(true,6)!!}					
 				{!!Html::tclose()!!}
 				
 				

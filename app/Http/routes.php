@@ -44,6 +44,8 @@ Route::group(['prefix' => 'reports'],function(){
 
 
 Route::group(['prefix' => 'user'],function(){
+	Route::get('/getemails/{id?}', ['as'=>'user-get-emails', 'uses'=>'UserPresenter@getUserEmails']);
+	Route::get('/getusernames/{id?}', ['as'=>'user-get-usernames', 'uses'=>'UserPresenter@getUsernames']);
 	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
 	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);

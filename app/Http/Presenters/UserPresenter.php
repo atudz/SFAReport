@@ -16,7 +16,9 @@ class UserPresenter extends PresenterCore
 	public function userList()
 	{
 		$this->view->roles = $this->getRoles();		
+		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->tableHeaders = $this->getUserTableColumns();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
 		return $this->view('users');
 	}
 
@@ -31,6 +33,7 @@ class UserPresenter extends PresenterCore
 		$this->view->statuses = PresenterFactory::getInstance('Reports')->getCustomerStatus();
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
+		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
 		return $this->view('addEdit');
 	}
@@ -55,9 +58,30 @@ class UserPresenter extends PresenterCore
 	/**
 	 * Get user emails
 	 */
-	public function getUserEmails($id=0)
+	public function getUserEmails($id=0, $json=true)
 	{
-		return \DB::table('user')->whereNotNull('deleted_at')->lists('email','id');
+		$prepare = \DB::table('user');
+		if($id)
+		{
+			$prepare = $prepare->where('id','<>',$id);
+		}
+		$result = $prepare->whereNull('deleted_at')->lists('email','id');
+		return $json ? response()->json($result) : $result;
+	}
+	
+	/**
+	 * Get user emails
+	 */
+	public function getUsernames($id=0, $json=true)
+	{
+		$prepare = \DB::table('user');
+		if($id)
+		{
+			$prepare = $prepare->where('id','<>',$id);
+		}
+		
+		$result = $prepare->whereNull('deleted_at')->lists('username','id');
+		return $json ? response()->json($result) : $result;
 	}
 	
 	/**
@@ -67,10 +91,23 @@ class UserPresenter extends PresenterCore
 	public function getAssignmentOptions()
 	{
 		return [
-			0 => 'Permanent',
-			1 => 'Reassigned',
-			2 => 'Temporary'			
+			1 => 'Permanent',
+			2 => 'Reassigned',
+			3 => 'Temporary'			
 		];	
+	}
+	
+	/**
+	 * Get gender
+	 * @return multitype:string
+	 */
+	public function getGender()
+	{
+		return [
+				//0 => 'NA',
+				1 => 'Male',
+				2 => 'Female'
+		];
 	}
 	
 	/**
@@ -89,11 +126,14 @@ class UserPresenter extends PresenterCore
 				user.id,
 				user.created_at,
 				CONCAT(user.firstname,\' \',user.lastname) fullname,
-				user_group.name role ';
+				app_area.area_name,
+				IF(user.location_assignment_type = 1, \'Permanent\', IF(user.location_assignment_type = 2, \'Reassigned\', IF(user.location_assignment_type = 3, \'Temporary\', \'\'))) assignment,
+				user_group.name role';
 		
 		$prepare = \DB::table('user')
 						->selectRaw($select)
-						->leftJoin('user_group','user.user_group_id','=','user_group.id');		
+						->leftJoin('user_group','user.user_group_id','=','user_group.id')
+						->leftJoin('app_area','app_area.area_code','=','user.location_assignment_code');		
 		 
 		$fnameFilter = FilterFactory::getInstance('Text');
 		$prepare = $fnameFilter->addFilter($prepare,'fullname', function($filter, $model){
@@ -109,6 +149,12 @@ class UserPresenter extends PresenterCore
 		$prepare = $createdFilter->addFilter($prepare,'created_at', function ($filter, $model){
 					return $model->whereBetween(\DB::raw('DATE(user.created_at)'),$filter->getValue());			
 					});
+		
+		$branchFilter = FilterFactory::getInstance('Select');
+		$prepare = $branchFilter->addFilter($prepare,'location_assignment_code');
+		
+		$assignmentFilter = FilterFactory::getInstance('Select');
+		$prepare = $assignmentFilter->addFilter($prepare,'location_assignment_type');
 		
 		//dd($prepare->toSql());
 		$result = $this->paginate($prepare);
@@ -130,8 +176,8 @@ class UserPresenter extends PresenterCore
 		$headers = [
 				['name'=>'Full Name', 'sort'=>'lastname'],
 				['name'=>'Role', 'sort'=>'role'],
-				//['name'=>'Branch', 'sort'=>'area'],
-				//['name'=>'Assignment', 'sort'=>'area'],
+				['name'=>'Branch', 'sort'=>'area_name'],
+				['name'=>'Assignment', 'sort'=>'assignment'],
 				['name'=>'Date Created', 'sort'=>'created_at'],
 				['name'=>'Actions'],				
 		];

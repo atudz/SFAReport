@@ -31,6 +31,8 @@ class UserController extends ControllerCore
         $user->username = $request->get('username');
         $user->address1 = $request->get('address');
      	$user->created_by = auth()->user()->id;
+     	$user->gender = $request->get('gender');
+     	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
         
         $user->location_assignment_code = $request->get('area');

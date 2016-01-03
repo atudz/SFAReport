@@ -45,10 +45,16 @@
 						{!!Html::input('password','confirm_pass','Confirm Password *')!!}
 					</div>
 					<div class="row form-input-field">
+						{!!Html::select('gender','Gender', $gender, '')!!}
+					</div>
+					<div class="row form-input-field">
+						{!!Html::input('number','age','Age','',['min'=>0])!!}
+					</div>					
+					<div class="row form-input-field">
 						{!!Html::input('text','address','Adddress')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','telephone','Telephone No.')!!}
+						{!!Html::input('text','telephone','Telephone No.','',['pattern'=>'[0-9]*'])!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','mobile','Mobile No.')!!}

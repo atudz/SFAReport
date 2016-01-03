@@ -1044,6 +1044,9 @@
 	    params = {
 	    	fullname: 'fullname',
 	    	user_group_id: 'user_group_id',
+	    	location_assignment_code: 'location_assignment_code',
+	    	location_assignment_type: 'location_assignment_type',
+	    	user_group_id: 'user_group_id',
 	    	created_at_from: 'created_at_from',
 	    	created_at_to: 'created_at_to'
 	    };
@@ -1088,6 +1091,32 @@
 			
 			var personalInfoErrors = [];
 			var personalInfoErrorList = '';
+			$scope.emailList = [];
+			$scope.usernameList = [];
+			
+			var API;
+			/*var API = $resource('user/getemails');
+			API.get({}, function(data){
+				//$log.info(data);
+				var emails = [];
+				$.each(data, function(index,val){
+					$log.info(val);
+					emails.push(val);
+				})
+				$scope.emailList = emails;
+			});
+			$log.info($scope.emailList);
+			
+			API = $resource('user/getusernames');
+			API.get({}, function(data){
+				//$log.info(data);
+				var usernames = [];
+				$.each(data, function(index,val){
+					usernames.push(val);
+				})
+				$scope.usernameList = usernames;
+			});
+			$log.info($scope.usernameList);*/
 			
 			// validate personal info
 			if(!$('#fname').val())
@@ -1098,6 +1127,26 @@
 			{
 				personalInfoErrors.push('Email is a required field.');
 			}
+		/*	if($('#email').val() && $.inArray($('#email').val(),$scope.emailList))
+			{
+				personalInfoErrors.push('Email must be unique.');
+			}
+			
+			if($('#username').val() && $.inArray($('#username').val(),$scope.usernameList))
+			{
+				personalInfoErrors.push('Username must be unique.');
+			}*/
+			
+			var numeric = new RegExp('/^\d+$/');
+			if($('#telephone').val() && !numeric.test($('#telephone')))
+			{
+				personalInfoErrors.push('Telephone must be numeric.');
+			}
+			if($('#mobile').val() && !numeric.test($('#mobile')))
+			{
+				personalInfoErrors.push('Mobile must be numeric.');
+			}
+			
 			if(!$('#password').val())
 			{
 				personalInfoErrors.push('Password is a required field.');
@@ -1188,6 +1237,8 @@
 				       username: $('#username').val(),
 				       password: $('#password').val(),
 				       address: $('#address').val(),
+				       gender: $('#gender').val(),
+				       age: $('#age').val(),
 				       telephone: $('#telephone').val(),
 				       mobile: $('#mobile').val(),
 				       role: $('#role').val(),
@@ -1198,7 +1249,7 @@
 				       assignment_date_to: $('#assignment_date_to').val()
 				};
 				
-				var API = $resource('controller/user/save');				
+				API = $resource('controller/user/save');				
 				$log.info(params);
 				API.save(params, function(data){
 					$log.info(data);

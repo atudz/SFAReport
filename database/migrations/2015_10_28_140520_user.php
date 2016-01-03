@@ -32,7 +32,7 @@ class User extends Migration
 			$table->string('avatar', 255)->nullable();
 			$table->enum('location_assignment_status', array('A', 'I', 'D'))->default('A');
 			$table->string('location_assignment_code', 255)->nullable();
-			$table->enum('location_assignment_type', array('0', '1', '2'))->default('0');
+			$table->enum('location_assignment_type', array('1', '2', '3'))->default('1');
 			$table->datetime('location_assignment_from')->nullable();
 			$table->datetime('location_assignment_to')->nullable();
 			$table->rememberToken();
