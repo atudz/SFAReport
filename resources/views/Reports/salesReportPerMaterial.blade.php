@@ -10,7 +10,7 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}
-						{!!Html::datepicker('return_date','Return Date',true)!!}
+						{!!Html::datepicker('return_date','Return Date/ Invoice Date',true)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}
 					</div>					
 					<div class="pull-right col-sm-6">	

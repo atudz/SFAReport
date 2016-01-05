@@ -408,7 +408,7 @@
 		    startingDay: 0
 		};
 
-		$scope.format = 'yyyy/MM/dd';
+		$scope.format = 'MM/dd/yyyy';
 			  
 	}
 
