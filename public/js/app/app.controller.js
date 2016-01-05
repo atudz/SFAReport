@@ -878,6 +878,9 @@
 	          var dateOut = new Date(date);
 	          return dateOut;
 	    };
+	    
+	    //Format number
+	    formatNumber(scope);
 	}
 	
 	/**
@@ -1064,6 +1067,9 @@
 
 	};
 	
+	/**
+	 * Format date
+	 */
 	function formateDate(scope) {
 		
 		// @Function
@@ -1072,6 +1078,30 @@
 	    	  if(!date) return '';	
 	          var dateOut = new Date(date);
 	          return dateOut;
+	    };
+	}
+	
+	/**
+	 * Format money
+	 */
+	function formatNumber(scope) {
+
+	    scope.formatNumber = function(number){
+	    	  if(!number) return '';
+	    	  
+	    	  var chunks = [];
+	    	  var realNumber;
+	    	  if(number.indexOf('.') != -1)
+	    	  {
+	    		  chunks = number.split('.');
+	    		  realNumber = chunks[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' + chunks[1];
+	    	  }
+	    	  else
+	    	  {
+	    		  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	    	  }
+	    	  
+	    	  return realNumber;
 	    };
 	}
 	
