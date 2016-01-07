@@ -6,7 +6,10 @@
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-animate/angular-animate.min.js') }}"></script>     
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/ng-table/dist/ng-table.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-smart-table/dist/smart-table.min.js') }}"></script>     
-<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-xeditable/dist/js/xeditable.min.js') }}"></script>     
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-xeditable/dist/js/xeditable.min.js') }}"></script>  
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/floatThead/dist/jquery.floatThead.min.js') }}"></script>  
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/floatThead/dist/jquery.floatThead-slim.min.js') }}"></script> 
+
 
 @if(auth()->user())
 	<script src="{{ URL::asset('js/app/app.module.js') }}"></script>

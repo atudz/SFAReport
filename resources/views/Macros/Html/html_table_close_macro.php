@@ -3,6 +3,7 @@
 Html::macro('tclose', function($paginate=true) {
 
 	$html = '</table>';
+	$html .= '</div>';
 
 	$html .= '
 			<script type="text/ng-template" id="EditColumnText">
@@ -88,8 +89,6 @@ Html::macro('tclose', function($paginate=true) {
 				</div>
 			</div>';
 	}
-			
-	$html .= '</div>';
 
 	return $html;
 });

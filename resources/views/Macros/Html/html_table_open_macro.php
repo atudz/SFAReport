@@ -63,9 +63,20 @@ Html::macro('topen', function($options=[]) {
 			            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
 			        </div>
     			</script>
+
+    			<script type="text/javascript">
+				$(function() {
+				 	$("table.table").floatThead({
+					    position: "absolute",
+					    scrollContainer: function($table){
+					        return $table.closest(".wrapper");
+					    }
+					});
+				});
+				</script>
     
 			</div>			
-			<div class="col-sm-12 table-responsive">							
+			<div class="wrapper">							
 			<table class="table table-striped table-condensed table-bordered"'.Html::attributes($options).'>';
 
 	return $html;
