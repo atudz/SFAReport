@@ -62,7 +62,7 @@
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_detail','quantity',record.return_detail_id,record.quantity,$index,'Quantity')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_detail','served_qty',record.sales_order_detail_id,record.quantity,$index,'Quantity')">
     							[[record.quantity]]
   							</a>
 						</td>
@@ -73,7 +73,7 @@
 						</td>
 						<td>[[record.uom_code]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(record.gross_served_amount)"></span>
 						</td>
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>

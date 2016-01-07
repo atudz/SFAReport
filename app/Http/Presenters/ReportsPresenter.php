@@ -1000,9 +1000,10 @@ ORDER BY tas.reference_num ASC,
 				   app_item_master.item_code,
 				   app_item_master.description,
     			   txn_return_detail.return_detail_id,
-				   txn_return_detail.quantity,
+				   txn_sales_order_detail.served_qty quantity,
 				   txn_return_detail.condition_code,
-				   txn_return_detail.uom_code,
+    			   txn_sales_order_detail.sales_order_detail_id,
+				   txn_sales_order_detail.uom_code,
 				   txn_sales_order_detail.gross_served_amount,
 				   txn_sales_order_detail.vat_amount,
 				   txn_sales_order_detail.discount_rate,
@@ -1038,7 +1039,7 @@ ORDER BY tas.reference_num ASC,
     	if($summary)
     	{
     		$select = '
-				   SUM(txn_return_detail.quantity) quantity,
+				   SUM(txn_sales_order_detail.served_qty) quantity,
 				   SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
 				   SUM(txn_sales_order_detail.vat_amount) vat_amount,
 				   SUM(txn_sales_order_detail.discount_amount) discount_amount,
@@ -1058,9 +1059,10 @@ ORDER BY tas.reference_num ASC,
 			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
 			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
+			    	->leftJoin('app_item_master','txn_sales_order_detail.item_code','=','app_item_master.item_code')
+			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num');
+			    	
 
 			    	
 		$salesmanFilter = FilterFactory::getInstance('Select');

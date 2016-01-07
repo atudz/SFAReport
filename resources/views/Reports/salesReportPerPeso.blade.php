@@ -55,7 +55,7 @@
   							</a>
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(record.gross_served_amount)"></span>
 						</td>
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>
