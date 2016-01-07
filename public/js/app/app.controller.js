@@ -408,6 +408,7 @@
 		    startingDay: 0
 		};
 
+		//$scope.format = 'yyyy/MM/dd';
 		$scope.format = 'MM/dd/yyyy';
 			  
 	}
@@ -540,7 +541,7 @@
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
 			});
-			log.info(filter);
+			log.info(params);
 			
 			scope.toggleFilter = true;
 			toggleLoading(true);
@@ -549,6 +550,7 @@
 	    		togglePagination(data.total);
 		    	scope.records = data.records;
 		    	scope.total = data.total;
+		    	scope.summary = data.summary;
 		    	toggleLoading();
 		    });
 	    	
@@ -849,6 +851,7 @@
 	    toggleLoading(true);
 	    API.get(params,function(data){
 	    	scope.records = data.records;
+	    	scope.summary = data.summary;
 	    	scope.total = data.total;
 	    	log.info(data);	    	
 	    	toggleLoading();
@@ -893,12 +896,14 @@
 			$('#pagination_div').removeClass('hidden');
 		    $('#pagination_div').addClass('show');
 		    $('#no_records_div').hide();
+		    $('#total_summary').show();
 		}
 		else
 		{
 			$('#pagination_div').removeClass('show');
 		    $('#pagination_div').addClass('hidden');
 		    $('#no_records_div').show();
+		    $('#total_summary').hide();
 		}		
 	}
 	
@@ -1086,11 +1091,22 @@
 	 */
 	function formatNumber(scope) {
 
-	    scope.formatNumber = function(number){
-	    	  if(!number) return '';
+	    scope.formatNumber = function(number, negate){
+	    	
+	    	  if('string' == typeof number)
+	    	  {
+	    		  number = Number(number);
+	    		  number = number.toFixed(2);
+	    	  }
+	    		
+	    	  if('number' == typeof number)
+	    		  number = number.toString();
+	    	  
+	    	  if(!number || number == undefined || number == '0' || number == '0.00') return '';
 	    	  
 	    	  var chunks = [];
-	    	  var realNumber;
+	    	  var realNumber;	    	  
+	    	  
 	    	  if(number.indexOf('.') != -1)
 	    	  {
 	    		  chunks = number.split('.');
@@ -1101,6 +1117,8 @@
 	    		  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	    	  }
 	    	  
+	    	  if(negate)
+	    		  realNumber = '(' + realNumber + ')';
 	    	  return realNumber;
 	    };
 	}

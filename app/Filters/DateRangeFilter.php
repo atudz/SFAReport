@@ -89,4 +89,18 @@ class DateRangeFilter extends FilterCore
 		return \Form::filterSelect($this->name.'[]',$this->options,$this->label, $this->value, $multiple);
 	}
 
+	/**
+	 * Format values to specified date format
+	 * @param string $format
+	 */
+	public function formatValues($values, $format='Y-m-d')
+	{
+		$formatted = [];
+		foreach($values as $val)
+		{
+			$formatted[] = date_format(new \DateTime($val), $format);
+		}
+		
+		return $formatted;
+	}
 }

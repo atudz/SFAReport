@@ -98,6 +98,56 @@
 							<span ng-bind="formatNumber(record.total_invoice)"></span>
 						</td>
 					</tr>
+					
+					<!-- Total Summary -->
+					<tr id="total_summary">
+						<th>Total</th>						
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.quantity)"></span>
+						</th>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+						</th>
+						<th>
+							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+						</th>
+					</tr>
+					
 					</tbody>
 					{!!Html::tfooter(true,33)!!}					
 				{!!Html::tclose()!!}

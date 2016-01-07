@@ -18,7 +18,7 @@ class UserPresenter extends PresenterCore
 		$this->view->roles = $this->getRoles();		
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->tableHeaders = $this->getUserTableColumns();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('users');
 	}
 
@@ -34,7 +34,7 @@ class UserPresenter extends PresenterCore
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('addEdit');
 	}
 	
