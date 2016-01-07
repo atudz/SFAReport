@@ -47,8 +47,8 @@
 						<td>[[record.segment_code]]</td>
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
-						<td>[[record.condition_code]]</td>
-						<td>[[record.quantity]]</td>						
+						<td>[[record.quantity]]</td>
+						<td>[[record.condition_code]]</td>											
 						<td>[[record.uom_code]]</td>
 						<td>
 							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
@@ -70,6 +70,50 @@
 							<span ng-bind="formatNumber(record.total_invoice)"></span>
 						</td>
 					</tr>
+					
+					<!-- Summary Total -->
+					<tr id="total_summary">
+						<th>Total</th>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<th>[[summary.quantity]]</th>
+						<td></td>												
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.gross_seved_amount)"></span>
+						</th>
+						<th>
+							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+						</th>
+						<td>[[record.collective_discount_rate]]</td>
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<td></td>						
+						<th>
+							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+						</th>
+					</tr>
+					
 					</tbody>
 					{!!Html::tfooter(true,30)!!}
 				{!!Html::tclose()!!}

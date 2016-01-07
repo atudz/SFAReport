@@ -960,9 +960,16 @@ ORDER BY tas.reference_num ASC,
     
     	$prepare = $this->getPreparedSalesReportMaterial(); 
     		
-    	//dd($prepare->toSql());
-    	$result = $this->paginate($prepare);
+    	$result = $this->paginate($prepare);    	    	
     	$data['records'] = $result->items();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedSalesReportMaterial(true);
+    		$data['summary'] = $prepare->first();
+    	}
+    	    	
     	$data['total'] = $result->total();
     
     	return response()->json($data);
@@ -972,7 +979,7 @@ ORDER BY tas.reference_num ASC,
      * Returns the prepared statement for Sales Report Per Material
      * @return Builder 
      */
-    public function getPreparedSalesReportMaterial()
+    public function getPreparedSalesReportMaterial($summary=false)
     {
     	$select = 'txn_sales_order_header.sales_order_header_id,
     			   txn_sales_order_header.so_number,
@@ -993,9 +1000,10 @@ ORDER BY tas.reference_num ASC,
 				   app_item_master.item_code,
 				   app_item_master.description,
     			   txn_return_detail.return_detail_id,
-				   txn_return_detail.quantity,
+				   txn_sales_order_detail.served_qty quantity,
 				   txn_return_detail.condition_code,
-				   txn_return_detail.uom_code,
+    			   txn_sales_order_detail.sales_order_detail_id,
+				   txn_sales_order_detail.uom_code,
 				   txn_sales_order_detail.gross_served_amount,
 				   txn_sales_order_detail.vat_amount,
 				   txn_sales_order_detail.discount_rate,
@@ -1028,6 +1036,19 @@ ORDER BY tas.reference_num ASC,
     			  ) updated  		
     			';
     	 
+    	if($summary)
+    	{
+    		$select = '
+				   SUM(txn_sales_order_detail.served_qty) quantity,
+				   SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
+				   SUM(txn_sales_order_detail.vat_amount) vat_amount,
+				   SUM(txn_sales_order_detail.discount_amount) discount_amount,
+				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,				  
+				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
+				   SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice
+    			';
+    	}
+    	
     	$prepare = \DB::table('txn_sales_order_header')
 			    	->selectRaw($select)
 			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
@@ -1038,9 +1059,10 @@ ORDER BY tas.reference_num ASC,
 			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
 			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
+			    	->leftJoin('app_item_master','txn_sales_order_detail.item_code','=','app_item_master.item_code')
+			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num');
+			    	
 
 			    	
 		$salesmanFilter = FilterFactory::getInstance('Select');
@@ -1054,7 +1076,7 @@ ORDER BY tas.reference_num ASC,
 			    	 
 		$companyCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
-							function($self, $model){
+							function($self, $model){								
 								return $model->where('txn_sales_order_header.customer_code','like',$self->getValue().'%');
 							});
 			    	 
@@ -1079,13 +1101,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});
 
 		return $prepare;	    	
@@ -1101,9 +1123,16 @@ ORDER BY tas.reference_num ASC,
     {
     	$prepare = $this->getPreparedSalesReportPeso();
     	 
-    	//dd($prepare->toSql());
-    	$result = $this->paginate($prepare);
+    	$result = $this->paginate($prepare);    	
     	$data['records'] = $result->items();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedSalesReportPeso(true);
+    		$data['summary'] = $prepare->first();
+    	}
+    	
     	$data['total'] = $result->total();
     	
     	return response()->json($data);
@@ -1113,7 +1142,7 @@ ORDER BY tas.reference_num ASC,
      * Return Sales Report per peso prepared statement
      * @return unknown
      */
-    public function getPreparedSalesReportPeso()
+    public function getPreparedSalesReportPeso($summary=false)
     {
     	$select = 'txn_sales_order_header.so_number,
 			  	   txn_sales_order_header.reference_num,
@@ -1156,7 +1185,18 @@ ORDER BY tas.reference_num ASC,
 	    				    )
 	    			  ) updated
     			';
-    	 
+
+    	if($summary)
+    	{
+    		$select = '
+				   SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
+				   SUM(txn_sales_order_detail.vat_amount) vat_amount,
+				   SUM(txn_sales_order_detail.discount_amount) discount_amount,
+				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,
+				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
+				   SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice
+    			';
+    	}
     	$prepare = \DB::table('txn_sales_order_header')
 			    	->selectRaw($select)
 			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
@@ -1199,13 +1239,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	 
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});			    	
 		return $prepare;
     }
@@ -1219,9 +1259,16 @@ ORDER BY tas.reference_num ASC,
     
     	$prepare = $this->getPreparedReturnMaterial();    		
     	
-    	//dd($prepare->toSql());
-    	$result = $this->paginate($prepare);
+    	$result = $this->paginate($prepare);        	
     	$data['records'] = $result->items();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedReturnMaterial(true);
+    		$data['summary'] = $prepare->first();
+    	}
+    	    	
     	$data['total'] = $result->total();
     
     
@@ -1232,7 +1279,7 @@ ORDER BY tas.reference_num ASC,
      * Return prepared statemen for return material
      * @return unknown
      */
-    public function getPreparedReturnMaterial()
+    public function getPreparedReturnMaterial($summary=false)
     {
     	$select = '
     			txn_return_header.return_txn_number,
@@ -1287,6 +1334,19 @@ ORDER BY tas.reference_num ASC,
     			  ) updated 
     			';
     	 
+    	if($summary)
+    	{
+    		$select = '
+    			SUM(txn_return_detail.quantity) quantity,
+				SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
+				SUM(txn_return_detail.vat_amount) vat_amount,
+				SUM(txn_sales_order_detail.discount_amount) discount_amount,
+				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,	
+				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
+				SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice    			
+    			';
+    	}
+    	
     	$prepare = \DB::table('txn_return_header')
 			    	->selectRaw($select)
 			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
@@ -1331,13 +1391,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
+			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	
 		return $prepare;	    	
@@ -1349,13 +1409,17 @@ ORDER BY tas.reference_num ASC,
      * @return \Illuminate\Http\JsonResponse
      */
     public function getReturnPeso()
-    {
-    
-    	$prepare = $this->getPreparedReturnPeso();	
-    	
-    	//dd($prepare->toSql());
-    	$result = $this->paginate($prepare);
+    {    
+    	$prepare = $this->getPreparedReturnPeso();    	
+    	$result = $this->paginate($prepare);    	
     	$data['records'] = $result->items();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedReturnPeso(true);
+    		$data['summary'] = $prepare->first();
+    	}    	
     	$data['total'] = $result->total();
     
     
@@ -1366,7 +1430,7 @@ ORDER BY tas.reference_num ASC,
      * Return prepared statement for return per peso
      * @return unknown
      */
-    public function getPreparedReturnPeso()
+    public function getPreparedReturnPeso($summary=false)
     {
     	$select = '
     			txn_return_header.return_txn_number,
@@ -1420,7 +1484,19 @@ ORDER BY tas.reference_num ASC,
     				    )
     			  ) updated
     			';
-    	 
+
+    	if($summary)
+    	{
+    		$select = '
+    			SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
+				SUM(txn_return_detail.vat_amount) vat_amount,
+				SUM(txn_sales_order_detail.discount_amount) discount_amount,
+				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,
+				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
+				SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice
+    			';
+    	}
+    	
     	$prepare = \DB::table('txn_return_header')
 			    	->selectRaw($select)
 			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
@@ -1453,13 +1529,13 @@ ORDER BY tas.reference_num ASC,
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
     			function($self, $model){
-    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->getValue());
+    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
     			});
     	
     	$postingFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $postingFilter->addFilter($prepare,'posting_date',
     			function($self, $model){
-    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->getValue());
+    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
     			});
     	
     	return $prepare;
@@ -1470,11 +1546,9 @@ ORDER BY tas.reference_num ASC,
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCustomerList()
-    {
-    
+    {    
     	$prepare = $this->getPreparedCustomerList();
     	
-    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
@@ -2194,12 +2268,16 @@ ORDER BY tas.reference_num ASC,
      * Get Area
      * @return multitype:
      */
-    public function getArea()
+    public function getArea($sfiOnly=false)
     {
-    	return \DB::table('app_area')
-		    			->where('status','=','A')
-		    			->orderBy('area_name')
-		    			->lists('area_name','area_code');
+    	$prepare = \DB::table('app_area')
+		    			->where('status','=','A');
+    	if($sfiOnly)
+    	{
+    		$prepare->where('area_name','like','SFI%');
+    	}
+    	
+    	return $prepare->orderBy('area_name')->lists('area_name','area_code');
     }
 
     /**

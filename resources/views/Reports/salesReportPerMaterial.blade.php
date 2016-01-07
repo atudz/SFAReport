@@ -63,7 +63,7 @@
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_detail','quantity',record.return_detail_id,record.quantity,$index,'Quantity')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_detail','served_qty',record.sales_order_detail_id,record.quantity,$index,'Quantity')">
     							[[record.quantity]]
   							</a>
 						</td>
@@ -74,7 +74,7 @@
 						</td>
 						<td>[[record.uom_code]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(record.gross_served_amount)"></span>
 						</td>
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>
@@ -99,6 +99,56 @@
 							<span ng-bind="formatNumber(record.total_invoice)"></span>
 						</td>
 					</tr>
+					
+					<!-- Total Summary -->
+					<tr id="total_summary">
+						<th>Total</th>						
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.quantity)"></span>
+						</th>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+						</th>
+						<th>
+							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+						</th>
+					</tr>
+					
 					</tbody>
 					{!!Html::tfooter(true,33)!!}					
 				{!!Html::tclose()!!}
