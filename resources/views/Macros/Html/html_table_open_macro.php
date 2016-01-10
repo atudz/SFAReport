@@ -69,6 +69,7 @@ Html::macro('topen', function($options=[]) {
 				 	$("table.table").floatThead({
 					    position: "absolute",
 					    autoReflow: true,
+					    zIndex: "2",
 					    scrollContainer: function($table){
 					        return $table.closest(".wrapper");
 					    }
