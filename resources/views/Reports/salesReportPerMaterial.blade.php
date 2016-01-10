@@ -10,8 +10,8 @@
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
+						{!!Html::datepicker('return_date','Return Date/ Invoice Date',true)!!}						
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}
-						{!!Html::datepicker('return_date','Return Date/ Invoice Date',true)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}
 					</div>					
 					<div class="pull-right col-sm-6">	
@@ -33,9 +33,8 @@
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
-						<!-- <td>[[record.remarks]]</td> -->
 						<td> 
-							<a href="#" editable-text="record.remarks" onbeforesave="update($data)">
+  							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
     							[[ record.remarks ]]
   							</a>
   						</td>
@@ -50,12 +49,12 @@
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
     							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
     							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
@@ -63,7 +62,7 @@
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_detail','served_qty',record.sales_order_detail_id,record.quantity,$index,'Quantity')">
+							<a href="" class="editable-click" ng-click="editColumn('number','txn_sales_order_detail','served_qty',record.sales_order_detail_id,record.quantity,$index,'Quantity','quantity',true)">
     							[[record.quantity]]
   							</a>
 						</td>

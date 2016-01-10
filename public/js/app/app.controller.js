@@ -9,6 +9,8 @@
 	 * Sales & Collection Report controller
 	 */
 	var app = angular.module('app');
+	var defaultDate = '';
+	
 	
 	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log',SalesCollectionReport]);
 	
@@ -159,13 +161,8 @@
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, params, log);	    
 	    
-	    // @Function
-	    // Description  : Triggered while displaying expiry date in Customer Details screen.
-	    scope.formatDate = function(date){
-	    	  if(!date) return '';
-	          var dateOut = new Date(date);
-	          return dateOut;
-	    };
+	    // Format date
+	    formatDate(scope);
 	}
 	/**
 	 * Unpaid Report
@@ -390,12 +387,42 @@
 	app.controller('Calendar',['$scope','$http','$log', Calendar]);
 	
 	function Calendar($scope, $http, $log)
-	{					
+	{	
 		$scope.dateFrom = null;
 	    $scope.dateTo = null;
-	    $log.info($('#default_value').val());
+	    
+	    $scope.maxDate = new Date(2020, 5, 22);
 
-		$scope.maxDate = new Date(2020, 5, 22);
+		$scope.open = function($event, elementId) {
+			$event.preventDefault();
+		    $event.stopPropagation();
+		    $scope[elementId] = true;
+		};
+
+		$scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 0
+		};
+
+		//$scope.format = 'yyyy/MM/dd';
+		$scope.format = 'MM/dd/yyyy';
+			  
+	}
+	
+	/**
+	 * Date Input Controller for editable columns
+	 */
+	app.controller('EditableColumnsCalendar',['$scope','$http','$log', EditableColumnsCalendar]);
+	
+	function EditableColumnsCalendar($scope, $http, $log)
+	{	
+		if(defaultDate)
+			$scope.dateFrom = defaultDate;
+		else
+			$scope.dateFrom = null;
+	    $scope.dateTo = null;
+	    
+	    $scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
@@ -716,7 +743,7 @@
 	function editTable(scope, modal, resource, window, options, log)
 	{
 		
-		scope.editColumn = function(type, table, column, id, value, index, name){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal){
 			
 			var selectOptions = options;
 			/*if(selectAPI)
@@ -729,6 +756,38 @@
 				});
 			}*/
 			
+			var total = column;
+			if(alias)
+				total = alias;
+			
+			scope.oldVal = '';
+			if(getTotal)
+				scope.oldVal = value;
+						
+			var template = '';
+			var inputType = '';
+			switch(type)
+			{
+				case 'date':
+					template = 'EditColumnDate';
+					inputType = 'datetime';
+					defaultDate = new Date(value);
+					break;
+				case 'select':
+					template = 'EditColumnSelect';
+					break;
+				case 'number':	
+					template = 'EditColumnText';
+					inputType = 'number';
+					value = Number(value);
+					break;
+				default:	
+					template = 'EditColumnText';
+					inputType = 'text';
+					break;	
+			}
+			log.info(value);
+			
 			log.info(selectOptions);
 			var params = {
 					table: table,
@@ -737,23 +796,14 @@
 					value: value,
 					selectOptions: selectOptions,
 					index: index,
-					type: type,
-					name: name
+					name: name,
+					alias: alias,
+					total: total,
+					old: scope.oldVal,
+					getTotal: getTotal,
+					type: inputType
 			};
 			
-			var template = '';
-			switch(type)
-			{
-				case 'date':
-					template = 'EditColumnDate';
-					break;
-				case 'select':
-					template = 'EditColumnSelect';
-					break;
-				default:	
-					template = 'EditColumnText';
-					break;	
-			}
 			
 			var modalInstance = modal.open({
 			 	animation: true,
@@ -874,13 +924,8 @@
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, filter, log);	    
 	    
-	 // @Function
-	    // Description  : Triggered while displaying expiry date in Customer Details screen.
-	    scope.formatDate = function(date){
-	    	  if(!date) return '';	
-	          var dateOut = new Date(date);
-	          return dateOut;
-	    };
+	    // Format date
+	    formatDate(scope);
 	    
 	    //Format number
 	    formatNumber(scope);
@@ -967,21 +1012,32 @@
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log) {
 
 		$scope.params = params;		
-		//$log.info($scope.$parent);
+		$log.info(params);
 		
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
-			if($scope.params.type == 'date')
+			if($scope.params.type == 'datetime')
 			{
 				var val = $scope.params.value;
-				//$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
+				$log.info('date_value ' + val);
 				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 			}
 			$log.info($scope.params);
 			API.save($scope.params, function(data){
 				$log.info(data);
 				$log.info($scope.params.value);
-				$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+				if($scope.params.alias)
+				{
+					$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
+					if($scope.params.getTotal)
+						$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
+				}					
+				else
+				{
+					$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+					if($scope.params.getTotal)
+						$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
+				}					
 				$('#'+$scope.params.index).addClass('modified');				
 			});
 			
@@ -1075,7 +1131,7 @@
 	/**
 	 * Format date
 	 */
-	function formateDate(scope) {
+	function formatDate(scope) {
 		
 		// @Function
 	    // Description  : Triggered while displaying expiry date in Customer Details screen.
@@ -1102,7 +1158,7 @@
 	    	  if('number' == typeof number)
 	    		  number = number.toString();
 	    	  
-	    	  if(!number || number == undefined || number == '0' || number == '0.00') return '';
+	    	  if(!number || number == undefined || number == '0') return '';
 	    	  
 	    	  var chunks = [];
 	    	  var realNumber;	    	  

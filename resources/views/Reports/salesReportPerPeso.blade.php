@@ -9,12 +9,13 @@
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
-						{!!Html::datepicker('posting_date','Posting Date',true)!!}
 						{!!Html::datepicker('return_date','Return Date/ Invoice Date',true)!!}
+						{!!Html::datepicker('posting_date','Posting Date',true)!!}						
 					</div>					
 					<div class="pull-right col-sm-6">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
+						{!!Html::select('customer','Customer', $customers)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}													 			
 					</div>			
 				{!!Html::fclose()!!}
@@ -29,11 +30,11 @@
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
-						<td>
-							<a href="#" editable-text="record.remarks" onbeforesave="update($data)">
+						<td> 
+  							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
     							[[ record.remarks ]]
   							</a>
-						</td>
+  						</td>
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>
 						<td>[[record.salesman_code]]</td>
@@ -45,12 +46,12 @@
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
     							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
     							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>

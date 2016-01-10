@@ -88,6 +88,7 @@ class ReportsPresenter extends PresenterCore
     		case 'perpeso':
     			$this->view->companyCode = $this->getCompanyCode();    			
     			$this->view->salesman = $this->getSalesman();
+    			$this->view->customers = $this->getCustomer();    			 
     			$this->view->areas = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesReportPesoColumns();
     			return $this->view('salesReportPerPeso');
@@ -987,7 +988,8 @@ ORDER BY tas.reference_num ASC,
 				   txn_activity_salesman.activity_code,
 				   txn_sales_order_header.customer_code,
 				   app_customer.customer_name,
-				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+    			   remarks.evaluated_objective_id,
+				   remarks.remarks,
 				   txn_sales_order_header.van_code,
 				   txn_sales_order_header.device_code,
 				   txn_sales_order_header.salesman_code,
@@ -1018,22 +1020,12 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
 				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
      			   IF(txn_sales_order_header.updated_by,\'modified\',
-    					IF(app_customer.updated_by,\'modified\',
-    						IF(app_area.updated_by,\'modified\',
-    							IF(app_salesman.updated_by,\'modified\',
-    								IF(txn_activity_salesman.updated_by,\'modified\',
-    									IF(txn_return_detail.updated_by,\'modified\',
-    										IF(app_item_master.updated_by,\'modified\',
-    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
-    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
-    											   )
-    										   )
-    									  )
-    								  )
-    							)
-    						 )
-    				    )
-    			  ) updated  		
+    					IF(txn_sales_order_header_discount.updated_by,\'modified\',
+    						IF(txn_sales_order_detail.updated_by,\'modified\',
+    							IF(remarks.updated_by,\'modified\',\'\')
+    						)
+    					)
+    			   ) updated  		
     			';
     	 
     	if($summary)
@@ -1061,10 +1053,16 @@ ORDER BY tas.reference_num ASC,
 			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
 			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
 			    	->leftJoin('app_item_master','txn_sales_order_detail.item_code','=','app_item_master.item_code')
-			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num');
+			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	->leftJoin(\DB::raw('
+			    			(select evaluated_objective_id,remarks,reference_num,updated_by 
+			    			 from txn_evaluated_objective
+			    			 group by reference_num) remarks'), function($join){
+			    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
+			    			 }
+			    	  );
 			    	
 
-			    	
 		$salesmanFilter = FilterFactory::getInstance('Select');
 		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
 			    	
@@ -1144,12 +1142,14 @@ ORDER BY tas.reference_num ASC,
      */
     public function getPreparedSalesReportPeso($summary=false)
     {
-    	$select = 'txn_sales_order_header.so_number,
+    	$select = 'txn_sales_order_header.sales_order_header_id,	
+    			   txn_sales_order_header.so_number,
 			  	   txn_sales_order_header.reference_num,
 				   txn_activity_salesman.activity_code,
 				   txn_sales_order_header.customer_code,
 				   app_customer.customer_name,
-				   (select remarks from txn_evaluated_objective where txn_evaluated_objective.reference_num = txn_sales_order_header.reference_num order by txn_evaluated_objective.sfa_modified_date desc limit 1) remarks,
+				   remarks.evaluated_objective_id,
+				   remarks.remarks,
 				   txn_sales_order_header.van_code,
 				   txn_sales_order_header.device_code,
 				   txn_sales_order_header.salesman_code,
@@ -1171,19 +1171,13 @@ ORDER BY tas.reference_num ASC,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
 				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
 				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
-	    			IF(txn_sales_order_header.updated_by,\'modified\',
-	    					IF(app_customer.updated_by,\'modified\',
-	    						IF(app_area.updated_by,\'modified\',
-	    							IF(app_salesman.updated_by,\'modified\',
-	    								IF(txn_activity_salesman.updated_by,\'modified\',
-	    									IF(txn_sales_order_header_discount.updated_by,\'modified\',
-	    										IF(txn_sales_order_detail.updated_by,\'modified\',\'\')	    											 
-	    									  )
-	    								  )
-	    							)
-	    						 )
-	    				    )
-	    			  ) updated
+	    		   IF(txn_sales_order_header.updated_by,\'modified\',
+	    				IF(txn_sales_order_header_discount.updated_by,\'modified\',
+	    					IF(txn_sales_order_detail.updated_by,\'modified\',
+    							IF(remarks.updated_by,\'modified\',\'\')
+    						)
+	    				)
+	    		   ) updated
     			';
 
     	if($summary)
@@ -1207,7 +1201,14 @@ ORDER BY tas.reference_num ASC,
 			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
 			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
+			    	->leftJoin(\DB::raw('
+			    			(select evaluated_objective_id,remarks,reference_num,updated_by
+			    			 from txn_evaluated_objective
+			    			 group by reference_num) remarks'), function($join){
+			    				    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
+			    				    			 }
+			    	);
 
 		$salesmanFilter = FilterFactory::getInstance('Select');
 		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1803,8 +1804,8 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Total Invoice Gross Amt'],
-    			['name'=>'Invoice Discount Amount 1','sort'=>'so_total_item_discount'],
-    			['name'=>'Invoice Discount Amount 2','sort'=>'so_total_collective_discount'],
+    			['name'=>'Invoice Discount Amount per Item','sort'=>'so_total_item_discount'],
+    			['name'=>'Invoice Discount Amount Collective','sort'=>'so_total_collective_discount'],
     			['name'=>'Total Invoice Amount','sort'=>'so_total_invoice_amount'],
     			['name'=>'CM Number','sort'=>'cm_number'],
     			['name'=>'Other Deduction Amount'],
@@ -2345,6 +2346,9 @@ ORDER BY tas.reference_num ASC,
     	$records = [];
     	$columns = [];
     	$rows = [];
+    	$summary = [];
+    	$header = '';
+    	$filters = [];
     	$filename = 'Report';
     	$prepare = '';
     	$vaninventory = false;
@@ -2385,13 +2389,19 @@ ORDER BY tas.reference_num ASC,
     			$columns = $this->getTableColumns('salesreportpermaterial');
     			$prepare = $this->getPreparedSalesReportMaterial();
     			$rows = $this->getSalesReportMaterialSelectColumns();
-    			$filename = 'Sales Report(Per Material)';
+    			$summary = $this->getPreparedSalesReportMaterial(true)->first();
+    			$header = 'Sales Report Per Material';
+    			$filters = $this->getSalesReportFilterData($report);
+    			$filename = 'Sales Report Per Material';
     			break;
     		case 'salesreportperpeso':
     			$columns = $this->getTableColumns('salesreportperpeso');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getSalesReportPesoSelectColumns();
-    			$filename = 'Sales Report(Per Peso)';
+    			$summary = $this->getPreparedSalesReportPeso(true)->first();
+    			$header = 'Sales Report Per Peso';
+    			$filters = $this->getSalesReportFilterData($report);
+    			$filename = 'Sales Report Per Peso';
     			break;
     		case 'returnpermaterial':
     			$columns = $this->getTableColumns('returnpermaterial');
@@ -2436,15 +2446,21 @@ ORDER BY tas.reference_num ASC,
     	//dd($records);
     	/* $this->view->columns = $columns;    	    
     	$this->view->rows = $rows;
-    	$this->view->records = $records;
+    	$this->view->header = $header;
+    	$this->view->filters = $filters;
+    	$this->view->records = $records; 
+    	$this->view->summary = $summary;
     	return $this->view('exportXls'); */
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters){
 	    			$params['columns'] = $columns;
 	    			$params['rows'] = $rows;
 	    			$params['records'] = $records;
+	    			$params['summary'] = $summary;
+	    			$params['header'] = $header;
+	    			$params['filters'] = $filters;
 	    			$sheet->loadView('Reports.exportXls', $params);
 	    		});
 	    	
@@ -2781,5 +2797,78 @@ ORDER BY tas.reference_num ASC,
     	}
     	
     	return response()->json($data);
+    }
+    
+    /**
+     * Get Sales Report Filter data
+     * @param string $report
+     * @return Ambigous <multitype:, multitype:string \App\Http\Presenters\multitype: Ambigous <string, \App\Http\Presenters\multitype:> >
+     */
+    public function getSalesReportFilterData($report='salesreportpermaterial')
+    {
+    	$filters = [];
+    	switch($report)
+    	{
+    		case 'salesreportpermaterial':
+    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
+    			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
+    			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
+    			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			 
+    			$filters = [
+    					'Salesman' => $salesman,
+    					'Area' => $area,
+    					'Customer' => $customer,
+    					'Company Code' => $company_code,
+    					'Material' => $material,
+    					'Segment' => $segment,
+    					'Return Date/Invoice Date' => $returnDate,
+    					'Posting Date' => $postingDate
+    			];
+    			break;
+    		case 'salesreportperpeso':
+    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
+    			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			
+    			$filters = [    					
+    				'Salesman' => $salesman,
+    				'Area' => $area,
+    				'Customer' => $customer,
+    				'Company Code' => $company_code,
+    				'Return Date/Invoice Date' => $returnDate,
+    				'Posting Date' => $postingDate
+    			];    			    			
+    			break;
+    		case 'returnpermaterial':
+    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
+    			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
+    			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
+    			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			 
+    			$filters = [
+    					'Salesman' => $salesman,
+    					'Area' => $area,
+    					'Customer' => $customer,
+    					'Company Code' => $company_code,
+    					'Material' => $material,
+    					'Segment' => $segment,
+    					'Return Date/Invoice Date' => $returnDate,
+    					'Posting Date' => $postingDate
+    			];		
+    	}
+    	
+    	return $filters;
     }
 }
