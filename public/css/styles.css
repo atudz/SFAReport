@@ -9,6 +9,8 @@ body {
 	background: #f1f4f7;
 	padding-top: 50px;
 	color: #5f6468;
+	font-size:13px;
+	font-family: Arial, sans-serif;
 }
 
 p {
@@ -450,9 +452,18 @@ a.bg-danger:hover {
 .wrapper .table{
 	margin-bottom: 0;
 }
+
 /*.floatThead-container{
 	margin-top: 50px!important;
 }*/
+
+.navbar-brand{
+	padding: 10px 15px 15px 15px;
+}
+.navbar-brand>img{
+	display: inline-block;
+	width: 150px;
+}
 
 @media (max-width: 768px) {
 	.widget-right {
@@ -662,6 +673,7 @@ a.bg-danger:hover {
 	display:block;
 	padding-left: 30px;
 	line-height: 40px;
+	font-size: 12px;
 }
 
 
@@ -1037,5 +1049,12 @@ tr.modified {
 .form-input-field {
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+@media (max-width: 400px) {
+	.navbar-brand>img{
+		display: none;
+		width: 150px;
+	}
 }
  
