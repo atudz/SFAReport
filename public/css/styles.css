@@ -43,7 +43,7 @@ h3, h4 {
 	font-size: 2em;
 }
 
-.text-muted {
+.text-muted a, .text-muted {
 	color: #9fadbb;
 }
 
@@ -343,6 +343,7 @@ a.bg-danger:hover {
 }
 
 .panel-blue { background: #f9243f; color: #fff; }
+
 .panel-teal { background: #1ebfae; color: #fff; }
 .panel-orange { background: #ffb53e; color: #fff; }
 .panel-red { background: #f9243f; color: #fff; }
@@ -493,10 +494,12 @@ a.bg-danger:hover {
 	color: #5f6468;
 }
 
-.panel-blue .widget-left { background: #f9243f; color: #fff; }
+.panel-red .widget-left { background: #f9243f; color: #fff; }
+.panel-gray .widget-left { background: #484B4C; color: #fff; }
+.panel-gold .widget-left { background: #F98624; color: #fff; }
 .panel-teal .widget-left { background: #1ebfae; color: #fff; }
 .panel-orange .widget-left { background: #ffb53e; color: #fff; }
-.panel-red .widget-left { background: #f9243f; color: #fff; }
+.panel-blue .widget-left { background: #30a5ff; color: #fff; }
 
 .panel-widget {
 	background: #fff;
@@ -950,11 +953,6 @@ h1.page-header {
 }
 .widget-right {
     padding: 11px;
-}
-
-.panel-red .widget-left {
-    background: #30a5ff;
-    color: #fff;
 }
 
 .error-list {
