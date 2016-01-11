@@ -1691,7 +1691,6 @@ ORDER BY tas.reference_num ASC,
     {
     	$prepare = $this->getPreparedMaterialPriceList();    	
     	 
-    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
@@ -1721,13 +1720,18 @@ ORDER BY tas.reference_num ASC,
     			';
     	
     	$prepare = \DB::table('app_item_master')
+    				->distinct()
 			    	->selectRaw($select)
 			    	->leftJoin('app_item_master_uom','app_item_master.item_code','=','app_item_master_uom.item_code')
 			    	->leftJoin('app_item_price','app_item_master.item_code','=','app_item_price.item_code')
-			    	->leftJoin('app_customer','app_item_price.customer_price_group','=','app_customer.customer_price_group')
+			    	->leftJoin(\DB::raw('
+			    			(select customer_price_group, area_code from app_customer group by customer_price_group) app_customer 
+			    			'), function($join){
+			    				$join->on('app_customer.customer_price_group','=','app_item_price.customer_price_group');
+			    			})
 			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
-    	
-    	$salesmanFilter = FilterFactory::getInstance('Select');
+
+		$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	
     	$areaFilter = FilterFactory::getInstance('Select');
