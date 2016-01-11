@@ -24,7 +24,7 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					<tr ng-repeat="record in records|filter:query">
+					<tr ng-repeat="record in records|filter:query" class=[[record.updated]]>
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>[[record.uom_code]]</td>

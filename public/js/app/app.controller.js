@@ -565,22 +565,40 @@
 			params['sort'] = scope.sortColumn;
 			params['order'] = scope.sortDirection;
 			
+			var hasError = false;
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
+				
+				if(val.indexOf('_from') != -1)
+				{
+					var from = $('#'+val).val();
+					var to = $('#'+val.replace('_from','_to')).val();
+										
+					if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}
+				}
+				
 			});
 			log.info(params);
 			
-			scope.toggleFilter = true;
-			toggleLoading(true);
-	    	API.save(params,function(data){
-	    		log.info(data);
-	    		togglePagination(data.total);
-		    	scope.records = data.records;
-		    	scope.total = data.total;
-		    	scope.summary = data.summary;
-		    	toggleLoading();
-		    });
-	    	
+			if(!hasError)
+			{
+				$('p[id$="_error"]').addClass('hide');
+				scope.toggleFilter = true;
+				toggleLoading(true);
+		    	API.save(params,function(data){
+		    		log.info(data);
+		    		togglePagination(data.total);
+			    	scope.records = data.records;
+			    	scope.total = data.total;
+			    	scope.summary = data.summary;
+			    	toggleLoading();			    	
+			    });
+			}
+			
 	    }
 		
 		scope.reset = function(){
@@ -594,6 +612,7 @@
 				params[val] = '';
 			});
 			log.info(filter);
+			$('p[id$="_error"]').addClass('hide');
 			
 			scope.toggleFilter = true;
 			toggleLoading(true);
@@ -601,7 +620,7 @@
 	    		log.info(data);
 	    		togglePagination(data.total);
 		    	scope.records = data.records;		    			    	
-		    	toggleLoading();
+		    	toggleLoading();		    	
 		    });
 	    	
 	    }

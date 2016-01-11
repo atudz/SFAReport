@@ -1689,7 +1689,7 @@ ORDER BY tas.reference_num ASC,
      */
     public function getMaterialPriceList()
     {
-    	$prepare = $this->getPrepareMaterialPriceList();    	
+    	$prepare = $this->getPreparedMaterialPriceList();    	
     	 
     	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
@@ -1704,7 +1704,7 @@ ORDER BY tas.reference_num ASC,
      * Return prepared statement for material price list
      * @return unknown
      */
-    public function getPrepareMaterialPriceList()
+    public function getPreparedMaterialPriceList()
     {
     	$select = '
     			app_item_master.item_code,
@@ -2407,31 +2407,43 @@ ORDER BY tas.reference_num ASC,
     			$columns = $this->getTableColumns('returnpermaterial');
     			$prepare = $this->getPreparedReturnMaterial();
     			$rows = $this->getReturnReportMaterialSelectColumns();
-    			$filename = 'Return Report(Per Material)';
+    			$summary = $this->getPreparedReturnMaterial(true)->first();
+    			$header = 'Return Per Material';
+    			$filters = $this->getSalesReportFilterData($report);
+    			$filename = 'Return Per Material';
     			break;
     		case 'returnperpeso':
     			$columns = $this->getTableColumns('returnperpeso');
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getReturnReportPesoSelectColumns();
-    			$filename = 'Return Report(Per Peso)';
+    			$summary = $this->getPreparedSalesReportPeso(true)->first();
+    			$header = 'Return Per Peso';
+    			$filters = $this->getSalesReportFilterData($report);
+    			$filename = 'Return Per Peso';
     			break;
     		case 'customerlist':
     			$columns = $this->getTableColumns('customerlist');
     			$prepare = $this->getPreparedCustomerList();
     			$rows = $this->getCustomerSelectColumns();
+    			$header = 'Customer List';
+    			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Customer List';
     			break;
     		case 'salesmanlist':
     			$columns = $this->getTableColumns('salesmanlist');    			
     			$prepare = $this->getPreparedSalesmanList();
     			$rows = $this->getSalesmanSelectColumns();
+    			$header = 'Salesman List';
+    			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Salesman List';
     			break;
     		case 'materialpricelist':
     			$columns = $this->getTableColumns('materialpricelist');
-    			$prepare = $this->getPreparedSalesReportPeso();
+    			$prepare = $this->getPreparedMaterialPriceList();
     			$rows = $this->getMaterialPriceSelectColumns();
-    			$filename = 'Sales Report(Per Peso)';
+    			$header = 'Material Price List';
+    			$filters = $this->getSalesReportFilterData($report);
+    			$filename = 'Material Price List';
     			break;
     		default:
     			return;
@@ -2759,7 +2771,7 @@ ORDER BY tas.reference_num ASC,
     			$prepare = $this->getPreparedSalesmanList();
     			break;
     		case 'materialpricelist':
-    			$prepare = $this->getPrepareMaterialPriceList();
+    			$prepare = $this->getPreparedMaterialPriceList();
     			break;
     		default:
     			return;
@@ -2867,6 +2879,72 @@ ORDER BY tas.reference_num ASC,
     					'Return Date/Invoice Date' => $returnDate,
     					'Posting Date' => $postingDate
     			];		
+    			break;
+    		case 'returnperpeso':
+    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    				$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    				$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
+    				$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			
+    				$filters = [
+    						'Salesman' => $salesman,
+    						'Area' => $area,
+    						'Customer' => $customer,
+    						'Company Code' => $company_code,
+    						'Return Date/Invoice Date' => $returnDate,
+    						'Posting Date' => $postingDate
+    				];
+    				break;
+    		 case 'customerlist':
+    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    				$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
+    				$sfa_modified_date = $this->request->get('sfa_modified_date') ? $this->request->get('sfa_modified_date') : 'All';
+    					 
+    				$filters = [
+    							'Salesman' => $salesman,
+    							'Area' => $area,
+    							'Company' => $company_code,
+    							'Status' => $status,
+    							'Sfa Modified Date' => $sfa_modified_date,
+    				];
+    				break;
+    		 case 'salesmanlist':
+    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    				$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
+    				$sfa_modified_date = $this->request->get('sfa_modified_date') ? $this->request->get('sfa_modified_date') : 'All';
+    				
+    				$filters = [
+    							'Salesman' => $salesman,
+    							'Area' => $area,
+    							'Company' => $company_code,
+    							'Status' => $status,
+    							'Sfa Modified Date' => $sfa_modified_date,
+    				];
+    				break;
+    		  case 'materialpricelist':
+	    		  	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+	    			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
+	    			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
+	    			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
+	    			$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
+    				$sfa_modified_date = $this->request->get('sfa_modified_date') ? $this->request->get('sfa_modified_date') : 'All';
+	    			 
+	    			$filters = [
+	    					'Company Code' => $company_code,	    					
+	    					'Area' => $area,
+	    					'Material' => $material,
+	    					'Segment' => $segment,
+	    					'Status' => $status,
+	    					'Sfa Modified Date' => $sfa_modified_date,
+	    					
+	    			];
+    				break;
     	}
     	
     	return $filters;

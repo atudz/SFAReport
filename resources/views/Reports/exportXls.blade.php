@@ -7,7 +7,7 @@
 		<tbody>
 			@if(isset($header))
 			<tr>
-				<th colspan="2">{{$header}}</th>
+				<th colspan="2" align="center">{{$header}}</th>
 			</tr>
 			@endif
 			@if(isset($filters))

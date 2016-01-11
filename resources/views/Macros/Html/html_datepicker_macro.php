@@ -22,6 +22,7 @@ Html::macro('datepicker', function($name, $label, $fromTo=false, $controller='Ca
                 		<button type="button" class="btn btn-default btn-sm" ng-click="open($event,\''.$name.'_to\')"><i class="glyphicon glyphicon-calendar"></i></button>
               		</span>
                 </p>
+                <p class="indent error hide" id="'.$name.'_error">Invalid date range.</p>				
                 </div>
              </div>
 				';

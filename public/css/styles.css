@@ -1055,4 +1055,8 @@ tr.modified {
 		width: 150px;
 	}
 }
+
+.error {
+	color: red;
+}
  
