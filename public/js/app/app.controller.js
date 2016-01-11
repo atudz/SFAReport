@@ -142,16 +142,12 @@
 	    
 	    params = [
 		          'salesman_code',
-		          'transaction_date',		          
+		          'transaction_date_from',
+		          'transaction_date_to',
 		          'status',
 		          'inventory_type'
 		];
-	    
-	    //Sort table records
-	    scope.sortColumn = '';
-		scope.sortDirection = 'asc';
-		sortColumn(scope,API,params,log);
-	    
+	    	    
 	    // Filter table records	    		
 		filterSubmitVanInventory(scope,API,params,log);
 		
@@ -450,11 +446,6 @@
 		
 		scope.filter = function(){
 	    	
-			params['page'] = scope.page;
-			params['page_limit'] = scope.perpage;
-			params['sort'] = scope.sortColumn;
-			params['order'] = scope.sortDirection;
-			
 			var dateFrom = new Date($('#transaction_date_from').val());
 			var dateTo = new Date($('#transaction_date_to').val());
 			
@@ -463,82 +454,57 @@
 			scope.dateValue = getDates(dateFrom,dateTo).shift();
 			log.info(scope.dateValue);
 			
+			var hasError = false;
 			$.each(filter, function(key,val){
 				if(val == 'transaction_date')
 					params[val] = scope.dateValue;
 				else
 					params[val] = $('#'+val).val();
+				
+				if(val.indexOf('_from') != -1)
+				{
+					var from = $('#'+val).val();
+					var to = $('#'+val.replace('_from','_to')).val();
+										
+					if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}
+				}
 			});			
 			log.info(params);
 			
-			
-			scope.toggleFilter = true;
-			toggleLoading(true);
-	    	API.save(params,function(data){
-	    		togglePagination(data.total);
-		    	scope.records = data.records;
-		    	scope.total = data.total;
-		    	scope.stocks = data.stocks;
-		    	scope.replenishment = data.replenishment;
-		    	scope.stock_on_hand = data.stock_on_hand;
-		    	toggleLoading();
-		    	log.info(data);	 
-		    	scope.showBody = data.total;
-		    	scope.showReplenishment = data.replenishment.total;
-		    	
-		    });
-	    	
-	    }
-		
-		scope.filterDate = function(){
-	    	
-			params['page'] = scope.page;
-			params['page_limit'] = scope.perpage;
-			params['sort'] = scope.sortColumn;
-			params['order'] = scope.sortDirection;
-			
-			scope.dateValue = $('#transaction_date').val();
-			log.info(scope.dateValue);
-			
-			$.each(filter, function(key,val){
-				if(val == 'transaction_date')
-					params[val] = scope.dateValue;
-				else
-					params[val] = $('#'+val).val();
-			});			
-			log.info(params);
-			
-			
-			scope.toggleFilter = true;
-			toggleLoading(true);
-	    	API.save(params,function(data){
-	    		togglePagination(data.total);
-		    	scope.records = data.records;
-		    	scope.total = data.total;
-		    	scope.stocks = data.stocks;
-		    	scope.replenishment = data.replenishment;
-		    	scope.stock_on_hand = data.stock_on_hand;
-		    	scope.short_over_stocks = data.short_over_stocks;
-		    	toggleLoading();
-		    	log.info(data);	    	
-		    	scope.showBody = data.total;
-		    	scope.showReplenishment = data.replenishment.total;
-		    });
+			if(!hasError)
+			{
+				$('p[id$="_error"]').addClass('hide');
+				scope.toggleFilter = true;
+				toggleLoading(true);
+		    	API.save(params,function(data){
+		    		togglePagination(data.total);
+			    	scope.records = data.records;
+			    	scope.total = data.total;
+			    	scope.stocks = data.stocks;
+			    	scope.replenishment = data.replenishment;
+			    	scope.stock_on_hand = data.stock_on_hand;
+			    	toggleLoading();
+			    	log.info(data);	 
+			    	scope.showBody = data.total;
+			    	scope.showReplenishment = data.replenishment.total;
+			    	
+			    });
+			}			
 	    	
 	    }
 		
 		scope.reset = function(){
 	    	
-			params['page'] = scope.page;
-			params['page_limit'] = scope.perpage;
-			params['sort'] = scope.sortColumn;
-			params['order'] = scope.sortDirection;
-			
 			$.each(filter, function(key,val){
 				params[val] = '';
 			});
 			log.info(filter);
 			
+			$('p[id$="_error"]').addClass('hide');
 			scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){

@@ -781,11 +781,11 @@ ORDER BY tas.reference_num ASC,
     		
     		foreach($sales as $item)
     		{
-    			$result->{'code_'.$item->item_code} = -$item->served_qty;    	
+    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';    	
     			if(isset($stockOnHand['code_'.$item->item_code]))
     				$stockOnHand['code_'.$item->item_code] -= $item->served_qty;
     			else
-    				$stockOnHand['code_'.$item->item_code] = -$item->served_qty;
+    				$stockOnHand['code_'.$item->item_code] = $item->served_qty;
     		}	
     		
     		$records[] = $result;
@@ -1622,11 +1622,9 @@ ORDER BY tas.reference_num ASC,
      * @return \Illuminate\Http\JsonResponse
      */
     public function getSalesmanList()
-    {
-    
+    {    
     	$prepare = $this->getPreparedSalesmanList();        	
     	
-    	//dd($prepare->toSql());
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
@@ -1936,7 +1934,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Customer'],
     			//['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Invoice Date'],
-    			['name'=>'Invoice No.','sort'=>'invoice_number'],    			 
+    			['name'=>'Invoice No.'],    			 
     			//['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Slip No.'],
     			['name'=>'Transaction Date'],

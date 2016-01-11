@@ -16,21 +16,27 @@
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
-			
-				<div class="col-sm-12 col-sm-offset-4">
-						<form class="form-inline">
-							<div class="form-group form-group-sm">
-								<label>Date Filter&nbsp;</label>
-								<select id="transaction_date" class="form-control" ng-model="dateValue" ng-change="filterDate()">
-									<option ng-repeat="date in dateFilter" value=[[date]]>[[date]]</option>											
-								</select>							
-							</div>	
-						</form>				    				    
-			    </div>			    
+										    
 				{!!Html::topen(['no_pdf'=>true])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					
+						
+						<!-- Beginning balance -->
+						<tr ng-show="showBody">
+							<th>Beginning Balance</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							@foreach($itemCodes as $item)
+								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+							@endforeach
+						</tr>											
+						
+						
 						<!-- Actual Count -->
 						<tr style="background-color:#ccccff;" ng-show="showBody">
 							<th>Actual Count</th>
@@ -133,24 +139,9 @@
 								<th>[[short_over_stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
-						
-						<!-- Beginning balance -->
-						<tr ng-show="showBody">
-							<th>Beginning Balance</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							@foreach($itemCodes as $item)
-								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
-							@endforeach
-						</tr>											
-						
+																		
 					</tbody>					
-				{!!Html::tclose()!!}
+				{!!Html::tclose(false)!!}
 				<input type="hidden" id="inventory_type" value="{{$type}}">
 			</div>			
 		</div>
