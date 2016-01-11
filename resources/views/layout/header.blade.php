@@ -7,6 +7,14 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
+
+				<button type="button" class="navbar-toggle-2 collapsed" >
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+
 				<a class="navbar-brand" href="/"><img src="img/sfi_home.jpg" /> <span>SFA</span> Reports </a>
 				<ul class="user-menu">
 					<li class="dropdown pull-right">
