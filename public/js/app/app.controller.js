@@ -478,7 +478,7 @@
 	    		else
 	    		{
 	    			log.info(scope.dateRanges.length);
-	    			if(!loadMore)
+	    			if(!loadMore && !scope.items.length)
 	    				$('#no_records_div').show();
 	    		}
 	    		
