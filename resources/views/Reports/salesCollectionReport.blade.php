@@ -10,6 +10,8 @@
 				<div class="pull-left col-sm-6">
 					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
 					{!!Html::datepicker('collection_date','Collection Date','true')!!}
+					{!!Html::input('text','invoice_number','Invoice #')!!}
+					{!!Html::input('text','or_number','OR #')!!}
 				</div>					
 				<div class="pull-right col-sm-6">	
 					{!!Html::select('customer_code','Customer Code', ['Name1','Name2'])!!}

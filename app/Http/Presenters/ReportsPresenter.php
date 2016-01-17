@@ -7,6 +7,7 @@ use App\Factories\FilterFactory;
 use App\Filters\SelectFilter;
 use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
+use Carbon\Carbon;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -689,7 +690,22 @@ ORDER BY tas.reference_num ASC,
      */
     public function getVanInventory($reports=false,$offset=0)
     {
-    	$reportRecords = [];
+    	// This is a required field so return empty if there's none
+    	if(!$this->request->get('transaction_date'))
+    	{
+    		$data = [
+    			'records' => [],
+    			'replenishment' => [],
+    			'short_over_stocks' => [],
+    			'stock_on_hand' => [],
+    			'stocks' => [],
+    			'toal' => 0	
+    		];
+    		
+    		return response()->json($data);
+    	} 
+    	
+    	$reportRecords = [];    	
     	$codes = [];
     	$itemCodes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');    	 
     	foreach($itemCodes as $item)
@@ -697,7 +713,8 @@ ORDER BY tas.reference_num ASC,
     		$codes[] = $item->item_code;
     	}
     	
-    	// Get Replenishment data
+    	// Beginning Balance / Actual Count
+    	// Get Replenishment data 
     	$prepare = \DB::table('txn_replenishment_header')
     					->select(['replenishment_date','reference_number']);
     	
@@ -706,9 +723,14 @@ ORDER BY tas.reference_num ASC,
     			function($self, $model){
     				return $model->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$self->getValue());
     			});
+    	
+    	$referenceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+    	
     	$replenishment = $prepare->first();
     			 
     	$replenishmentItems = [];
+    	$tempActualCount = [];
     	if($replenishment)
     	{
     		$replenishmentItems = \DB::table('txn_replenishment_detail')
@@ -719,11 +741,9 @@ ORDER BY tas.reference_num ASC,
     		foreach($replenishmentItems as $item)
     		{
     			$replenishment->{'code_'.$item->item_code} = $item->quantity;
-    			if(!isset($stockOnHand['code_'.$item->item_code]))
-    				$stockOnHand['code_'.$item->item_code] = $item->quantity;
-    			else
-    				$stockOnHand['code_'.$item->item_code] += $item->quantity;
-    		}
+    			$tempActualCount['code_'.$item->item_code] = $item->quantity;
+    		}    			    			
+    		
     		$replenishment->total = 1;
     	}
     	else
@@ -735,25 +755,34 @@ ORDER BY tas.reference_num ASC,
     	$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
     			
     	
-    	// Get Van Inventory stock data
+    	// Get Van Inventory stock transfer data
     	$prepare = $this->getPreparedVanInventoryStocks();
     	$stocks = $prepare->first();    	
     	
-    	$stockOnHand = [];    	 
     	$stockItems = [];
+    	$tempStockTransfer = [];
     	if($stocks) 
     	{
 	    	$stockItems = $this->getVanInventoryStockItems($stocks->stock_transfer_number, $codes);
 	    	foreach($stockItems as $item)
 	    	{
 	    		$stocks->{'code_'.$item->item_code} = $item->quantity;
-	    		if(!isset($stockOnHand['code_'.$item->item_code]))
-	    			$stockOnHand['code_'.$item->item_code] = $item->quantity;
-	    		else
-	    			$stockOnHand['code_'.$item->item_code] += $item->quantity;
+	    		$tempStockTransfer['code_'.$item->item_code] = $item->quantity;
 	    	}
     	}
-    	$data['stocks'] = $stocks;
+    	else
+    	{
+    		// pull previous stock transfer
+    		$tempStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
+    	}
+    	
+    	
+    	if($stocks)
+    		$stocks->total = $stocks ? 1 : 0;
+    	else
+    		$stocks['total'] = $stocks ? 1 : 0;
+    	$data['stocks'] = $stocks;    	
+    	
     	$reportRecords[] = (array)$stocks;
     	
     	
@@ -766,40 +795,60 @@ ORDER BY tas.reference_num ASC,
     	}   
     	else
     	{	 	
-    		$results = $this->paginate($prepare);
+    		$results = $prepare->get();
     	}    	
 
     	$records = [];
-    	$items = ($reports) ? $results : $results->items();
-    	foreach($items as $result)
+    	$tempInvoices = [];
+    	$tempReturns = [];
+    	//dd($results);
+    	foreach($results as $result)
     	{
     		$sales = \DB::table('txn_sales_order_detail')
 			    		->select(['item_code','served_qty'])
 			    		->where('so_number','=',$result->so_number)
 			    		->whereIn('item_code',$codes)
 			    		->get();
-    		
+
     		foreach($sales as $item)
     		{
-    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';    	
-    			if(isset($stockOnHand['code_'.$item->item_code]))
-    				$stockOnHand['code_'.$item->item_code] -= $item->served_qty;
+    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';
+    			if(isset($tempInvoices['code_'.$item->item_code]))
+    				$tempInvoices['code_'.$item->item_code] += $item->served_qty;
     			else
-    				$stockOnHand['code_'.$item->item_code] = $item->served_qty;
-    			
+    				$tempInvoices['code_'.$item->item_code] = $item->served_qty;    			
     		}	
     		
-    		if(isset($stockOnHand['code_'.$result->item_code]))
-    			$stockOnHand['code_'.$result->item_code] += (int)$result->quantity;
+    		if(isset($temp['code_'.$result->item_code]))
+    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
     		else
-    			$stockOnHand['code_'.$result->item_code] = $result->quantity;
+    			$tempReturns['code_'.$result->item_code] = $result->quantity;
     		
     		$records[] = $result;
     		$reportRecords[] = (array)$result;
     	}
     	
+    	// Compute Stock on Hand
+    	$stockOnHand = [];    	 
+    	foreach($codes as $code)
+    	{
+    		$code = 'code_'.$code;
+    		if(!isset($tempActualCount[$code]))
+    			$tempActualCount[$code] = 0;
+    		if(!isset($tempStockTransfer[$code]))
+    			$tempStockTransfer[$code] = 0;
+    		if(!isset($tempReturns[$code]))
+    			$tempReturns[$code] = 0;
+    		if(!isset($tempInvoices[$code]))
+    			$tempInvoices[$code] = 0;
+    		
+    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
+    		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
+    	}
+    	
     	$data['records'] = $records;
-    	$data['total'] = $reports ? count($records) : $results->total();
+    	$data['total'] = $reports ? count($records) : count($results);
     	
     	$data['stock_on_hand'] = $stockOnHand;
     	$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock Onhand</strong>'],$stockOnHand);
@@ -817,15 +866,173 @@ ORDER BY tas.reference_num ASC,
     		{
     			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : '';
     		}
+    		$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
+    		$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
     	}
+    	$shortOverStocks['total'] = $shortOverStocks ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
     	$reportRecords[] = $reportRecords[] = array_merge(['customer_name'=>'<strong>Short Over Stocks</strong>'],$shortOverStocks);
     	
     	unset($replenishment->replenishment_date);
     	unset($replenishment->reference_number);
     	$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
-    	    	    	    
+    	//dd($reportRecords);    	    	    
+    	
     	return ($reports) ? $reportRecords : response()->json($data);
+    }
+    
+    
+    /**
+     * Get previous stock on hand value
+     * @param unknown $dateFrom
+     * @return multitype:
+     */
+    public function getPreviousStockOnHand($dateFrom)
+    {
+    	$itemCodes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');    	 
+    	foreach($itemCodes as $item)
+    	{
+    		$codes[] = $item->item_code;
+    	}
+    	
+    	// Get previous stock transfer
+    	$prepare = \DB::table('txn_stock_transfer_in_header')
+    					->select([\DB::raw('DATE(sfa_modified_date) sfa_modified_date'),'stock_transfer_number'])
+    					->where(\DB::raw('DATE(sfa_modified_date)'),'<',$dateFrom)
+    					->where('salesman_code','=',$this->request->get('salesman_code'));
+    	
+    	$stockTransferNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
+    	$prepare = $prepare->orderBy('sfa_modified_date','desc');
+    	
+    	$stockTransfer = $prepare->first();
+    					
+    	if(!$stockTransfer)
+    		return [];
+    	
+    	// Stock Transfer
+    	$tempStockTransfer = [];
+    	if($stockTransfer)
+    	{
+    		$stockItems = $this->getVanInventoryStockItems($stockTransfer->stock_transfer_number, $codes);
+    		foreach($stockItems as $item)
+    		{
+    			$tempStockTransfer['code_'.$item->item_code] = $item->quantity;
+    		}
+    	}
+    	
+    	$prevDate = date('Y-m-d', strtotime('-1 day', strtotime($dateFrom)));
+    	
+    	// Beginning Balance / Actual Count
+    	// Get Replenishment data 
+    	$prepare = \DB::table('txn_replenishment_header')
+    					->select('reference_number')
+    					->whereBetween(\DB::raw('DATE(replenishment_date)'),[$stockTransfer->sfa_modified_date,$prevDate]);
+    	
+    	$referenceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+    	$replenishment = $prepare->get(); 
+    	
+    	$tempActualCount = [];
+    	if($replenishment)
+    	{
+    		$refNumbers = [];
+    		foreach($replenishment as $rep)
+    			$refNumbers[] = $rep->reference_number;
+    			
+    		$replenishmentItems = \DB::table('txn_replenishment_detail')
+			    			->select(['item_code','quantity','replenishment_detail_id'])
+			    			->whereIn('item_code',$codes)
+			    			->whereIn('reference_number',$refNumbers)
+			    			->get();
+    		foreach($replenishmentItems as $item)
+    		{
+    			if(!isset($tempActualCount['code_'.$item->item_code]))
+    				$tempActualCount['code_'.$item->item_code] = 0;
+    			$tempActualCount['code_'.$item->item_code] += $item->quantity;
+    		}	
+    		    		    			    			    
+    	}
+    			 
+    	
+    	// Get Invoice 
+    	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
+    	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
+    	$itemCodes = [];
+    	foreach($item_codes as $item)
+    	{
+    		$itemCodes[] = $item->item_code;
+    	}
+    	
+    	/* $prepare = \DB::table('txn_sales_order_header')
+    				->distinct()    		
+ 				   	->select(['txn_sales_order_header.so_number','txn_return_detail.quantity','txn_sales_order_detail.item_code'])
+ 				   	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number')
+ 				   	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
+ 				   	->where('txn_sales_order_header.salesman_code','=',$this->request->get('salesman_code'))
+ 				   	->whereIn('txn_sales_order_detail.item_code',$itemCodes)
+ 				   	->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$stockTransfer->sfa_modified_date,$prevDate]); */
+    	$prepare = $this->getPreparedVanInventory(true)
+    				->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$stockTransfer->sfa_modified_date,$prevDate]);
+    	$invoices = $prepare->get();
+    	//dd($invoices);
+    	foreach($invoices as $result)
+    	{
+    		$sales = \DB::table('txn_sales_order_detail')
+			    		->select(['item_code','served_qty'])
+			    		->where('so_number','=',$result->so_number)
+			    		->whereIn('item_code',$itemCodes)
+			    		->get();
+
+    		foreach($sales as $item)
+    		{
+    			if(!isset($tempInvoices['code_'.$item->item_code]))
+    				$tempInvoices['code_'.$item->item_code] = 0;
+    			$tempInvoices['code_'.$item->item_code] += $item->served_qty;    			
+    		}	
+    		
+    		if(isset($temp['code_'.$result->item_code]))
+    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
+    		else
+    			$tempReturns['code_'.$result->item_code] = $result->quantity;
+    		
+    	}
+    	
+    	// Compute Stock on Hand
+    	$stockOnHand = [];    	 
+    	foreach($codes as $code)
+    	{
+    		$code = 'code_'.$code;
+    		if(!isset($tempActualCount[$code]))
+    			$tempActualCount[$code] = 0;
+    		if(!isset($tempStockTransfer[$code]))
+    			$tempStockTransfer[$code] = 0;
+    		if(!isset($tempReturns[$code]))
+    			$tempReturns[$code] = 0;
+    		if(!isset($tempInvoices[$code]))
+    			$tempInvoices[$code] = 0;
+    		
+    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
+    		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
+    	}
+    	
+    	return $stockOnHand;
+    }
+    
+    
+    /**
+     * Convert - to parenthisis
+     * @param unknown $val
+     * @return unknown
+     */
+    public function negate($val)
+    {
+    	if($val < 0)
+    	{
+    		$val = str_replace('-', '(', $val) . ')';
+    	}
+    	return $val;
     }
     
     /**
@@ -845,6 +1052,9 @@ ORDER BY tas.reference_num ASC,
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	
+    	$stockTransferNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
+    	
     	return $prepare;
     			 
     }
@@ -853,7 +1063,7 @@ ORDER BY tas.reference_num ASC,
      * Return prepared statement for van inventory
      * @return unknown
      */
-    public function getPreparedVanInventory()
+    public function getPreparedVanInventory($noTransaction=false)
     {
     	$select = '
     			   app_customer.customer_name,
@@ -862,7 +1072,11 @@ ORDER BY tas.reference_num ASC,
     			   txn_sales_order_header.so_number,
     			   txn_return_detail.item_code,    
     			   txn_return_detail.quantity,				   	
-				   txn_return_header.return_slip_num';				 
+				   txn_return_header.return_slip_num,
+    			   IF(txn_sales_order_header.updated_by,\'modified\',
+    				 IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
+    			   ) updated
+    			';				 
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
@@ -878,12 +1092,24 @@ ORDER BY tas.reference_num ASC,
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	 
-    	$transactionFilter = FilterFactory::getInstance('Date');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
-    			function($self, $model){
-    				return $model->where(\DB::raw('DATE(txn_sales_order_header.so_date)'),'=',$self->getValue());
-    			});
+    	if(!$noTransaction)
+    	{
+	    	$transactionFilter = FilterFactory::getInstance('Date');
+	    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+	    			function($self, $model){
+	    				return $model->where(\DB::raw('DATE(txn_sales_order_header.so_date)'),'=',$self->getValue());
+	    			});
+    	}
     	 
+    	$invoiceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number');
+    	
+    	$returnSlipNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $returnSlipNumFilter->addFilter($prepare,'return_slip_num',
+    					function($self,$model){    						
+    						return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
+    				});
+    	
     	/* $invoiceFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date'); */
     	 

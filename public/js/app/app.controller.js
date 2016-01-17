@@ -10,6 +10,7 @@
 	 */
 	var app = angular.module('app');
 	var defaultDate = '';
+	var fetch = true;
 	
 	
 	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log',SalesCollectionReport]);
@@ -105,55 +106,37 @@
 	 */
 	function vanInventoryController(scope, resource, modal, window, reportType, log)
 	{
-		var today = new Date();
-	    scope.dateValue = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
-	    scope.dateFilter = [scope.dateValue]; 
-	    
-	    // Filter flag
+		// Filter flag
 		scope.toggleFilter = true;
+		
+		// items data
+		scope.items = [];
 		
 		var report = reportType;
 		
 		// Fetch table data from server
-	    scope.records = [];	    
+	    scope.records = [];
 	    
 	    var API = resource('/reports/getdata/'+report);	    
-	    var params = {
-	    		salesman: $('#salesman_code').val(),
-	    		transaction_date: scope.dateValue,
-	    		status: $('#status').val(),
-	    		inventory_type: $('#inventory_type').val()
-	    };
-	    log.info(params);
-	    
-	    toggleLoading(true);
-	    API.get(params,function(data){
-	    	scope.records = data.records;
-	    	scope.total = data.total;
-	    	scope.stocks = data.stocks;
-	    	scope.replenishment = data.replenishment;
-	    	log.info(data);	    	
-	    	toggleLoading();
-	    	togglePagination(data.total);
-	    	scope.showBody = data.total;
-	    	scope.showReplenishment = data.replenishment.total;
-	    	scope.short_over_stocks = data.short_over_stocks;	    	
-	    });	    	    
-	    
-	    params = [
+	    var params = [
 		          'salesman_code',
+		          'transaction_date',
 		          'transaction_date_from',
 		          'transaction_date_to',
 		          'status',
-		          'inventory_type'
+		          'inventory_type',
+		          'invoice_number',
+		          'stock_transfer_number',
+		          'return_slip_num',
+		          'reference_number'
 		];
+	    
+	    $('#no_records_div').show();
+	    toggleLoading();
 	    	    
 	    // Filter table records	    		
 		filterSubmitVanInventory(scope,API,params,log);
 		
-	    // Paginate table records	    
-	    pagination(scope,API,params,log);
-	    
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, params, log);	    
 	    
@@ -436,84 +419,138 @@
 			  
 	}
 
+	/**
+	 * Get more data
+	 */
+	function fetchMore(scope, API, filter, log, loadMore)
+	{
+		var params = {};
+		var hasError = false;
+		
+		$.each(filter, function(key,val){
+			if(val == 'transaction_date')
+				params[val] = scope.dateValue;
+			else
+				params[val] = $('#'+val).val();
+			
+			if(val.indexOf('_from') != -1)
+			{
+				var from = $('#'+val).val();
+				var to = $('#'+val.replace('_from','_to')).val();
+									
+				if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
+				{
+					hasError = true;
+					$('#'+val.replace('_from','_error')).removeClass('hide');
+				}
+			}
+		});			
+		log.info(params);
+		
+		if(!hasError)
+		{
+			$('p[id$="_error"]').addClass('hide');
+			scope.toggleFilter = true;
+			toggleLoading(true);
+			
+	    	API.save(params,function(data){
+	    		
+	    		if(data.total)
+	    		{
+	    			scope.items.push({
+				    	records: data.records,
+				    	total: data.total,
+				    	stocks: data.stocks,
+				    	replenishment: data.replenishment,		    	
+				    	showBody: data.total,
+				    	showReplenishment: data.replenishment.total,
+				    	short_over_stocks: data.short_over_stocks,
+				    	stock_on_hand: data.stock_on_hand
+			    	});
+	    			$('#no_records_div').hide();
+	    			fetch = false;
+	    	//		log.info('fetch false');
+	    		}
+	    		else
+	    		{
+	    			log.info(scope.dateRanges.length);
+	    			if(!loadMore)
+	    				$('#no_records_div').show();
+	    		}
+	    		
+	    		toggleLoading();
+		    	log.info(scope.items);
+		    	
+		    });
+		}
+		else
+			fetch = false;
+		toggleLoading();
+	}
 	
 	/**
 	 * Centralized filter function
 	 */
 	function filterSubmitVanInventory(scope, API, filter, log)
 	{
-		var params = {};
-		
 		scope.filter = function(){
 	    	
 			var dateFrom = new Date($('#transaction_date_from').val());
 			var dateTo = new Date($('#transaction_date_to').val());
 			
-			var dateRanges = getDates(dateFrom,dateTo);
-			scope.dateFilter = dateRanges;
-			scope.dateValue = getDates(dateFrom,dateTo).shift();
-			log.info(scope.dateValue);
+			scope.items = [];
+			scope.dateRanges = getDates(dateFrom,dateTo);
 			
-			var hasError = false;
-			$.each(filter, function(key,val){
-				if(val == 'transaction_date')
-					params[val] = scope.dateValue;
-				else
-					params[val] = $('#'+val).val();
-				
-				if(val.indexOf('_from') != -1)
-				{
-					var from = $('#'+val).val();
-					var to = $('#'+val.replace('_from','_to')).val();
-										
-					if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
-					{
-						hasError = true;
-						$('#'+val.replace('_from','_error')).removeClass('hide');
-					}
-				}
-			});			
-			log.info(params);
-			
-			if(!hasError)
+			fetch = true;
+			while(scope.dateRanges.length)
 			{
-				$('p[id$="_error"]').addClass('hide');
-				scope.toggleFilter = true;
-				toggleLoading(true);
-		    	API.save(params,function(data){
-		    		togglePagination(data.total);
-			    	scope.records = data.records;
-			    	scope.total = data.total;
-			    	scope.stocks = data.stocks;
-			    	scope.replenishment = data.replenishment;
-			    	scope.stock_on_hand = data.stock_on_hand;
-			    	toggleLoading();
-			    	log.info(data);	 
-			    	scope.showBody = data.total;
-			    	scope.showReplenishment = data.replenishment.total;
-			    	
-			    });
-			}			
-	    	
+				scope.dateValue = scope.dateRanges.shift();			
+				log.info(scope.dateRanges.length);
+				//log.info('fetch true');
+				
+				if(!scope.dateRanges.length)
+					$('#load_more').addClass('hide');			
+				else
+					$('#load_more').removeClass('hide');
+				
+				log.info(scope.dateRanges);
+				log.info(scope.dateValue);
+				
+				fetchMore(scope, API, filter, log);
+			}
+			
 	    }
 		
-		scope.reset = function(){
-	    	
-			$.each(filter, function(key,val){
-				params[val] = '';
-			});
-			log.info(filter);
+		scope.more = function() {
 			
+			fetch = true;
+			while(scope.dateRanges.length)
+			{
+				if(scope.dateRanges.length > 0)
+				{
+					scope.dateValue = scope.dateRanges.shift();
+					if(!scope.dateRanges.length)
+						$('#load_more').addClass('hide');	
+					log.info(scope.dateRanges);
+					log.info(scope.dateValue);
+					
+					fetchMore(scope, API, filter, log, true);	
+				}
+				else
+				{
+					$('#load_more').addClass('hide');
+				}
+			}
+			
+		};
+		
+		scope.reset = function(){
+	    				
 			$('p[id$="_error"]').addClass('hide');
 			scope.toggleFilter = true;
-			toggleLoading(true);
-	    	API.save(params,function(data){
-	    		log.info(data);
-	    		togglePagination(data.total);
-		    	scope.records = data.records;		    			    	
-		    	toggleLoading();
-		    });
-	    	
+			toggleLoading();
+	    	scope.items = []
+	    	$('#load_more').addClass('hide');
 	    }
 	}
 	

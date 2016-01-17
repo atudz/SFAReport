@@ -10,19 +10,24 @@
 					<div class="pull-left col-sm-6">
 						{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
 						{!!Html::select('status','Status', $statuses,'')!!}
+						{!!Html::input('text','invoice_number','Invoice #')!!}
+						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}
 					</div>					
 					<div class="pull-right col-sm-6">
-						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}						
+						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}	
+						{!!Html::input('text','return_slip_num','Return Slip #')!!}
+						{!!Html::input('text','reference_number','Replenishment #')!!}					
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
-										    
+								
 				{!!Html::topen(['no_pdf'=>true])!!}
-				{!!Html::theader($tableHeaders)!!}
+					{!!Html::theader($tableHeaders)!!}
 					<tbody>
-						
+					<tbody ng-repeat="item in items">
+																
 						<!-- Beginning balance -->
-						<tr ng-show="showBody">
+						<tr ng-show="item.showBody">
 							<th>Beginning Balance</th>
 							<th></th>
 							<th></th>
@@ -32,13 +37,13 @@
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>											
 						
 						
 						<!-- Actual Count -->
-						<tr style="background-color:#ccccff;" ng-show="showBody">
+						<tr style="background-color:#ccccff;" ng-show="item.replenishment.total">
 							<th>Actual Count</th>
 							<th></th>
 							<th></th>
@@ -46,33 +51,33 @@
 							<th></th>
 							<th></th>
 							<th>
-								<span ng-bind="formatDate(replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[replenishment.reference_number]]</th>
+							<th>[[item.replenishment.reference_number]]</th>
 							@foreach($itemCodes as $item)
-								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
+								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 						
 						<!-- Stock count -->
-						<tr ng-show="showBody">
+						<tr ng-show="item.stocks.total">
 							<th></th>
 							<th></th>
 							<th></th>
 							<th></th>
 							<th>
-								<span ng-bind="formatDate(stocks.transaction_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="formatDate(item.stocks.transaction_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[stocks.stock_transfer_number]]</th>
+							<th>[[item.stocks.stock_transfer_number]]</th>
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[stocks.{{'code_'.$item->item_code}}]]</th>
+								<th>[[item.stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 						
 						<!-- Record list -->
-						<tr ng-repeat="record in records|filter:query" ng-show="showBody">
+						<tr ng-repeat="record in item.records|filter:query" ng-show="item.total" class="[[record.updated]]">
 							<td>[[record.customer_name]]</td>
 							<td>
 								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>							
@@ -87,15 +92,10 @@
 								<td> [[record.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
-						<tr id="no_records_div" style="background-color:white;">
-							<td colspan="{{8+count($itemCodes)}}">
-								No records found.
-							</td>
-						</tr>
 						
 						<!-- Stock on Hand -->
-						<tr style="background-color: #ccffcc" ng-show="showBody">
-							<th>Stock Onhand</th>
+						<tr style="background-color: #ccffcc" ng-show="item.showBody">
+							<th>Stock On Hand</th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -104,13 +104,13 @@
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[stock_on_hand.{{'code_'.$item->item_code}}]]</th>
+								<th>[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 												
 						<!-- Short over stocks -->
-						<tr style="background-color:#edc4c4;" ng-show="showBody">
-							<th>Short Over Stocks</th>
+						<tr style="background-color:#edc4c4;" ng-show="item.short_over_stocks.total">
+							<th>Short/Over Stocks</th>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -119,13 +119,29 @@
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[short_over_stocks.{{'code_'.$item->item_code}}]]</th>
+								<th>[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 																		
-					</tbody>					
+					</tbody>	
+					<tr id="no_records_div" style="background-color:white;">
+							<td colspan="{{8+count($itemCodes)}}">
+								No records found.
+							</td>
+					</tr>
+						
+					</tbody>				
 				{!!Html::tclose(false)!!}
 				<input type="hidden" id="inventory_type" value="{{$type}}">
+				
+				<div class="rs-mini-toolbar hide" id="load_more">
+					<div class="rs-toolbar-savebtn">
+						<a class="button-primary revgreen" ng-click="more()" id="button_save_slide-tb" original-title="" style="display: block; cursor:pointer;">
+							<i class="fa fa-refresh" style="display: inline-block;vertical-align: middle;width: 25px;height: 20px;background-repeat: no-repeat;"></i>
+							Load more..
+						</a>
+					</div>					
+				</div>
 			</div>			
 		</div>
 	</div>
