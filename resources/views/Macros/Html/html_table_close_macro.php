@@ -52,6 +52,19 @@ Html::macro('tclose', function($paginate=true) {
 					</form>   										 					
 				</div>			    			
     		</script>
+
+    		<script type="text/javascript">
+				$(function() {
+				 	$("table.table").floatThead({
+					    position: "absolute",
+					    autoReflow: true,
+					    zIndex: "2",
+					    scrollContainer: function($table){
+					        return $table.closest(".wrapper");
+					    }
+					});
+				});
+			</script>
 			
 			
 			';

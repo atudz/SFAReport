@@ -10,8 +10,8 @@
                         <em class="glyphicon glyphicon-list-alt glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large"><a href="#salescollection.report">0</a></div>
-                        <div class="text-muted"><a href="#salescollection.report">Sales &amp; Collections</a></div>
+                        <div class="large">0</div>
+                        <div class="text-muted">Sales &amp; Collections</div>
                     </div>
                 </div>
             </div>
@@ -24,8 +24,8 @@
                         <em class="glyphicon glyphicon-barcode glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large"><a href="#vaninventory.canned">0</a></div>
-                        <div class="text-muted"><a href="#vaninventory.canned">Van Inventory</a></div>
+                        <div class="large">0</div>
+                        <div class="text-muted">Van Inventory</div>
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
                         <em class="glyphicon glyphicon-credit-card glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large"><a href="#unpaid">0</a></div>
-                        <div class="text-muted"><a href="#unpaid">Unpaid Invoice</a></div>
+                        <div class="large">0</div>
+                        <div class="text-muted">Unpaid Invoice</div>
                     </div>
                 </div>
             </div>
@@ -52,8 +52,8 @@
                         <em class="glyphicon glyphicon-stats glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large"><a href="#salesreport.permaterial">0</a></div>
-                        <div class="text-muted"><a href="#salesreport.permaterial">Sales Report</a></div>
+                        <div class="large">0</div>
+                        <div class="text-muted">Sales Report</div>
                     </div>
                 </div>
             </div>
@@ -66,8 +66,8 @@
                         <em class="glyphicon glyphicon-th-list glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large"><a href="#bir">0</a></div>
-                        <div class="text-muted"><a href="#bir">BIR</a></div>
+                        <div class="large">0</div>
+                        <div class="text-muted">BIR</div>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
     <hr />
     <div class="row">
 
-        <div class="col-xs-12 col-md-6 col-lg-3">
+       <!--  <div class="col-xs-12 col-md-6 col-lg-3">
             <div class="panel panel-gray panel-widget ">
                 <div class="row no-padding">
                     <div class="col-sm-3 col-lg-5 widget-left">
@@ -103,6 +103,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div><!--/.row-->
