@@ -52,7 +52,7 @@ class UserPresenter extends PresenterCore
 	 */
 	public function getRoles()
 	{
-		return \DB::table('user_group')->orderBy('name')->lists('name','id');	
+		return \DB::table('user_group')->lists('name','id');	
 	}
 	
 	/**

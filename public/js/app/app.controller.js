@@ -179,6 +179,7 @@
 		          'company_code',
 		          'customer',
 		          'material',
+		          'invoice_number',
 		          'segment'
 		];
 	    
@@ -215,6 +216,7 @@
 		          'salesman_code',
 		          'area',
 		          'company_code',
+		          'invoice_number',
 		          'customer'
 		];
 	    
@@ -240,6 +242,7 @@
 		          'salesman_code',
 		          'area',
 		          'company_code',
+		          'invoice_number',
 		          'material',
 		          'segment'
 		];
@@ -264,6 +267,7 @@
 		          'salesman_code',
 		          'area',
 		          'company_code',
+		          'invoice_number',
 		          'material',
 		          'segment'
 		];
@@ -1325,14 +1329,6 @@
 			if(!$('#assignment_type').val())
 			{
 				locationErrors.push('Assignment is a required field.')
-			}			
-			if(!$('#assignment_date_from').val())
-			{
-				locationErrors.push('Date from is a required field.')
-			}
-			if(!$('#assignment_date_to').val())
-			{
-				locationErrors.push('Date to is a required field.')
 			}
 			
 			if(locationErrors.length > 0)

@@ -1313,6 +1313,12 @@ ORDER BY tas.reference_num ASC,
 								return $model->where('txn_sales_order_header.customer_code','like',$self->getValue().'%');
 							});
 			    	 
+		$invoiceNumFilter = FilterFactory::getInstance('Text');
+		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+						function($self, $model){
+							return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');							
+					});
+		
 		$customerFilter = FilterFactory::getInstance('Select');
 		$prepare = $customerFilter->addFilter($prepare,'customer',
 			    			function($self, $model){
@@ -1453,7 +1459,13 @@ ORDER BY tas.reference_num ASC,
 			    			function($self, $model){
 			    				return $model->where('app_area.area_code','=',$self->getValue());
 			    			});
-			    	
+
+		$invoiceNumFilter = FilterFactory::getInstance('Text');
+		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+				function($self, $model){
+					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
+				});
+		
 		$companyCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
 							function($self, $model){
@@ -1611,7 +1623,13 @@ ORDER BY tas.reference_num ASC,
 							function($self, $model){
 								return $model->where('txn_return_header.customer_code','like',$self->getValue().'%');
 							});
-			    	 
+
+		/* $invoiceNumFilter = FilterFactory::getInstance('Text');
+		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+				function($self, $model){
+					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
+				}); */
+		
 		$itemCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
 			    			function($self, $model){
@@ -1762,6 +1780,12 @@ ORDER BY tas.reference_num ASC,
 								return $model->where('txn_return_header.customer_code','like',$self->getValue().'%');
 							});
     	 
+		/* $invoiceNumFilter = FilterFactory::getInstance('Text');
+		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+				function($self, $model){
+					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
+				}); */
+		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
     			function($self, $model){

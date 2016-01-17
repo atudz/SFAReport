@@ -78,7 +78,7 @@
 						{!!Html::select('assignment_type','Assignment *', $assignmentOptions, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::datepicker('assignment_date','Date From & To*', true)!!}							
+						{!!Html::datepicker('assignment_date','Date From & To', true)!!}							
 					</div>												
 				</div>
 				
