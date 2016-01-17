@@ -752,7 +752,9 @@ ORDER BY tas.reference_num ASC,
     	}
     			 
     	$data['replenishment'] = $replenishment;
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
+    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
+    	if($replenishment && isset($replenishment->total) && $replenishment->total)
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
     			
     	
     	// Get Van Inventory stock transfer data
@@ -780,10 +782,11 @@ ORDER BY tas.reference_num ASC,
     	if($stocks)
     		$stocks->total = $stocks ? 1 : 0;
     	else
-    		$stocks['total'] = $stocks ? 1 : 0;
+    		$stocks['total'] = 0;
     	$data['stocks'] = $stocks;    	
     	
-    	$reportRecords[] = (array)$stocks;
+    	if(is_object($stocks))
+    		$reportRecords[] = (array)$stocks;
     	
     	
     	// Get Cusomter List
@@ -851,8 +854,7 @@ ORDER BY tas.reference_num ASC,
     	$data['total'] = $reports ? count($records) : count($results);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock Onhand</strong>'],$stockOnHand);
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
+    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
     	$shortOverStocks = [];
@@ -871,12 +873,11 @@ ORDER BY tas.reference_num ASC,
     	}
     	$shortOverStocks['total'] = $shortOverStocks ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
-    	$reportRecords[] = $reportRecords[] = array_merge(['customer_name'=>'<strong>Short Over Stocks</strong>'],$shortOverStocks);
+    	if($shortOverStocks['total'])
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
     	
     	unset($replenishment->replenishment_date);
-    	unset($replenishment->reference_number);
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
-    	//dd($reportRecords);    	    	    
+    	unset($replenishment->reference_number);	    	    
     	
     	return ($reports) ? $reportRecords : response()->json($data);
     }
@@ -1624,11 +1625,11 @@ ORDER BY tas.reference_num ASC,
 								return $model->where('txn_return_header.customer_code','like',$self->getValue().'%');
 							});
 
-		/* $invoiceNumFilter = FilterFactory::getInstance('Text');
+		$invoiceNumFilter = FilterFactory::getInstance('Text');
 		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
 				function($self, $model){
-					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
-				}); */
+					return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
+				});
 		
 		$itemCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
@@ -1780,11 +1781,11 @@ ORDER BY tas.reference_num ASC,
 								return $model->where('txn_return_header.customer_code','like',$self->getValue().'%');
 							});
     	 
-		/* $invoiceNumFilter = FilterFactory::getInstance('Text');
+		$invoiceNumFilter = FilterFactory::getInstance('Text');
 		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
 				function($self, $model){
-					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
-				}); */
+					return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
+				});
 		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
@@ -2632,7 +2633,18 @@ ORDER BY tas.reference_num ASC,
     			$vaninventory = true; 				
     			$status = $this->request->get('status') ? $this->request->get('status') : 'A';
     			$columns = $this->getVanInventoryColumns('canned',$status);
-    			$records = $this->getVanInventory(true, $offset);    			
+    			
+    			$params = $this->request->all();
+    			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
+    			$to = $params['transaction_date_to'];
+    			while(strtotime($from) < strtotime($to))
+    			{
+    				$params['transaction_date'] = $from;
+    				$this->request->replace($params);
+    				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
+    				$records = array_merge($records,$this->getVanInventory(true, $offset));
+    			}
+    			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned',$status);
 	    		$filename = 'Van Inventory(Canned & Mixes)';
 	    		break;
@@ -2640,7 +2652,18 @@ ORDER BY tas.reference_num ASC,
     			$vaninventory = true;
     			$status = $this->request->get('status') ? $this->request->get('status') : 'A';
     			$columns = $this->getVanInventoryColumns('frozen',$status);
-    			$records = $this->getVanInventory(true, $offset);    			
+
+    			$params = $this->request->all();
+    			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
+    			$to = $params['transaction_date_to'];
+    			while(strtotime($from) < strtotime($to))
+    			{
+    				$params['transaction_date'] = $from;
+    				$this->request->replace($params);
+    				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
+    				$records = array_merge($records,$this->getVanInventory(true, $offset));
+    			}
+    			
 	    		$rows = $this->getVanInventorySelectColumns('frozen',$status);
     			$filename = 'Van Inventory(Frozen & Kassel)';
     			break;    			
