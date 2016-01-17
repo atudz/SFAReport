@@ -52,7 +52,7 @@ class PresenterCore extends Controller
 
 	public function __construct()
     {
-        //$this->middleware('auth', ['except' => ['login','forgotPassword']]);
+        $this->middleware('auth', ['except' => ['login','forgotPassword']]);
         $this->view = new \stdClass();
         $this->request = app('request');
     }
