@@ -721,7 +721,7 @@ a.bg-danger:hover {
 .sidebar ul.nav li.parent ul li a {
 	border: none;
 	display:block;
-	padding-left: 30px;
+	padding-left: 15px;
 	line-height: 40px;
 	font-size: 12px;
 }
