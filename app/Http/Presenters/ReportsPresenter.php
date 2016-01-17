@@ -786,7 +786,13 @@ ORDER BY tas.reference_num ASC,
     				$stockOnHand['code_'.$item->item_code] -= $item->served_qty;
     			else
     				$stockOnHand['code_'.$item->item_code] = $item->served_qty;
+    			
     		}	
+    		
+    		if(isset($stockOnHand['code_'.$result->item_code]))
+    			$stockOnHand['code_'.$result->item_code] += (int)$result->quantity;
+    		else
+    			$stockOnHand['code_'.$result->item_code] = $result->quantity;
     		
     		$records[] = $result;
     		$reportRecords[] = (array)$result;
@@ -853,18 +859,21 @@ ORDER BY tas.reference_num ASC,
     			   app_customer.customer_name,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
-    			   txn_sales_order_header.so_number,    			   	
+    			   txn_sales_order_header.so_number,
+    			   txn_return_detail.item_code,    
+    			   txn_return_detail.quantity,				   	
 				   txn_return_header.return_slip_num';				 
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
     				->distinct()    				
-			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
+			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number')
 			    	->leftJoin('txn_return_header', function ($join){
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
 			    		->where('txn_sales_order_header.salesman_code','=','txn_return_header.salesman_code');
 			    	})
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number');
+			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');

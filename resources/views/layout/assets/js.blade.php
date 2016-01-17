@@ -9,7 +9,7 @@
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-xeditable/dist/js/xeditable.min.js') }}"></script>  
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/floatThead/dist/jquery.floatThead.min.js') }}"></script>  
 <script type="text/javascript" src="{{ URL::asset('js/components/packages/floatThead/dist/jquery.floatThead-slim.min.js') }}"></script> 
-
+<script type="text/javascript" src="{{ URL::asset('js/components/packages/angular-endless-scroll/dist/angular-endless-scroll.min.js') }}"></script>
 
 @if(auth()->user())
 	<script src="{{ URL::asset('js/app/app.module.js') }}"></script>

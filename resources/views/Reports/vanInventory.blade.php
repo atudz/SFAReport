@@ -107,24 +107,7 @@
 								<th>[[stock_on_hand.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
-						
-						<!-- Actual count -->
-						<tr style="background-color:#ccccff;" ng-show="showBody">
-							<th>Actual Count</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th>
-								<span ng-bind="formatDate(replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
-							</th>
-							<th>[[replenishment.reference_number]]</th>
-							@foreach($itemCodes as $item)
-								<th>[[replenishment.{{'code_'.$item->item_code}}]]</th>
-							@endforeach
-						</tr>	
-						
+												
 						<!-- Short over stocks -->
 						<tr style="background-color:#edc4c4;" ng-show="showBody">
 							<th>Short Over Stocks</th>
