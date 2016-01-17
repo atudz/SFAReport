@@ -858,6 +858,7 @@ ORDER BY tas.reference_num ASC,
     	
     	// Short over stocks
     	$shortOverStocks = [];
+    	$displayShort = false;
     	foreach($stockOnHand as $code => $stock)
     	{
     		if($replenishment && isset($replenishment->{$code}))
@@ -868,10 +869,12 @@ ORDER BY tas.reference_num ASC,
     		{
     			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : '';
     		}
+    		if($shortOverStocks) 
+    			$displayShort = true;
     		$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
     		$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
     	}
-    	$shortOverStocks['total'] = $shortOverStocks ? 1 : 0;
+    	$shortOverStocks['total'] = $displayShort ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
     	if($shortOverStocks['total'])
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);

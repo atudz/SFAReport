@@ -131,8 +131,7 @@
 		          'reference_number'
 		];
 	    
-	    $('#no_records_div').show();
-	    toggleLoading();
+	    fetchMore(scope,API,params,log);
 	    	    
 	    // Filter table records	    		
 		filterSubmitVanInventory(scope,API,params,log);
@@ -477,7 +476,6 @@
 	    		}
 	    		else
 	    		{
-	    			log.info(scope.dateRanges.length);
 	    			if(!loadMore && !scope.items.length)
 	    				$('#no_records_div').show();
 	    		}
@@ -488,8 +486,7 @@
 		    });
 		}
 		else
-			fetch = false;
-		toggleLoading();
+			fetch = false;		
 	}
 	
 	/**
