@@ -8,6 +8,7 @@ use App\Filters\SelectFilter;
 use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
 use Carbon\Carbon;
+use App\Factories\LibraryFactory;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -744,15 +745,15 @@ ORDER BY tas.reference_num ASC,
     			$tempActualCount['code_'.$item->item_code] = $item->quantity;
     		}    			    			
     		
-    		$replenishment->total = 1;
+    		$replenishment->total = 1;    		
     	}
     	else
     	{
     		$replenishment['total'] = 0;
     	}
     			 
-    	$data['replenishment'] = $replenishment;
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
+    	$data['replenishment'] = (array)$replenishment;
+    	//$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
     	if($replenishment && isset($replenishment->total) && $replenishment->total)
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
     			
@@ -783,7 +784,7 @@ ORDER BY tas.reference_num ASC,
     		$stocks->total = $stocks ? 1 : 0;
     	else
     		$stocks['total'] = 0;
-    	$data['stocks'] = $stocks;    	
+    	$data['stocks'] = (array)$stocks;    	
     	
     	if(is_object($stocks))
     		$reportRecords[] = (array)$stocks;
@@ -832,7 +833,8 @@ ORDER BY tas.reference_num ASC,
     	}
     	
     	// Compute Stock on Hand
-    	$stockOnHand = [];    	 
+    	$stockOnHand = [];    	
+    	$hasStockOnHand = false; 
     	foreach($codes as $code)
     	{
     		$code = 'code_'.$code;
@@ -848,13 +850,17 @@ ORDER BY tas.reference_num ASC,
     		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
+    		
+    		if($stockOnHand[$code])
+    			$hasStockOnHand = true;
     	}
     	
     	$data['records'] = $records;
     	$data['total'] = $reports ? count($records) : count($results);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
+    	if($hasStockOnHand && $data['stocks']['total'])
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
     	$shortOverStocks = [];
@@ -869,14 +875,17 @@ ORDER BY tas.reference_num ASC,
     		{
     			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : '';
     		}
-    		if($shortOverStocks) 
-    			$displayShort = true;
+    		
     		$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
     		$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
+    		
+    		if($shortOverStocks[$code] && $data['stocks']['total'])
+    			$displayShort = true;
+    		
     	}
     	$shortOverStocks['total'] = $displayShort ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
-    	if($shortOverStocks['total'])
+    	if($displayShort)
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
     	
     	unset($replenishment->replenishment_date);
@@ -1147,19 +1156,132 @@ ORDER BY tas.reference_num ASC,
      */
     public function getUnpaidInvoice()
     {
-    
-    	$prepare = \DB::table('user');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'area');
-    	
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date');
-    
+    	$prepare = $this->getPreparedUnpaidInvoice();
     	$result = $this->paginate($prepare);
     
     
-    	return response()->json($this->dummy());
+    	return response()->json(['records'=>[1,2,3,4]]);
+    }
+    
+    public function getPreparedUnpaidInvoice()
+    {
+    	// VW_INV temporary table
+    	$query = '
+    		select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount
+            from (
+                    select salesman_code, customer_code, invoice_number, original_amount as invoice_amount
+                  	from txn_invoice ti where DATE(ti.invoice_date) <= \'2016/1/19\'
+                  	and ti.document_type = \'I\'
+                  	and ti.status = \'A\'
+                  	and ti.customer_code in (select customer_code from app_salesman_customer where salesman_code = ti.salesman_code and status =\'A\')
+      
+                  	UNION ALL
+    	
+                  	select tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number,
+                  	case when sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) <= 0 then 0 else
+                  			      sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount
+                  	from txn_sales_order_header tsoh
+			
+                  	inner join
+					         (select reference_num,round(sum(gross_served_amount + vat_amount - discount_amount),2) as so_net_amt
+							         from txn_sales_order_detail
+							         group by reference_num) tsod
+					         on tsoh.reference_num = tsod.reference_num
+			
+        					left join
+        					(select reference_num,round(sum(served_deduction_amount),2) as served_deduction_amount
+        							from txn_sales_order_header_discount group by reference_num) tsohd
+					         on tsoh.reference_num = tsohd.reference_num
+			
+        					left join
+        					(select reference_num,round(sum(gross_amount + vat_amount - discount_amount),2) as rtn_net_amt
+        							from txn_return_detail group by reference_num) trd
+        					on tsoh.reference_num = trd.reference_num
+			
+        					left join txn_return_header_discount trhd
+        					on tsoh.reference_num = trhd.reference_num
+			
+                  where DATE(tsoh.so_date) <= \'2016/1/19\'
+                  and tsoh.customer_code in (select customer_code from app_salesman_customer where salesman_code = tsoh.salesman_code and status =\'A\')
+                  and tsod.so_net_amt > 0
+                  group by tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number
+               ) vw_inv
+              group by salesman_code, customer_code, invoice_number
+    			';
+    	$temp = LibraryFactory::getInstance('TemporaryTable');
+    	$fields = [
+    			'salesman_code' => 'varchar(255) default NULL',
+    			'customer_code' => 'varchar(255) default NULL',
+    			'invoice_number' => 'varchar(255) default NULL',
+    			'invoice_amount' => 'float default 0'
+    	];
+    	//$nameVwInv = $temp->create($fields,false,'vw_inv');
+    	//$temp->populateFromQuery($query);
+    	 
+    	
+    	// VW_COL temporary table
+    	$query = '
+    			 select tch.salesman_code, tch.customer_code, tci.invoice_number, round(sum(tci.applied_amount),2) as applied_amount 
+                    from txn_collection_header tch
+                    inner join txn_collection_invoice tci
+                    on tch.reference_num = tci.reference_num
+                    and tch.collection_num = tci.collection_num
+                    where DATE(tch.or_date) <= \'2016/1/19\'
+                    group by tch.salesman_code, tch.customer_code, tci.invoice_number
+    			';
+    	$fields = [
+    			'salesman_code' => 'varchar(255) default NULL',
+    			'customer_code' => 'varchar(255) default NULL',
+    			'invoice_number' => 'varchar(255) default NULL',
+    			'applied_amount' => 'float default 0'
+    	];
+    	$nameVwCol = $temp->create($fields,false,'vw_col');
+    	$temp->populateFromQuery($query);
+    	
+    	
+    	$select = '
+    			  app_salesman.salesman_name,
+			      app_area.area_name,
+			      app_customer.customer_code,
+			      ltrim(rtrim(app_customer.customer_name)) + \' \' + ltrim(rtrim(app_customer.customer_name2)) customer_name,
+			      f.remarks,
+			      vw_inv.invoice_number,
+			      e.so_date invoice_date,
+			      coalesce(vw_inv.invoice_amount,0) original_amount,
+			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) open_balance
+    			';
+    	$prepare = \DB::table($nameVwInv)
+    				->selectRaw($select)
+    				/* ->join($nameVwCol,function($join){
+    					$join->on($nameVwCol.'.salesman_code','=',$nameVwInv.'.salesman_code');
+    					$join->on($nameVwCol.'.customer_code','=',$nameVwInv.'.customer_code');
+    					$join->on($nameVwCol.'.invoice_number','=',$nameVwInv.'.invoice_number');
+    				}) */
+    				->join('app_salesman',function($join) use ($nameVwInv){
+    					$join->on('app_salesman.salesman_code','=',$nameVwInv.'.salesman_code');
+    					$join->on('app_salesman.status','=','A');    					
+    				})
+    				->join('app_customer',function($join) use ($nameVwInv){
+    					$join->on('app_customer.customer_code','=',$nameVwInv.'.customer_code');
+    					$join->on('app_customer.status','=','A');
+    				})
+    				->join('app_area',function($join){
+    					$join->on('app_area.area_code','=','app_customer.area_code');
+    					$join->on('app_area.status','=','A');
+    				})
+    				->join('txn_sales_order_header','txn_sales_order_header.invoice_number','=',$nameVwInv.'.invoice_number')
+    				->leftJoin(\DB::raw('
+			    			(select remarks,reference_num
+			    			 from txn_evaluated_objective
+			    			 group by reference_num) remarks'), function($join){
+    							    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
+    							    			 }
+    				);
+    	dd($prepare->toSql());
+    	
+    	
+    	
+    	return $prepare;
     }
     
     /**
@@ -2649,7 +2771,9 @@ ORDER BY tas.reference_num ASC,
     			}
     			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned',$status);
-	    		$filename = 'Van Inventory(Canned & Mixes)';
+	    		$header = 'Van Inventory and History Report';
+	    		$filters = $this->getVanInventoryFilterData();
+	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
     		case 'vaninventoryfrozen';
     			$vaninventory = true;
@@ -2668,7 +2792,9 @@ ORDER BY tas.reference_num ASC,
     			}
     			
 	    		$rows = $this->getVanInventorySelectColumns('frozen',$status);
-    			$filename = 'Van Inventory(Frozen & Kassel)';
+	    		$header = 'Van Inventory and History Report';
+	    		$filters = $this->getVanInventoryFilterData();
+    			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
     			break;    			
     		case 'bir':
     			return $this->getBir();
@@ -3117,6 +3243,7 @@ ORDER BY tas.reference_num ASC,
     			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
     			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			$invoiceNum = $this->request->get('invoice_number');
     			 
     			$filters = [
     					'Salesman' => $salesman,
@@ -3125,8 +3252,9 @@ ORDER BY tas.reference_num ASC,
     					'Company Code' => $company_code,
     					'Material' => $material,
     					'Segment' => $segment,
-    					'Return Date/Invoice Date' => $returnDate,
-    					'Posting Date' => $postingDate
+    					'Invoice Date/Return Date' => $returnDate,
+    					'Posting Date' => $postingDate,
+    					'Invoice Number' => $invoiceNum
     			];
     			break;
     		case 'salesreportperpeso':
@@ -3136,14 +3264,16 @@ ORDER BY tas.reference_num ASC,
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			$invoiceNum = $this->request->get('invoice_number');
     			
     			$filters = [    					
     				'Salesman' => $salesman,
     				'Area' => $area,
     				'Customer' => $customer,
     				'Company Code' => $company_code,
-    				'Return Date/Invoice Date' => $returnDate,
-    				'Posting Date' => $postingDate
+    				'Invoice Date/Return Date' => $returnDate,
+    				'Posting Date' => $postingDate,
+    				'Invoice Number' => $invoiceNum
     			];    			    			
     			break;
     		case 'returnpermaterial':
@@ -3155,6 +3285,7 @@ ORDER BY tas.reference_num ASC,
     			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
     			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    			$invoiceNum = $this->request->get('invoice_number');
     			 
     			$filters = [
     					'Salesman' => $salesman,
@@ -3163,8 +3294,9 @@ ORDER BY tas.reference_num ASC,
     					'Company Code' => $company_code,
     					'Material' => $material,
     					'Segment' => $segment,
-    					'Return Date/Invoice Date' => $returnDate,
-    					'Posting Date' => $postingDate
+    					'Invoice Date/Return Date' => $returnDate,
+    					'Posting Date' => $postingDate,
+    					'Invoice Number' => $invoiceNum
     			];		
     			break;
     		case 'returnperpeso':
@@ -3174,14 +3306,16 @@ ORDER BY tas.reference_num ASC,
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     				$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     				$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
-    			
+    				$invoiceNum = $this->request->get('invoice_number');
+    				
     				$filters = [
     						'Salesman' => $salesman,
     						'Area' => $area,
     						'Customer' => $customer,
     						'Company Code' => $company_code,
-    						'Return Date/Invoice Date' => $returnDate,
-    						'Posting Date' => $postingDate
+    						'Invoice Date/Return Date' => $returnDate,
+    						'Posting Date' => $postingDate,
+    						'Invoice Number' => $invoiceNum
     				];
     				break;
     		 case 'customerlist':
@@ -3233,6 +3367,36 @@ ORDER BY tas.reference_num ASC,
 	    			];
     				break;
     	}
+    	
+    	return $filters;
+    }
+    
+    /**
+     * Get Van inventory filters
+     */
+    public function getVanInventoryFilterData()
+    {
+    	$filters = [];
+    	 
+    	$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    	$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
+    	
+    	$invoiceNum = $this->request->get('invoice_number');
+    	$stockTransNum = $this->request->get('stock_transfer_number');
+    	$returnSlipNum = $this->request->get('return_slip_num');
+    	$referenceNum = $this->request->get('reference_number');
+    	
+    	$transDate = ($this->request->get('transaction_date_from') && $this->request->get('transaction_date_to')) ? $this->request->get('transaction_date_from').' - '.$this->request->get('transaction_date_to') : 'None';
+    	
+    	$filters = [
+    			'Salesman' => $salesman,
+    			'Status' => $status,
+    			'Invoice #' => $invoiceNum,
+    			'Stock Transfer #' => $stockTransNum,
+    			'Return Slip #' => $returnSlipNum,
+    			'Reference #' => $referenceNum,
+    			'Transaction Date' => $transDate,    			
+    	];
     	
     	return $filters;
     }

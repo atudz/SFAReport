@@ -102,7 +102,7 @@ class TemporaryTableLibrary extends LibraryCore
 	 *
 	 * @return $this->tableName or Boolean
 	 */
-	public function create($fields, $withId = false, $tableName = "", $typeText = true, $index = '')
+	public function create($fields, $withId = false, $tableName = "", $typeText = false, $index = '')
 	{
 		if (!$tableName)
 		{
@@ -119,8 +119,7 @@ class TemporaryTableLibrary extends LibraryCore
 			$fieldString .= ",$col $type";
 		}
 	
-		$sql = "CREATE TEMPORARY TABLE IF NOT EXISTS $this->tableName (" . substr($fieldString, 1) . ' )';
-	
+		$sql = "CREATE TEMPORARY TABLE IF NOT EXISTS $this->tableName (" . substr($fieldString, 1) . ' )';	
 		\DB::statement($sql);
 	
 		if($index)

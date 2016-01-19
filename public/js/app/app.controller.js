@@ -158,7 +158,7 @@
 			];
 		    
 		    // main controller
-		    reportController($scope,$resource,$uibModal,$window,'unpaid',params,$log);
+		    reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log);
 	}
 	
 	/**
@@ -428,35 +428,18 @@
 	function fetchMore(scope, API, filter, log, loadMore)
 	{
 		var params = {};
-		var hasError = false;
-		
 		$.each(filter, function(key,val){
-			if(val == 'transaction_date')
-				params[val] = scope.dateValue;
-			else
-				params[val] = $('#'+val).val();
-			
-			if(val.indexOf('_from') != -1)
-			{
-				var from = $('#'+val).val();
-				var to = $('#'+val.replace('_from','_to')).val();
-									
-				if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
-				{
-					hasError = true;
-					$('#'+val.replace('_from','_error')).removeClass('hide');
-				}
-			}
-		});			
+			params[val] = $('#'+val).val();			
+		});
+		params['transaction_date'] = scope.dateValue;
+					
+		$('p[id$="_error"]').addClass('hide');
+		scope.toggleFilter = true;
+		toggleLoading(true);
 		log.info(params);
-		
-		if(!hasError)
-		{
-			$('p[id$="_error"]').addClass('hide');
-			scope.toggleFilter = true;
-			toggleLoading(true);
+		log.info(scope.dateValue);
 			
-	    	API.save(params,function(data){
+	    API.save(params,function(data){
 	    		
 	    		if(data.total)
 	    		{
@@ -483,10 +466,7 @@
 	    		toggleLoading();
 		    	log.info(scope.items);
 		    	
-		    });
-		}
-		else
-			fetch = false;		
+		});				
 	}
 	
 	/**
@@ -496,35 +476,57 @@
 	{
 		scope.filter = function(){
 	    	
-			var dateFrom = new Date($('#transaction_date_from').val());
-			var dateTo = new Date($('#transaction_date_to').val());
+			var hasError = false;			
+			$.each(filter, function(key,val){
+				if(val.indexOf('_from') != -1)
+				{
+					var from = $('#'+val).val();
+					var to = $('#'+val.replace('_from','_to')).val();
+						
+					if(!from && !to)
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).html('This field is required.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+						
+					}
+					else if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
+					{
+						hasError = true;						
+						$('#'+val.replace('_from','_error')).html('Invalid date range.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}
+				}
+			});
 			
-			scope.items = [];
-			scope.dateRanges = getDates(dateFrom,dateTo);
-			
-			fetch = true;
-			while(scope.dateRanges.length)
+			if(!hasError)
 			{
-				scope.dateValue = scope.dateRanges.shift();			
-				log.info(scope.dateRanges.length);
-				//log.info('fetch true');
+				var dateFrom = new Date($('#transaction_date_from').val());
+				var dateTo = new Date($('#transaction_date_to').val());
 				
-				if(!scope.dateRanges.length)
-					$('#load_more').addClass('hide');			
-				else
-					$('#load_more').removeClass('hide');
+				scope.items = [];
+				scope.dateRanges = getDates(dateFrom,dateTo);
 				
-				log.info(scope.dateRanges);
-				log.info(scope.dateValue);
-				
-				fetchMore(scope, API, filter, log);
+				while(scope.dateRanges.length)
+				{
+					scope.dateValue = scope.dateRanges.shift();			
+					log.info(scope.dateRanges.length);
+					
+					if(!scope.dateRanges.length)
+						$('#load_more').addClass('hide');			
+					else
+						$('#load_more').removeClass('hide');
+					
+					log.info(scope.dateRanges);
+					log.info(scope.dateValue);
+					
+					fetchMore(scope, API, filter, log);
+				}
 			}
-			
 	    }
 		
 		scope.more = function() {
 			
-			fetch = true;
 			while(scope.dateRanges.length)
 			{
 				if(scope.dateRanges.length > 0)

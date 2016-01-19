@@ -27,7 +27,7 @@
 					<tbody ng-repeat="item in items">
 																
 						<!-- Beginning balance -->
-						<tr ng-show="item.showBody">
+						<!-- <tr ng-show="item.showBody">
 							<th>Beginning Balance</th>
 							<th></th>
 							<th></th>
@@ -40,7 +40,7 @@
 								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>											
-						
+						 -->
 						
 						<!-- Actual Count -->
 						<tr style="background-color:#ccccff;" ng-show="item.replenishment.total">
