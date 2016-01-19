@@ -96,8 +96,8 @@
 				// Sync 
 				.when('/sync',{
 					templateUrl: '/reports/sync',
-					/*controller: 'Sync',
-					controllerAs: 'sync'*/
+					controller: 'Sync',
+					/*controllerAs: 'sync'*/
 				})
 				
 				// Users 

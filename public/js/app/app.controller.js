@@ -1380,5 +1380,36 @@
 			}
 		}
 	};
+	
+	
+	
+	/**
+	 * Sync controller
+	 */
+
+	app.controller('Sync',['$scope','$resource','$log',Sync]);
+	
+	function Sync($scope, $resource, $log)
+	{			    
+		$scope.showError = false;
+		$scope.showSuccess = false;
+	    $scope.showLoading = false;
+	    $scope.syncLogs = '';
+	    
+	    $scope.sync = function(){
+	    	
+	    	$scope.showLoading = true;
+	    	var API = $resource('controller/reports/sync');				
+			API.get({}, function(data){
+				$scope.syncLogs = data.logs;
+				$scope.showSuccess = true;	
+				$scope.showLoading = false;	
+			},
+			function(error){
+				$scope.showLoading = false;
+				$scope.showError = true;
+			});
+	    }
+	}
 
 })();

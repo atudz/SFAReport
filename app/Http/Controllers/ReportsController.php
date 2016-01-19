@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use Illuminate\Http\Request;
+use App\Factories\LibraryFactory;
 
 class ReportsController extends ControllerCore
 {
@@ -37,5 +38,22 @@ class ReportsController extends ControllerCore
 		
 		$data['success'] = true;
 		return response()->json($data);	
+	}
+	
+	
+	/**
+	 * Sync reports from SFA db
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function sync()
+	{
+		$message = '';
+		$result = LibraryFactory::getInstance('Sync')->sync();
+		if($result)
+		{
+			$message = file_get_contents(storage_path('logs/sync/'.date('Y-m-d').'.log'));
+		}
+		$data['logs'] = $message;		
+		return response()->json($data);
 	}
 }

@@ -62,6 +62,7 @@ Route::group(['prefix' => 'user'],function(){
 Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
+	Route::get('/reports/sync', ['as'=>'report-sync', 'uses'=>'ReportsController@sync']);
 
 	Route::post('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
