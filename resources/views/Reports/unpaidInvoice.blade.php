@@ -21,8 +21,26 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
+						<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
+							<td>[[record.salesman_name]]</td>						
+							<td>[[record.area_name]]</td>
+							<td>[[record.customer_code]]</td>
+							<td>[[record.customer_name]]</td>
+							<td>[[record.remarks]]</td>
+							<td>[[record.invoice_number]]</td>
+							<td>
+								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+							</td>
+							<td>							
+								<span ng-bind="formatNumber(record.original_amount)"></span>
+							</td>
+							<td>
+								<span ng-bind="formatNumber(record.open_balance)"></span>
+							</td>
+						</tr>					
 					</tbody>
-					{!!Html::tfooter(true,8)!!}
+				
+					{!!Html::tfooter(true,9)!!}
 				{!!Html::tclose()!!}				
 			</div>			
 		</div>

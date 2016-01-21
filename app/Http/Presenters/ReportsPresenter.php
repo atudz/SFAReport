@@ -1079,7 +1079,7 @@ ORDER BY tas.reference_num ASC,
     public function getPreparedVanInventory($noTransaction=false)
     {
     	$select = '
-    			   app_customer.customer_name,
+    			   ac.customer_name,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
@@ -1093,8 +1093,16 @@ ORDER BY tas.reference_num ASC,
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
-    				->distinct()    				
-			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
+    				->distinct()
+    				->leftJoin(\DB::raw('
+			    			(select customer_code, customer_name
+			    			 from app_customer
+			    			 group by customer_code) ac'), 
+    						function($join) {
+    							$join->on('txn_sales_order_header.customer_code','=','ac.customer_code');
+    						}
+    				)    				
+			    	//->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
 			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number')
 			    	->leftJoin('txn_return_header', function ($join){
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
@@ -1160,7 +1168,7 @@ ORDER BY tas.reference_num ASC,
     	$result = $this->paginate($prepare);
     
     
-    	return response()->json(['records'=>[1,2,3,4]]);
+    	return response()->json(['records'=>$result->items()]);
     }
     
     public function getPreparedUnpaidInvoice()
@@ -1215,8 +1223,8 @@ ORDER BY tas.reference_num ASC,
     			'invoice_number' => 'varchar(255) default NULL',
     			'invoice_amount' => 'float default 0'
     	];
-    	//$nameVwInv = $temp->create($fields,false,'vw_inv');
-    	//$temp->populateFromQuery($query);
+    	$nameVwInv = $temp->create($fields,false,'vw_inv');
+    	$temp->populateFromQuery($query);
     	 
     	
     	// VW_COL temporary table
@@ -1236,7 +1244,7 @@ ORDER BY tas.reference_num ASC,
     			'applied_amount' => 'float default 0'
     	];
     	$nameVwCol = $temp->create($fields,false,'vw_col');
-    	$temp->populateFromQuery($query);
+    	//$temp->populateFromQuery($query);
     	
     	
     	$select = '
@@ -1245,40 +1253,38 @@ ORDER BY tas.reference_num ASC,
 			      app_customer.customer_code,
 			      ltrim(rtrim(app_customer.customer_name)) + \' \' + ltrim(rtrim(app_customer.customer_name2)) customer_name,
 			      f.remarks,
-			      vw_inv.invoice_number,
-			      e.so_date invoice_date,
-			      coalesce(vw_inv.invoice_amount,0) original_amount,
-			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) open_balance
+			      '.$nameVwInv.'.invoice_number,
+			      txn_sales_order_header.so_date invoice_date,
+			      coalesce('.$nameVwInv.'.invoice_amount,0) original_amount,
+			      coalesce('.$nameVwInv.'.invoice_amount,0) - coalesce('.$nameVwCol.'.applied_amount,0) open_balance
     			';
     	$prepare = \DB::table($nameVwInv)
     				->selectRaw($select)
-    				/* ->join($nameVwCol,function($join){
+    				->leftjoin($nameVwCol,function($join) use ($nameVwInv,$nameVwCol){
     					$join->on($nameVwCol.'.salesman_code','=',$nameVwInv.'.salesman_code');
     					$join->on($nameVwCol.'.customer_code','=',$nameVwInv.'.customer_code');
     					$join->on($nameVwCol.'.invoice_number','=',$nameVwInv.'.invoice_number');
-    				}) */
+    				})
     				->join('app_salesman',function($join) use ($nameVwInv){
     					$join->on('app_salesman.salesman_code','=',$nameVwInv.'.salesman_code');
-    					$join->on('app_salesman.status','=','A');    					
+    					$join->where('app_salesman.status','=','A');    					
     				})
     				->join('app_customer',function($join) use ($nameVwInv){
     					$join->on('app_customer.customer_code','=',$nameVwInv.'.customer_code');
-    					$join->on('app_customer.status','=','A');
+    					$join->where('app_customer.status','=','A');
     				})
     				->join('app_area',function($join){
     					$join->on('app_area.area_code','=','app_customer.area_code');
-    					$join->on('app_area.status','=','A');
+    					$join->where('app_area.status','=','A');
     				})
     				->join('txn_sales_order_header','txn_sales_order_header.invoice_number','=',$nameVwInv.'.invoice_number')
     				->leftJoin(\DB::raw('
 			    			(select remarks,reference_num
 			    			 from txn_evaluated_objective
-			    			 group by reference_num) remarks'), function($join){
-    							    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
+			    			 group by reference_num) f'), function($join){
+    							    			 	$join->on('txn_sales_order_header.reference_num','=','f.reference_num');
     							    			 }
-    				);
-    	dd($prepare->toSql());
-    	
+    				);    	
     	
     	
     	return $prepare;
@@ -2158,7 +2164,7 @@ ORDER BY tas.reference_num ASC,
     		case 'vaninventoryfrozen':
     			return $this->getVanInventoryColumns('frozen');
     		case 'unpaidinvoice':
-    			return $this->getVanInventoryColumns();
+    			return $this->getUnpaidColumns();
     		case 'bir':
     			return $this->getBirColumns();
     		case 'salesreportpermaterial':
@@ -2257,6 +2263,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Customer Name','sort'=>'customer_name'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Original Amount'],
     			['name'=>'Balance Amount', 'sort'=>'balance_amount']
     	];
