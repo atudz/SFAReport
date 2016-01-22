@@ -46,7 +46,7 @@ class TextFilter extends FilterCore
 			return $scope($this,$model);	
 		}
 		
-		return $scope ? $this->$scope($model) : $model->where($name,'LIKE',$this->getValue().'%');
+		return $scope ? $this->$scope($model) : $model->where($name,'LIKE','%'.$this->getValue().'%');
 	}
 	
 	/**

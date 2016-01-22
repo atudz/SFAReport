@@ -869,19 +869,13 @@ ORDER BY tas.reference_num ASC,
     	{
     		if($replenishment && isset($replenishment->{$code}))
     		{    			
-    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? ($replenishment->{$code}-$stockOnHand[$code]) : $replenishment->{$code}; 
-    		}
-    		else
-    		{
-    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : '';
-    		}
-    		
-    		$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
-    		$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
-    		
-    		if($shortOverStocks[$code] && $data['stocks']['total'])
-    			$displayShort = true;
-    		
+    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? ($replenishment->{$code}-$stockOnHand[$code]) : $replenishment->{$code};
+    			$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
+    			$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
+    			
+    			if($shortOverStocks[$code] && $data['stocks']['total'])
+    				$displayShort = true;
+    		}    		    		
     	}
     	$shortOverStocks['total'] = $displayShort ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
@@ -2757,7 +2751,7 @@ ORDER BY tas.reference_num ASC,
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
     			$to = $params['transaction_date_to'];
-    			while(strtotime($from) < strtotime($to))
+    			while(strtotime($from) <= strtotime($to))
     			{
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
@@ -2778,7 +2772,7 @@ ORDER BY tas.reference_num ASC,
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
     			$to = $params['transaction_date_to'];
-    			while(strtotime($from) < strtotime($to))
+    			while(strtotime($from) <= strtotime($to))
     			{
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
