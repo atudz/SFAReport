@@ -1079,36 +1079,24 @@ ORDER BY tas.reference_num ASC,
     public function getPreparedVanInventory($noTransaction=false)
     {
     	$select = '
-    			   ac.customer_name,
+    			   app_customer.customer_name,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
-    			   txn_return_detail.item_code,    
-    			   txn_return_detail.quantity,				   	
-				   txn_return_header.return_slip_num,
-    			   IF(txn_sales_order_header.updated_by,\'modified\',
-    				 IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
-    			   ) updated
+    			   txn_return_header.return_slip_num,
+    			   txn_return_detail.item_code,
+    			   txn_return_detail.quantity,
+    			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
-    				->distinct()
-    				->leftJoin(\DB::raw('
-			    			(select customer_code, customer_name
-			    			 from app_customer
-			    			 group by customer_code) ac'), 
-    						function($join) {
-    							$join->on('txn_sales_order_header.customer_code','=','ac.customer_code');
-    						}
-    				)    				
-			    	//->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number')
+    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
 			    	->leftJoin('txn_return_header', function ($join){
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
 			    		->where('txn_sales_order_header.salesman_code','=','txn_return_header.salesman_code');
 			    	})
-			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num');
+			    	->leftJoin('txn_return_detail','txn_return_header.return_txn_number','=','txn_return_detail.return_txn_number');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1146,14 +1134,14 @@ ORDER BY tas.reference_num ASC,
     						return $model->where('app_area.area_code','=',$self->getValue());	
     				}); */
     	
-    	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
+    	/* $status = $this->request->get('status') ? $this->request->get('status') : 'A';
     	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
     	$codes = [];
     	foreach($item_codes as $item)
     	{
     		$codes[] = $item->item_code;
     	}
-    	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes);    	
+    	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */    	
     	
     	return $prepare;
     }
