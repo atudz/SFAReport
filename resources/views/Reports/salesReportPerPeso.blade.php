@@ -100,27 +100,29 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+							<span ng-bind="formatNumber(summary.gross_served_amount,false,true)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount)"></span>
-						</th>
-						<td></td>
-						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="formatNumber(summary.vat_amount,false,true)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+							<span ng-bind="formatNumber(summary.discount_amount,true,true)"></span>
 						</th>
 						<td></td>
-						<td></td>
-						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true,true)"></span>
+						</th>
 						<td></td>
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="formatNumber(summary.collective_deduction_amount,false,true)"></span>
+						</th>
+						<td></td>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.total_invoice,false,true)"></span>
 						</th>
 					</tr>
 					

@@ -1350,8 +1350,8 @@ ORDER BY tas.reference_num ASC,
 				   app_item_master.segment_code,
 				   app_item_master.item_code,
 				   app_item_master.description,
-    			   txn_return_detail.return_detail_id,
-				   txn_sales_order_detail.served_qty quantity,
+    			   txn_sales_order_detail.served_qty quantity,
+    			   txn_return_detail.return_detail_id,				   
 				   txn_return_detail.condition_code,
     			   txn_sales_order_detail.sales_order_detail_id,
 				   txn_sales_order_detail.uom_code,
@@ -1368,6 +1368,7 @@ ORDER BY tas.reference_num ASC,
       			   tsohd.deduction_reference_num,
     			   tsohd.deduction_remarks,
     			   tsohd.collective_deduction_amount,
+    			   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
 				   IF(txn_sales_order_header.updated_by,\'modified\',
     						IF(txn_sales_order_detail.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
@@ -1379,12 +1380,13 @@ ORDER BY tas.reference_num ASC,
     	if($summary)
     	{
     		$select = '
-				   SUM(txn_sales_order_detail.served_qty) quantity,
-				   SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
-				   SUM(txn_sales_order_detail.vat_amount) vat_amount,
-				   SUM(tsohd.collective_discount_amount) collective_deduction_amount,
-    			   SUM(tsohd.collective_deduction_amount) collective_deduction_amount,
-				   SUM((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice	
+				   ROUND(SUM(txn_sales_order_detail.served_qty),0) quantity,
+				   ROUND(SUM(txn_sales_order_detail.gross_served_amount),0) gross_served_amount,
+    			   ROUND(SUM(txn_sales_order_detail.discount_amount),0) discount_amount,
+				   ROUND(SUM(txn_sales_order_detail.vat_amount),0) vat_amount,
+				   ROUND(SUM(tsohd.collective_discount_amount),0) collective_discount_amount,
+    			   ROUND(SUM(tsohd.collective_deduction_amount),0) collective_deduction_amount,
+				   ROUND(SUM((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)),0) total_invoice	
     			';
     	}
     	
@@ -1530,33 +1532,33 @@ ORDER BY tas.reference_num ASC,
 				   txn_sales_order_detail.vat_amount,
 				   txn_sales_order_detail.discount_rate,
 				   txn_sales_order_detail.discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
-				   IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+				   tsohd.collective_discount_rate,	
+    			   tsohd.collective_discount_amount,
+      			   tsohd.discount_reference_num,
+    			   tsohd.discount_remarks,
+    			   tsohd.collective_deduction_rate,	
+    			   tsohd.collective_deduction_amount,
+      			   tsohd.deduction_reference_num,
+    			   tsohd.deduction_remarks,
+    			   tsohd.collective_deduction_amount,
+    			   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
 	    		   IF(txn_sales_order_header.updated_by,\'modified\',
-	    				IF(txn_sales_order_header_discount.updated_by,\'modified\',
 	    					IF(txn_sales_order_detail.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
     						)
-	    				)
+
 	    		   ) updated
     			';
 
     	if($summary)
     	{
     		$select = '
-				   SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
-				   SUM(txn_sales_order_detail.vat_amount) vat_amount,
-				   SUM(txn_sales_order_detail.discount_amount) discount_amount,
-				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,
-				   SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
-				   SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice
+				   ROUND(SUM(txn_sales_order_detail.gross_served_amount),0) gross_served_amount,
+				   ROUND(SUM(txn_sales_order_detail.vat_amount),0) vat_amount,
+				   ROUND(SUM(txn_sales_order_detail.discount_amount),0) discount_amount,
+				   ROUND(SUM(tsohd.collective_discount_amount),0) collective_discount_amount,
+    			   ROUND(SUM(tsohd.collective_deduction_amount),0) collective_deduction_amount,
+				   ROUND(SUM((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)),0) total_invoice
     			';
     	}
     	$prepare = \DB::table('txn_sales_order_header')
@@ -1568,7 +1570,22 @@ ORDER BY tas.reference_num ASC,
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
 			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
-			    	->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	//->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
+			    	->leftJoin(\DB::raw('
+			    			(select reference_num,
+			    			served_deduction_rate as collective_deduction_rate,
+			    			served_deduction_rate as collective_discount_rate,
+			    			ref_no as discount_reference_num,
+			    			remarks as discount_remarks,
+			    			ref_no as deduction_reference_num,
+			    			remarks as deduction_remarks,
+							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
+							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+							from txn_sales_order_header_discount
+							group by reference_num) tsohd'), function($join){
+			    										$join->on('txn_sales_order_header.reference_num','=','tsohd.reference_num');
+			    									}
+			    	)
 			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
 			    	->leftJoin(\DB::raw('
 			    			(select evaluated_objective_id,remarks,reference_num,updated_by
@@ -1662,7 +1679,7 @@ ORDER BY tas.reference_num ASC,
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
-				(select remarks from txn_evaluated_objective teo where reference_num = txn_return_header.reference_num order by teo.sfa_modified_date desc limit 1) AS remarks,
+				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
 				txn_return_header.salesman_code,
@@ -1677,48 +1694,32 @@ ORDER BY tas.reference_num ASC,
 				txn_return_detail.condition_code,
 				txn_return_detail.quantity,
 				txn_return_detail.uom_code,
-				txn_sales_order_detail.gross_served_amount,
+				txn_return_detail.gross_amount,
 				txn_return_detail.vat_amount,
-				txn_sales_order_detail.discount_rate,
-				txn_sales_order_detail.discount_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
+				\'0\' discount_rate,
+				txn_return_detail.discount_amount,
+				trhd.collective_discount_rate,	
+    			trhd.collective_discount_amount,
+      			trhd.discount_reference_num,
+    			trhd.discount_remarks,
+    			((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice,
     			IF(txn_return_header.updated_by,\'modified\',
-    					IF(app_customer.updated_by,\'modified\',
-    						IF(app_area.updated_by,\'modified\',
-    							IF(app_salesman.updated_by,\'modified\',
-    								IF(txn_activity_salesman.updated_by,\'modified\',
-    									IF(txn_return_detail.updated_by,\'modified\',
-    										IF(app_item_master.updated_by,\'modified\',
-    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
-    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
-    											   )
-    										   )
-    									  )
-    								  )
-    							)
-    						 )
-    				    )
-    			  ) updated 
+	    					IF(txn_return_detail.updated_by,\'modified\',
+    							IF(remarks.updated_by,\'modified\',\'\')
+    						)
+
+	    		) updated 
     			';
     	 
     	if($summary)
     	{
     		$select = '
-    			SUM(txn_return_detail.quantity) quantity,
-				SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
-				SUM(txn_return_detail.vat_amount) vat_amount,
-				SUM(txn_sales_order_detail.discount_amount) discount_amount,
-				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,	
-				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
-				SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice    			
+    			ROUND(SUM(txn_return_detail.quantity),0) quantity,
+				ROUND(SUM(txn_return_detail.gross_amount),0) gross_served_amount,
+				ROUND(SUM(txn_return_detail.vat_amount),0) vat_amount,
+				ROUND(SUM(txn_return_detail.discount_amount),0) discount_amount,
+				ROUND(SUM(trhd.collective_discount_amount),0) collective_discount_amount,
+    			ROUND(SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)),0) total_invoice    			
     			';
     	}
     	
@@ -1733,8 +1734,24 @@ ORDER BY tas.reference_num ASC,
 			    	})
 			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
 			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-			    	->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	->leftJoin(\DB::raw('
+			    			(select reference_num,
+			    			deduction_rate as collective_discount_rate,
+			    			ref_no as discount_reference_num,
+			    			remarks as discount_remarks,
+							sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_discount_amount
+							from txn_return_header_discount
+							group by reference_num) trhd'), function($join){
+			    									$join->on('txn_return_header.reference_num','=','trhd.reference_num');
+			    								}
+			    	)
+			    	->leftJoin(\DB::raw('
+			    			(select evaluated_objective_id,remarks,reference_num,updated_by
+			    			 from txn_evaluated_objective
+			    			 group by reference_num) remarks'), function($join){
+			    				    			 	$join->on('txn_return_header.reference_num','=','remarks.reference_num');
+			    				    			 }
+			    	);
 
 		$salesmanFilter = FilterFactory::getInstance('Select');
 		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1772,13 +1789,13 @@ ORDER BY tas.reference_num ASC,
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
+			    				return $model->whereBetween(\DB::raw('DATE(txn_return_header.return_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
+			    				return $model->whereBetween(\DB::raw('DATE(txn_return_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});
 			    	
 		return $prepare;	    	
@@ -1819,7 +1836,7 @@ ORDER BY tas.reference_num ASC,
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
-				(select remarks from txn_evaluated_objective teo where reference_num = txn_return_header.reference_num order by teo.sfa_modified_date desc limit 1) AS remarks,
+				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
 				txn_return_header.salesman_code,
@@ -1834,47 +1851,32 @@ ORDER BY tas.reference_num ASC,
 				txn_return_detail.condition_code,
 				txn_return_detail.quantity,
 				txn_return_detail.uom_code,
-				txn_sales_order_detail.gross_served_amount,
+				txn_return_detail.gross_amount,
 				txn_return_detail.vat_amount,
-				txn_sales_order_detail.discount_rate,
-				txn_sales_order_detail.discount_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_discount_rate,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_discount_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.ref_no,\'\') discount_reference_num,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.remarks,\'\') discount_remarks,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_rate,\'\') collective_deduction_rate,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\') collective_deduction_amount,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.ref_no,\'\') deduction_reference_num,
-				IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.remarks,\'\') deduction_remarks,
-				((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\'))) total_invoice,
-    			IF(txn_return_header.updated_by,\'modified\',
-    					IF(app_customer.updated_by,\'modified\',
-    						IF(app_area.updated_by,\'modified\',
-    							IF(app_salesman.updated_by,\'modified\',
-    								IF(txn_activity_salesman.updated_by,\'modified\',
-    									IF(txn_return_detail.updated_by,\'modified\',
-    										IF(app_item_master.updated_by,\'modified\',
-    											IF(txn_sales_order_header_discount.updated_by,\'modified\',
-    												IF(txn_sales_order_detail.updated_by,\'modified\',\'\')
-    											   )
-    										   )
-    									  )
-    								  )
-    							)
-    						 )
-    				    )
-    			  ) updated
+				\'0\' discount_rate,
+				txn_return_detail.discount_amount,
+				trhd.collective_discount_rate,	
+    			trhd.collective_discount_amount,
+      			trhd.discount_reference_num,
+    			trhd.discount_remarks,
+    			((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice,
+	    		IF(txn_return_header.updated_by,\'modified\',
+	    					IF(txn_return_detail.updated_by,\'modified\',
+    							IF(remarks.updated_by,\'modified\',\'\')
+    						)
+
+	    		) updated
     			';
 
     	if($summary)
     	{
     		$select = '
-    			SUM(txn_sales_order_detail.gross_served_amount) gross_served_amount,
-				SUM(txn_return_detail.vat_amount) vat_amount,
-				SUM(txn_sales_order_detail.discount_amount) discount_amount,
-				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_discount_amount,
-				SUM(IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')) collective_deduction_amount,
-				SUM(((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount+IF(txn_sales_order_header_discount.deduction_type_code=\'DISCOUNT\',txn_sales_order_header_discount.order_deduction_amount,\'\')+IF(txn_sales_order_header_discount.deduction_type_code=\'DEDUCTION\',txn_sales_order_header_discount.order_deduction_amount,\'\')))) total_invoice
+    			ROUND(SUM(txn_return_detail.gross_amount),0) gross_amount,
+				ROUND(SUM(txn_return_detail.vat_amount),0) vat_amount,
+				ROUND(SUM(txn_return_detail.discount_amount),0) discount_amount,
+				ROUND(SUM(trhd.collective_discount_amount),0) collective_discount_amount,
+    			ROUND(SUM(trhd.collective_deduction_amount),0) collective_deduction_amount,
+				ROUND(SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)),0) total_invoice
     			';
     	}
     	
@@ -1889,8 +1891,28 @@ ORDER BY tas.reference_num ASC,
 			    	})
 			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
 			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
-			    	->leftJoin('txn_sales_order_header_discount','txn_return_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_return_header.reference_num','=','txn_sales_order_detail.reference_num');
+			    	->leftJoin(\DB::raw('
+			    			(select reference_num,
+			    			deduction_rate as collective_deduction_rate,
+			    			deduction_rate as collective_discount_rate,
+			    			ref_no as discount_reference_num,
+			    			remarks as discount_remarks,
+			    			ref_no as deduction_reference_num,
+			    			remarks as deduction_remarks,
+							sum(case when deduction_code = \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_deduction_amount,
+							sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_discount_amount
+							from txn_return_header_discount
+							group by reference_num) trhd'), function($join){
+			    									$join->on('txn_return_header.reference_num','=','trhd.reference_num');
+			    								}
+			    	)
+			    	->leftJoin(\DB::raw('
+			    			(select evaluated_objective_id,remarks,reference_num,updated_by
+			    			 from txn_evaluated_objective
+			    			 group by reference_num) remarks'), function($join){
+			    				    			 	$join->on('txn_return_header.reference_num','=','remarks.reference_num');
+			    				    			 }
+			    	);			    	
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1914,15 +1936,12 @@ ORDER BY tas.reference_num ASC,
 				});
 		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
-    			function($self, $model){
-    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
-    			});
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date');
     	
     	$postingFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $postingFilter->addFilter($prepare,'posting_date',
     			function($self, $model){
-    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
+    				return $model->whereBetween(\DB::raw('DATE(txn_return_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
     			});
     	
     	return $prepare;
@@ -2388,9 +2407,9 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
     			['name'=>'Area','sort'=>'area'],
-    			['name'=>'Invoice No/ Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Invoice No/ Return Slip No.','sort'=>'invoice_number'],
     			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice/Return Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Invoice/Return Posting Date','sort'=>'invoice_posting_date'],
     			['name'=>'Segment Code','sort'=>'segment_code'],
     			['name'=>'Item Code','sort'=>'item_code'],
     			['name'=>'Material Description','sort'=>'description'],
@@ -2433,9 +2452,9 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
     			['name'=>'Area','sort'=>'area'],
-    			['name'=>'Invoice No/ Return Slip No.','sort'=>'return_slip_number'],
+    			['name'=>'Invoice No/ Return Slip No.','sort'=>'invoice_number'],
     			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice/Return Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Invoice/Return Posting Date','sort'=>'invoice_posting_date'],
     			['name'=>'Gross Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
@@ -2472,8 +2491,8 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
     			['name'=>'Area','sort'=>'area'],
-    			['name'=>'Return Slip No.','sort'=>'return_slip_number'],
-    			['name'=>'Return Date','sort'=>'invoice_date'],
+    			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
+    			['name'=>'Return Date','sort'=>'return_date'],
     			['name'=>'Posting Date','sort'=>'return_posting_date'],
     			['name'=>'Segment Code','sort'=>'segment_code'],
     			['name'=>'Item Code','sort'=>'item_code'],
@@ -2513,8 +2532,8 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
     			['name'=>'Area','sort'=>'area'],
-    			['name'=>'Return Slip No.','sort'=>'return_slip_number'],
-    			['name'=>'Return Date','sort'=>'invoice_date'],
+    			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
+    			['name'=>'Return Date','sort'=>'return_date'],
     			['name'=>'Posting Date','sort'=>'return_posting_date'],
     			['name'=>'Gross Amount'],
     			['name'=>'Vat Amount'],
@@ -2588,7 +2607,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Uom Code','sort'=>'uom_code'],
     			['name'=>'Segment Code','sort'=>'segment_code'],
     			['name'=>'Unit Price','sort'=>'unit_price'],
-    			['name'=>'Customer Price Group','sort'=>'custom_price_group'],
+    			['name'=>'Customer Price Group','sort'=>'customer_price_group'],
     			['name'=>'Effective date from','sort'=>'effective_date_from'],
     			['name'=>'Effective date to','sort'=>'effective_date_to'],
     			['name'=>'Area','sort'=>'area_name'],
@@ -2829,9 +2848,9 @@ ORDER BY tas.reference_num ASC,
     			break;
     		case 'returnperpeso':
     			$columns = $this->getTableColumns('returnperpeso');
-    			$prepare = $this->getPreparedSalesReportPeso();
+    			$prepare = $this->getPreparedReturnPeso();
     			$rows = $this->getReturnReportPesoSelectColumns();
-    			$summary = $this->getPreparedSalesReportPeso(true)->first();
+    			$summary = $this->getPreparedReturnPeso(true)->first();
     			$header = 'Return Per Peso';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Peso';
@@ -3004,7 +3023,7 @@ ORDER BY tas.reference_num ASC,
     			'condition_code',
     			'quantity',    			 
     			'uom_code',    			
-    			'gross_served_amount',
+    			'gross_amount',
     			'vat_amount',
     			'discount_rate',
     			'discount_amount',
@@ -3037,7 +3056,7 @@ ORDER BY tas.reference_num ASC,
     			'return_slip_num',
     			'return_date',
     			'return_posting_date',
-    			'gross_served_amount',
+    			'gross_amount',
     			'vat_amount',
     			'discount_rate',
     			'discount_amount',

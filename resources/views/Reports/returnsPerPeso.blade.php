@@ -43,7 +43,7 @@
 							<span ng-bind="formatDate(record.return_posting_date) | date:'MM/dd/yyyy'"></span>
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(record.gross_amount)"></span>
 						</td>
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>
@@ -80,23 +80,23 @@
 						<td></td>												
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(summary.gross_amount,false,true)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+							<span ng-bind="formatNumber(summary.vat_amount,false,true)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="formatNumber(summary.discount_amount,true,true)"></span>
 						</th>
 						<td>[[record.collective_discount_rate]]</td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true,true)"></span>
 						</th>
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="formatNumber(summary.total_invoice,false,true)"></span>
 						</th>
 					</tr>
 					

@@ -641,7 +641,7 @@
 		
 		scope.sort = function(col) {
 			scope.sortColumn = col;
-			var el = $('#'+col);
+			var el = $('th[id="'+col+'"]');
 			
 			el.parent().find('th').removeClass('sorted');
 			el.parent().find('th>i').removeClass('fa-sort-asc');
@@ -1172,16 +1172,31 @@
 	 */
 	function formatNumber(scope) {
 
-	    scope.formatNumber = function(number, negate){
+	    scope.formatNumber = function(number, negate, round){
 	    	
 	    	  if('string' == typeof number)
 	    	  {
 	    		  number = Number(number);
+	    		  if(round)
+	    		  {
+	    			  number = Math.round(number);
+	    			  if(negate) number = '('+number+')';
+	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	    		  }
 	    		  number = number.toFixed(2);
 	    	  }
 	    		
 	    	  if('number' == typeof number)
+	    	  {
+	    		  if(round)
+	    		  {
+	    			  number = Math.round(number);
+	    			  if(negate) number = '('+number+')';
+	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	    		  }
 	    		  number = number.toString();
+	    	  }
+	    		  
 	    	  
 	    	  if(!number || number == undefined || number == '0') return '';
 	    	  
