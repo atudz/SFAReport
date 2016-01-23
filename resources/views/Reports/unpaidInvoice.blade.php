@@ -35,8 +35,25 @@
 								<span ng-bind="formatNumber(record.original_amount)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.open_balance)"></span>
+								<span ng-bind="formatNumber(record.balance_amount)"></span>
 							</td>
+						</tr>
+						
+						<!-- Summary total -->
+						<tr>
+							<th>Total</th>						
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<th>
+								<span ng-bind="formatNumber(summary.original_amount,false,true)"></span>
+							</th>
+							<th>
+								<span ng-bind="formatNumber(summary.balance_amount,false,true)"></span>
+							</th>
 						</tr>					
 					</tbody>
 				

@@ -157,8 +157,8 @@
 			          'customer'
 			];
 		    
-		    // main controller
-		    reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log);
 	}
 	
 	/**
