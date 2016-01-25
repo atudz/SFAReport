@@ -1328,28 +1328,212 @@ ORDER BY tas.reference_num ASC,
      * @return \Illuminate\Http\JsonResponse
      */
     public function getBir()
-    {
-    
-    	$prepare = \DB::table('user');
-    
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    
-    	$documentFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $documentFilter->addFilter($prepare,'document_date');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Depot',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'depot');
-    	
-    	$assignmentFilter = FilterFactory::getInstance('Select','Assignment',SelectFilter::SINGLE_SELECT);
-    	$prepare = $assignmentFilter->addFilter($prepare,'assignment');
-    
+    {  		  
+    	$prepare = $this->getPreparedBir();
     	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();    	
+    	$data['total'] = $result->total();
     
-    	return response()->json($this->dummy());
+    	return response()->json($data);
+    }
+    
+    /**
+     * Return Prepared Bir
+     * @return unknown
+     */
+    public function getPreparedBir()
+    {
+    	$querySales = '    			
+				select 
+					ACT.salesman_code sales_group, 
+					ACT.customer_code,
+					SOtbl.so_date document_date,
+					coalesce(SOtbl.invoice_number, \'\') reference,
+					coalesce(SOtbl.SO_total_vat, 0.00) tax_amount,					
+					coalesce(SOtbl.SO_amount, 0.00) total_sales,
+					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount					
+
+					from txn_activity_salesman ACT 
+
+				join				
+				(
+					select ALL_SO.so_number, 
+						ALL_SO.reference_num,  
+						ALL_SO.salesman_code, 
+						ALL_SO.customer_code,
+						ALL_SO.so_date,
+						ALL_SO.sfa_modified_date,
+						ALL_SO.invoice_number,
+						sum(ALL_SO.total_vat) as SO_total_vat,						
+						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,						
+						sum(ALL_SO.so_amount) as SO_amount,
+						sum(ALL_SO.net_amount) as SO_net_amount
+						from (
+						
+							select tsoh.so_number, 
+								tsoh.reference_num, 
+								tsoh.salesman_code, 
+								tsoh.customer_code,
+								tsoh.so_date,
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number,
+								(sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12)*0.12 as total_vat,
+								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12 as so_amount,
+								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount
+								from txn_sales_order_header tsoh
+								inner join txn_sales_order_detail tsod
+								on tsoh.reference_num = tsod.reference_num
+								and tsoh.salesman_code = tsod.modified_by 
+								group by tsoh.so_number, 
+								tsoh.reference_num, 
+								tsoh.salesman_code, 
+								tsoh.customer_code,
+								tsoh.so_date,
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number
+
+							union all
+
+							select tsoh.so_number, 
+								tsoh.reference_num, 
+								tsoh.salesman_code, 								
+								tsoh.customer_code,
+								tsoh.so_date,
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number,
+								(sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12)*0.12 as total_vat,
+								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12 as so_amount,
+								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount
+								from txn_sales_order_header tsoh
+								inner join txn_sales_order_deal tsodeal
+								on tsoh.reference_num = tsodeal.reference_num
+								group by tsoh.so_number, 
+								tsoh.reference_num, 
+								tsoh.salesman_code, 
+								tsoh.customer_code,
+								tsoh.so_date,
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number
+																
+						) ALL_SO
+
+						
+					left join
+					(
+						select reference_num,
+						sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+						from txn_sales_order_header_discount
+						group by reference_num
+					) tsohd on ALL_SO.reference_num = tsohd.reference_num
+
+										
+					group by ALL_SO.so_number, 
+						ALL_SO.reference_num, 
+						ALL_SO.salesman_code, 
+						ALL_SO.customer_code,
+						ALL_SO.so_date,
+						ALL_SO.sfa_modified_date,
+						ALL_SO.invoice_number	
+						
+				) SOtbl 
+				on SOtbl.reference_num = ACT.reference_num
+				and SOtbl.salesman_code = ACT.salesman_code
+				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')    			
+    			';
+    	
+    	$queryRtn = '
+    			select 
+					ACT.salesman_code sales_group, 
+					ACT.customer_code,					
+					RTNtbl.return_date document_date,
+					coalesce(RTNtbl.return_slip_num, \'\') reference,
+					coalesce(RTNtbl.RTN_total_vat, 0.00) tax_amount,
+					coalesce(RTNtbl.RTN_total_amount, 0.00) total_sales,
+					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount					
+
+					from txn_activity_salesman ACT 
+
+				join 				
+				(
+					select trh.return_txn_number,
+						trh.reference_num, 
+						trh.salesman_code, 
+						trh.customer_code,
+						trh.return_date, 
+						trh.sfa_modified_date,
+						trh.return_slip_num,
+
+						(sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12)*0.12 as RTN_total_vat,												
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
+						- sum(trhd.collective_discount_amount)
+						as RTN_net_amount,
+						
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12 as RTN_total_amount
+					from txn_return_header trh
+					inner join txn_return_detail trd on trh.reference_num = trd.reference_num  and trh.salesman_code = trd.modified_by -- added to bypass duplicate refnums
+					
+					left join
+					(
+						select reference_num
+						,sum(coalesce(deduction_amount,0)) as collective_discount_amount
+						from txn_return_header_discount
+						group by reference_num) trhd
+						on trh.reference_num = trhd.reference_num
+					
+						group by trh.return_txn_number,
+						trh.reference_num, 
+						trh.salesman_code, 
+						trh.customer_code,
+						trh.return_date, 
+						trh.sfa_modified_date, 
+						trh.return_slip_num
+											
+				) RTNtbl
+				on RTNtbl.reference_num = ACT.reference_num
+				and RTNtbl.salesman_code = ACT.salesman_code
+				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')
+    			';
+    	
+    	$select = '
+    			bir.document_date,
+				SUBSTRING_INDEX(app_customer.customer_name,\'_\',-1) name,
+				CONCAT(app_customer.address_1,\', \', CONCAT(app_customer.address_2,\', \', app_customer.address_3)) customer_address,
+				app_area.area_name depot,
+				bir.reference,
+				bir.tax_amount,
+				bir.total_sales,
+    			bir.total_sales sales,
+    			bir.total_sales local_sales,
+				bir.total_invoice_amount,
+    			bir.total_invoice_amount term_cash,
+				bir.sales_group,
+				app_salesman.salesman_name assignment
+    			';
+    	$from = '( '.$querySales.' UNION ' .$queryRtn . ' ) bir';
+    	
+    	$prepare = \DB::table(\DB::raw($from))
+    				->selectRaw($select)
+    				->leftJoin('app_customer','app_customer.customer_code','=','bir.customer_code')
+    				->leftJoin('app_area','app_area.area_code','=','app_customer.customer_code')
+    				->leftJoin('app_salesman','app_salesman.salesman_code','=','bir.sales_group');
+    	
+    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
+    	$prepare = $areaFilter->addFilter($prepare,'area', function($self, $model){
+			    		return $model->where('app_area.area_code','=',$self->getValue());
+			    	});
+    	
+    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman',function($self, $model){
+			    		return $model->where('bir.sales_group','=',$self->getValue());
+			    	});
+    	
+    	$documentFilter = FilterFactory::getInstance('DateRange','Month');
+    	$prepare = $documentFilter->addFilter($prepare,'document_date',function($self, $model){
+			    		return $model->whereBetween(\DB::raw('DATE(bir.document_date)'),$self->formatValues($self->getValue()));
+			    	});
+    	
+    	
+    	return $prepare;
     }
     
     /**
@@ -2418,23 +2602,23 @@ ORDER BY tas.reference_num ASC,
     public function getBirColumns()
     {
     	$headers = [
-    			['name'=>'Document Date','sort'=>true],
-    			['name'=>'Name','sort'=>true],
-    			['name'=>'Customer Address','sort'=>true],
-    			['name'=>'Depot','sort'=>true],
-    			['name'=>'Reference','sort'=>true],
-    			['name'=>'Vat Registration No.','sort'=>true],
-    			['name'=>'Sales-Exempt','sort'=>true],
-    			['name'=>'Sales-0%','sort'=>true],
-    			['name'=>'Sales-12%','sort'=>true],
-    			['name'=>'Total Sales','sort'=>true],
-    			['name'=>'Tax Amount','sort'=>true],
-    			['name'=>'Total Invoice Amount','sort'=>true],
-    			['name'=>'Local Sales','sort'=>true],
-    			['name'=>'Term-Cash','sort'=>true],
-    			['name'=>'Term-on-Account','sort'=>true],
-    			['name'=>'Sales Group','sort'=>true],
-    			['name'=>'Assignment','sort'=>true],
+    			['name'=>'Document Date','sort'=>'document_date'],
+    			['name'=>'Name','sort'=>'name'],
+    			['name'=>'Customer Address','sort'=>'customer_address'],
+    			['name'=>'Depot','sort'=>'depot'],
+    			['name'=>'Reference','sort'=>'reference'],
+    			['name'=>'Vat Registration No.'],
+    			['name'=>'Sales-Exempt'],
+    			['name'=>'Sales-0%'],
+    			['name'=>'Sales-12%','sort'=>'sales'],
+    			['name'=>'Total Sales','sort'=>'total_sales'],
+    			['name'=>'Tax Amount','sort'=>'tax_amount'],
+    			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
+    			['name'=>'Local Sales','sort'=>'local_sales'],
+    			['name'=>'Term-Cash','sort'=>'term_cash'],
+    			['name'=>'Term-on-Account'],
+    			['name'=>'Sales Group','sort'=>'sales_group'],
+    			['name'=>'Assignment','sort'=>'assignment'],
     	];
     
     	return $headers;
@@ -2824,6 +3008,14 @@ ORDER BY tas.reference_num ASC,
     			return $this->getSalesCollectionPosting();
     		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummary();
+    		case 'bir';
+    			$columns = $this->getTableColumns($report);
+    			$prepare = $this->getPreparedBir();
+    			$rows = $this->getBirSelectColumns();
+    			$header = 'Bir Report';
+    			$filters = $this->getBirFilterData();
+    			$filename = 'Bir Report';
+    			break;
     		case 'unpaidinvoice';
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedUnpaidInvoice();
@@ -3227,6 +3419,33 @@ ORDER BY tas.reference_num ASC,
     	];
     }
     
+    /**
+     * Return Bir Select Columns
+     * @return multitype:string
+     */
+    public function getBirSelectColumns()
+    {
+    	return [
+    			'document_date',
+    			'name',
+    			'customer_address',
+    			'depot',
+    			'reference',
+    			'vat_reg_number',
+    			'sales_exempt',
+    			'sales_0',
+    			'sales',
+    			'total_sales',
+    			'tax_amount',
+    			'total_invoice_amount',
+    			'local_sales',
+    			'term_cash',
+    			'term_on_acount',
+    			'sales_group',
+    			'assignment',
+    	];
+    }
+    
     
     /**
      * Return material price list select columns
@@ -3261,8 +3480,12 @@ ORDER BY tas.reference_num ASC,
     	$prepare = '';
     	switch($report)
     	{
+    		case 'bir';
+    			$prepare = $this->getPreparedBir();
+    			break;
     		case 'unpaidinvoice';
     			$prepare = $this->getPreparedUnpaidInvoice();
+    			break;
     		case 'vaninventorycanned':
     		case 'vaninventoryfrozen':
     			$prepare = $this->getPreparedVanInventory();    			
@@ -3522,6 +3745,27 @@ ORDER BY tas.reference_num ASC,
     			'Invoice Date' => $invoiceDate,
     	];
     	 
+    	return $filters;
+    }
+    
+    
+    /**
+     * Get Van inventory filters
+     */
+    public function getBirFilterData()
+    {
+    	$filters = [];
+    
+    	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
+    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
+    
+    	$filters = [
+    			'Salesman' => $salesman,
+    			'Area' => $area,
+    			'Document Date' => $documentDate,
+    	];
+    
     	return $filters;
     }
 }

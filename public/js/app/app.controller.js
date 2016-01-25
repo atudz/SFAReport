@@ -349,13 +349,10 @@
 	{
 			    
 	    var params = [
-		          'customer_code',
 		          'area',
-		          'segment_code',
-		          'item_code',
-		          'status',
-		          'sfa_modified_date_from',
-		          'sfa_modified_date_to'
+		          'salesman',
+		          'document_date_from',
+		          'document_date_to'
 		];
 	    
 	    // main controller
