@@ -1323,7 +1323,7 @@
 		scope.locationInfoError = false;
 		scope.success = false;		
 		
-		scope.save = function(edit){
+		scope.save = function(edit,profile){
 			
 			var personalInfoErrors = [];
 			var personalInfoErrorList = '';
@@ -1362,6 +1362,12 @@
 			if(!$('#email').val())
 			{
 				personalInfoErrors.push('Email is a required field.');
+			}
+			
+			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			if($('#email').val() && !rgxEmail.test($('#email').val()))
+			{
+				personalInfoErrors.push('Invalid email address.');
 			}
 		/*	if($('#email').val() && $.inArray($('#email').val(),$scope.emailList))
 			{
@@ -1480,8 +1486,9 @@
 				log.info(params);
 				API.save(params, function(data){
 					log.info(data);
-					//$scope.success = true;
-					location.path('user.list');
+					scope.success = true;
+					if(!profile)
+						location.path('user.list');
 				});
 			}
 		}
@@ -1535,15 +1542,14 @@
 				case 'activate':
 					var API = $resource('/controller/user/activate/'+$scope.params.id);		    
 				    API.get({},function(data){
-				    	$scope.parent.records[$scope.params.row].active = true;
-				    	$log.info($scope.$parent.records[$scope.params.row]);
+				    	$scope.$parent.records[$scope.params.row].active = true;
 				    	$log.info(data);
 				    });
 					break;
 				case 'deactivate':
 			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);		    
 				    API.get({},function(data){
-				    	$log.info($scope.$parent.records[$scope.params.row]);
+				    	$scope.$parent.records[$scope.params.row].active = false;				    	
 				    	$log.info(data);
 				    });
 					break;
@@ -1573,16 +1579,99 @@
 	
 	function ChangePassword($scope, $resource, $log)
 	{			    
+		$scope.error = false;
+		$scope.success = false;
 		$scope.submit = function(){
-	    	
-	    	var params = {old_pass:$('#old_password'),new_pass:$('#new_password')};
+			
+			var errorList = [];
+			if(!$.trim($('#old_password').val()))
+			{
+				errorList.push('Old password is a required field.');
+			}
+			if(!$.trim($('#new_password').val()))
+			{
+				errorList.push('New password is a required field.');
+			}
+			if(!$.trim($('#confirm_password').val()))
+			{
+				errorList.push('Confirm password is a required field.');
+			}
+			
+			if($.trim($('#confirm_password').val()) && $.trim($('#new_password').val()) && $.trim($('#new_password').val()) != $.trim($('#confirm_password').val()))
+			{
+				errorList.push('Password don\'t match.');
+			}
+			
+			$log.info(errorList);
+			if(errorList.length > 0)
+			{
+				var i = 0;
+				var errorHtml = '<ul>';
+				for(i = 0; i < errorList.length; i++)
+				{
+					errorHtml += '<li>'+errorList[i]+'</li>';
+				}
+				errorHtml += '</ul>';
+				$('#error_list').html(errorHtml);
+				$scope.error = true;
+				$scope.success = false;
+			}
+			else
+			{
+				$('#error_list').html('');
+				$scope.error = false;				
+			}
+			
+			
+	    	var params = {old_pass:$('#old_password').val(),new_pass:$('#new_password').val()};
+	    	$log.info(params);
 	    	var API = $resource('controller/user/changepass');				
-			API.get({}, function(data){
-				$scope.syncLogs = data.logs;
-				$scope.showSuccess = true;	
-				$scope.showLoading = false;	
+			API.save(params, function(data){
+				$log.info(data);
+				if(data.success)
+				{
+					$scope.success = true;
+				}	
+				if(data.failure)
+				{
+					$('#error_list').html('Incorrect password.');
+					$scope.error = true;
+				}
 			});
 	    }
+	}
+	
+	
+	/**
+	 * Profile Controller
+	 */
+
+	app.controller('Profile',['$scope','$resource','$location','$log',Profile]);
+	
+	function Profile($scope, $resource, $location, $log)
+	{			    
+		$scope.age = '';
+		$scope.from = null;
+		$scope.to = null;
+		$scope.id = 0;
+		
+		var API = $resource('/user/myprofile');
+	    var params = {};
+	    
+	    API.get(params,function(data){
+	    	$scope.records = data;
+	    	$log.info(data);
+	    	$scope.id = data.id;
+	    	$scope.age = Number(data.age);
+	    	if(data.location_assignment_from != '0000-00-00 00:00:00' && data.location_assignment_from != null)
+	    		$scope.from = new Date(data.location_assignment_from)
+	    	if(data.location_assignment_to != '0000-00-00 00:00:00' && data.location_assignment_to != null)
+	    		$scope.to = new Date(data.location_assignment_to)	    
+	    	
+	    });
+	    
+	    // Save user profile
+	    saveUser($scope,$resource,$location,$log);
 	}
 
 })();

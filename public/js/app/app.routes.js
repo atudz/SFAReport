@@ -125,8 +125,8 @@
 
 				.when('/profile.my',{
 					templateUrl: '/profile',
-					/*controller: 'Sync',
-					controllerAs: 'sync'*/
+					controller: 'Profile',
+					/*controllerAs: 'sync'*/
 				})
 
 				.when('/usergroup.rights',{

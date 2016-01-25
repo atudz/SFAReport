@@ -20,6 +20,19 @@ class AuthController extends ControllerCore
 				'login' => 'required|max:255', 'password' => 'required|max:255',
 		]);
 
+		$user = ModelFactory::getInstance('User')
+					->where('email','=',$request->input('login'))
+					->where('username','=',$request->input('login'),'or')
+					->first();
+		if($user && $user->status == 'I')
+		{
+			return redirect('/login')
+			->withInput($request->only('login'))
+			->withErrors([
+					'error' => 'The user account is inactive. Try again?',
+			]);
+		}
+		
 		$field = filter_var($request->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 	    $request->merge([$field => $request->input('login')]);
 		

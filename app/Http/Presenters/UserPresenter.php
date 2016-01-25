@@ -31,8 +31,6 @@ class UserPresenter extends PresenterCore
 	 */
 	public function addEdit($userId=0)
 	{
-		$this->view->user = ModelFactory::getInstance('User')->findOrNew($userId);
-		$this->view->statuses = PresenterFactory::getInstance('Reports')->getCustomerStatus();
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
@@ -59,7 +57,6 @@ class UserPresenter extends PresenterCore
 	 */
 	public function edit()
 	{
-		$this->view->statuses = PresenterFactory::getInstance('Reports')->getCustomerStatus();
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
@@ -73,7 +70,19 @@ class UserPresenter extends PresenterCore
 	}
 	
 	public function profile(){
+		$this->view->assignmentOptions = $this->getAssignmentOptions();
+		$this->view->roles = $this->getRoles();
+		$this->view->gender = $this->getGender();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('myProfile');
+	}
+	
+	/**
+	 * Get my profile
+	 * @return \App\Http\Presenters\Ambigous
+	 */
+	public function myProfile(){
+		return $this->getUser(auth()->user()->id);
 	}
 	
 	/**
@@ -158,7 +167,8 @@ class UserPresenter extends PresenterCore
 				app_area.area_name,
 				IF(user.location_assignment_type = 1, \'Permanent\', IF(user.location_assignment_type = 2, \'Reassigned\', IF(user.location_assignment_type = 3, \'Temporary\', \'\'))) assignment,
 				user_group.name role,
-				IF(user.status=\'A\',1,0) active
+				user.status,
+				user.email
 				';
 		
 		$prepare = \DB::table('user')
@@ -168,9 +178,10 @@ class UserPresenter extends PresenterCore
 		 
 		$fnameFilter = FilterFactory::getInstance('Text');
 		$prepare = $fnameFilter->addFilter($prepare,'fullname', function($filter, $model){
-			dd($filter->getValue);
-						return $model->where('user.firstname','like',$filter->getValue().'%')
-									 ->orWhere('user.lastname','like',$filter->getValue().'%');
+						return $model->where(function ($query) use ($filter){
+							$query->where('user.firstname','like','%'.$filter->getValue().'%')
+								  ->where('user.lastname','like','%'.$filter->getValue().'%','or');
+						});						
 					});
 				
 		$roleFilter = FilterFactory::getInstance('Select');
@@ -194,7 +205,17 @@ class UserPresenter extends PresenterCore
 		//dd($prepare->toSql());
 		$result = $this->paginate($prepare);
 		
-		$data['records'] = $result->items();
+		$items = $result->items();
+		
+		foreach($items as $k=>$item)
+		{
+			if($item->status == 'A')
+				$items[$k]->active = true;
+			else
+				$items[$k]->active = false;
+		}
+		
+		$data['records'] = $items;
 		$data['total'] = $result->total();
 		
 		return response()->json($data);
@@ -210,6 +231,7 @@ class UserPresenter extends PresenterCore
 	{
 		$headers = [
 				['name'=>'Full Name', 'sort'=>'lastname'],
+				['name'=>'Email', 'sort'=>'email'],
 				['name'=>'Role', 'sort'=>'role'],
 				['name'=>'Branch', 'sort'=>'area_name'],
 				['name'=>'Assignment', 'sort'=>'assignment'],

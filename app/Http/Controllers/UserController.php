@@ -9,9 +9,30 @@ use Illuminate\Http\Request;
 class UserController extends ControllerCore
 {
 
-
-    public function changePassword(){
-
+	/**
+	 * Change password
+	 */
+    public function changePassword(Request $request) 
+    {
+		
+    	$data['success'] = false;
+    	$data['failure'] = true;
+    	
+    	if($request->get('old_pass') && $request->get('new_pass'))
+    	{
+    		$user = auth()->user();
+    		$password = $user->password;
+    		if(\Hash::check($request->get('old_pass'),$password))
+    		{
+    			$user->password = bcrypt($request->get('new_pass'));
+    			$user->save();
+    			
+    			$data['success'] = true;
+    			$data['failure'] = false;
+    		}
+    	}
+    	
+    	return response()->json($data);
     }
 
 	/**
@@ -39,8 +60,10 @@ class UserController extends ControllerCore
         
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');
-        $user->location_assignment_from = $request->get('assignment_date_from');
-        $user->location_assignment_to = $request->get('assignment_date_to');
+        if($request->get('assignment_date_from'))
+        	$user->location_assignment_from = new \DateTime($request->get('assignment_date_from'));
+        if($request->get('assignment_date_to'))
+        	$user->location_assignment_to = new \DateTime($request->get('assignment_date_to'));
         
         $user->telephone = $request->get('telephone');
        	$user->mobile = $request->get('mobile');

@@ -72,9 +72,6 @@
 						{!!Html::select('area','Branch *', $areas, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::select('status','Status *', $statuses, '')!!}
-					</div>
-					<div class="row form-input-field">
 						{!!Html::select('assignment_type','Assignment *', $assignmentOptions, '')!!}
 					</div>
 					<div class="row form-input-field">

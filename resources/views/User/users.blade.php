@@ -37,19 +37,20 @@
 						<!-- Record list -->
 						<tr ng-repeat="record in records|filter:query" id="[[record.id]]">
 							<td>[[record.fullname]]</td>
+							<td>[[record.email]]</td>
 							<td>[[record.role]]</td>
 							<td>[[record.area_name]]</td>
 							<td>[[record.assignment]]</td>
 							<td>[[record.created_at]]</td>
 							<td>
 								<a href="#user.edit/[[record.id]]" uib-tooltip="Edit"><i class="fa fa-pencil-square-o fa-lg"></i></a>
-								<a style="cursor:pointer" id="active_link" ng-hide="record.active" ng-click="activate(record.id,$index)"><i class="fa fa-unlock-alt fa-lg" uib-tooltip="Activate"></i></a>
-								<a style="cursor:pointer" id="inactive_link" ng-hide="!record.active" ng-click="deactivate(record.id,$index)""><i class="fa fa-lock fa-lg" uib-tooltip="Deactivate"></i></a>
+								<a style="cursor:pointer" id="active_link" ng-show="!record.active" ng-click="activate(record.id,$index)"><i class="fa fa-unlock-alt fa-lg" uib-tooltip="Activate"></i></a>
+								<a style="cursor:pointer" id="inactive_link" ng-show="record.active" ng-click="deactivate(record.id,$index)""><i class="fa fa-lock fa-lg" uib-tooltip="Deactivate"></i></a>
 								<a style="cursor:pointer" ng-click="remove(record.id)"><i class="fa fa-times fa-lg" uib-tooltip="Delete"></i></a>
 							</td>
 						</tr>						
 					</tbody>
-					{!!Html::tfooter(true,6)!!}					
+					{!!Html::tfooter(true,7)!!}					
 				{!!Html::tclose()!!}
 				
 				

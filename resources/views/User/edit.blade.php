@@ -67,7 +67,7 @@
 						<div class="form-group form-group-sm">						
 							<label for="password" class="col-sm-3 control-label">Password *</label>
 			 				<div class="col-sm-6">
-			 					<input class="form-control" id="password" name="password" type="text" placeholder="Leave this blank if no change">
+			 					<input class="form-control" id="password" name="password" type="password" placeholder="Leave this blank if no change">
 			 				</div>			 				
 			 			</div>
 					</div>
@@ -75,7 +75,7 @@
 						<div class="form-group form-group-sm">						
 							<label for="confirm_pass" class="col-sm-3 control-label">Confirm Password *</label>
 			 				<div class="col-sm-6">
-			 					<input class="form-control" id="confirm_pass" name="confirm_pass" type="text" placeholder="Leave this blank if no change">
+			 					<input class="form-control" id="confirm_pass" name="confirm_pass" type="password" placeholder="Leave this blank if no change">
 			 				</div>			 				
 			 			</div>
 					</div>
@@ -137,6 +137,22 @@
 			 							<option value="{{$id}}">{{$role}}</option>
 			 						@endforeach			 						
 			 					</select>	
+			 					<p class="help-block hidden" id="admin_info">
+			 						<i>Can add unlimited auditor users.</i><br>
+			 						<i>Can add unlimited AIC users.</i><br>
+			 						<i>Can add unlimited van salesman users.</i><br>
+			 					</p>
+			 					<p class="help-block hidden" id="auditor_info">
+			 						<i>Can view reports all branches.</i><br>			 						
+			 					</p>
+			 					<p class="help-block hidden" id="aic_info">
+			 						<i>Can only view their reports only (per branch).</i><br>
+			 						<i>Can only filter their area only.</i><br>			 						
+			 					</p>
+			 					<p class="help-block hidden" id="salesman_info">
+			 						<i>Can only view their reports only (per branch).</i><br>
+			 						<i>Can only filter their area only.</i><br>
+			 					</p>
 			 				</div>
 			 			</div>
 					</div>

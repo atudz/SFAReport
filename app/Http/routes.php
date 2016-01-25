@@ -51,6 +51,7 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
 	Route::get('/edit', ['as'=>'user-edit', 'uses'=>'UserPresenter@edit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
+	Route::get('/myprofile', ['as'=>'user-profile', 'uses'=>'UserPresenter@myProfile']);
 });
 
 /*
@@ -69,9 +70,10 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/user/activate/{id}', ['as'=>'user-activate', 'uses'=>'UserController@activate']);
 	Route::get('/user/deactivate/{id}', ['as'=>'user-deactivate', 'uses'=>'UserController@deactivate']);
 	Route::get('/user/delete/{id}', ['as'=>'user-delete', 'uses'=>'UserController@delete']);
-	Route::get('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
+	//Route::get('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);	
 	Route::post('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
+	//Route::get('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 });
 

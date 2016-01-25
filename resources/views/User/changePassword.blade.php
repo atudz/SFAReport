@@ -5,9 +5,11 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-
-			{!!Form::open(['url'=>'/controller/changepassword','class'=>'changepassword-form'])!!}
-				<div class="form-group row">
+				{!!Html::error('error','error_list')!!}
+				<div class="pull-left col-sm-12 alert-success" ng-show="success" style="margin-bottom:10px">
+					<div class="error-list">Password changed successfully.</div>						
+				</div>
+				<div class="form-group row" style="margin-top:10px">
 					<label class="col-sm-2" for="old_password">Old Password</label>
 					<div class="col-sm-5">
 				      <input type="password" class="form-control" id="old_password" placeholder="">
@@ -27,11 +29,9 @@
 				</div>
 				<div class="form-group row">
 				    <div class="col-sm-offset-2 col-sm-5">
-				      <button type="submit" class="btn btn-success">Submit</button>
+				      <button type="button" class="btn btn-success" ng-click="submit()">Submit</button>
 				    </div>
 			 	</div>
-		    </form>
-		    {!!Form::close()!!}
 			</div>
 		</div>
 	</div>
