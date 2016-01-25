@@ -44,10 +44,12 @@ Route::group(['prefix' => 'reports'],function(){
 
 
 Route::group(['prefix' => 'user'],function(){
+	Route::get('/edit/{id}', ['as'=>'user-get', 'uses'=>'UserPresenter@getUser']);
 	Route::get('/getemails/{id?}', ['as'=>'user-get-emails', 'uses'=>'UserPresenter@getUserEmails']);
 	Route::get('/getusernames/{id?}', ['as'=>'user-get-usernames', 'uses'=>'UserPresenter@getUsernames']);
 	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
 	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
+	Route::get('/edit', ['as'=>'user-edit', 'uses'=>'UserPresenter@edit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 });
 
@@ -64,6 +66,10 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
 	Route::get('/reports/sync', ['as'=>'report-sync', 'uses'=>'ReportsController@sync']);
 
+	Route::get('/user/activate/{id}', ['as'=>'user-activate', 'uses'=>'UserController@activate']);
+	Route::get('/user/deactivate/{id}', ['as'=>'user-deactivate', 'uses'=>'UserController@deactivate']);
+	Route::get('/user/delete/{id}', ['as'=>'user-delete', 'uses'=>'UserController@delete']);
+	Route::get('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
 	Route::post('/user/save', ['as'=>'user-save', 'uses'=>'UserController@save']);
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);

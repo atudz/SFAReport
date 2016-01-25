@@ -37,6 +37,19 @@ class ReportsPresenter extends PresenterCore
      */
     public function index()
     {
+    	/* $unpaid = $this->getDataCount('unpaidinvoice')->getData();
+    	$this->view->unpaidTotal = $unpaid->total;
+    	
+    	$sales = $this->getDataCount('salesreportpermaterial')->getData();
+    	$this->view->salesTotal = $sales->total;
+    	
+    	$van = $this->getDataCount('vaninventoryfrozen')->getData();
+    	$this->view->vanTotal = $van->total;
+    	 */
+    	
+    	$this->view->unpaidTotal = 0;
+    	$this->view->salesTotal = 0;
+    	$this->view->vanTotal = 0;
     	return $this->view('index');
     }
     

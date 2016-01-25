@@ -1108,9 +1108,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserList',['$scope','$resource','$log', UserList]);
+	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log', UserList]);
 	
-	function UserList($scope, $resource, $log) {
+	function UserList($scope, $resource, $window, $uibModal, $log) {
 
 		// Filter flag
 		$scope.toggleFilter = true;
@@ -1149,7 +1149,59 @@
 	    filterSubmit($scope,API,params,$log);
 		
 	    // Paginate table records	    
-	    pagination($scope,API,params,$log);	    	    
+	    pagination($scope,API,params,$log);	  
+	    
+	    var params;
+	    $scope.activate = function(id,row){	    	
+	    	params = {id:id,action:'activate',message:'Are you sure you want to activate this user?',row:row};		    
+	    	var modalInstance = $uibModal.open({
+	    		scope: $scope,
+			 	animation: true,
+			 	templateUrl: 'Confirm',
+				controller: 'UserAction',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+	    }
+	    
+	    $scope.deactivate = function(id,row){
+	    	params = {id:id,action:'deactivate',message:'Are you sure you want to deactivate this user?',row:row};		    
+	    	var modalInstance = $uibModal.open({
+	    		scope: $scope,
+			 	animation: true,
+			 	templateUrl: 'Confirm',
+				controller: 'UserAction',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+	    }
+	    
+	    $scope.remove = function(id){
+	    	params = {id:id,action:'delete',message:'Are you sure you want to delete this user?'};		    
+	    	var modalInstance = $uibModal.open({
+			 	animation: true,
+			 	scope: $scope,
+			 	templateUrl: 'Confirm',
+				controller: 'UserAction',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+	    }
 
 	};
 	
@@ -1227,16 +1279,56 @@
 	
 	function UserAdd($scope, $resource, $location, $log) {
 
-		$scope.personalInfoError = false;
-		$scope.locationInfoError = false;
-		$scope.success = false;
+		$scope.id = 0;
+	    // Save user profile
+	    saveUser($scope,$resource,$location,$log);
+	};
+	
+	
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('UserEdit',['$scope','$resource','$routeParams','$location','$log', UserEdit]);
+	
+	function UserEdit($scope, $resource, $routeParams, $location, $log) {
+
+		$scope.age = '';
+		$scope.from = null;
+		$scope.to = null;
+		$scope.id = 0;
 		
-		$scope.save = function(){
+		var API = $resource('/user/edit/'+$routeParams.id);
+	    var params = {};
+	    
+	    API.get(params,function(data){
+	    	$scope.records = data;
+	    	$log.info(data);
+	    	$scope.id = data.id;
+	    	$scope.age = Number(data.age);	    	
+	    	$scope.from = new Date(data.location_assignment_from)
+	    	$scope.to = new Date(data.location_assignment_to)	    	
+	    });
+	    
+	    // Save user profile
+	    saveUser($scope,$resource,$location,$log);
+	};
+	
+	/**
+	 * Save user profile
+	 */
+	function saveUser(scope, resource, location, log)
+	{
+		scope.personalInfoError = false;
+		scope.locationInfoError = false;
+		scope.success = false;		
+		
+		scope.save = function(edit){
 			
 			var personalInfoErrors = [];
 			var personalInfoErrorList = '';
-			$scope.emailList = [];
-			$scope.usernameList = [];
+			scope.emailList = [];
+			scope.usernameList = [];
 			
 			var API;
 			/*var API = $resource('user/getemails');
@@ -1281,7 +1373,7 @@
 				personalInfoErrors.push('Username must be unique.');
 			}*/
 			
-			var numeric = new RegExp('/^\d+$/');
+			/*var numeric = new RegExp('/^\d+$/');
 			if($('#telephone').val() && !numeric.test($('#telephone')))
 			{
 				personalInfoErrors.push('Telephone must be numeric.');
@@ -1289,21 +1381,24 @@
 			if($('#mobile').val() && !numeric.test($('#mobile')))
 			{
 				personalInfoErrors.push('Mobile must be numeric.');
-			}
+			}*/
 			
-			if(!$('#password').val())
+			if(!edit)
 			{
-				personalInfoErrors.push('Password is a required field.');
-			}
-			if(!$('#confirm_pass').val())
-			{
-				personalInfoErrors.push('Confirm password is a required field.');
-			}
-			
-			if($('#password').val() && $('#confirm_pass').val() && $('#password').val() != $('#confirm_pass').val())
-			{
-				personalInfoErrors.push('Password don\'t match.')
-			}
+				if(!$('#password').val())
+				{
+					personalInfoErrors.push('Password is a required field.');
+				}
+				if(!$('#confirm_pass').val())
+				{
+					personalInfoErrors.push('Confirm password is a required field.');
+				}
+				
+				if($('#password').val() && $('#confirm_pass').val() && $('#password').val() != $('#confirm_pass').val())
+				{
+					personalInfoErrors.push('Password don\'t match.')
+				}
+			}			
 			
 			if(personalInfoErrors.length > 0)
 			{
@@ -1315,12 +1410,12 @@
 				}
 				personalInfoErrorList += '</ul>';
 				$('#error_list_personal').html(personalInfoErrorList);
-				$scope.personalInfoError = true;
-				$scope.success = false;
+				scope.personalInfoError = true;
+				scope.success = false;
 			}
 			else
 			{
-				$scope.personalInfoError = false;
+				scope.personalInfoError = false;
 			}
 			
 			
@@ -1335,10 +1430,6 @@
 			if(!$('#area').val())
 			{
 				locationErrors.push('Area is a required field.')
-			}
-			if(!$('#status').val())
-			{
-				locationErrors.push('Status is a required field.')
 			}
 			if(!$('#assignment_type').val())
 			{
@@ -1355,17 +1446,18 @@
 				}
 				locationErrorList += '</ul>';
 				$('#error_list_location').html(locationErrorList);
-				$scope.locationInfoError = true;
-				$scope.success = false;
+				scope.locationInfoError = true;
+				scope.success = false;
 			}
 			else
 			{
-				$scope.locationInfoError = false;
+				scope.locationInfoError = false;
 			}
 			
-			if(!$scope.locationInfoError && !$scope.personalInfoError)
+			if(!scope.locationInfoError && !scope.personalInfoError)
 			{
 				var params = {
+					   id: scope.id,
 				       fname: $('#fname').val(),
 				       lname: $('#lname').val(),
 				       mname: $('#mname').val(),
@@ -1379,22 +1471,21 @@
 				       mobile: $('#mobile').val(),
 				       role: $('#role').val(),
 				       area: $('#area').val(),
-				       status: $('#status').val(),
 				       assignment_type: $('#assignment_type').val(),
 				       assignment_date_from: $('#assignment_date_from').val(),
 				       assignment_date_to: $('#assignment_date_to').val()
 				};
 				
-				API = $resource('controller/user/save');				
-				$log.info(params);
+				API = resource('controller/user/save');				
+				log.info(params);
 				API.save(params, function(data){
-					$log.info(data);
+					log.info(data);
 					//$scope.success = true;
-					$location.path('user.list');
+					location.path('user.list');
 				});
 			}
 		}
-	};
+	}
 	
 	
 	
@@ -1423,6 +1514,73 @@
 			function(error){
 				$scope.showLoading = false;
 				$scope.showError = true;
+			});
+	    }
+	}
+	
+	
+	/**
+	 * Edit Table record controller
+	 */
+	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log', UserAction]);
+	
+	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log) {
+
+		$scope.params = params;		
+		$log.info(params);
+		$log.info($scope);
+		$scope.ok = function () {				
+			switch($scope.params.action)
+			{
+				case 'activate':
+					var API = $resource('/controller/user/activate/'+$scope.params.id);		    
+				    API.get({},function(data){
+				    	$scope.parent.records[$scope.params.row].active = true;
+				    	$log.info($scope.$parent.records[$scope.params.row]);
+				    	$log.info(data);
+				    });
+					break;
+				case 'deactivate':
+			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);		    
+				    API.get({},function(data){
+				    	$log.info($scope.$parent.records[$scope.params.row]);
+				    	$log.info(data);
+				    });
+					break;
+				case 'delete':
+					var API = $resource('/controller/user/delete/'+$scope.params.id);		    
+				    API.get({},function(data){
+				    	$('#'+$scope.params.id).remove();
+				    	$log.info(data);
+				    });
+					break;
+			}
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+	};
+
+	
+	/**
+	 * Change password Controller
+	 */
+
+	app.controller('ChangePassword',['$scope','$resource','$log',ChangePassword]);
+	
+	function ChangePassword($scope, $resource, $log)
+	{			    
+		$scope.submit = function(){
+	    	
+	    	var params = {old_pass:$('#old_password'),new_pass:$('#new_password')};
+	    	var API = $resource('controller/user/changepass');				
+			API.get({}, function(data){
+				$scope.syncLogs = data.logs;
+				$scope.showSuccess = true;	
+				$scope.showLoading = false;	
 			});
 	    }
 	}

@@ -26,9 +26,11 @@ class UserController extends ControllerCore
         $user->firstname = $request->get('fname');
         $user->lastname = $request->get('lname');
         $user->middlename = $request->get('mname');
-        $user->password = bcrypt($request->get('password'));
+        if($request->get('password'))
+        	$user->password = bcrypt($request->get('password'));
         $user->email = $request->get('email');
-        $user->username = $request->get('username');
+        if($request->get('username'))
+        	$user->username = $request->get('username');
         $user->address1 = $request->get('address');
      	$user->created_by = auth()->user()->id;
      	$user->gender = $request->get('gender');
@@ -36,40 +38,66 @@ class UserController extends ControllerCore
         $user->user_group_id = $request->get('role');
         
         $user->location_assignment_code = $request->get('area');
-        $user->location_assignment_status = $request->get('status');
         $user->location_assignment_type = $request->get('assignment_type');
         $user->location_assignment_from = $request->get('assignment_date_from');
         $user->location_assignment_to = $request->get('assignment_date_to');
         
-        $response['id'] = 0;        
-        if($user->save())
-        {
-        	if($request->get('telephone'))
-        	{
-        		$phone = ModelFactory::getInstance('UserPhone');
-        		$phone->phone_number = $request->get('telephone');
-        		$phone->user_id = $user->id;
-        		$phone->save();
-        	}
-        	if($request->get('mobile'))
-        	{
-        		$mobile = ModelFactory::getInstance('UserPhone');
-        		$mobile->phone_number = $request->get('mobile');
-        		$mobile->user_id = $user->id;
-        		$mobile->save();
-        	}        	
-        	
-        	
-        	$response['success'] = true;
-        	$response['id'] = $user->id;
-        }
-        else 
-        {
-        	$response['response'] = true;
-        	$response['id'] = 0;
-        }
+        $user->telephone = $request->get('telephone');
+       	$user->mobile = $request->get('mobile');
+       	$user->save();
+        $response['success'] = true;
+        $response['id'] = $user->id;
+        
         
         return response()->json($response);
     }
 
+    /**
+     * Activate user
+     *
+     * @return Response
+     */
+    public function activate($id)
+    {
+    	$user = ModelFactory::getInstance('User')->find($id);
+    	$user->status = 'A';
+    	$user->save();
+    	
+    	$response['success'] = true;
+    	return response()->json($response);
+    }
+    
+    /**
+     * Dectivate user
+     *
+     * @return Response
+     */
+    public function deactivate($id)
+    {
+    	$user = ModelFactory::getInstance('User')->find($id);
+    	$user->status = 'I';
+    	$user->save();
+    	
+    	$response['success'] = true;
+    	return response()->json($response);
+    }
+    
+    /**
+     * Dectivate user
+     *
+     * @return Response
+     */
+    public function delete($id)
+    {
+    	$user = ModelFactory::getInstance('User')->find($id);
+    	if($user)
+    	{
+    		$user->status = 'D';
+    		$user->save();
+    		$user->delete();    		
+    	}
+    	    	
+    	$response['success'] = true;
+    	return response()->json($response);
+    }
 }

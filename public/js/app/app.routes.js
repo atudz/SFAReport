@@ -111,11 +111,16 @@
 					controller: 'UserAdd'
 					/*controllerAs: 'sync'*/
 				})
+				.when('/user.edit/:id',{
+					templateUrl: '/user/edit',
+					controller: 'UserEdit'
+					/*controllerAs: 'sync'*/
+				})
 
 				.when('/profile.changepassword',{
 					templateUrl: '/changepass',
-					/*controller: 'Sync',
-					controllerAs: 'sync'*/
+					controller: 'ChangePassword',
+					/*controllerAs: 'sync'*/
 				})
 
 				.when('/profile.my',{

@@ -24,7 +24,7 @@
                         <em class="glyphicon glyphicon-barcode glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">0</div>
+                        <div class="large">{{$vanTotal}}</div>
                         <div class="text-muted">Van Inventory</div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         <em class="glyphicon glyphicon-credit-card glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">0</div>
+                        <div class="large">{{$unpaidTotal}}</div>
                         <div class="text-muted">Unpaid Invoice</div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <em class="glyphicon glyphicon-stats glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">0</div>
+                        <div class="large">{{$salesTotal}}</div>
                         <div class="text-muted">Sales Report</div>
                     </div>
                 </div>

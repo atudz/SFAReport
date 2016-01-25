@@ -5,6 +5,7 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\FilterFactory;
 use App\Factories\PresenterFactory;
+use App\Factories\ModelFactory;
 
 class UserPresenter extends PresenterCore
 {
@@ -30,12 +31,40 @@ class UserPresenter extends PresenterCore
 	 */
 	public function addEdit($userId=0)
 	{
+		$this->view->user = ModelFactory::getInstance('User')->findOrNew($userId);
 		$this->view->statuses = PresenterFactory::getInstance('Reports')->getCustomerStatus();
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('addEdit');
+	}
+	
+	/**
+	 * Get user info
+	 * @param number $userId
+	 * @return Ambigous <\Illuminate\View\View, \Illuminate\Contracts\View\Factory>
+	 */
+	public function getUser($userId)
+	{
+		$user = ModelFactory::getInstance('User')->find($userId);
+		$data = $user ? $user->toArray() : [];
+		return response()->json($data);
+	}
+	
+	
+	/**
+	 * Display add edit form
+	 * @return Ambigous <\Illuminate\View\View, \Illuminate\Contracts\View\Factory>
+	 */
+	public function edit()
+	{
+		$this->view->statuses = PresenterFactory::getInstance('Reports')->getCustomerStatus();
+		$this->view->assignmentOptions = $this->getAssignmentOptions();
+		$this->view->roles = $this->getRoles();
+		$this->view->gender = $this->getGender();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		return $this->view('edit');
 	}
 	
 	
@@ -128,7 +157,9 @@ class UserPresenter extends PresenterCore
 				CONCAT(user.firstname,\' \',user.lastname) fullname,
 				app_area.area_name,
 				IF(user.location_assignment_type = 1, \'Permanent\', IF(user.location_assignment_type = 2, \'Reassigned\', IF(user.location_assignment_type = 3, \'Temporary\', \'\'))) assignment,
-				user_group.name role';
+				user_group.name role,
+				IF(user.status=\'A\',1,0) active
+				';
 		
 		$prepare = \DB::table('user')
 						->selectRaw($select)
@@ -155,6 +186,10 @@ class UserPresenter extends PresenterCore
 		
 		$assignmentFilter = FilterFactory::getInstance('Select');
 		$prepare = $assignmentFilter->addFilter($prepare,'location_assignment_type');
+		
+		$exclude = [1,auth()->user()->id];
+		$prepare->whereNotIn('user.id',$exclude);
+		$prepare->whereNull('user.deleted_at');
 		
 		//dd($prepare->toSql());
 		$result = $this->paginate($prepare);

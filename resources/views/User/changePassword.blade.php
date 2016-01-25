@@ -16,18 +16,18 @@
 				<div class="form-group row">
 					<label class="col-sm-2" for="old_password">New Password</label>
 					<div class="col-sm-5">
-				      <input type="password" class="form-control" id="old_password" placeholder="">
+				      <input type="password" class="form-control" id="new_password" placeholder="">
 				    </div>
 				</div>
 				<div class="form-group row">
 					<label class="col-sm-2" for="old_password">Confirm Password</label>
 					<div class="col-sm-5">
-				      <input type="password" class="form-control" id="old_password" placeholder="">
+				      <input type="password" class="form-control" id="confirm_password" placeholder="">
 				    </div>
 				</div>
 				<div class="form-group row">
 				    <div class="col-sm-offset-2 col-sm-5">
-				      <button type="submit" class="btn btn-primary">Submit</button>
+				      <button type="submit" class="btn btn-success">Submit</button>
 				    </div>
 			 	</div>
 		    </form>

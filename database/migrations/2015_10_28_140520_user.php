@@ -20,6 +20,8 @@ class User extends Migration
 			$table->string('lastname', 255);
 			$table->string('middlename', 255)->nullable();
 			$table->string('password', 255);
+			$table->string('telephone', 255)->nullable();
+			$table->string('mobile', 255)->nullable();
 			$table->string('email', 255)->unique()->nullable();
 			$table->string('username', 255)->unique()->nullable();
 			$table->integer('age')->index()->nullable();
@@ -30,11 +32,11 @@ class User extends Migration
 			$table->datetime('last_login_date')->nullable();
 			$table->integer('created_by')->index()->default('0');
 			$table->string('avatar', 255)->nullable();
-			$table->enum('location_assignment_status', array('A', 'I', 'D'))->default('A');
 			$table->string('location_assignment_code', 255)->nullable();
 			$table->enum('location_assignment_type', array('1', '2', '3'))->default('1');
 			$table->datetime('location_assignment_from')->nullable();
 			$table->datetime('location_assignment_to')->nullable();
+			$table->enum('status', array('A', 'I', 'D'))->default('A');			
 			$table->rememberToken();
 			$table->softDeletes();			
 		});
