@@ -1196,9 +1196,9 @@ ORDER BY tas.reference_num ASC,
     	
     	// VW_INV temporary table
     	$queryInv = '
-    		(select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount
+    		(select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount, updated
             from (
-                    select salesman_code, customer_code, invoice_number, original_amount as invoice_amount
+                    select salesman_code, customer_code, invoice_number, original_amount as invoice_amount, \'\' updated
                   	from txn_invoice ti where '.sprintf($filterInvoice,'ti.').'
                   	and ti.document_type = \'I\'
                   	and ti.status = \'A\'		
@@ -1208,7 +1208,8 @@ ORDER BY tas.reference_num ASC,
     	
                   	select tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number,
                   	case when sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) <= 0 then 0 else
-                  			      sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount
+                  			      sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount,
+                  	IF(tsoh.updated_by,\'modified\',\'\') updated		
                   	from txn_sales_order_header tsoh
 			
                   	inner join
@@ -1260,7 +1261,8 @@ ORDER BY tas.reference_num ASC,
 			      vw_inv.invoice_number,
 			      txn_sales_order_header.so_date invoice_date,
 			      coalesce(vw_inv.invoice_amount,0) original_amount,
-			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) balance_amount
+			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) balance_amount,
+    			  vw_inv.updated
     			';
     	if($summary)
     	{
@@ -1345,13 +1347,15 @@ ORDER BY tas.reference_num ASC,
     {
     	$querySales = '    			
 				select 
+    				0 negate,
 					ACT.salesman_code sales_group, 
 					ACT.customer_code,
 					SOtbl.so_date document_date,
 					coalesce(SOtbl.invoice_number, \'\') reference,
 					coalesce(SOtbl.SO_total_vat, 0.00) tax_amount,					
 					coalesce(SOtbl.SO_amount, 0.00) total_sales,
-					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount					
+					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount,
+    				SOtbl.updated					
 
 					from txn_activity_salesman ACT 
 
@@ -1379,7 +1383,8 @@ ORDER BY tas.reference_num ASC,
 								tsoh.invoice_number,
 								(sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12)*0.12 as total_vat,
 								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12 as so_amount,
-								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount
+								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount,
+    							IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod
 								on tsoh.reference_num = tsod.reference_num
@@ -1403,7 +1408,8 @@ ORDER BY tas.reference_num ASC,
 								tsoh.invoice_number,
 								(sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12)*0.12 as total_vat,
 								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12 as so_amount,
-								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount
+								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount,
+    							IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
@@ -1443,13 +1449,15 @@ ORDER BY tas.reference_num ASC,
     	
     	$queryRtn = '
     			select 
+    				1 negate,
 					ACT.salesman_code sales_group, 
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference,
 					coalesce(RTNtbl.RTN_total_vat, 0.00) tax_amount,
 					coalesce(RTNtbl.RTN_total_amount, 0.00) total_sales,
-					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount					
+					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount,
+    			    RTNtbl.updated					
 
 					from txn_activity_salesman ACT 
 
@@ -1468,25 +1476,27 @@ ORDER BY tas.reference_num ASC,
 						- sum(trhd.collective_discount_amount)
 						as RTN_net_amount,
 						
-						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12 as RTN_total_amount
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12 as RTN_total_amount,
+    					IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 					from txn_return_header trh
-					inner join txn_return_detail trd on trh.reference_num = trd.reference_num  and trh.salesman_code = trd.modified_by -- added to bypass duplicate refnums
+					inner join txn_return_detail trd on trh.reference_num = trd.reference_num  and trh.salesman_code = trd.modified_by
 					
 					left join
 					(
 						select reference_num
 						,sum(coalesce(deduction_amount,0)) as collective_discount_amount
 						from txn_return_header_discount
-						group by reference_num) trhd
-						on trh.reference_num = trhd.reference_num
+						group by reference_num
+    				) trhd
+					on trh.reference_num = trhd.reference_num
 					
-						group by trh.return_txn_number,
-						trh.reference_num, 
-						trh.salesman_code, 
-						trh.customer_code,
-						trh.return_date, 
-						trh.sfa_modified_date, 
-						trh.return_slip_num
+					group by trh.return_txn_number,
+					trh.reference_num, 
+					trh.salesman_code, 
+					trh.customer_code,
+					trh.return_date, 
+					trh.sfa_modified_date, 
+					trh.return_slip_num
 											
 				) RTNtbl
 				on RTNtbl.reference_num = ACT.reference_num
@@ -1495,6 +1505,7 @@ ORDER BY tas.reference_num ASC,
     			';
     	
     	$select = '
+    			bir.negate,
     			bir.document_date,
 				SUBSTRING_INDEX(app_customer.customer_name,\'_\',-1) name,
 				CONCAT(app_customer.address_1,\', \', CONCAT(app_customer.address_2,\', \', app_customer.address_3)) customer_address,
@@ -1507,6 +1518,7 @@ ORDER BY tas.reference_num ASC,
 				bir.total_invoice_amount,
     			bir.total_invoice_amount term_cash,
 				bir.sales_group,
+    			bir.updated,
 				app_salesman.salesman_name assignment
     			';
     	$from = '( '.$querySales.' UNION ' .$queryRtn . ' ) bir';

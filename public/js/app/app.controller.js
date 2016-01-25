@@ -950,7 +950,7 @@
 	    formatDate(scope);
 	    
 	    //Format number
-	    formatNumber(scope);
+	    formatNumber(scope,log);
 	}
 	
 	/**
@@ -1219,7 +1219,7 @@
 	/**
 	 * Format money
 	 */
-	function formatNumber(scope) {
+	function formatNumber(scope, log) {
 
 	    scope.formatNumber = function(number, negate, round){
 	    	
@@ -1261,8 +1261,7 @@
 	    	  {
 	    		  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	    	  }
-	    	  
-	    	  if(negate)
+	    	  if(negate === '1' || negate === true || negate === 1)
 	    		  realNumber = '(' + realNumber + ')';
 	    	  return realNumber;
 	    };

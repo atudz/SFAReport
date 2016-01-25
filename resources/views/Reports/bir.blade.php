@@ -32,22 +32,22 @@
 							<td></td>
 							<td></td>
 							<td>
-								<span ng-bind="formatNumber(record.sales)"></span>
+								<span ng-bind="formatNumber(record.sales,record.negate)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.total_sales)"></span>
+								<span ng-bind="formatNumber(record.total_sales,record.negate)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.tax_amount)"></span>
+								<span ng-bind="formatNumber(record.tax_amount,record.negate)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
+								<span ng-bind="formatNumber(record.total_invoice_amount,record.negate)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.local_sales)"></span>
+								<span ng-bind="formatNumber(record.local_sales,record.negate)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.term_cash)"></span>
+								<span ng-bind="formatNumber(record.term_cash,record.negate)"></span>
 							</td>
 							<td></td>
 							<td>[[record.sales_group]]</td>
