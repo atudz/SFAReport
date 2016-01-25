@@ -1141,14 +1141,17 @@ ORDER BY tas.reference_num ASC,
     						return $model->where('app_area.area_code','=',$self->getValue());	
     				}); */
     	
-    	/* $status = $this->request->get('status') ? $this->request->get('status') : 'A';
+    	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
     	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
     	$codes = [];
     	foreach($item_codes as $item)
     	{
     		$codes[] = $item->item_code;
     	}
-    	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */    	
+    	if($this->request->get('inventory_type') == 'frozen')
+    		$prepare = $prepare->where('txn_sales_order_header.customer_code','LIKE','200%');
+    	else
+    		$prepare = $prepare->where('txn_sales_order_header.customer_code','LIKE','100%');
     	
     	return $prepare;
     }
