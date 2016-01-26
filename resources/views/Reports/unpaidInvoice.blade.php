@@ -49,10 +49,10 @@
 							<td></td>
 							<td></td>
 							<th>
-								<span ng-bind="formatNumber(summary.original_amount,false,true)"></span>
+								<span ng-bind="formatNumber(summary.original_amount)"></span>
 							</th>
 							<th>
-								<span ng-bind="formatNumber(summary.balance_amount,false,true)"></span>
+								<span ng-bind="formatNumber(summary.balance_amount)"></span>
 							</th>
 						</tr>					
 					</tbody>

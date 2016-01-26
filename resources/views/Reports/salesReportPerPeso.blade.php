@@ -42,17 +42,17 @@
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice No/Return Slip No')">
+							<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number')">
     							[[ record.invoice_number ]]
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
     							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
 						<td>
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','sfa_modified_date',record.sales_order_header_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
     							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
   							</a>
 						</td>
@@ -100,29 +100,29 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_served_amount,false,true)"></span>
+							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount,false,true)"></span>
-						</th>
-						<td></td>
-						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true,true)"></span>
+							<span ng-bind="formatNumber(summary.vat_amount,false)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount,true,true)"></span>
+							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
 						</th>
 						<td></td>
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_deduction_amount,false,true)"></span>
+							<span ng-bind="formatNumber(summary.collective_deduction_amount)"></span>
 						</th>
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice,false,true)"></span>
+							<span ng-bind="formatNumber(summary.total_invoice)"></span>
 						</th>
 					</tr>
 					

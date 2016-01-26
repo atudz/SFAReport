@@ -1579,154 +1579,280 @@ ORDER BY tas.reference_num ASC,
      */
     public function getPreparedSalesReportMaterial($summary=false)
     {
-    	$select = 'txn_sales_order_header.sales_order_header_id,
-    			   txn_sales_order_header.so_number,
-			  	   txn_sales_order_header.reference_num,
-				   txn_activity_salesman.activity_code,
-				   txn_sales_order_header.customer_code,
-				   app_customer.customer_name,
-    			   remarks.evaluated_objective_id,
-				   remarks.remarks,
-				   txn_sales_order_header.van_code,
-				   txn_sales_order_header.device_code,
-				   txn_sales_order_header.salesman_code,
-				   app_salesman.salesman_name,
-				   app_area.area_name area,
-				   txn_sales_order_header.invoice_number,
-				   txn_sales_order_header.so_date invoice_date,
-				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   app_item_master.segment_code,
-				   app_item_master.item_code,
-				   app_item_master.description,
-    			   txn_sales_order_detail.served_qty quantity,
-    			   txn_return_detail.return_detail_id,				   
-				   txn_return_detail.condition_code,
-    			   txn_sales_order_detail.sales_order_detail_id,
-				   txn_sales_order_detail.uom_code,
-				   txn_sales_order_detail.gross_served_amount,
-				   txn_sales_order_detail.vat_amount,
-				   txn_sales_order_detail.discount_rate,
-				   txn_sales_order_detail.discount_amount,
-    			   tsohd.collective_discount_rate,	
-    			   tsohd.collective_discount_amount,
-      			   tsohd.discount_reference_num,
-    			   tsohd.discount_remarks,
-    			   tsohd.collective_deduction_rate,	
-    			   tsohd.collective_deduction_amount,
-      			   tsohd.deduction_reference_num,
-    			   tsohd.deduction_remarks,
-    			   tsohd.collective_deduction_amount,
-    			   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
-				   IF(txn_sales_order_header.updated_by,\'modified\',
-    						IF(txn_sales_order_detail.updated_by,\'modified\',
-    							IF(remarks.updated_by,\'modified\',\'\')
-    						)
-    					
-    			   ) updated  		
+    	$querySales = '
+    			SELECT
+				tsoh.so_number,
+				tsoh.reference_num,
+				tas.activity_code,
+				tsoh.customer_code,
+				ac.customer_name,
+			    remarks.remarks,
+			    remarks.evaluated_objective_id,
+				tsoh.van_code,
+				tsoh.device_code,
+				tsoh.salesman_code,
+				aps.salesman_name,
+				aa.area_name area,
+				tsoh.invoice_number,
+				tsoh.so_date invoice_date,
+				tsoh.sfa_modified_date invoice_posting_date,
+				aim.segment_code,
+				aim.item_code,
+				aim.description,
+			    tsod.served_qty quantity,
+			    0 return_detail_id,
+				\'\' condition_code,
+				tsod.uom_code,
+				tsod.gross_served_amount,
+				tsod.vat_amount,
+				tsod.discount_rate,
+				tsod.discount_amount,
+			    tsohd.collective_discount_rate,
+			    tsohd.collective_discount_amount,
+			    tsohd.discount_reference_num,
+			    tsohd.discount_remarks,
+			    tsohd.collective_deduction_rate,
+			    tsohd.collective_deduction_amount,
+			    tsohd.deduction_reference_num,
+			    tsohd.deduction_remarks,
+			    tsod.sales_order_detail_id,
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
+		
+				\'txn_sales_order_header\' invoice_table,
+				\'invoice_number\' invoice_number_column,
+				\'so_date\' invoice_date_column,
+				\'sfa_modified_date\' invoice_posting_date_column,
+				tsoh.sales_order_header_id invoice_pk_id,
+				\'txn_sales_order_detail\' quantity_table,
+				\'served_qty\' quantity_column,
+				tsod.sales_order_detail_id quantity_pk_id,
+				\'\' condition_code_table,
+				\'\' condition_code_column,
+				0 condition_code_pk_id
+		
+		
+				FROM txn_sales_order_header tsoh
+				LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)
+				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
+				LEFT JOIN app_salesman aps ON(aps.salesman_code=tsoh.salesman_code)
+				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=tsoh.reference_num AND tas.salesman_code=tsoh.salesman_code)
+				LEFT JOIN  txn_sales_order_detail tsod ON(tsod.reference_num=tsoh.reference_num)
+				LEFT JOIN app_item_master aim ON(tsod.item_code=aim.item_code)
+				LEFT JOIN
+				(
+					select reference_num,
+						   served_deduction_rate as collective_deduction_rate,
+						   served_deduction_rate as collective_discount_rate,
+						   ref_no as discount_reference_num,
+						   remarks as discount_remarks,
+						   ref_no as deduction_reference_num,
+						   remarks as deduction_remarks,
+							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
+							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+					from txn_sales_order_header_discount group by reference_num
+				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
+				LEFT JOIN
+				(
+					select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
+				) remarks ON(remarks.reference_num=tsoh.reference_num)
     			';
     	 
+    	$queryReturns = '
+    			SELECT
+				trh.return_txn_number so_number,
+				trh.reference_num,
+				tas.activity_code,
+				trh.customer_code,
+				ac.customer_name,
+				remarks.remarks,
+			    remarks.evaluated_objective_id,
+				trh.van_code,
+				trh.device_code,
+				trh.salesman_code,
+				aps.salesman_name,
+				aa.area_name area,
+				trh.return_slip_num invoice_number,
+				trh.return_date invoice_date,
+				trh.sfa_modified_date invoice_posting_date,
+				aim.segment_code,
+				aim.item_code,
+				aim.description,
+				trd.quantity,
+				trd.return_detail_id,
+				trd.condition_code,
+				trd.return_detail_id sales_order_detail_id,
+				trd.uom_code,
+				trd.gross_amount gross_served_amount,
+				trd.vat_amount,
+				0 discount_rate,
+				trd.discount_amount,
+				trhd.collective_discount_rate,
+			    trhd.collective_discount_amount,
+			    trhd.discount_reference_num,
+			    trhd.discount_remarks,
+				0 collective_deduction_rate,
+			    0 collective_deduction_amount,
+			    0 deduction_reference_num,
+			    0 deduction_remarks,
+			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
+			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
+		
+			    \'txn_return_header\' invoice_table,
+				\'return_slip_num\' invoice_number_column,
+				\'return_date\' invoice_date_column,
+				\'sfa_modified_date\' invoice_posting_date_column,
+				trh.return_header_id invoice_pk_id,
+				\'txn_return_detail\' quantity_table,
+				\'quantity\' quantity_column,
+				trd.return_detail_id quantity_pk_id,
+				\'txn_return_detail\' condition_code_table,
+				\'condition_code\' condition_code_column,
+				trd.return_detail_id condition_code_pk_id
+		
+			FROM txn_return_header trh
+			LEFT JOIN app_customer ac ON(ac.customer_code=trh.customer_code)
+			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
+			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
+			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
+			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
+			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)
+			LEFT JOIN
+			(
+				select reference_num,
+					   deduction_rate as collective_discount_rate,
+					   ref_no as discount_reference_num,
+					   remarks as discount_remarks,
+					   sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_discount_amount
+			    from txn_return_header_discount group by reference_num
+			) trhd ON(trh.reference_num=trhd.reference_num)
+			LEFT JOIN
+			(
+				select evaluated_objective_id,remarks,reference_num,updated_by
+				from txn_evaluated_objective
+			    group by reference_num
+			) remarks ON(remarks.reference_num=trh.reference_num)
+    
+    			';
+    	 
+    	$select = '
+    			sales.so_number,
+				sales.reference_num,
+				sales.activity_code,
+				sales.customer_code,
+				sales.customer_name,
+			    sales.remarks,
+				sales.van_code,
+				sales.device_code,
+				sales.salesman_code,
+				sales.salesman_name,
+				sales.area,
+				sales.invoice_number,
+				sales.invoice_date,
+				sales.invoice_posting_date,
+				sales.segment_code,
+				sales.item_code,
+				sales.description,
+			    sales.quantity,
+			    sales.condition_code,
+				sales.uom_code,
+				sales.gross_served_amount,
+				sales.vat_amount,
+				sales.discount_rate,
+				sales.discount_amount,
+			    sales.collective_discount_rate,
+			    sales.collective_discount_amount,
+			    sales.discount_reference_num,
+			    sales.discount_remarks,
+			    sales.collective_deduction_rate,
+			    sales.collective_deduction_amount,
+			    sales.deduction_reference_num,
+			    sales.deduction_remarks,
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+				sales.updated,
+				sales.evaluated_objective_id,
+    			sales.invoice_table,
+				sales.invoice_number_column,
+				sales.invoice_date_column,
+				sales.invoice_posting_date_column,
+				sales.invoice_pk_id,
+				sales.quantity_table,
+				sales.quantity_column,
+				sales.quantity_pk_id,
+				sales.condition_code_table,
+				sales.condition_code_column,
+				sales.condition_code_pk_id
+    			';
+    	
     	if($summary)
     	{
     		$select = '
-				   ROUND(SUM(txn_sales_order_detail.served_qty),0) quantity,
-				   ROUND(SUM(txn_sales_order_detail.gross_served_amount),0) gross_served_amount,
-    			   ROUND(SUM(txn_sales_order_detail.discount_amount),0) discount_amount,
-				   ROUND(SUM(txn_sales_order_detail.vat_amount),0) vat_amount,
-				   ROUND(SUM(tsohd.collective_discount_amount),0) collective_discount_amount,
-    			   ROUND(SUM(tsohd.collective_deduction_amount),0) collective_deduction_amount,
-				   ROUND(SUM((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)),0) total_invoice	
+				   SUM(sales.quantity) quantity,
+				   SUM(sales.gross_served_amount) gross_served_amount,
+    			   SUM(sales.discount_amount) discount_amount,
+				   SUM(sales.vat_amount) vat_amount,
+				   SUM(sales.collective_discount_amount) collective_discount_amount,
+    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice
     			';
     	}
+    	 
+    	$prepare = \DB::table(\DB::raw('('.$querySales.' UNION '.$queryReturns.') sales'))
+    	->selectRaw($select);
     	
-    	$prepare = \DB::table('txn_sales_order_header')
-			    	->selectRaw($select)
-			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
-			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-			    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
-			    	->leftJoin('txn_activity_salesman', function($join){
-			    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
-			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
-			    	})
-			    	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
-			    	->leftJoin('app_item_master','txn_sales_order_detail.item_code','=','app_item_master.item_code')
-			    	//->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin(\DB::raw('
-			    			(select reference_num,
-			    			served_deduction_rate as collective_deduction_rate,
-			    			served_deduction_rate as collective_discount_rate,
-			    			ref_no as discount_reference_num,
-			    			remarks as discount_remarks,
-			    			ref_no as deduction_reference_num,
-			    			remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
-							from txn_sales_order_header_discount
-							group by reference_num) tsohd'), function($join){
-			    				    			 	$join->on('txn_sales_order_header.reference_num','=','tsohd.reference_num');
-			    				    			 }
-			    	)
-			    	->leftJoin(\DB::raw('
-			    			(select evaluated_objective_id,remarks,reference_num,updated_by 
-			    			 from txn_evaluated_objective
-			    			 group by reference_num) remarks'), function($join){
-			    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
-			    			 }
-			    	  );
-			    	
-
-		$salesmanFilter = FilterFactory::getInstance('Select');
-		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
-			    	
-		$areaFilter = FilterFactory::getInstance('Select');
-		$prepare = $areaFilter->addFilter($prepare,'area',
-			    			function($self, $model){
-			    				return $model->where('app_area.area_code','=',$self->getValue());
-			    			});
-			    	 
-		$companyCodeFilter = FilterFactory::getInstance('Select');
-		$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
-							function($self, $model){								
-								return $model->where('txn_sales_order_header.customer_code','like',$self->getValue().'%');
-							});
-			    	 
-		$invoiceNumFilter = FilterFactory::getInstance('Text');
-		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
-						function($self, $model){
-							return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');							
-					});
-		
-		$customerFilter = FilterFactory::getInstance('Select');
-		$prepare = $customerFilter->addFilter($prepare,'customer',
-			    			function($self, $model){
-			    				return $model->where('txn_sales_order_header.customer_code','=',$self->getValue());
-			    			});
-			    	 
-		$itemCodeFilter = FilterFactory::getInstance('Select');
-		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
-			    			function($self, $model){
-			    				return $model->where('app_item_master.item_code','=',$self->getValue());
-			    			});
-			    	 
-		$segmentCodeFilter = FilterFactory::getInstance('Select');
-		$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
-			    			function($self, $model){
-			    				return $model->where('app_item_master.segment_code','=',$self->getValue());
-			    			});
-			    	
-		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
-			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
-			    			});
-			    	
-		$postingFilter = FilterFactory::getInstance('DateRange');
-		$prepare = $postingFilter->addFilter($prepare,'posting_date',
-			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
-			    			});
-
-		return $prepare;	    	
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('sales.area_code','=',$self->getValue());
+    			});
+    	 
+    	$companyCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
+    			function($self, $model){
+    				return $model->where('sales.customer_code','like',$self->getValue().'%');
+    			});
+    	 
+    	$invoiceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+    			function($self, $model){
+    				return $model->where('sales.invoice_number','LIKE',$self->getValue().'%');
+    			});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer',
+    			function($self, $model){
+    				return $model->where('sales.customer_code','=',$self->getValue());
+    			});
+    	 
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    			function($self, $model){
+    				return $model->where('sales.item_code','=',$self->getValue());
+    			});
+    	 
+    	$segmentCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
+    			function($self, $model){
+    				return $model->where('sales.segment_code','=',$self->getValue());
+    			});
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
+    			function($self, $model){
+    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_date)'),$self->formatValues($self->getValue()));
+    			});
+    	
+    	$postingFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $postingFilter->addFilter($prepare,'posting_date',
+    			function($self, $model){
+    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
+    			});
+    	
+    	
+    	return $prepare;	
     }
     
     
@@ -1760,134 +1886,280 @@ ORDER BY tas.reference_num ASC,
      */
     public function getPreparedSalesReportPeso($summary=false)
     {
-    	$select = 'txn_sales_order_header.sales_order_header_id,	
-    			   txn_sales_order_header.so_number,
-			  	   txn_sales_order_header.reference_num,
-				   txn_activity_salesman.activity_code,
-				   txn_sales_order_header.customer_code,
-				   app_customer.customer_name,
-				   remarks.evaluated_objective_id,
-				   remarks.remarks,
-				   txn_sales_order_header.van_code,
-				   txn_sales_order_header.device_code,
-				   txn_sales_order_header.salesman_code,
-				   app_salesman.salesman_name,
-				   app_area.area_name area,
-				   txn_sales_order_header.invoice_number,
-				   txn_sales_order_header.so_date invoice_date,
-				   txn_sales_order_header.sfa_modified_date invoice_posting_date,
-				   txn_sales_order_detail.gross_served_amount,
-				   txn_sales_order_detail.vat_amount,
-				   txn_sales_order_detail.discount_rate,
-				   txn_sales_order_detail.discount_amount,
-				   tsohd.collective_discount_rate,	
-    			   tsohd.collective_discount_amount,
-      			   tsohd.discount_reference_num,
-    			   tsohd.discount_remarks,
-    			   tsohd.collective_deduction_rate,	
-    			   tsohd.collective_deduction_amount,
-      			   tsohd.deduction_reference_num,
-    			   tsohd.deduction_remarks,
-    			   tsohd.collective_deduction_amount,
-    			   ((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
-	    		   IF(txn_sales_order_header.updated_by,\'modified\',
-	    					IF(txn_sales_order_detail.updated_by,\'modified\',
-    							IF(remarks.updated_by,\'modified\',\'\')
-    						)
-
-	    		   ) updated
+    	$querySales = '
+    			SELECT
+				tsoh.so_number,
+				tsoh.reference_num,
+				tas.activity_code,
+				tsoh.customer_code,
+				ac.customer_name,
+			    remarks.remarks,
+			    remarks.evaluated_objective_id,
+				tsoh.van_code,
+				tsoh.device_code,
+				tsoh.salesman_code,
+				aps.salesman_name,
+				aa.area_name area,
+				tsoh.invoice_number,
+				tsoh.so_date invoice_date,
+				tsoh.sfa_modified_date invoice_posting_date,
+				aim.segment_code,
+				aim.item_code,
+				aim.description,
+			    tsod.served_qty quantity,
+			    0 return_detail_id,				   
+				\'\' condition_code,
+				tsod.uom_code,
+				tsod.gross_served_amount,
+				tsod.vat_amount,
+				tsod.discount_rate,
+				tsod.discount_amount,
+			    tsohd.collective_discount_rate,	
+			    tsohd.collective_discount_amount,
+			    tsohd.discount_reference_num,
+			    tsohd.discount_remarks,
+			    tsohd.collective_deduction_rate,	
+			    tsohd.collective_deduction_amount,
+			    tsohd.deduction_reference_num,
+			    tsohd.deduction_remarks,	
+			    tsod.sales_order_detail_id,		
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
+			
+				\'txn_sales_order_header\' invoice_table,
+				\'invoice_number\' invoice_number_column,
+				\'so_date\' invoice_date_column,
+				\'sfa_modified_date\' invoice_posting_date_column,
+				tsoh.sales_order_header_id invoice_pk_id,				
+				\'txn_sales_order_detail\' quantity_table,
+				\'served_qty\' quantity_column,
+				tsod.sales_order_detail_id quantity_pk_id,
+				\'\' condition_code_table,
+				\'\' condition_code_column,
+				0 condition_code_pk_id
+			
+			
+				FROM txn_sales_order_header tsoh
+				LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)
+				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
+				LEFT JOIN app_salesman aps ON(aps.salesman_code=tsoh.salesman_code)
+				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=tsoh.reference_num AND tas.salesman_code=tsoh.salesman_code)
+				LEFT JOIN  txn_sales_order_detail tsod ON(tsod.reference_num=tsoh.reference_num)
+				LEFT JOIN app_item_master aim ON(tsod.item_code=aim.item_code)
+				LEFT JOIN 
+				(
+					select reference_num,
+						   served_deduction_rate as collective_deduction_rate,
+						   served_deduction_rate as collective_discount_rate,
+						   ref_no as discount_reference_num,
+						   remarks as discount_remarks,
+						   ref_no as deduction_reference_num,
+						   remarks as deduction_remarks,
+							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
+							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+					from txn_sales_order_header_discount group by reference_num	
+				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
+				LEFT JOIN
+				(
+					select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
+				) remarks ON(remarks.reference_num=tsoh.reference_num)	
     			';
-
+    	
+    	$queryReturns = '
+    			SELECT
+				trh.return_txn_number so_number,
+				trh.reference_num,
+				tas.activity_code,
+				trh.customer_code,
+				ac.customer_name,
+				remarks.remarks,
+			    remarks.evaluated_objective_id,
+				trh.van_code,
+				trh.device_code,
+				trh.salesman_code,
+				aps.salesman_name,
+				aa.area_name area,
+				trh.return_slip_num invoice_number,
+				trh.return_date invoice_date,
+				trh.sfa_modified_date invoice_posting_date,
+				aim.segment_code,
+				aim.item_code,
+				aim.description,
+				trd.quantity,
+				trd.return_detail_id,
+				trd.condition_code,	
+				trd.return_detail_id sales_order_detail_id,			
+				trd.uom_code,
+				trd.gross_amount gross_served_amount,
+				trd.vat_amount,
+				0 discount_rate,
+				trd.discount_amount,
+				trhd.collective_discount_rate,
+			    trhd.collective_discount_amount,
+			    trhd.discount_reference_num,
+			    trhd.discount_remarks,
+				0 collective_deduction_rate,	
+			    0 collective_deduction_amount,
+			    0 deduction_reference_num,
+			    0 deduction_remarks,
+			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
+			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
+			
+			    \'txn_return_header\' invoice_table,
+				\'return_slip_num\' invoice_number_column,
+				\'return_date\' invoice_date_column,
+				\'sfa_modified_date\' invoice_posting_date_column,
+				trh.return_header_id invoice_pk_id,				
+				\'txn_return_detail\' quantity_table,
+				\'quantity\' quantity_column,
+				trd.return_detail_id quantity_pk_id,
+				\'txn_return_detail\' condition_code_table,
+				\'condition_code\' condition_code_column,
+				trd.return_detail_id condition_code_pk_id
+			
+			FROM txn_return_header trh
+			LEFT JOIN app_customer ac ON(ac.customer_code=trh.customer_code)
+			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
+			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
+			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
+			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
+			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)
+			LEFT JOIN
+			(
+				select reference_num,
+					   deduction_rate as collective_discount_rate,
+					   ref_no as discount_reference_num,
+					   remarks as discount_remarks,
+					   sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_discount_amount
+			    from txn_return_header_discount group by reference_num
+			) trhd ON(trh.reference_num=trhd.reference_num)
+			LEFT JOIN
+			(
+				select evaluated_objective_id,remarks,reference_num,updated_by
+				from txn_evaluated_objective
+			    group by reference_num
+			) remarks ON(remarks.reference_num=trh.reference_num)
+    			
+    			';
+    	
+    	$select = '
+    			sales.so_number,
+				sales.reference_num,
+				sales.activity_code,
+				sales.customer_code,
+				sales.customer_name,
+			    sales.remarks,
+				sales.van_code,
+				sales.device_code,
+				sales.salesman_code,
+				sales.salesman_name,
+				sales.area,
+				sales.invoice_number,
+				sales.invoice_date,
+				sales.invoice_posting_date,
+				sales.segment_code,
+				sales.item_code,
+				sales.description,
+			    sales.quantity,
+			    sales.condition_code,
+				sales.uom_code,
+				sales.gross_served_amount,
+				sales.vat_amount,
+				sales.discount_rate,
+				sales.discount_amount,
+			    sales.collective_discount_rate,	
+			    sales.collective_discount_amount,
+			    sales.discount_reference_num,
+			    sales.discount_remarks,
+			    sales.collective_deduction_rate,	
+			    sales.collective_deduction_amount,
+			    sales.deduction_reference_num,
+			    sales.deduction_remarks,	
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+				sales.updated,
+				sales.evaluated_objective_id,
+    			sales.invoice_table,
+				sales.invoice_number_column,
+				sales.invoice_date_column,
+				sales.invoice_posting_date_column,
+				sales.invoice_pk_id,				
+				sales.quantity_table,
+				sales.quantity_column,
+				sales.quantity_pk_id,
+				sales.condition_code_table,
+				sales.condition_code_column,
+				sales.condition_code_pk_id   		
+    			';
+    	 
     	if($summary)
     	{
     		$select = '
-				   ROUND(SUM(txn_sales_order_detail.gross_served_amount),0) gross_served_amount,
-				   ROUND(SUM(txn_sales_order_detail.vat_amount),0) vat_amount,
-				   ROUND(SUM(txn_sales_order_detail.discount_amount),0) discount_amount,
-				   ROUND(SUM(tsohd.collective_discount_amount),0) collective_discount_amount,
-    			   ROUND(SUM(tsohd.collective_deduction_amount),0) collective_deduction_amount,
-				   ROUND(SUM((txn_sales_order_detail.gross_served_amount + txn_sales_order_detail.vat_amount) - (txn_sales_order_detail.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)),0) total_invoice
+				   SUM(sales.quantity) quantity,
+				   SUM(sales.gross_served_amount) gross_served_amount,
+    			   SUM(sales.discount_amount) discount_amount,
+				   SUM(sales.vat_amount) vat_amount,
+				   SUM(sales.collective_discount_amount) collective_discount_amount,
+    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice	
     			';
     	}
-    	$prepare = \DB::table('txn_sales_order_header')
-			    	->selectRaw($select)
-			    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
-			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-			    	->leftJoin('app_salesman','txn_sales_order_header.salesman_code','=','app_salesman.salesman_code')
-			    	->leftJoin('txn_activity_salesman', function($join){
-			    		$join->on('txn_sales_order_header.reference_num','=','txn_activity_salesman.reference_num');
-			    		$join->on('txn_sales_order_header.salesman_code','=','txn_activity_salesman.salesman_code');
-			    	})
-			    	//->leftJoin('txn_sales_order_header_discount','txn_sales_order_header.reference_num','=','txn_sales_order_header_discount.reference_num')
-			    	->leftJoin(\DB::raw('
-			    			(select reference_num,
-			    			served_deduction_rate as collective_deduction_rate,
-			    			served_deduction_rate as collective_discount_rate,
-			    			ref_no as discount_reference_num,
-			    			remarks as discount_remarks,
-			    			ref_no as deduction_reference_num,
-			    			remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
-							from txn_sales_order_header_discount
-							group by reference_num) tsohd'), function($join){
-			    										$join->on('txn_sales_order_header.reference_num','=','tsohd.reference_num');
-			    									}
-			    	)
-			    	->leftJoin('txn_sales_order_detail','txn_sales_order_header.reference_num','=','txn_sales_order_detail.reference_num')
-			    	->leftJoin(\DB::raw('
-			    			(select evaluated_objective_id,remarks,reference_num,updated_by
-			    			 from txn_evaluated_objective
-			    			 group by reference_num) remarks'), function($join){
-			    				    			 	$join->on('txn_sales_order_header.reference_num','=','remarks.reference_num');
-			    				    			 }
-			    	);
+    	
+    	$prepare = \DB::table(\DB::raw('('.$querySales.' UNION '.$queryReturns.') sales'))
+			    	->selectRaw($select);			    	
 
 		$salesmanFilter = FilterFactory::getInstance('Select');
 		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
-			    	 
+			    	
 		$areaFilter = FilterFactory::getInstance('Select');
 		$prepare = $areaFilter->addFilter($prepare,'area',
 			    			function($self, $model){
-			    				return $model->where('app_area.area_code','=',$self->getValue());
+			    				return $model->where('sales.area_code','=',$self->getValue());
 			    			});
-
-		$invoiceNumFilter = FilterFactory::getInstance('Text');
-		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
-				function($self, $model){
-					return $model->where('txn_sales_order_header.invoice_number','LIKE',$self->getValue().'%');
-				});
-		
+			    	 
 		$companyCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
-							function($self, $model){
-								return $model->where('txn_sales_order_header.customer_code','like',$self->getValue().'%');
+							function($self, $model){								
+								return $model->where('sales.customer_code','like',$self->getValue().'%');
 							});
-			    	
+			    	 
+		$invoiceNumFilter = FilterFactory::getInstance('Text');
+		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+						function($self, $model){
+							return $model->where('sales.invoice_number','LIKE',$self->getValue().'%');							
+					});
+		
+		$customerFilter = FilterFactory::getInstance('Select');
+		$prepare = $customerFilter->addFilter($prepare,'customer',
+			    			function($self, $model){
+			    				return $model->where('sales.customer_code','=',$self->getValue());
+			    			});
+			    	 
 		$itemCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
 			    			function($self, $model){
-			    				return $model->where('app_item_master.item_code','=',$self->getValue());
+			    				return $model->where('sales.item_code','=',$self->getValue());
 			    			});
-			    	
+			    	 
 		$segmentCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
 			    			function($self, $model){
-			    				return $model->where('app_item_master.segment_code','=',$self->getValue());
+			    				return $model->where('sales.segment_code','=',$self->getValue());
 			    			});
-			    	 
+			    	
 		$invoiceDateFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $invoiceDateFilter->addFilter($prepare,'return_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),$self->formatValues($self->getValue()));
+			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_date)'),$self->formatValues($self->getValue()));
 			    			});
-			    	 
+			    	
 		$postingFilter = FilterFactory::getInstance('DateRange');
 		$prepare = $postingFilter->addFilter($prepare,'posting_date',
 			    			function($self, $model){
-			    				return $model->whereBetween(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
-			    			});			    	
-		return $prepare;
+			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
+			    			});
+
+
+		return $prepare;	
     }
     
     /**
@@ -1962,12 +2234,12 @@ ORDER BY tas.reference_num ASC,
     	if($summary)
     	{
     		$select = '
-    			ROUND(SUM(txn_return_detail.quantity),0) quantity,
-				ROUND(SUM(txn_return_detail.gross_amount),0) gross_served_amount,
-				ROUND(SUM(txn_return_detail.vat_amount),0) vat_amount,
-				ROUND(SUM(txn_return_detail.discount_amount),0) discount_amount,
-				ROUND(SUM(trhd.collective_discount_amount),0) collective_discount_amount,
-    			ROUND(SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)),0) total_invoice    			
+    			SUM(txn_return_detail.quantity) quantity,
+				SUM(txn_return_detail.gross_amount) gross_served_amount,
+				SUM(txn_return_detail.vat_amount) vat_amount,
+				SUM(txn_return_detail.discount_amount) discount_amount,
+				SUM(trhd.collective_discount_amount) collective_discount_amount,
+    			SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice    			
     			';
     	}
     	
@@ -2121,12 +2393,12 @@ ORDER BY tas.reference_num ASC,
     	if($summary)
     	{
     		$select = '
-    			ROUND(SUM(txn_return_detail.gross_amount),0) gross_amount,
-				ROUND(SUM(txn_return_detail.vat_amount),0) vat_amount,
-				ROUND(SUM(txn_return_detail.discount_amount),0) discount_amount,
-				ROUND(SUM(trhd.collective_discount_amount),0) collective_discount_amount,
-    			ROUND(SUM(trhd.collective_deduction_amount),0) collective_deduction_amount,
-				ROUND(SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)),0) total_invoice
+    			SUM(txn_return_detail.gross_amount) gross_amount,
+				SUM(txn_return_detail.vat_amount) vat_amount,
+				SUM(txn_return_detail.discount_amount) discount_amount,
+				SUM(trhd.collective_discount_amount) collective_discount_amount,
+    			SUM(trhd.collective_deduction_amount) collective_deduction_amount,
+				SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice
     			';
     	}
     	
@@ -2680,7 +2952,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Collective Deduction Amount'],
     			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
     			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net amount'],
+    			['name'=>'Total Invoice/Return Net Amount'],
     	];
     
     	return $headers;
@@ -2719,7 +2991,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Collective Deduction Amount'],
     			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
     			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net amount'],
+    			['name'=>'Total Invoice/Return Net Amount'],
     	];
     
     	return $headers;
@@ -2760,7 +3032,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net amount'],
+    			['name'=>'Total Return Net Amount'],
     	];
     
     	return $headers;
@@ -2795,7 +3067,7 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net amount'],
+    			['name'=>'Total Return Net Amount'],
     	];
     
     	return $headers;
