@@ -1371,7 +1371,8 @@ ORDER BY tas.reference_num ASC,
 						sum(ALL_SO.total_vat) as SO_total_vat,						
 						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,						
 						sum(ALL_SO.so_amount) as SO_amount,
-						sum(ALL_SO.net_amount) as SO_net_amount
+						sum(ALL_SO.net_amount) as SO_net_amount,
+    					ALL_SO.updated
 						from (
 						
 							select tsoh.so_number, 
@@ -1409,7 +1410,7 @@ ORDER BY tas.reference_num ASC,
 								(sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12)*0.12 as total_vat,
 								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12 as so_amount,
 								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount,
-    							IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
+    							IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
@@ -1970,16 +1971,16 @@ ORDER BY tas.reference_num ASC,
     			';
     	}
     	
-    	$prepare = \DB::table('txn_return_header')
+    	$prepare = \DB::table('txn_activity_salesman')
 			    	->selectRaw($select)
-			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
-			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
-			    	->leftJoin('txn_activity_salesman', function($join){
+			    	->join('txn_return_header', function($join){
 			    		$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
 			    		$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
-			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
+			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')			    	
+			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')			    	
 			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
 			    	->leftJoin(\DB::raw('
 			    			(select reference_num,
@@ -2044,6 +2045,8 @@ ORDER BY tas.reference_num ASC,
 			    			function($self, $model){
 			    				return $model->whereBetween(\DB::raw('DATE(txn_return_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});
+		
+		$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
 			    	
 		return $prepare;	    	
     	
@@ -2127,15 +2130,15 @@ ORDER BY tas.reference_num ASC,
     			';
     	}
     	
-    	$prepare = \DB::table('txn_return_header')
+    	$prepare = \DB::table('txn_activity_salesman')
 			    	->selectRaw($select)
-			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
-			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
-			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')
-			    	->leftJoin('txn_activity_salesman', function($join){
+			    	->join('txn_return_header', function($join){
 			    		$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
 			    		$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
+			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
+			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')			    	
 			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
 			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
 			    	->leftJoin(\DB::raw('
@@ -2190,6 +2193,8 @@ ORDER BY tas.reference_num ASC,
     			function($self, $model){
     				return $model->whereBetween(\DB::raw('DATE(txn_return_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
     			});
+    	
+    	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
     	
     	return $prepare;
     }
