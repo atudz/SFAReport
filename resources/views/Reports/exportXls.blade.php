@@ -12,9 +12,9 @@
 			@endif
 			@if(isset($filters))
 				@foreach($filters as $label=>$val)
-					<tr align="left">
-						<td><strong>{{$label}}</strong></td>
-						<td>{{$val}}</td>
+					<tr>
+						<td align="left"><strong>{{$label}}</strong></td>
+						<td align="left">{{$val}}</td>
 					</tr>
 				@endforeach
 			@endif

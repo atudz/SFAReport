@@ -262,14 +262,24 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesCollectionReport()
     {
-    	$query = ' SELECT 
-				   tas.customer_code, 
-				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,					
+    	
+    	//dd($prepare);
+    	$result = $this->paginate($prepare);
+    	
+    	
+    	return response()->json($this->dummy());
+    }
+    
+    public function getPreparedSalesCollection()
+    {
+    	$query = ' SELECT
+				   tas.customer_code,
+				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				   (select remarks from txn_evaluated_objective teo where teo.reference_num = tas.reference_num order by teo.sfa_modified_date desc limit 1) remarks,
 				   sotbl.invoice_number,
 				   sotbl.so_date invoice_date,
 				   sotbl.so_total_served so_total_served,
-				   sotbl.so_total_item_discount so_total_item_discount,					
+				   sotbl.so_total_item_discount so_total_item_discount,
 				   sotbl.so_total_collective_discount,
 				   (sotbl.so_total_served - sotbl.so_total_item_discount) total_invoice_amount,
 			  	   tsohd2.ref_no other_deduction_slip_number,
@@ -277,11 +287,11 @@ class ReportsPresenter extends PresenterCore
 				   rtntbl.RTN_total_gross,
 				   rtntbl.RTN_total_collective_discount,
 				   rtntbl.RTN_net_amount,
-				   (sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,	
+				   (sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,
 				   coltbl.or_date,
 	               coltbl.or_number,
 				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) cash_amount,
-				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) check_amount,																
+				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) check_amount,
 				   coltbl.bank,
 				   coltbl.check_number,
 				   coltbl.check_date,
@@ -289,33 +299,33 @@ class ReportsPresenter extends PresenterCore
 				   ti.invoice_date cm_date,
 			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\') credit_amount,
 				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\')) total_collected_amount
-
-				   from txn_activity_salesman tas 
+    	
+				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
-				   left join				
+				   left join
 					-- SALES ORDER SUBTABLE
 					(
-						select 
-							all_so.so_number, 
-							all_so.reference_num,  
-							all_so.salesman_code, 
+						select
+							all_so.so_number,
+							all_so.reference_num,
+							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_vat) as so_total_vat,
 							sum(all_so.total_discount) as so_total_item_discount,
-											
+						
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
 							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
-											
+						
 							sum(all_so.so_amount) as so_amount,
 							sum(all_so.net_amount) as so_net_amount
 						from (
-								select 
-									tsoh.so_number, 
-									tsoh.reference_num, 
-									tsoh.salesman_code, 
+								select
+									tsoh.so_number,
+									tsoh.reference_num,
+									tsoh.salesman_code,
 									tsoh.customer_code,
 									tsoh.so_date,
 									tsoh.invoice_number,
@@ -326,21 +336,21 @@ class ReportsPresenter extends PresenterCore
 									sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
-								group by tsoh.so_number, 
-									tsoh.reference_num, 
-									tsoh.salesman_code, 
+								group by tsoh.so_number,
+									tsoh.reference_num,
+									tsoh.salesman_code,
 									tsoh.van_code,
 									tsoh.customer_code,
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-					
+			
 								union all
-					
-								select 
-									tsoh.so_number, 
-									tsoh.reference_num, 
-									tsoh.salesman_code, 
+			
+								select
+									tsoh.so_number,
+									tsoh.reference_num,
+									tsoh.salesman_code,
 									tsoh.customer_code,
 									tsoh.so_date,
 									tsoh.invoice_number,
@@ -351,128 +361,149 @@ class ReportsPresenter extends PresenterCore
 									sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
-								group by tsoh.so_number, 
-									tsoh.reference_num, 
-									tsoh.salesman_code, 
-									tsoh.van_code, 
+								group by tsoh.so_number,
+									tsoh.reference_num,
+									tsoh.salesman_code,
+									tsoh.van_code,
 									tsoh.customer_code,
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-																					
-						) all_so
-					
 											
+						) all_so
+			
+						
 						left join
 						(
-							select 
+							select
 								reference_num,
 								sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount,
 								sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 							from txn_sales_order_header_discount
 							group by reference_num
 						) tsohd on all_so.reference_num = tsohd.reference_num
-					
-																
-						group by all_so.so_number, 
-							all_so.reference_num, 
-							all_so.salesman_code, 
+			
+    	
+						group by all_so.so_number,
+							all_so.reference_num,
+							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
-							all_so.invoice_number	
-											
+							all_so.invoice_number
+						
 					) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
-
+    	
 					left join txn_sales_order_header_discount tsohd2 on sotbl.reference_num = tsohd2.reference_num and tsohd2.deduction_code=\'EWT\'
-					left join 
+					left join
 					-- RETURN SUBTABLE
 					(
-						select 
+						select
 							trh.return_txn_number,
-							trh.reference_num, 
-							trh.salesman_code, 
+							trh.reference_num,
+							trh.salesman_code,
 							trh.customer_code,
-							trh.return_date, 
+							trh.return_date,
 							trh.return_slip_num,
 							sum(trd.gross_amount + trd.vat_amount) as RTN_total_gross,
 							sum(trhd.collective_discount_amount) as RTN_total_collective_discount,
-							sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
+							sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)
 											- sum(trhd.collective_discount_amount)
 											as RTN_net_amount
 						from txn_return_header trh
-						inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by 					
+						inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
 						left join
 						(
-							select 
-								reference_num, 
+							select
+								reference_num,
 								sum(coalesce(deduction_amount,0)) as collective_discount_amount
 							from txn_return_header_discount
 							group by reference_num
-						) trhd on trh.reference_num = trhd.reference_num					
-						group by 
+						) trhd on trh.reference_num = trhd.reference_num
+						group by
 							trh.return_txn_number,
-							trh.reference_num, 
-							trh.salesman_code, 
+							trh.reference_num,
+							trh.salesman_code,
 							trh.customer_code,
-							trh.return_date, 
-							trh.sfa_modified_date, 
-							trh.return_slip_num											
+							trh.return_date,
+							trh.sfa_modified_date,
+							trh.return_slip_num
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
-
+    	
 					-- COLLECTION SUBTABLE
 					left join
 					(
-						select 	
+						select
 							tch.reference_num,
 							tch.salesman_code,
 							tch.or_number,
 							tch.or_amount,
-							tch.or_date, 
+							tch.or_date,
 							tcd.payment_method_code,
 							tcd.payment_amount,
 							tcd.check_number,
 							tcd.check_date,
 							tcd.bank,
 							tcd.cm_number
-					
+			
 						from txn_collection_header tch
-						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums				
+						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
 					) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
-					
+			
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
-					
-					WHERE tas.activity_code like \'%SO%\'	
-					ORDER BY tas.reference_num ASC, 
-					 		 tas.salesman_code ASC, 
-							 tas.customer_code ASC		
-    			';    	
-    	
-    	$data = \DB::select($query);
-    	return response()->json(['records'=>$data]);
-    	//dd($prepare);
+			
+					WHERE tas.activity_code like \'%SO%\'
+					ORDER BY tas.reference_num ASC,
+					 		 tas.salesman_code ASC,
+							 tas.customer_code ASC
+    			';
+    	 
+    	$select = '
+    			collection.customer_code,
+				collection customer_name,
+				collection remarks,
+				collection.invoice_number,
+				collection.invoice_date,
+				collection.so_total_served,
+				collection so_total_item_discount,
+				collection.so_total_collective_discount,
+				collection.total_invoice_amount,
+				collection.other_deduction_slip_number,
+				collection.return_slip_num,
+				collection.RTN_total_gross,
+				collection.RTN_total_collective_discount,
+				collection.RTN_net_amount,
+				collection.total_invoice_net_amount,
+				collection.or_date,
+	            collection.or_number,
+				collection.cash_amount,
+				collection.check_amount,
+				collection.bank,
+				collection.check_number,
+		        collection.check_date,
+				collection.cm_number,
+				collection.invoice_date cm_date,
+			   	collection.credit_amount,
+				collection total_collected_amount
+    
+    			';
+    	$prepare = \DB::tabe('('.$query.') collection');
     	
     	$codeFilter = FilterFactory::getInstance('Text','Company Code');
     	$prepare = $codeFilter->addFilter($prepare,'code');
-    
+    	
     	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    	
+    	 
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange','Invoice Date');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date');
-    	
+    	 
     	$collectionDateFilter = FilterFactory::getInstance('DateRange','Collection Date');
     	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date');
-    	
+    	 
     	$postingDateFilter = FilterFactory::getInstance('DateRange','Posting Date');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date');
-    	//dd($prepare);
-    	$result = $this->paginate($prepare);
-    	
-    	
-    	return response()->json($this->dummy());
     }
-    
     
     /**
      * Get Sales & Collection Posting records
@@ -480,178 +511,234 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesCollectionPosting()
     {
-    	$query = ' 
-    			select 
-	tas.activity_code,
-	aps.salesman_name,
-	tas.customer_code, 
-	CONCAT(ac.customer_name,ac.customer_name2) customer_name,					
-	(select remarks from txn_evaluated_objective teo where teo.reference_num = tas.reference_num order by teo.sfa_modified_date desc limit 1) remarks,
-	sotbl.invoice_number,
-	(sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,	
-	sotbl.so_date invoice_date,
-	sotbl.sfa_modified_date invoice_posting_date,
-	coltbl.or_number,
-	coltbl.or_amount,
-	coltbl.check_date,
-	coltbl.sfa_modified_date collection_posting_date
-	
-from txn_activity_salesman tas 
-left join app_salesman aps on aps.salesman_code = tas.salesman_code
-left join app_customer ac on ac.customer_code = tas.customer_code
-left join				
--- SALES ORDER SUBTABLE
-(
-	select 
-		all_so.reference_num,  
-		all_so.salesman_code, 
-		all_so.customer_code,
-		all_so.so_date,
-		all_so.invoice_number,
-		all_so.sfa_modified_date,
-		sum(all_so.total_served) as so_total_served,
-		sum(all_so.total_discount) as so_total_item_discount,
-		sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction
-	from (
-			select 
-				tsoh.so_number, 
-				tsoh.reference_num, 
-				tsoh.salesman_code, 
-				tsoh.customer_code,
-				tsoh.so_date,
-				tsoh.sfa_modified_date,
-				tsoh.invoice_number,
-				sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
-				sum(tsod.discount_amount) as total_discount
-			from txn_sales_order_header tsoh
-			inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
-			group by tsoh.so_number, 
-				tsoh.reference_num, 
-				tsoh.salesman_code, 
-				tsoh.customer_code,
-				tsoh.so_date,
-				tsoh.sfa_modified_date,
-				tsoh.invoice_number
-
-			union all
-
-			select 
-				tsoh.so_number, 
-				tsoh.reference_num, 
-				tsoh.salesman_code, 
-				tsoh.customer_code,
-				tsoh.so_date,
-				tsoh.sfa_modified_date,
-				tsoh.invoice_number,
-				sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
-				0.00 as total_discount
-			from txn_sales_order_header tsoh
-			inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
-			group by tsoh.so_number, 
-				tsoh.reference_num, 
-				tsoh.salesman_code, 
-				tsoh.customer_code,
-				tsoh.so_date,
-				tsoh.sfa_modified_date,
-				tsoh.invoice_number
-																
-	) all_so
-
-						
-	left join
-	(
-		select 
-			reference_num,
-			sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount			
-		from txn_sales_order_header_discount
-		group by reference_num
-	) tsohd on all_so.reference_num = tsohd.reference_num
-
-											
-	group by all_so.so_number, 
-		all_so.reference_num, 
-		all_so.salesman_code, 
-		all_so.customer_code,
-		all_so.so_date,
-		all_so.invoice_number	
-						
-) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
-
-left join 
--- RETURN SUBTABLE
-(
-	select 
-		trh.reference_num, 
-		trh.salesman_code, 
-		trh.customer_code,
-		sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
-						- sum(trhd.collective_discount_amount)
-						as rtn_net_amount
-	from txn_return_header trh
-	inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by 					
-	left join
-	(
-		select 
-			reference_num, 
-			sum(coalesce(deduction_amount,0)) as collective_discount_amount
-		from txn_return_header_discount
-		group by reference_num
-	) trhd on trh.reference_num = trhd.reference_num					
-	group by 
-		trh.return_txn_number,
-		trh.reference_num, 
-		trh.salesman_code, 
-		trh.customer_code									
-) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
-
--- COLLECTION SUBTABLE
-left join
-(
-	select 	
-		tch.reference_num,
-		tch.salesman_code,
-		tch.or_number,
-		tch.or_amount,
-		tch.sfa_modified_date,
-		tcd.check_date
-	from txn_collection_header tch
-	inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums				
-	left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
-
-WHERE tas.activity_code like \'%SO%\'	
-ORDER BY tas.reference_num ASC, 
- 		 tas.salesman_code ASC, 
-		 tas.customer_code ASC		
-    			
-    			';
-    	 
-    	$data = \DB::select($query);
-    	return response()->json(['records'=>$data]);
-    	
-    	$prepare = \DB::table('user');
-    	 
-    	$codeFilter = FilterFactory::getInstance('Text','Company Code');
-    	$prepare = $codeFilter->addFilter($prepare,'code');
-    
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
-    	 
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange','Invoice Date');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date');
-    	 
-    	$collectionDateFilter = FilterFactory::getInstance('DateRange','Collection Date');
-    	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date');
-    	 
-    	$postingDateFilter = FilterFactory::getInstance('DateRange','Posting Date');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date');
-    
+    	$prepare = $this->getPreparedSalesCollectionPosting();
     	$result = $this->paginate($prepare);
-    	 
-    	 
-    	return response()->json($this->dummy());
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    	
+    	return response()->json($data);    	
     }
     
+    /**
+     * Return prepared sales collection posting
+     * @return \Illuminate\Http\JsonResponse|unknown
+     */
+    public function getPreparedSalesCollectionPosting()
+    {
+    	$query = '
+    		select
+				tas.activity_code,
+    			aps.salesman_code,
+				aps.salesman_name,
+				tas.customer_code,
+				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
+				remarks.remarks,
+				sotbl.invoice_number,
+				(sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,
+				sotbl.so_date invoice_date,
+				sotbl.sfa_modified_date invoice_posting_date,
+				coltbl.or_number,
+				coltbl.or_amount,
+				coltbl.check_date,
+				coltbl.sfa_modified_date collection_posting_date
+			    	
+			from txn_activity_salesman tas
+			left join app_salesman aps on aps.salesman_code = tas.salesman_code
+			left join app_customer ac on ac.customer_code = tas.customer_code
+			left join
+			-- SALES ORDER SUBTABLE
+			(
+				select
+					all_so.reference_num,
+					all_so.salesman_code,
+					all_so.customer_code,
+					all_so.so_date,
+					all_so.invoice_number,
+					all_so.sfa_modified_date,
+					sum(all_so.total_served) as so_total_served,
+					sum(all_so.total_discount) as so_total_item_discount,
+					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction
+				from (
+						select
+							tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number,
+							sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
+							sum(tsod.discount_amount) as total_discount
+						from txn_sales_order_header tsoh
+						inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
+						group by tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number
+			    	
+						union all
+			    	
+						select
+							tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number,
+							sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
+							0.00 as total_discount
+						from txn_sales_order_header tsoh
+						inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
+						group by tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number
+			    	
+				) all_so
+			    	
+			    	
+				left join
+				(
+					select
+						reference_num,
+						sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount
+					from txn_sales_order_header_discount
+					group by reference_num
+				) tsohd on all_so.reference_num = tsohd.reference_num
+			    	
+									
+				group by all_so.so_number,
+					all_so.reference_num,
+					all_so.salesman_code,
+					all_so.customer_code,
+					all_so.so_date,
+					all_so.invoice_number
+			    	
+			) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
+			    	
+			left join
+			-- RETURN SUBTABLE
+			(
+				select
+					trh.reference_num,
+					trh.salesman_code,
+					trh.customer_code,
+					sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)
+									- sum(trhd.collective_discount_amount)
+									as rtn_net_amount
+				from txn_return_header trh
+				inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
+				left join
+				(
+					select
+						reference_num,
+						sum(coalesce(deduction_amount,0)) as collective_discount_amount
+					from txn_return_header_discount
+					group by reference_num
+				) trhd on trh.reference_num = trhd.reference_num
+				group by
+					trh.return_txn_number,
+					trh.reference_num,
+					trh.salesman_code,
+					trh.customer_code
+			) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
+			    	
+			-- COLLECTION SUBTABLE
+			left join
+			(
+				select
+					tch.reference_num,
+					tch.salesman_code,
+					tch.or_number,
+					tch.or_amount,
+					tch.sfa_modified_date,
+					tcd.check_date
+				from txn_collection_header tch
+				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
+				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
+			) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+			left join
+			(
+				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
+			) remarks ON(remarks.reference_num=tas.reference_num)
+    			    	
+			WHERE tas.activity_code like \'%SO%\'
+			ORDER BY tas.reference_num ASC,
+			 		 tas.salesman_code ASC,
+					 tas.customer_code ASC
+			    
+    			';
+    	
+    	$select = '
+    			collection.activity_code,
+				collection.salesman_name,
+				collection.customer_code,
+				collection.customer_name,
+				collection.remarks,
+				collection.invoice_number,
+				collection.total_invoice_net_amount,
+				collection.invoice_date,
+				collection.invoice_posting_date,
+				collection.or_number,
+				collection.or_amount,
+				collection.check_date,
+				collection.collection_posting_date
+    			'; 
+    	
+    	$prepare = \DB::table(\DB::raw('('.$query.') collection'))
+    					->selectRaw($select);
+    	
+    	$invoiceNumberFilter = FilterFactory::getInstance('Text');
+    	$prepare = $invoiceNumberFilter->addFilter($prepare,'invoice_number',
+    			function($self, $model){
+    				return $model->where('collection.invoice_number','LIKE','%'.$self->getValue().'%');
+    			});
+    	
+    	$orNumberFilter = FilterFactory::getInstance('Text');
+    	$prepare = $orNumberFilter->addFilter($prepare,'or_number',
+    			function($self, $model){
+    				return $model->where('collection.or_number','LIKE','%'.$self->getValue().'%');
+    			});
+    	
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
+    			function($self, $model){
+    				return $model->where('collection.salesman_code','=',$self->getValue());
+    			});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'salesman',
+    			function($self, $model){
+    				return $model->where('collection.customer_code','=',$self->getValue());
+    			});
+    	
+    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
+    			function($self, $model){
+    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
+    			});
+    	
+    	$collectionDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date',
+    			function($self, $model){
+    				return $model->whereBetween('collection.collection_posting_date',$self->formatValues($self->getValue()));
+    			});
+    	
+    	$postingDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date',
+    			function($self, $model){
+    				return $model->whereBetween('collection.collection_posting_date',$self->formatValues($self->getValue()));
+    			});
+    	
+    	return $prepare;
+    }
     
     /**
      * Get Sales & Collection Posting records
@@ -2783,13 +2870,13 @@ ORDER BY tas.reference_num ASC,
     			['name'=>'Customer Name','sort'=>'customer_name'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
-    			['name'=>'Total Invoice Net Amount'],
-    			['name'=>'Invoice Date'],
-    			['name'=>'Invoice Posting Date'],
+    			['name'=>'Total Invoice Net Amount','sort'=>'total_invoice_net_amount'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
+    			['name'=>'Invoice Posting Date','sort'=>'invoice_posting_date'],
     			['name'=>'OR Number','sort'=>'or_number'],
-    			['name'=>'OR Amount'],
-    			['name'=>'OR Date'],
-    			['name'=>'Collection Posting Date']
+    			['name'=>'OR Amount','sort'=>'or_amount'],
+    			['name'=>'OR Date','sort'=>'or_date'],
+    			['name'=>'Collection Posting Date','sort'=>'collection_posting_date']
     	];
     	 
     	return $headers;
@@ -3300,9 +3387,21 @@ ORDER BY tas.reference_num ASC,
     	switch($report)
     	{
     		case 'salescollectionreport':
-    			return $this->getSalesCollectionReport();
+    			$columns = $this->getTableColumns($report);
+    			$prepare = $this->getPreparedSalesCollection();
+    			$rows = $this->getSalesCollectionPostingSelectColumns();
+    			$header = 'Sales & Collection Posting Date';
+    			$filters = $this->getSalesCollectionFilterData();
+    			$filename = 'Sales & Collection Posting Date Report';
+    			break;
     		case 'salescollectionposting':
-    			return $this->getSalesCollectionPosting();
+    			$columns = $this->getTableColumns($report);
+    			$prepare = $this->getPreparedSalesCollectionPosting();
+    			$rows = $this->getSalesCollectionPostingSelectColumns();
+    			$header = 'Sales & Collection Posting Date';
+    			$filters = $this->getSalesCollectionFilterData();
+    			$filename = 'Sales & Collection Posting Date Report';
+    			break;
     		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummary();
     		case 'bir';
@@ -3767,6 +3866,30 @@ ORDER BY tas.reference_num ASC,
     
     
     /**
+     * Return sales collection posting select columns
+     * @return multitype:string
+     */
+    public function getSalesCollectionPostingSelectColumns()
+    {
+    	return [
+    			'activity_code',
+    			'salesman_name',
+    			'customer_code',
+    			'customer_name',
+    			'remarks',
+    			'invoice_number',
+    			'total_invoice_net_amount',
+    			'invoice_date',
+    			'invoice_posting_date',
+    			'or_number',
+    			'or_amount',
+    			'check_date',
+    			'collection_posting_date',
+    	];
+    }
+    
+    
+    /**
      * Get report data count
      * @param string $report
      * @return JSON the data count
@@ -3777,6 +3900,15 @@ ORDER BY tas.reference_num ASC,
     	$prepare = '';
     	switch($report)
     	{
+    		case 'salescollectionreport';
+	    		$prepare = $this->getPreparedSalesCollection();
+	    		break;
+    		case 'salescollectionposting';
+	    		$prepare = $this->getPreparedSalesCollectionPosting();
+	    		break;
+	    	case 'salescollectionsummary';
+	    		$prepare = $this->getPreparedSalesCollectionPosting();
+	    		break;
     		case 'bir';
     			$prepare = $this->getPreparedBir();
     			break;
@@ -4061,6 +4193,35 @@ ORDER BY tas.reference_num ASC,
     			'Salesman' => $salesman,
     			'Area' => $area,
     			'Document Date' => $documentDate,
+    	];
+    
+    	return $filters;
+    }
+    
+    
+    /**
+     * Get Sales Collection Filter Data
+     */
+    public function getSalesCollectionFilterData()
+    {
+    	$filters = [];
+    
+    	$customer = $this->request->get('customer_code') ?  $this->request->get('customer_code') : 'All';
+    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
+    	$collectiontDate = ($this->request->get('collection_date_from') && $this->request->get('collection_date_to')) ? $this->request->get('collection_date_from').' - '.$this->request->get('collection_date_to') : 'All';
+    	$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
+    	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
+    	
+    	$filters = [
+    			'Invoice Date' => $invoiceDate,
+    			'Collection Date' => $collectiontDate,
+    			'Invoice #' => $invoice,
+    			'OR #' => $or,
+    			'Customer Code' => $customer,
+    			'Salesman' => $salesman,
+    			'Posting Date' => $postingDate,
     	];
     
     	return $filters;

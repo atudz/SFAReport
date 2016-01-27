@@ -63,6 +63,14 @@ Html::macro('tclose', function($paginate=true) {
 					</form>   										 					
 				</div>			    			
     		</script>
+			
+			<script type="text/ng-template" id="Info">
+        		<div class="modal-body">										
+					<form class="form-inline">				         
+						<p class="text-center"><strong>[[params.message]]</strong>&nbsp;&nbsp;&nbsp;<button class="btn btn-default" type="button btn-sm" ng-click="cancel()">Ok</button></p>					 		
+					</form>   										 					
+				</div>			    			
+    		</script>
 
     		<script type="text/javascript">
 				$(function() {

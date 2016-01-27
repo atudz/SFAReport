@@ -1,7 +1,7 @@
 {!!Html::breadcrumb(['Sales & Collection','Posting'])!!}
 {!!Html::pageheader('Sales & Collection Posting')!!}
 
-<div class="row" data-ng-controller="SalesCollectionPosting">
+<div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -32,14 +32,23 @@
 							<td>[[record.remarks]]</td>
 							<td>[[record.invoice_number]]</td>
 							<td>[[record.total_invoice_net_amount]]</td>
-							<td>[[record.invoice_date]]</td>
-							<td>[[record.invoice_posting_date]]</td>
+							<td>
+								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+							</td>
+							<td>
+								<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+							</td>
 							<td>[[record.or_number]]</td>
 							<td>[[record.or_amount]]</td>
-							<td>[[record.check_date]]</td>
-							<td>[[record.collection_posting_date]]</td>									
+							<td>
+								<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+							</td>
+							<td>
+								<span ng-bind="formatDate(record.collection_posting_date) | date:'MM/dd/yyyy'"></span>
+							</td>									
 						</tr>					
 					</tbody>
+					{!!Html::tfooter(true,14)!!}	
 				{!!Html::tclose()!!}				
 				
 			</div>			

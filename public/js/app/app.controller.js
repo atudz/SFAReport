@@ -24,11 +24,18 @@
 		          'collection_date_from',
 		          'collection_date_to',
 		          'posting_date_from',
-		          'posting_date_to'
+		          'posting_date_to',
+		          'salesman',
+		          'invoice_number',
+		          'or_number'
+		          
 		];
 	    
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log);
+	    
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	    		
 	}
 	
@@ -48,11 +55,14 @@
 		          'collection_date_from',
 		          'collection_date_to',
 		          'posting_date_from',
-		          'posting_date_to'
+		          'posting_date_to',
+		          'salesman',
+		          'invoice_number',
+		          'or_number'
 		];
 	    
 	    // main controller 
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log);	   
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log);
 	}
 	
 	
@@ -868,7 +878,19 @@
 				log.info(data);
 				if(!data.total)
 				{
-					window.alert('No records to export.');
+					var params = {message:'No data to export.'};		    
+			    	var modalInstance = modal.open({
+			    		animation: true,
+					 	templateUrl: 'Info',
+						controller: 'Info',
+						windowClass: 'center-modal',
+						size: 'sm',
+						resolve: {
+							params: function () {
+								return params;
+						    }
+						}
+					});
 				}
 				else if(data.max_limit)
 				{
@@ -927,7 +949,7 @@
 	    	scope.total = data.total;
 	    	log.info(data);	    	
 	    	toggleLoading();
-	    	togglePagination(data.total);
+	    	togglePagination(data.total);	    	
 	    });	    	    
 	    
 	    params = filter;
@@ -1523,7 +1545,7 @@
 	
 	
 	/**
-	 * Edit Table record controller
+	 * User Action Controller
 	 */
 	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log', UserAction]);
 	
@@ -1669,5 +1691,21 @@
 	    // Save user profile
 	    saveUser($scope,$resource,$location,$log);
 	}
+
+	/**
+	 * User Action Controller
+	 */
+	app.controller('Info',['$scope','$uibModalInstance','params','$log', Info]);
+	
+	function Info($scope, $uibModalInstance, params, $log) {
+
+		$scope.params = params;		
+		$log.info(params);
+		
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+		
+	};
 
 })();

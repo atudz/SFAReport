@@ -1,7 +1,7 @@
 {!!Html::breadcrumb(['Sales & Collection','Reports'])!!}
 {!!Html::pageheader('Sales & Collection Report')!!}
 
-<div class="row" data-ng-controller="SalesCollectionReport">
+<div class="row">
 	<div class="col-sm-12">
 		<div class="panel panel-default">
 		<div class="panel-body">		
@@ -14,8 +14,8 @@
 					{!!Html::input('text','or_number','OR #')!!}
 				</div>					
 				<div class="pull-right col-sm-6">	
-					{!!Html::select('customer_code','Customer Code', ['Name1','Name2'])!!}
-					{!!Html::select('salesman','Salesman', ['Name1','Name2'])!!}							 			
+					{!!Html::select('customer_code','Customer Code', $customerCode)!!}
+					{!!Html::select('salesman','Salesman', $salesman)!!}							 			
 					{!!Html::datepicker('posting_date','Posting Date','true')!!}
 				</div>			
 			{!!Html::fclose()!!}
