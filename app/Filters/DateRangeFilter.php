@@ -78,7 +78,7 @@ class DateRangeFilter extends FilterCore
 			return $scope($this,$model);	
 		}
 				
-		return $scope ? $this->$scope($model) : $model->whereBetween(\DB::raw('DATE('.$name.')'),$this->getValue());
+		return $scope ? $this->$scope($model) : $model->whereBetween(\DB::raw('DATE('.$name.')'),$this->formatValues($this->getValue()));
 	}
 	
 	/**

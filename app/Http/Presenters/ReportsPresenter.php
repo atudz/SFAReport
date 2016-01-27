@@ -2243,9 +2243,9 @@ ORDER BY tas.reference_num ASC,
     			';
     	}
     	
-    	$prepare = \DB::table('txn_activity_salesman')
+    	$prepare = \DB::table('txn_return_header')
 			    	->selectRaw($select)
-			    	->join('txn_return_header', function($join){
+			    	->join('txn_activity_salesman', function($join){
 			    		$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
 			    		$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
@@ -2402,9 +2402,9 @@ ORDER BY tas.reference_num ASC,
     			';
     	}
     	
-    	$prepare = \DB::table('txn_activity_salesman')
+    	$prepare = \DB::table('txn_return_header')
 			    	->selectRaw($select)
-			    	->join('txn_return_header', function($join){
+			    	->join('txn_activity_salesman', function($join){
 			    		$join->on('txn_return_header.reference_num','=','txn_activity_salesman.reference_num');
 			    		$join->on('txn_return_header.salesman_code','=','txn_activity_salesman.salesman_code');
 			    	})
@@ -2572,18 +2572,26 @@ ORDER BY tas.reference_num ASC,
     	$select = '
     			app_salesman.salesman_code,
     			app_salesman.salesman_name,
-    			app_customer.area_code,
-				app_area.area_name,
+    			salesman_customer.area_code,
+				salesman_customer.area_name,
     			app_salesman_van.van_code,
     			app_salesman.sfa_modified_date,
 				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
     			';
     	 
     	$prepare = \DB::table('app_salesman')
-		    	->selectRaw($select)
-		    	->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
-		    	->leftJoin('app_customer','app_salesman_customer.customer_code','=','app_customer.customer_code')
-		    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+    			->distinct()
+		    	->selectRaw($select)		    	
+		    	->leftJoin(
+		    		\DB::raw('(
+		    				SELECT salesman_code,ac.area_code,aa.area_name
+							FROM app_salesman_customer apsc
+							JOIN app_customer ac ON ( ac.customer_code = apsc.customer_code ) 
+							JOIN app_area aa ON ( aa.area_code = ac.area_code ) 
+							GROUP BY ac.area_code) salesman_customer'), function($join){
+		    						    			 	$join->on('salesman_customer.salesman_code','=','app_salesman.salesman_code');
+		    						    			 }
+				)
 		    	->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
@@ -3146,7 +3154,7 @@ ORDER BY tas.reference_num ASC,
      * Get Salesman 
      * @return multitype:
      */
-    public function getSalesman($withCode=false)
+    public function getSalesman($withCode=true)
     {
     	$select = 'salesman_code, salesman_name name';
     	if($withCode)

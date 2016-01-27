@@ -12,7 +12,7 @@
 			@endif
 			@if(isset($filters))
 				@foreach($filters as $label=>$val)
-					<tr>
+					<tr align="left">
 						<td><strong>{{$label}}</strong></td>
 						<td>{{$val}}</td>
 					</tr>
@@ -31,11 +31,19 @@
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
-						<td>
+						<td align="left">
 							@if(is_object($record) && isset($record->$row))
-								{!!$record->$row!!}
+								@if(false !== strpos($row,'date'))
+									{{ date('m/d/Y', strtotime($record->$row)) }}
+								@else
+									{!!$record->$row!!}
+								@endif
 							@elseif(is_array($record) && isset($record[$row]))
-								{!!$record[$row]!!}	
+								@if(false !== strpos($row,'date'))
+									{{ date('m/d/Y', strtotime($record[$row])) }}
+								@else
+									{!!$record[$row]!!}
+								@endif									
 							@endif
 						</td>
 					@endforeach
