@@ -567,7 +567,7 @@
 	/**
 	 * Centralized filter function
 	 */
-	function filterSubmit(scope, API, filter, log)
+	function filterSubmit(scope, API, filter, log, report)
 	{
 		var params = {};
 		
@@ -626,6 +626,14 @@
 			});
 			log.info(filter);
 			$('p[id$="_error"]').addClass('hide');
+			
+			if(report == 'salescollectionreport')
+		    {
+		    	var currentDate = new Date();
+		    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+		    	params = {invoice_date_from:formatted,invoice_date_to:formatted};	  
+		    	log.info(params);
+		    }
 			
 			scope.toggleFilter = true;
 			toggleLoading(true);
@@ -942,6 +950,14 @@
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
 	    
+	    if(report == 'salescollectionreport')
+	    {
+	    	var currentDate = new Date();
+	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
+	    	log.info(params);
+	    }
+	    
 	    toggleLoading(true);
 	    API.get(params,function(data){
 	    	scope.records = data.records;
@@ -960,7 +976,7 @@
 		sortColumn(scope,API,params,log);
 	    
 	    // Filter table records	    
-	    filterSubmit(scope,API,params,log);
+	    filterSubmit(scope,API,params,log, report);
 		
 	    // Paginate table records	    
 	    pagination(scope,API,params,log);
