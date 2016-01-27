@@ -286,16 +286,18 @@ class ReportsPresenter extends PresenterCore
     public function getPreparedSalesCollection($summary = false)
     {
     	$query = ' SELECT
+    			   tas.salesman_code,
 				   tas.customer_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
-				   remarks.remarks,
+				   remarks.remarks,    			   
 				   sotbl.invoice_number,
 				   sotbl.so_date invoice_date,
 				   sotbl.so_total_served so_total_served,
 				   sotbl.so_total_item_discount so_total_item_discount,
 				   sotbl.so_total_collective_discount,
+    			   sotbl.sfa_modified_date invoice_posting_date,
 				   (sotbl.so_total_served - sotbl.so_total_item_discount) total_invoice_amount,
-			  	   tsohd2.ref_no other_deduction_slip_number,
+			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   rtntbl.RTN_total_gross,
 				   rtntbl.RTN_total_collective_discount,
@@ -311,7 +313,14 @@ class ReportsPresenter extends PresenterCore
 				   coltbl.cm_number,
 				   ti.invoice_date cm_date,
 			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\') credit_amount,
-				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\')) total_collected_amount
+				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\')) total_collected_amount,
+    			
+    			   remarks.evaluated_objective_id,
+    			   sotbl.sales_order_header_id,
+    			   coltbl.collection_header_id,
+    			   coltbl.collection_detail_id,
+    			   rtntbl.return_header_id,
+    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
     	
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
@@ -319,12 +328,15 @@ class ReportsPresenter extends PresenterCore
 					-- SALES ORDER SUBTABLE
 					(
 						select
+    						all_so.sales_order_header_id,
+    			
 							all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+    						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_vat) as so_total_vat,
 							sum(all_so.total_discount) as so_total_item_discount,
@@ -333,20 +345,25 @@ class ReportsPresenter extends PresenterCore
 							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
 						
 							sum(all_so.so_amount) as so_amount,
-							sum(all_so.net_amount) as so_net_amount
+							sum(all_so.net_amount) as so_net_amount,
+    			
+    						all_so.updated
 						from (
 								select
+    								tsoh.sales_order_header_id,
 									tsoh.so_number,
 									tsoh.reference_num,
 									tsoh.salesman_code,
 									tsoh.customer_code,
 									tsoh.so_date,
+    								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
 									sum(IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00)) as total_served,
 									(sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00))/1.12)*0.12 as total_vat,
 									sum(IF(tsod.discount_amount,tsod.discount_amount,0.00)) as total_discount,
 									sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00))/1.12 as so_amount,
-									sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00)) as net_amount
+									sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00)) as net_amount,
+    								IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
 								group by tsoh.so_number,
@@ -361,17 +378,20 @@ class ReportsPresenter extends PresenterCore
 								union all
 			
 								select
+    								tsoh.sales_order_header_id,
 									tsoh.so_number,
 									tsoh.reference_num,
 									tsoh.salesman_code,
 									tsoh.customer_code,
 									tsoh.so_date,
+    								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
 									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00)) as total_served,
 									(sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00))/1.12)*0.12 as total_vat,
 									0.00 as total_discount,
 									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00))/1.12 as so_amount,
-									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00)) as net_amount
+									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00)) as net_amount,
+    								IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
 								group by tsoh.so_number,
@@ -411,6 +431,7 @@ class ReportsPresenter extends PresenterCore
 					-- RETURN SUBTABLE
 					(
 						select
+    						trh.return_header_id,
 							trh.return_txn_number,
 							trh.reference_num,
 							trh.salesman_code,
@@ -421,7 +442,8 @@ class ReportsPresenter extends PresenterCore
 							sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00)) as RTN_total_collective_discount,
 							sum((IF(trd.gross_amount,trd.gross_amount,0.00) + IF(trd.vat_amount,trd.vat_amount,0.00)) - IF(trd.discount_amount,trd.discount_amount,0.00))
 											- sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00))
-											as RTN_net_amount
+											as RTN_net_amount,
+    						IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 						from txn_return_header trh
 						inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
 						left join
@@ -456,7 +478,10 @@ class ReportsPresenter extends PresenterCore
 							tcd.check_number,
 							tcd.check_date,
 							tcd.bank,
-							tcd.cm_number
+							tcd.cm_number,
+    						tch.collection_header_id,
+    						tcd.collection_detail_id,
+    						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
 			
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
@@ -466,7 +491,7 @@ class ReportsPresenter extends PresenterCore
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
 					(
-						select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
+						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 					) remarks ON(remarks.reference_num=tas.reference_num)
 			
 					WHERE tas.activity_code like \'%SO%\'
@@ -485,7 +510,7 @@ class ReportsPresenter extends PresenterCore
 				collection.so_total_item_discount,
 				collection.so_total_collective_discount,
 				collection.total_invoice_amount,
-				collection.other_deduction_slip_number,
+				collection.other_deduction_amount,
 				collection.return_slip_num,
 				collection.RTN_total_gross,
 				collection.RTN_total_collective_discount,
@@ -501,7 +526,14 @@ class ReportsPresenter extends PresenterCore
 				collection.cm_number,
 				collection.invoice_date cm_date,
 			   	collection.credit_amount,
-				collection.total_collected_amount
+				collection.total_collected_amount,
+    			
+    			collection.evaluated_objective_id,
+    			collection.sales_order_header_id,
+    			collection.collection_header_id,
+				collection.collection_detail_id,
+    			collection.return_header_id,
+    			collection.updated
     
     			';
     	
@@ -543,10 +575,12 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'salesman',
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
     			function($self, $model){
     				return $model->where('collection.customer_code','=',$self->getValue());
     			});
+    	
+    	
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
@@ -557,13 +591,13 @@ class ReportsPresenter extends PresenterCore
     	$collectionDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date',
     			function($self, $model){
-    				return $model->whereBetween('collection.collection_posting_date',$self->formatValues($self->getValue()));
+    				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
     			});
     	
     	$postingDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date',
     			function($self, $model){
-    				return $model->whereBetween('collection.collection_posting_date',$self->formatValues($self->getValue()));
+    				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
     			});
     	
     	return $prepare;
@@ -604,7 +638,8 @@ class ReportsPresenter extends PresenterCore
 				coltbl.or_number,
 				coltbl.or_amount,
 				coltbl.or_date,
-				coltbl.sfa_modified_date collection_posting_date
+				coltbl.sfa_modified_date collection_posting_date,
+    			IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated	
 			    	
 			from txn_activity_salesman tas
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
@@ -621,7 +656,8 @@ class ReportsPresenter extends PresenterCore
 					all_so.sfa_modified_date,
 					sum(all_so.total_served) as so_total_served,
 					sum(all_so.total_discount) as so_total_item_discount,
-					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction
+					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
+    				all_so.updated
 				from (
 						select
 							tsoh.so_number,
@@ -632,7 +668,8 @@ class ReportsPresenter extends PresenterCore
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
 							sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
-							sum(tsod.discount_amount) as total_discount
+							sum(tsod.discount_amount) as total_discount,
+    						IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
 						group by tsoh.so_number,
@@ -654,7 +691,8 @@ class ReportsPresenter extends PresenterCore
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
 							sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
-							0.00 as total_discount
+							0.00 as total_discount,
+    						IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
 						group by tsoh.so_number,
@@ -696,7 +734,8 @@ class ReportsPresenter extends PresenterCore
 					trh.customer_code,
 					sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)
 									- sum(trhd.collective_discount_amount)
-									as rtn_net_amount
+									as rtn_net_amount,
+    				IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 				from txn_return_header trh
 				inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
 				left join
@@ -723,7 +762,8 @@ class ReportsPresenter extends PresenterCore
 					tch.or_number,
 					tch.or_amount,
     				tch.or_date,
-					tch.sfa_modified_date					
+					tch.sfa_modified_date,
+    				IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated					
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
@@ -753,7 +793,8 @@ class ReportsPresenter extends PresenterCore
 				collection.or_number,
 				collection.or_amount,
 				collection.or_date,	            
-				collection.collection_posting_date
+				collection.collection_posting_date,
+    			collection.updated
     			'; 
     	
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))
@@ -778,7 +819,7 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'salesman',
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
     			function($self, $model){
     				return $model->where('collection.customer_code','=',$self->getValue());
     			});
@@ -2900,8 +2941,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Total Invoice Gross Amt'],
-    			['name'=>'Invoice Discount Amount per Item','sort'=>'so_total_item_discount'],
-    			['name'=>'Invoice Discount Amount Collective','sort'=>'so_total_collective_discount'],
+    			['name'=>'Invoice Discount Amount 1','sort'=>'so_total_item_discount'],
+    			['name'=>'Invoice Discount Amount 2','sort'=>'so_total_collective_discount'],
     			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
     			['name'=>'CM Number','sort'=>'cm_number'],
     			['name'=>'Other Deduction Amount'],
@@ -3459,10 +3500,11 @@ class ReportsPresenter extends PresenterCore
     		case 'salescollectionreport':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedSalesCollection();
-    			$rows = $this->getSalesCollectionPostingSelectColumns();
-    			$header = 'Sales & Collection Posting Date';
+    			$rows = $this->getSalesCollectionSelectColumns();
+    			$summary = $this->getPreparedSalesCollection(true)->first();
+    			$header = 'Sales & Collection Report';
     			$filters = $this->getSalesCollectionFilterData();
-    			$filename = 'Sales & Collection Posting Date Report';
+    			$filename = 'Sales & Collection Report';
     			break;
     		case 'salescollectionposting':
     			$columns = $this->getTableColumns($report);
@@ -3934,6 +3976,42 @@ class ReportsPresenter extends PresenterCore
     	];
     }
     
+    /**
+     * Return sales collection select columns
+     * @return multitype:string
+     */
+    public function getSalesCollectionSelectColumns()
+    {
+    	return [
+    			'customer_code',
+    			'customer_name',
+    			'remarks',
+    			'invoice_number',
+    			'invoice_date',
+    			'so_total_served',    			
+    			'so_total_item_discount',
+    			'so_total_collective_discount',
+    			'total_invoice_amount',
+    			'cm_number',
+    			'other_deduction_amount',
+    			'return_slip_num',
+    			'RTN_total_gross',
+    			'RTN_total_collective_discount',
+    			'RTN_net_amount',
+    			'total_invoice_net_amount',
+    			'or_date',
+    			'or_number',
+    			'cash_amount',
+    			'check_amount',
+    			'bank',
+    			'check_number',
+    			'check_date',
+    			'cm_number',
+    			'cm_date',
+    			'credit_amount',
+    			'total_collected_amount',
+    	];
+    }
     
     /**
      * Return sales collection posting select columns

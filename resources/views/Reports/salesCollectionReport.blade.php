@@ -24,13 +24,23 @@
 			{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
-				<tr ng-repeat="record in records|filter:query">
+				<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 					<td>[[record.customer_code]]</td>
 					<td>[[record.customer_name]]</td>
-					<td>[[record.remarks]]</td>
-					<td>[[record.invoice_number]]</td>
 					<td>
-						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
+    						[[ record.remarks ]]
+  						</a>
+					</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
+    						[[ record.invoice_number ]]
+  						</a>
+					</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
+    						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+  						</a>						
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.so_total_served)"></span>
@@ -40,9 +50,17 @@
 					<td>
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
 					</td>
-					<td>[[record.cm_number]]</td>
-					<td>[[record.other_deduction_slip_number]]</td>
-					<td>[[record.return_slip_num]]</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM Number','cm_number')">
+    						[[ record.cm_number ]]
+  						</a>
+					</td>
+					<td>[[record.other_deduction_amount]]</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
+    						[[record.return_slip_num]]
+  						</a>
+					</td>
 					<td>
 						<span ng-bind="formatNumber(record.RTN_total_gross)"></span>
 					</td>
@@ -54,21 +72,41 @@
 						<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
 					</td>
 					<td>
-						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
+						<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
+    						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
+  						</a>						
 					</td>
-					<td>[[record.or_number]]</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')">
+    						[[record.or_number]]
+  						</a>
+					</td>
 					<td>
 						<span ng-bind="formatNumber(record.cash_amount)"></span>
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.check_amount)"></span>
 					</td>
-					<td>[[record.bank]]</td>
-					<td>[[record.check_number]]</td>
 					<td>
-						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
+    						[[record.bank]]
+  						</a>
 					</td>
-					<td>[[record.cm_number]]</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')">
+    						[[record.check_number]]
+  						</a>
+					</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
+    						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+  						</a>						
+					</td>
+					<td>
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')">
+    						[[record.cm_number]]
+  						</a>
+					</td>
 					<td>
 						<span ng-bind="formatDate(record.cm_date) | date:'MM/dd/yyyy'"></span>
 					</td>
@@ -81,7 +119,7 @@
 				</tr>
 				
 				<!-- Summary -->
-				<tr>
+				<tr id="total_summary">
 					<th>Total</th>
 					<td></td>
 					<td></td>
