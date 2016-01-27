@@ -29,31 +29,109 @@
 					<td>[[record.customer_name]]</td>
 					<td>[[record.remarks]]</td>
 					<td>[[record.invoice_number]]</td>
-					<td>[[record.invoice_date]]</td>
-					<td>[[record.so_total_served]]</td>
+					<td>
+						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber(record.so_total_served)"></span>
+					</td>
 					<td>[[record.so_total_item_discount]]</td>
 					<td>[[record.so_total_collective_discount]]</td>
-					<td>[[record.total_invoice_amount]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
+					</td>
 					<td>[[record.cm_number]]</td>
 					<td>[[record.other_deduction_slip_number]]</td>
 					<td>[[record.return_slip_num]]</td>
-					<td>[[record.RTN_total_gross]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.RTN_total_gross)"></span>
+					</td>
 					<td>[[record.RTN_total_collective_discount]]</td>
-					<td>[[record.RTN_net_amount]]</td>
-					<td>[[record.total_invoice_net_amount]]</td>
-					<td>[[record.or_date]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.RTN_net_amount)"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
+					</td>
+					<td>
+						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
+					</td>
 					<td>[[record.or_number]]</td>
-					<td>[[record.cash_amount]]</td>
-					<td>[[record.check_amount]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.cash_amount)"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber(record.check_amount)"></span>
+					</td>
 					<td>[[record.bank]]</td>
 					<td>[[record.check_number]]</td>
-					<td>[[record.check_date]]</td>
+					<td>
+						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+					</td>
 					<td>[[record.cm_number]]</td>
-					<td>[[record.cm_date]]</td>
-					<td>[[record.credit_amount]]</td>
-					<td>[[record.total_collected_amount]]</td>									
+					<td>
+						<span ng-bind="formatDate(record.cm_date) | date:'MM/dd/yyyy'"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber(record.credit_amount)"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber(record.total_collected_amount)"></span>
+					</td>									
+				</tr>
+				
+				<!-- Summary -->
+				<tr>
+					<th>Total</th>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<th>
+						<span ng-bind="formatNumber(summary.so_total_served)"></span>
+					</th>
+					<td></td>
+					<th>
+						<span ng-bind="formatNumber(summary.so_total_collective_discount)"></span>
+					</th>
+					<th>
+						<span ng-bind="formatNumber(summary.total_invoice_amount)"></span>
+					</th>
+					<td></td>
+					<td></td>
+					<td></td>
+					<th>
+						<span ng-bind="formatNumber(summary.RTN_total_gross)"></span>
+					</th>
+					<th>
+						<span ng-bind="formatNumber(summary.RTN_total_collective_discount)"></span>
+					</th>
+					<th>
+						<span ng-bind="formatNumber(summary.RTN_net_amount)"></span>
+					</th>
+					<th>
+						<span ng-bind="formatNumber(summary.total_invoice_net_amount)"></span>
+					</th>
+					<td></td>
+					<td></td>
+					<th>
+						<span ng-bind="formatNumber(summary.cash_amount)"></span>
+					</th>
+					<th>
+						<span ng-bind="formatNumber(summary.check_amount)"></span>
+					</th>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<th>
+						<span ng-bind="formatNumber(summary.total_collected_amount)"></span>
+					</th>									
 				</tr>
 				</tbody>
+				{!!Html::tfooter(true,27)!!}
 			{!!Html::tclose()!!}
 	
 		</div>		
