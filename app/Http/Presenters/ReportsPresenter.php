@@ -1888,7 +1888,10 @@ class ReportsPresenter extends PresenterCore
     	->selectRaw($select);
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
+    			function($self, $model){
+    				return $model->where('sales.salesman_code','=',$self->getValue());
+    			});
     	
     	$areaFilter = FilterFactory::getInstance('Select');
     	$prepare = $areaFilter->addFilter($prepare,'area',
@@ -2195,7 +2198,10 @@ class ReportsPresenter extends PresenterCore
 			    	->selectRaw($select);			    	
 
 		$salesmanFilter = FilterFactory::getInstance('Select');
-		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
+    			function($self, $model){
+    				return $model->where('sales.salesman_code','=',$self->getValue());
+    			});
 			    	
 		$areaFilter = FilterFactory::getInstance('Select');
 		$prepare = $areaFilter->addFilter($prepare,'area',
