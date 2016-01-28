@@ -23,8 +23,19 @@
 				{!!Html::topen()!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					
+						<tr ng-repeat="record in records|filter:query">
+							<td>[[record.activity_code]]</td>
+							<td>[[record.salesman_name]]</td>
+							<td>[[record.customer_code]]</td>
+							<td>[[record.customer_name]]</td>
+							<td>[[record.remarks]]</td>
+							<td>[[record.invoice_number]]</td>
+							<td>
+								<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
+							</td>									
+						</tr>	
 					</tbody>
+					{!!Html::tfooter(true,14)!!}
 				{!!Html::tclose()!!}
 			</div>			
 		</div>
