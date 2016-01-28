@@ -37,19 +37,11 @@ class ReportsPresenter extends PresenterCore
      */
     public function index()
     {
-    	/* $unpaid = $this->getDataCount('unpaidinvoice')->getData();
-    	$this->view->unpaidTotal = $unpaid->total;
-    	
-    	$sales = $this->getDataCount('salesreportpermaterial')->getData();
-    	$this->view->salesTotal = $sales->total;
-    	
-    	$van = $this->getDataCount('vaninventoryfrozen')->getData();
-    	$this->view->vanTotal = $van->total;
-    	 */
-    	
-    	$this->view->unpaidTotal = 0;
-    	$this->view->salesTotal = 0;
-    	$this->view->vanTotal = 0;
+    	$summary = \DB::table('report_summary')->get();
+    	foreach($summary as $report)
+    	{
+    		$this->view->{$report->report} = $report->count;
+    	}
     	return $this->view('index');
     }
     
@@ -4373,5 +4365,30 @@ class ReportsPresenter extends PresenterCore
     	];
     
     	return $filters;
+    }
+    
+    /**
+     * Update report summary columns
+     */
+    public function updateReportSummary()
+    {
+    	$salesCollection = $this->getDataCount('salescollectionreport');
+    	$unpaid = $this->getDataCount('unpaidinvoice');
+    	$van = $this->getDataCount('vaninventorycanned');
+    	$bir = $this->getDataCount('bir');
+    	$sales = $this->getDataCount('salesreportpermaterial');
+    	
+    	$today = new \DateTime();
+    	$data = [
+    		['report'=>'salescollection','count'=>$salesCollection->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    		['report'=>'unpaidinvoice','count'=>$unpaid->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    		['report'=>'van','count'=>$van->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    		['report'=>'bir','count'=>$bir->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    		['report'=>'salesreport','count'=>$sales->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    	];
+    	
+    	\DB::table('report_summary')->delete();
+    	
+    	\DB::table('report_summary')->insert($data);
     }
 }
