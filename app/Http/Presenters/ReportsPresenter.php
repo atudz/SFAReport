@@ -1054,12 +1054,15 @@ class ReportsPresenter extends PresenterCore
      * @param unknown $itemCodes
      * @return unknown
      */
-    public function getVanInventoryStockItems($transferId, $itemCodes)
+    public function getVanInventoryStockItems($transferIds, $itemCodes)
     {
+    	if(!is_array($transferIds))
+    		$transferIds = array($transferIds);
+    	
     	$stockItems = \DB::table('txn_stock_transfer_in_detail')
 					    	->select(['item_code','quantity'])
 					    	->whereIn('item_code',$itemCodes)
-					    	->where('stock_transfer_number','=',$transferId)
+					    	->whereIn('stock_transfer_number',$transferIds)
 					    	->get();
     	return $stockItems;
     }
@@ -1134,55 +1137,58 @@ class ReportsPresenter extends PresenterCore
     	}
     			 
     	$data['replenishment'] = (array)$replenishment;
-    	//$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],(array)$replenishment);
-    	if($replenishment && isset($replenishment->total) && $replenishment->total)
+    	if($reports && $replenishment && isset($replenishment->total) && $replenishment->total)
+    	{
+    		$beginningBalance = (array)$replenishment;
+    		unset($beginningBalance['reference_number'],$beginningBalance['replenishment_date']);
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
+    	}
     			
     	
     	// Get Van Inventory stock transfer data
     	$prepare = $this->getPreparedVanInventoryStocks();
-    	$stocks = $prepare->first();    	
+    	$stocks = $prepare->get();
     	
     	$stockItems = [];
     	$tempStockTransfer = [];
     	if($stocks) 
     	{
-	    	$stockItems = $this->getVanInventoryStockItems($stocks->stock_transfer_number, $codes);
-	    	foreach($stockItems as $item)
+    		$transferIds = [];
+    		foreach ($stocks as $stock)
+	    		$transferIds[] = $stock->stock_transfer_number;
+    		
+	    	foreach ($transferIds as $k=>$id)
 	    	{
-	    		$stocks->{'code_'.$item->item_code} = $item->quantity;
-	    		$tempStockTransfer['code_'.$item->item_code] = $item->quantity;
+	    		$stockItems = $this->getVanInventoryStockItems($id, $codes);	    		
+	    		foreach($stockItems as $item)
+	    		{
+		    		$stocks[$k]->{'code_'.$item->item_code} = $item->quantity;
+		    		if(!isset($tempStockTransfer['code_'.$item->item_code]))
+		    			$tempStockTransfer['code_'.$item->item_code] = 0;
+		    		$tempStockTransfer['code_'.$item->item_code] += $item->quantity;
+	    		}
+	    		if($reports)
+	    			$reportRecords[] = $stocks[$k];
 	    	}
     	}
-    	else
-    	{
-    		// pull previous stock transfer
-    		$tempStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
-    	}
+
+    	// pull previous stock transfer
+    	$tempPrevStockTransfer = [];
+    	$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
+    	//dd($tempPrevStockTransfer);
+
+    	//dd($stocks);
     	
-    	
-    	if($stocks)
-    		$stocks->total = $stocks ? 1 : 0;
-    	else
-    		$stocks['total'] = 0;
+    	$data['total_stocks'] = $stocks ? count($stocks) : 0;    	
     	$data['stocks'] = (array)$stocks;    	
-    	
-    	if(is_object($stocks))
-    		$reportRecords[] = (array)$stocks;
     	
     	
     	// Get Cusomter List
-    	$prepare = $this->getPreparedVanInventory();
-    	if($reports)
-    	{
-    		$limit = config('system.report_limit_xls');
-    		$results = $prepare->skip($offset)->take($limit)->get();
-    	}   
-    	else
-    	{	 	
-    		$results = $prepare->get();
-    	}    	
-
+    	$prepare = $this->getPreparedVanInventory();    	
+    	$results = $prepare->get();
+			
+    	//dd($results);
     	$records = [];
     	$tempInvoices = [];
     	$tempReturns = [];
@@ -1210,7 +1216,8 @@ class ReportsPresenter extends PresenterCore
     			$tempReturns['code_'.$result->item_code] = $result->quantity;
     		
     		$records[] = $result;
-    		$reportRecords[] = (array)$result;
+    		if($reports)
+    			$reportRecords[] = (array)$result;
     	}
     	
     	// Compute Stock on Hand
@@ -1227,20 +1234,22 @@ class ReportsPresenter extends PresenterCore
     			$tempReturns[$code] = 0;
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
+    		if(!isset($tempPrevStockTransfer[$code]))	
+    			$tempPrevStockTransfer[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     		
     		if($stockOnHand[$code])
     			$hasStockOnHand = true;
     	}
-    	
+    	//dd($tempPrevStockTransfer, $tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
     	$data['records'] = $records;
     	$data['total'] = $reports ? count($records) : count($results);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	if($hasStockOnHand && $data['stocks']['total'])
+    	if($reports && $data['total'])
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
@@ -1254,13 +1263,13 @@ class ReportsPresenter extends PresenterCore
     			$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
     			$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
     			
-    			if($shortOverStocks[$code] && $data['stocks']['total'])
+    			if($shortOverStocks[$code] && $data['total_stocks'])
     				$displayShort = true;
     		}    		    		
     	}
     	$shortOverStocks['total'] = $displayShort ? 1 : 0;
     	$data['short_over_stocks'] = $shortOverStocks;
-    	if($displayShort)
+    	if($reports && $displayShort)
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
     	
     	unset($replenishment->replenishment_date);
@@ -1283,17 +1292,24 @@ class ReportsPresenter extends PresenterCore
     		$codes[] = $item->item_code;
     	}
     	
+    	$dateFrom = (new \DateTime($dateFrom))->format('Y-m-d');
+    	
     	// Get previous stock transfer
-    	$prepare = \DB::table('txn_stock_transfer_in_header')
-    					->select([\DB::raw('DATE(sfa_modified_date) sfa_modified_date'),'stock_transfer_number'])
-    					->where(\DB::raw('DATE(sfa_modified_date)'),'<',$dateFrom)
-    					->where('salesman_code','=',$this->request->get('salesman_code'));
+    	$prepare = $this->getPreparedVanInventoryStocks(true);
+    	$prepare = $prepare->where(\DB::raw('DATE(sfa_modified_date)'),'<',$dateFrom);    	
+    	$prepare = $prepare->orderBy('sfa_modified_date');
     	
-    	$stockTransferNumFilter = FilterFactory::getInstance('Text');
-    	$prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
-    	$prepare = $prepare->orderBy('sfa_modified_date','desc');
+    	$stockStart = $prepare->first();
+    	if(!$stockStart)
+    		return [];
     	
-    	$stockTransfer = $prepare->first();
+    	$dateFrom = date('Y-m-d', strtotime('-1 day', strtotime($dateFrom)));
+    	
+    	$dateStart = (new \DateTime($stockStart->transaction_date))->format('Y-m-d');
+    	$prepare = $this->getPreparedVanInventoryStocks(true);
+    	$prepare = $prepare->whereBetween(\DB::raw('DATE(sfa_modified_date)'),[$dateStart,$dateFrom]);
+    	$prepare = $prepare->orderBy('sfa_modified_date');
+    	$stockTransfer = $prepare->get();    	
     					
     	if(!$stockTransfer)
     		return [];
@@ -1302,20 +1318,23 @@ class ReportsPresenter extends PresenterCore
     	$tempStockTransfer = [];
     	if($stockTransfer)
     	{
-    		$stockItems = $this->getVanInventoryStockItems($stockTransfer->stock_transfer_number, $codes);
+    		$transferIds = [];
+    		foreach($stockTransfer as $stock)
+    			$transferIds[] = $stock->stock_transfer_number;
+    		$stockItems = $this->getVanInventoryStockItems($transferIds, $codes);
     		foreach($stockItems as $item)
     		{
-    			$tempStockTransfer['code_'.$item->item_code] = $item->quantity;
+    			if(!isset($tempStockTransfer['code_'.$item->item_code]))
+    				$tempStockTransfer['code_'.$item->item_code] = 0;
+    			$tempStockTransfer['code_'.$item->item_code] += $item->quantity;    			
     		}
-    	}
-    	
-    	$prevDate = date('Y-m-d', strtotime('-1 day', strtotime($dateFrom)));
+    	}    	
     	
     	// Beginning Balance / Actual Count
-    	// Get Replenishment data 
+    	// Get Replenishment data     	
     	$prepare = \DB::table('txn_replenishment_header')
     					->select('reference_number')
-    					->whereBetween(\DB::raw('DATE(replenishment_date)'),[$stockTransfer->sfa_modified_date,$prevDate]);
+    					->whereBetween(\DB::raw('DATE(replenishment_date)'),[$dateStart,$dateFrom]);
     	
     	$referenceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
@@ -1341,7 +1360,6 @@ class ReportsPresenter extends PresenterCore
     		}	
     		    		    			    			    
     	}
-    			 
     	
     	// Get Invoice 
     	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
@@ -1351,19 +1369,10 @@ class ReportsPresenter extends PresenterCore
     	{
     		$itemCodes[] = $item->item_code;
     	}
-    	
-    	/* $prepare = \DB::table('txn_sales_order_header')
-    				->distinct()    		
- 				   	->select(['txn_sales_order_header.so_number','txn_return_detail.quantity','txn_sales_order_detail.item_code'])
- 				   	->leftJoin('txn_sales_order_detail','txn_sales_order_header.so_number','=','txn_sales_order_detail.so_number')
- 				   	->leftJoin('txn_return_detail','txn_sales_order_header.reference_num','=','txn_return_detail.reference_num')
- 				   	->where('txn_sales_order_header.salesman_code','=',$this->request->get('salesman_code'))
- 				   	->whereIn('txn_sales_order_detail.item_code',$itemCodes)
- 				   	->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$stockTransfer->sfa_modified_date,$prevDate]); */
+
     	$prepare = $this->getPreparedVanInventory(true)
-    				->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$stockTransfer->sfa_modified_date,$prevDate]);
+    				->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$dateStart,$dateFrom]);
     	$invoices = $prepare->get();
-    	//dd($invoices);
     	foreach($invoices as $result)
     	{
     		$sales = \DB::table('txn_sales_order_detail')
@@ -1400,11 +1409,11 @@ class ReportsPresenter extends PresenterCore
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     	}
-    	
+    	 
     	return $stockOnHand;
     }
     
@@ -1427,21 +1436,31 @@ class ReportsPresenter extends PresenterCore
      * Return prepared statement for van inventory stocks
      * @return unknown
      */
-    public function getPreparedVanInventoryStocks()
+    public function getPreparedVanInventoryStocks($noTransaction=false)
     {
+    	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
+    	
     	$prepare = \DB::table('txn_stock_transfer_in_header')
-    					->selectRaw('modified_date transaction_date,stock_transfer_number');
+    					->selectRaw('txn_stock_transfer_in_header.modified_date transaction_date,txn_stock_transfer_in_header.stock_transfer_number')
+    					->join(\DB::raw(
+    						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
+    						), function ($join){
+					    		$join->on('txn_stock_transfer_in_header.stock_transfer_number','=','tsin.stock_transfer_number');
+			    	});
     	 
-    	$transactionFilter = FilterFactory::getInstance('Date');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
-		    			function($self, $model){
-		    				return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.sfa_modified_date)'),'=',$self->getValue());
-		    			});
+    	if(!$noTransaction)
+    	{
+	    	$transactionFilter = FilterFactory::getInstance('Date');
+	    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+			    			function($self, $model){
+			    				return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.sfa_modified_date)'),'=',$self->getValue());
+			    			});
+    	}
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	
     	$stockTransferNumFilter = FilterFactory::getInstance('Text');
-    	$prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
+	    $prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
     	
     	return $prepare;
     			 
@@ -1464,8 +1483,15 @@ class ReportsPresenter extends PresenterCore
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
+    	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
+    	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
+    				->join(\DB::raw(
+    						'(select reference_num from txn_sales_order_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY reference_num) tsod'
+    						), function ($join){
+					    		$join->on('txn_sales_order_header.reference_num','=','tsod.reference_num');
+			    	})
     				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
 			    	->leftJoin('txn_return_header', function ($join){
 			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
@@ -1493,22 +1519,7 @@ class ReportsPresenter extends PresenterCore
     					function($self,$model){    						
     						return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
     				});
-    	
-    	/* $invoiceFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date'); */
-    	 
-    	/* $postingFilter = FilterFactory::getInstance('DateRange');
-    	 $prepare = $postingFilter->addFilter($prepare,'posting_date',
-	    				function($self, $model){
-	    						return $model->where(\DB::raw('DATE(txn_sales_order_header.sfa_modified_date)'),'=',$self->getValue());	
-    				});
-    	 */ 
-    	/* $typeFilter = FilterFactory::getInstance('Select');
-    	$prepare = $typeFilter->addFilter($prepare,'type',
-    					function($self, $model){
-    						return $model->where('app_area.area_code','=',$self->getValue());	
-    				}); */
-    	
+    	    	
     	/* $status = $this->request->get('status') ? $this->request->get('status') : 'A';
     	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
     	$codes = [];
@@ -1518,6 +1529,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */    	
     	
+    	$prepare->orderBy('txn_sales_order_header.invoice_number');
     	return $prepare;
     }
     
@@ -3922,7 +3934,7 @@ class ReportsPresenter extends PresenterCore
     			'transaction_date',
     			'stock_transfer_number',
     			'replenishment_date',
-    			'replenishment_number',    			
+    			'reference_number',    			
     	];
     	
     	$items = $this->getVanInventoryItems($type,'item_code',$status);
@@ -4265,8 +4277,7 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'vaninventorycanned':
     		case 'vaninventoryfrozen':
-    			$prepare = $this->getPreparedVanInventory(); 
-    			break;   			
+    			$prepare = $this->getPreparedVanInventory();   
     		case 'salesreportpermaterial':
     			$prepare = $this->getPreparedSalesReportMaterial();
     			break;

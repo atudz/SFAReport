@@ -454,6 +454,7 @@
 				    	records: data.records,
 				    	total: data.total,
 				    	stocks: data.stocks,
+				    	show_stocks: data.total_stocks,
 				    	replenishment: data.replenishment,		    	
 				    	showBody: data.total,
 				    	showReplenishment: data.replenishment.total,

@@ -60,19 +60,19 @@
 						</tr>
 						
 						<!-- Stock count -->
-						<tr ng-show="item.stocks.total">
+						<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks">
 							<th></th>
 							<th></th>
 							<th></th>
 							<th></th>
 							<th>
-								<span ng-bind="formatDate(item.stocks.transaction_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[item.stocks.stock_transfer_number]]</th>
+							<th>[[stock.stock_transfer_number]]</th>
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
-								<th>[[item.stocks.{{'code_'.$item->item_code}}]]</th>
+								<th>[[stock.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
 						</tr>
 						
