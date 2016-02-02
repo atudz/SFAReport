@@ -40,7 +40,7 @@
 						</tr>
 						
 						<!-- Summary total -->
-						<tr>
+						<tr id="total_summary">
 							<th>Total</th>						
 							<td></td>
 							<td></td>
