@@ -288,24 +288,24 @@ class ReportsPresenter extends PresenterCore
 				   sotbl.so_total_item_discount so_total_item_discount,
 				   sotbl.so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
-				   (sotbl.so_total_served - sotbl.so_total_item_discount) total_invoice_amount,
+				   (sotbl.so_total_served - sotbl.so_total_collective_discount) total_invoice_amount,
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   rtntbl.RTN_total_gross,
 				   rtntbl.RTN_total_collective_discount,
-				   rtntbl.RTN_net_amount,
-				   (sotbl.so_total_served - sotbl.so_total_item_discount - sotbl.so_total_ewt_deduction - rtntbl.rtn_net_amount) total_invoice_net_amount,
+				   (rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount) RTN_net_amount,
+				   ((sotbl.so_total_served - sotbl.so_total_collective_discount) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - (rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount)) total_invoice_net_amount,
 				   coltbl.or_date,
 	               coltbl.or_number,
-				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) cash_amount,
-				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) check_amount,
+				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) cash_amount,
+				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) check_amount,
 				   coltbl.bank,
 				   coltbl.check_number,
 				   coltbl.check_date,
 				   coltbl.cm_number,
 				   ti.invoice_date cm_date,
-			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\') credit_amount,
-				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, \'\')) total_collected_amount,
+			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) credit_amount,
+				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0)) total_collected_amount,
     			
     			   remarks.evaluated_objective_id,
     			   sotbl.sales_order_header_id,
@@ -432,9 +432,6 @@ class ReportsPresenter extends PresenterCore
 							trh.return_slip_num,
 							sum(IF(trd.gross_amount,trd.gross_amount,0.00) + IF(trd.vat_amount,trd.vat_amount,0.00)) as RTN_total_gross,
 							sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00)) as RTN_total_collective_discount,
-							sum((IF(trd.gross_amount,trd.gross_amount,0.00) + IF(trd.vat_amount,trd.vat_amount,0.00)) - IF(trd.discount_amount,trd.discount_amount,0.00))
-											- sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00))
-											as RTN_net_amount,
     						IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 						from txn_return_header trh
 						inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
@@ -624,7 +621,7 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
 				sotbl.invoice_number,
-				(IF(sotbl.so_total_served,sotbl.so_total_served,0.00) - IF(sotbl.so_total_item_discount,sotbl.so_total_item_discount,0.00) - IF(sotbl.so_total_ewt_deduction,sotbl.so_total_ewt_deduction,0.00) - IF(rtntbl.rtn_net_amount,rtntbl.rtn_net_amount,0.00)) total_invoice_net_amount,
+    			((coalesce(sotbl.so_total_served,0.00)-coalesce(sotbl.so_total_collective_discount,0.00)) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - (coalesce(rtntbl.RTN_total_gross,0.00) - coalesce(rtntbl.RTN_total_collective_discount,0.00))) total_invoice_net_amount,
 				sotbl.so_date invoice_date,
 				sotbl.sfa_modified_date invoice_posting_date,
 				coltbl.or_number,
@@ -648,6 +645,7 @@ class ReportsPresenter extends PresenterCore
 					all_so.sfa_modified_date,
 					sum(all_so.total_served) as so_total_served,
 					sum(all_so.total_discount) as so_total_item_discount,
+    				sum(tsohd.collective_discount_amount) as so_total_collective_discount,
 					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
     				all_so.updated
 				from (
@@ -702,6 +700,7 @@ class ReportsPresenter extends PresenterCore
 				(
 					select
 						reference_num,
+    					sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount,
 						sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount
 					from txn_sales_order_header_discount
 					group by reference_num
@@ -724,6 +723,8 @@ class ReportsPresenter extends PresenterCore
 					trh.reference_num,
 					trh.salesman_code,
 					trh.customer_code,
+    				sum(IF(trd.gross_amount,trd.gross_amount,0.00) + IF(trd.vat_amount,trd.vat_amount,0.00)) as RTN_total_gross,
+					sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00)) as RTN_total_collective_discount,
 					sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)
 									- sum(trhd.collective_discount_amount)
 									as rtn_net_amount,
@@ -3129,17 +3130,17 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Total Invoice Gross Amt'],
+    			['name'=>'Invoice Gross Amount'],
     			['name'=>'Invoice Discount Amount Per Item','sort'=>'so_total_item_discount'],
-    			['name'=>'Invoice Discount Amount Amount Collective','sort'=>'so_total_collective_discount'],
-    			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
+    			['name'=>'Invoice Discount Amount Collective','sort'=>'so_total_collective_discount'],
+    			['name'=>'Invoice Net Amount','sort'=>'total_invoice_amount'],
     			['name'=>'CM Number','sort'=>'cm_number'],
     			['name'=>'Other Deduction Amount'],
     			['name'=>'Return Slip Number','sort'=>'return_slip_num'],
-    			['name'=>'Total Return Amount'],
+    			['name'=>'Return Amount'],
     			['name'=>'Return Discount Amount'],
-    			['name'=>'Return Net amount'],
-    			['name'=>'Total Invoice Net Amount'],
+    			['name'=>'Return Net Amount'],
+    			['name'=>'Invoice Collectible Amount'],
     			['name'=>'Collection Date','sort'=>'or_date'],
     			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'Cash'],
@@ -3705,7 +3706,7 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'salescollectionsummary':
     			$columns = $this->getTableColumns($report);
-    			$prepare = $this->getPreparedSalesCollectionPosting();
+    			$prepare = $this->getPreparedSalesCollectionSummary();
     			$rows = $this->getSalesCollectionSummaryColumns();
     			$header = 'Summary of Sales';
     			$filters = $this->getSalesCollectionSummaryFilterData();
