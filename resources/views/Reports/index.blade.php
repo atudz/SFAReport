@@ -10,7 +10,7 @@
                         <em class="glyphicon glyphicon-list-alt glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$salescollection}}</div>
+                        <div class="large">{{$salescollection or 0}}</div>
                         <div class="text-muted">Sales &amp; Collections</div>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                         <em class="glyphicon glyphicon-barcode glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$van}}</div>
+                        <div class="large">{{$van or 0}}</div>
                         <div class="text-muted">Van Inventory</div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         <em class="glyphicon glyphicon-credit-card glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$unpaidinvoice}}</div>
+                        <div class="large">{{$unpaidinvoice or 0}}</div>
                         <div class="text-muted">Unpaid Invoice</div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         <em class="glyphicon glyphicon-stats glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$salesreport}}</div>
+                        <div class="large">{{$salesreport or 0}}</div>
                         <div class="text-muted">Sales Report</div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                         <em class="glyphicon glyphicon-th-list glyphicon-l"></em>
                     </div>
                     <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$bir}}</div>
+                        <div class="large">{{$bir or 0}}</div>
                         <div class="text-muted">BIR</div>
                     </div>
                 </div>
