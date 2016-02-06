@@ -1907,7 +1907,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table(\DB::raw($from))
     				->selectRaw($select)
     				->leftJoin('app_customer','app_customer.customer_code','=','bir.customer_code')
-    				->leftJoin('app_area','app_area.area_code','=','app_customer.customer_code')
+    				->leftJoin('app_area','app_area.area_code','=','app_customer.area_code')
     				->leftJoin('app_salesman','app_salesman.salesman_code','=','bir.sales_group');
     	
     	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
@@ -1926,6 +1926,7 @@ class ReportsPresenter extends PresenterCore
 			    	});
     	
     	
+    	$prepare->where('app_customer.customer_name','like','1000%');
     	return $prepare;
     }
     
@@ -3129,8 +3130,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Total Invoice Gross Amt'],
-    			['name'=>'Invoice Discount Amount 1','sort'=>'so_total_item_discount'],
-    			['name'=>'Invoice Discount Amount 2','sort'=>'so_total_collective_discount'],
+    			['name'=>'Invoice Discount Amount Per Item','sort'=>'so_total_item_discount'],
+    			['name'=>'Invoice Discount Amount Amount Collective','sort'=>'so_total_collective_discount'],
     			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
     			['name'=>'CM Number','sort'=>'cm_number'],
     			['name'=>'Other Deduction Amount'],
