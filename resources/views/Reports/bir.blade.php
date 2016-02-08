@@ -9,10 +9,11 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6">
 						{!!Html::select('area','Area', $area)!!}
-						{!!Html::select('salesman','Salesman', $salesman)!!}											
+						{!!Html::select('salesman','Salesman', $salesman)!!}			
+						{!!Html::input('text','reference','Reference #')!!}								
 					</div>					
 					<div class="pull-right col-sm-6">	
-						{!!Html::datepicker('document_date','Document Date','true')!!}
+						{!!Html::datepicker('document_date','Document Date','true')!!}						
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

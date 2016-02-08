@@ -14,7 +14,8 @@
 					{!!Html::input('text','or_number','OR #')!!}
 				</div>					
 				<div class="pull-right col-sm-6">	
-					{!!Html::select('customer_code','Customer Code', $customerCode)!!}
+					{!!Html::input('text','customer_name','Customer Name')!!}
+					{!!Html::select('company_code','Company Code', $companyCode)!!}
 					{!!Html::select('salesman','Salesman', $salesman)!!}							 			
 					{!!Html::datepicker('posting_date','Posting Date','true')!!}
 				</div>			

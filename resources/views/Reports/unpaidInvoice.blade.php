@@ -14,6 +14,7 @@
 					</div>					
 					<div class="pull-right col-sm-6">	
 						{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
+						{!!Html::input('text','invoice_number','Invoice #')!!}
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

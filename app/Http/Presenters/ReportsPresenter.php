@@ -56,11 +56,13 @@ class ReportsPresenter extends PresenterCore
     	switch($type)
     	{
     		case 'report':
+    			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionReportColumns();
     			return $this->view('salesCollectionReport');
     		case 'posting':
+    			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionPostingColumns();
@@ -564,12 +566,16 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
+    	$prepare = $customerFilter->addFilter($prepare,'company_code',
     			function($self, $model){
-    				return $model->where('collection.customer_code','=',$self->getValue());
+    				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
     			});
     	
-    	
+    	$nameFilter = FilterFactory::getInstance('Text');
+    	$prepare = $nameFilter->addFilter($prepare,'customer_name',
+    			function($self, $model){
+    				return $model->where('collection.customer_name','LIKE','%'.$self->getValue().'%');
+    			});
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
@@ -812,9 +818,15 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$customerFilter = FilterFactory::getInstance('Select');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
+    	$prepare = $customerFilter->addFilter($prepare,'company_code',
     			function($self, $model){
-    				return $model->where('collection.customer_code','=',$self->getValue());
+    				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
+    			});
+    	
+    	$nameFilter = FilterFactory::getInstance('Text');
+    	$prepare = $nameFilter->addFilter($prepare,'customer_name',
+    			function($self, $model){
+    				return $model->where('collection.customer_name','LIKE','%'.$self->getValue().'%');
     			});
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
@@ -1790,6 +1802,12 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->where('vw_inv.customer_code','=',$self->getValue());
     			});
+    	
+    	$invoiceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
+    			function($self, $model){
+    				return $model->where('vw_inv.invoice_number','LIKE','%'.$self->getValue().'%');
+    			});
     	 
     	return $prepare;
     }
@@ -2014,6 +2032,11 @@ class ReportsPresenter extends PresenterCore
 			    		return $model->whereBetween(\DB::raw('DATE(bir.document_date)'),$self->formatValues($self->getValue()));
 			    	});
     	
+    	$referenceFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceFilter->addFilter($prepare,'reference',
+    				function($self, $model){
+    					return $model->where('bir.reference','LIKE','%'.$self->getValue().'%');
+    				});
     	
     	$prepare->where('app_customer.customer_name','like','1000%');
     	return $prepare;
@@ -2291,7 +2314,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
     			function($self, $model){
-    				return $model->where('sales.invoice_number','LIKE',$self->getValue().'%');
+    				return $model->where('sales.invoice_number','LIKE','%'.$self->getValue().'%');
     			});
     	
     	$customerFilter = FilterFactory::getInstance('Select');
@@ -2601,7 +2624,7 @@ class ReportsPresenter extends PresenterCore
 		$invoiceNumFilter = FilterFactory::getInstance('Text');
 		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
 						function($self, $model){
-							return $model->where('sales.invoice_number','LIKE',$self->getValue().'%');							
+							return $model->where('sales.invoice_number','LIKE','%'.$self->getValue().'%');							
 					});
 		
 		$customerFilter = FilterFactory::getInstance('Select');
@@ -2767,7 +2790,7 @@ class ReportsPresenter extends PresenterCore
 		$invoiceNumFilter = FilterFactory::getInstance('Text');
 		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
 				function($self, $model){
-					return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
+					return $model->where('txn_return_header.return_slip_num','LIKE','%'.$self->getValue().'%');
 				});
 		
 		$itemCodeFilter = FilterFactory::getInstance('Select');
@@ -2930,7 +2953,7 @@ class ReportsPresenter extends PresenterCore
 		$invoiceNumFilter = FilterFactory::getInstance('Text');
 		$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number',
 				function($self, $model){
-					return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
+					return $model->where('txn_return_header.return_slip_num','LIKE','%'.$self->getValue().'%');
 				});
 		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
@@ -4661,12 +4684,14 @@ class ReportsPresenter extends PresenterCore
     	$company = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     	$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
-    	 
+    	$invoiceNum = $this->request->get('invoice_number');
+    	
     	$filters = [
     			'Salesman' => $salesman,
     			'Company' => $company,
     			'Customer' => $customer,
     			'Invoice Date' => $invoiceDate,
+    			'Invoice #' => $invoiceNum,
     	];
     	 
     	return $filters;
@@ -4683,11 +4708,13 @@ class ReportsPresenter extends PresenterCore
     	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
+    	$reference = $this->request->get('reference');
     
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
     			'Document Date' => $documentDate,
+    			'Reference #' => $reference,
     	];
     
     	return $filters;
@@ -4701,20 +4728,22 @@ class ReportsPresenter extends PresenterCore
     {
     	$filters = [];
     
-    	$customer = $this->request->get('customer_code') ?  $this->request->get('customer_code') : 'All';
+    	$customer = $this->request->get('company_code') ?  $this->request->get('company_code') : 'All';
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$collectiontDate = ($this->request->get('collection_date_from') && $this->request->get('collection_date_to')) ? $this->request->get('collection_date_from').' - '.$this->request->get('collection_date_to') : 'All';
     	$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
     	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
     	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
+    	$name = $this->request->get('customer_name') ? $this->request->get('customer_name') : 'All';
     	
     	$filters = [
     			'Invoice Date' => $invoiceDate,
     			'Collection Date' => $collectiontDate,
     			'Invoice #' => $invoice,
     			'OR #' => $or,
-    			'Customer Code' => $customer,
+    			'Company Code' => $customer,
+    			'Customer Name' => $name,
     			'Salesman' => $salesman,
     			'Posting Date' => $postingDate,
     	];

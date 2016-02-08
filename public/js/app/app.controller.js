@@ -18,7 +18,8 @@
 	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log)
 	{	    	
 	    var params = [
-		          'customer_code',
+		          'company_code',
+		          'customer_name',
 		          'invoice_date_from',
 		          'invoice_date_to',
 		          'collection_date_from',
@@ -49,7 +50,8 @@
 	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log)
 	{		
 	    var params = [
-		          'customer_code',
+		          'company_code',
+		          'customer_name',
 		          'invoice_date_from',
 		          'invoice_date_to',
 		          'collection_date_from',
@@ -161,6 +163,7 @@
 			          'company_code',
 			          'invoice_date_from',
 			          'invoice_date_to',
+			          'invoice_number',
 			          'salesman',
 			          'customer'
 			];
@@ -359,6 +362,7 @@
 	    var params = [
 		          'area',
 		          'salesman',
+		          'reference',
 		          'document_date_from',
 		          'document_date_to'
 		];
