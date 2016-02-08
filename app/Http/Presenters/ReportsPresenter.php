@@ -3747,6 +3747,8 @@ class ReportsPresenter extends PresenterCore
     		return;
     	}
     	
+    	gc_collect_cycles();
+    	
     	$records = [];
     	$columns = [];
     	$theadRaw = '';
@@ -3756,6 +3758,7 @@ class ReportsPresenter extends PresenterCore
     	$filters = [];
     	$filename = 'Report';
     	$prepare = '';
+    	$fontSize = '11px';
     	$vaninventory = false;
     	$salesSummary = false;
     	
@@ -3792,12 +3795,15 @@ class ReportsPresenter extends PresenterCore
 							<th rowspan="2" align="center" style="wrap-text:true">12% Sales Tax</th>
 							<th rowspan="2" align="center" style="wrap-text:true">Amount Subject To Commission</th>
 						</tr>
-    					<tr>
-							<th align="center"></th>
+    					<tr>';
+    			
+    			if(in_array($type,['xls','xlsx']))
+					$theadRaw .= '<th align="center"></th>';
+							
+    			$theadRaw .= '
     						<th align="center">From</th>
 							<th align="center">To</th>    						
-						</tr>
-    					'; 
+					    </tr>'; 
     			$prepare = $this->getPreparedSalesCollectionSummary();
     			$rows = $this->getSalesCollectionSummarySelectColumns();
     			$summary = $this->getPreparedSalesCollectionSummary(true)->first();
@@ -3875,6 +3881,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Sales Report Per Material';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Sales Report Per Material';
+    			$fontSize = '7px';
     			break;
     		case 'salesreportperpeso':
     			$columns = $this->getTableColumns($report);
@@ -3884,6 +3891,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Sales Report Per Peso';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Sales Report Per Peso';
+    			$fontSize = '7px';
     			break;
     		case 'returnpermaterial':
     			$columns = $this->getTableColumns($report);
@@ -3893,6 +3901,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Return Per Material';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Material';
+    			$fontSize = '9px';
     			break;
     		case 'returnperpeso':
     			$columns = $this->getTableColumns($report);
@@ -3949,7 +3958,8 @@ class ReportsPresenter extends PresenterCore
     	$this->view->filters = $filters;
     	$this->view->records = $records; 
     	$this->view->summary = $summary;
-    	return $this->view('exportXls'); */ 
+    	$this->view->fontSize = $fontSize;
+    	return $this->view('exportPdf'); */ 
     	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw){
@@ -3968,16 +3978,19 @@ class ReportsPresenter extends PresenterCore
     	}
     	elseif($type == 'pdf')
     	{
-    		\Excel::create($filename, function($excel) use ($columns,$rows,$records){
-    			$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records){
-    				$params['columns'] = $columns;
-    				$params['rows'] = $rows;
-    				$params['records'] = $records;
-    				$sheet->loadView('Reports.exportPdf', $params);
-    			});
-    		
-    		})->export($type);
-    	}
+
+    		$params['columns'] = $columns;
+    		$params['theadRaw'] = $theadRaw;
+    		$params['rows'] = $rows;
+    		$params['records'] = $records;
+    		$params['summary'] = $summary;
+    		$params['header'] = $header;
+    		$params['filters'] = $filters;
+    		$params['fontSize'] = $fontSize;
+    		$pdf = \PDF::loadView('Reports.exportPdf', $params);    	
+    		unset($params,$records,$prepare);				
+    		return $pdf->download($filename.'.pdf');
+    	}    		
     }
     
     /**
@@ -4410,6 +4423,9 @@ class ReportsPresenter extends PresenterCore
     		$limit = config('system.report_limit_xls');
     	else
     		$limit = config('system.report_limit_pdf');
+    	
+    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']))
+    		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
     	if($total > $limit)

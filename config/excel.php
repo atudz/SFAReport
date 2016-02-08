@@ -82,16 +82,16 @@ return array(
         |--------------------------------------------------------------------------
         */
         'pageSetup' => array(
-            'orientation'           => 'portrait',
+            'orientation'           => 'landscape',
             'paperSize'             => '9',
             'scale'                 => '100',
-            'fitToPage'             => false,
+            'fitToPage'             => true,
             'fitToHeight'           => true,
             'fitToWidth'            => true,
             'columnsToRepeatAtLeft' => array('', ''),
             'rowsToRepeatAtTop'     => array(0, 0),
-            'horizontalCentered'    => false,
-            'verticalCentered'      => false,
+            'horizontalCentered'    => true,
+            'verticalCentered'      => true,
             'printArea'             => null,
             'firstPageNumber'       => null,
         ),
@@ -224,7 +224,7 @@ return array(
             |    Default order: array(top, right, bottom, left)
             |
             */
-            'page_margin'          => false,
+            'page_margin'          => [0.25,0.25,0.25,0.25],
 
             /*
             |--------------------------------------------------------------------------
@@ -539,7 +539,7 @@ return array(
             'th'     => array(
                 'font' => array(
                     'bold' => true,
-                    'size' => 12,
+                    'size' => 10,
                 )
             ),
 
@@ -551,7 +551,7 @@ return array(
             'strong' => array(
                 'font' => array(
                     'bold' => true,
-                    'size' => 12,
+                    'size' => 10,
                 )
             ),
 
@@ -563,7 +563,7 @@ return array(
             'b'      => array(
                 'font' => array(
                     'bold' => true,
-                    'size' => 12,
+                    'size' => 10,
                 )
             ),
 
@@ -575,7 +575,7 @@ return array(
             'i'      => array(
                 'font' => array(
                     'italic' => true,
-                    'size'   => 12,
+                    'size'   => 8,
                 )
             ),
 
@@ -587,7 +587,7 @@ return array(
             'h1'     => array(
                 'font' => array(
                     'bold' => true,
-                    'size' => 24,
+                    'size' => 10,
                 )
             ),
 
