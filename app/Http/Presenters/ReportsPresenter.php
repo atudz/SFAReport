@@ -2398,14 +2398,7 @@ class ReportsPresenter extends PresenterCore
 				aa.area_name area,
 				tsoh.invoice_number,
 				tsoh.so_date invoice_date,
-				tsoh.sfa_modified_date invoice_posting_date,
-				aim.segment_code,
-				aim.item_code,
-				aim.description,
-			    tsod.served_qty quantity,
-			    0 return_detail_id,				   
-				\'\' condition_code,
-				tsod.uom_code,
+				tsoh.sfa_modified_date invoice_posting_date,				   
 				tsod.gross_served_amount,
 				tsod.vat_amount,
 				tsod.discount_rate,
@@ -2440,8 +2433,17 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
 				LEFT JOIN app_salesman aps ON(aps.salesman_code=tsoh.salesman_code)
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=tsoh.reference_num AND tas.salesman_code=tsoh.salesman_code)
-				LEFT JOIN  txn_sales_order_detail tsod ON(tsod.reference_num=tsoh.reference_num)
-				LEFT JOIN app_item_master aim ON(tsod.item_code=aim.item_code)
+				LEFT JOIN 
+				(
+					select sales_order_detail_id,
+    					   updated_by,
+    					   reference_num,
+						   sum(gross_served_amount) as gross_served_amount,
+    					   sum(vat_amount) as vat_amount,
+    					   sum(discount_rate) as discount_rate,
+    					   sum(discount_amount) as discount_amount									
+					from txn_sales_order_detail group by reference_num	
+				) tsod ON(tsod.reference_num=tsoh.reference_num)				
 				LEFT JOIN 
 				(
 					select reference_num,
@@ -2477,15 +2479,8 @@ class ReportsPresenter extends PresenterCore
 				aa.area_name area,
 				trh.return_slip_num invoice_number,
 				trh.return_date invoice_date,
-				trh.sfa_modified_date invoice_posting_date,
-				aim.segment_code,
-				aim.item_code,
-				aim.description,
-				trd.quantity,
-				trd.return_detail_id,
-				trd.condition_code,	
+				trh.sfa_modified_date invoice_posting_date,				
 				trd.return_detail_id sales_order_detail_id,			
-				trd.uom_code,
 				trd.gross_amount gross_served_amount,
 				trd.vat_amount,
 				0 discount_rate,
@@ -2518,8 +2513,17 @@ class ReportsPresenter extends PresenterCore
 			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
 			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
 			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
-			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
-			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)
+			LEFT JOIN 
+			(
+				select return_detail_id,
+    				   updated_by,
+    				   reference_num,
+					   sum(gross_amount) as gross_amount,
+    				   sum(vat_amount) as vat_amount,
+    				   0 as discount_rate,
+    				   sum(discount_amount) as discount_amount									
+					from txn_return_detail group by reference_num	
+			) trd ON(trd.reference_num=trh.reference_num)	
 			LEFT JOIN
 			(
 				select reference_num,
@@ -2553,12 +2557,6 @@ class ReportsPresenter extends PresenterCore
 				sales.invoice_number,
 				sales.invoice_date,
 				sales.invoice_posting_date,
-				sales.segment_code,
-				sales.item_code,
-				sales.description,
-			    sales.quantity,
-			    sales.condition_code,
-				sales.uom_code,
 				sales.gross_served_amount,
 				sales.vat_amount,
 				sales.discount_rate,
@@ -2590,7 +2588,6 @@ class ReportsPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-				   SUM(sales.quantity) quantity,
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
@@ -2866,23 +2863,17 @@ class ReportsPresenter extends PresenterCore
 				txn_return_header.return_slip_num,
 				txn_return_header.return_date,
 				txn_return_header.sfa_modified_date return_posting_date,
-				app_item_master.segment_code,
-				app_item_master.item_code,
-				app_item_master.description,
-				txn_return_detail.condition_code,
-				txn_return_detail.quantity,
-				txn_return_detail.uom_code,
-				txn_return_detail.gross_amount,
-				txn_return_detail.vat_amount,
+				trd.gross_amount,
+				trd.vat_amount,
 				\'0\' discount_rate,
-				txn_return_detail.discount_amount,
+				trd.discount_amount,
 				trhd.collective_discount_rate,	
     			trhd.collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
-    			((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice,
+    			((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice,
 	    		IF(txn_return_header.updated_by,\'modified\',
-	    					IF(txn_return_detail.updated_by,\'modified\',
+	    					IF(trd.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
     						)
 
@@ -2892,12 +2883,12 @@ class ReportsPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-    			SUM(txn_return_detail.gross_amount) gross_amount,
-				SUM(txn_return_detail.vat_amount) vat_amount,
-				SUM(txn_return_detail.discount_amount) discount_amount,
+    			SUM(trd.gross_amount) gross_amount,
+				SUM(trd.vat_amount) vat_amount,
+				SUM(trd.discount_amount) discount_amount,
 				SUM(trhd.collective_discount_amount) collective_discount_amount,
     			SUM(trhd.collective_deduction_amount) collective_deduction_amount,
-				SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice
+				SUM((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount + trhd.collective_deduction_amount)) total_invoice
     			';
     	}
     	
@@ -2910,8 +2901,18 @@ class ReportsPresenter extends PresenterCore
 			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code')
 			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
 			    	->leftJoin('app_salesman','txn_return_header.salesman_code','=','app_salesman.salesman_code')			    	
-			    	->leftJoin('txn_return_detail','txn_return_header.reference_num','=','txn_return_detail.reference_num')
-			    	->leftJoin('app_item_master','txn_return_detail.item_code','=','app_item_master.item_code')
+			    	->leftJoin(\DB::raw('(
+						    	select return_detail_id,
+			    				   updated_by,
+			    				   reference_num,
+								   sum(gross_amount) as gross_amount,
+			    				   sum(vat_amount) as vat_amount,
+			    				   0 as discount_rate,
+			    				   sum(discount_amount) as discount_amount									
+								from txn_return_detail group by reference_num
+			    			   ) trd'), function($join){
+			    				$join->on('txn_return_header.reference_num','=','trd.reference_num');
+			    	})
 			    	->leftJoin(\DB::raw('
 			    			(select reference_num,
 			    			deduction_rate as collective_deduction_rate,
