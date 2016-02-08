@@ -52,7 +52,7 @@
 						<td>[[record.condition_code]]</td>											
 						<td>[[record.uom_code]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(record.gross_amount)"></span>
 						</td>
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>
@@ -95,7 +95,7 @@
 						<td></td>												
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_seved_amount)"></span>
+							<span ng-bind="formatNumber(summary.gross_amount)"></span>
 						</th>
 						<th>
 							<span ng-bind="formatNumber(summary.vat_amount)"></span>

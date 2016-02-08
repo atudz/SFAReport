@@ -2731,7 +2731,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$select = '
     			SUM(txn_return_detail.quantity) quantity,
-				SUM(txn_return_detail.gross_amount) gross_served_amount,
+				SUM(txn_return_detail.gross_amount) gross_amount,
 				SUM(txn_return_detail.vat_amount) vat_amount,
 				SUM(txn_return_detail.discount_amount) discount_amount,
 				SUM(trhd.collective_discount_amount) collective_discount_amount,
