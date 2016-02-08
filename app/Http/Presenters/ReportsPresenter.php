@@ -1616,6 +1616,18 @@ class ReportsPresenter extends PresenterCore
      */
     public function getUnpaidInvoice()
     {
+    	// This is a required field so return empty if there's none
+    	if(!$this->request->get('invoice_date_from'))
+    	{
+    		$data = [
+    				'records' => [],
+    				'summary' => [],
+    				'total' => 0
+    		];
+    	
+    		return response()->json($data);
+    	}
+    	
     	$prepare = $this->getPreparedUnpaidInvoice();
     	
     	$result = $this->paginate($prepare);
@@ -1648,7 +1660,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	else
     	{
-    		$filterInvoice = 'DATE(%sinvoice_date) <= \''.date('Y-m-d').'\'';
+    		$filterInvoice = 'DATE(%sinvoice_date) = \''.date('Y-m-d').'\'';
     	}
     	
     	// VW_INV temporary table
@@ -1724,8 +1736,8 @@ class ReportsPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-			      ROUND(SUM(coalesce(vw_inv.invoice_amount,0)),0) original_amount,
-			      ROUND(SUM(coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)),0) balance_amount
+			      SUM(coalesce(vw_inv.invoice_amount,0)) original_amount,
+			      SUM(coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)) balance_amount
     			';
     	}
     	
@@ -1758,7 +1770,7 @@ class ReportsPresenter extends PresenterCore
     				);    	
     	
     	
-    	$prepare = $prepare->where(\DB::raw('coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)'),'>','0');
+    	$prepare = $prepare->where(\DB::raw('coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)'),'>','0.01');
     	
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
