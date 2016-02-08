@@ -3875,9 +3875,13 @@ class ReportsPresenter extends PresenterCore
     			return $this->getBir();
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
-    			$prepare = $this->getPreparedSalesReportMaterial();
     			$rows = $this->getSalesReportMaterialSelectColumns();
-    			$summary = $this->getPreparedSalesReportMaterial(true)->first();
+    			
+    			$prepare = $this->getPreparedSalesReportMaterial();    			 
+    			$summary = $this->getPreparedSalesReportMaterial(true)->first();    			
+    			$prepare = $prepare->skip($offset)->take($limit);
+    			$records = $prepare->get();
+    			
     			$header = 'Sales Report Per Material';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Sales Report Per Material';
@@ -3959,11 +3963,11 @@ class ReportsPresenter extends PresenterCore
     	$this->view->records = $records; 
     	$this->view->summary = $summary;
     	$this->view->fontSize = $fontSize;
-    	return $this->view('exportPdf'); */ 
+    	return $this->view('exportSalesCollection'); */ 
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report){
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
@@ -3971,14 +3975,14 @@ class ReportsPresenter extends PresenterCore
 	    			$params['summary'] = $summary;
 	    			$params['header'] = $header;
 	    			$params['filters'] = $filters;
-	    			$sheet->loadView('Reports.exportXls', $params);	    			
+	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
+	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
 	    		});
 	    	
 	    	})->export($type);
     	}
     	elseif($type == 'pdf')
     	{
-
     		$params['columns'] = $columns;
     		$params['theadRaw'] = $theadRaw;
     		$params['rows'] = $rows;
@@ -3987,8 +3991,9 @@ class ReportsPresenter extends PresenterCore
     		$params['header'] = $header;
     		$params['filters'] = $filters;
     		$params['fontSize'] = $fontSize;
-    		$pdf = \PDF::loadView('Reports.exportPdf', $params);    	
-    		unset($params,$records,$prepare);				
+    		$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportPdf';
+    		$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
     }

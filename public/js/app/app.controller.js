@@ -961,7 +961,7 @@
 	    {
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {invoice_date_from:formatted,salesman:$('#salesman').val()};
+	    	params = {salesman:$('#salesman').val()};
 	    	log.info(params);
 	    }
 	    
