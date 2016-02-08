@@ -11,9 +11,9 @@
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">			
 		<div data-ng-view>
 			<!-- @yield('content') -->			
-		</div>
-		@include('layout.footer')
+		</div>		
 	</div><!--/.row-->
+	@include('layout.footer')
 	@include('layout.assets.js')
 </body>
 
