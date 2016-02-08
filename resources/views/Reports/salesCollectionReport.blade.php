@@ -45,8 +45,12 @@
 					<td>
 						<span ng-bind="formatNumber(record.so_total_served)"></span>
 					</td>
-					<td>[[record.so_total_item_discount]]</td>
-					<td>[[record.so_total_collective_discount]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.so_total_item_discount)"></span>
+					</td>
+					<td>
+						<span ng-bind="formatNumber([record.so_total_collective_discount)"></span>
+					</td>
 					<td>
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
 					</td>
@@ -55,7 +59,9 @@
     						[[ record.cm_number ]]
   						</a>
 					</td>
-					<td>[[record.other_deduction_amount]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.other_deduction_amount)"></span>
+					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
     						[[record.return_slip_num]]
@@ -64,7 +70,9 @@
 					<td>
 						<span ng-bind="formatNumber(record.RTN_total_gross)"></span>
 					</td>
-					<td>[[record.RTN_total_collective_discount]]</td>
+					<td>
+						<span ng-bind="formatNumber(record.RTN_total_collective_discount)"></span>
+					</td>
 					<td>
 						<span ng-bind="formatNumber(record.RTN_net_amount)"></span>
 					</td>

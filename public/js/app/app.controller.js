@@ -75,13 +75,11 @@
 	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
-		          'customer_code',
+		          'company_code',
 		          'invoice_date_from',
-		          'invoice_date_to',
-		          'collection_date_from',
-		          'collection_date_to',
-		          'posting_date_from',
-		          'posting_date_to'
+		          'salesman',
+		          'area'
+		          
 		];
 	    
 	    // main controller 
@@ -582,28 +580,29 @@
 			var hasError = false;
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
-				
+					
 				if(val.indexOf('_from') != -1)
 				{
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
-										
-					if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
+											
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
 				}
-				
+					
 			});
 			log.info(params);
+						
 			
 			if(!hasError)
 			{
 				$('p[id$="_error"]').addClass('hide');
 				scope.toggleFilter = true;
 				toggleLoading(true);
-		    	API.save(params,function(data){
+				API.save(params,function(data){
 		    		log.info(data);
 		    		togglePagination(data.total);
 			    	scope.records = data.records;
@@ -956,6 +955,13 @@
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
+	    	log.info(params);
+	    }
+	    else if(report == 'salescollectionsummary')
+	    {
+	    	var currentDate = new Date();
+	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+	    	params = {invoice_date_from:formatted,salesman:$('#salesman').val()};
 	    	log.info(params);
 	    }
 	    
@@ -1724,5 +1730,9 @@
 		};
 		
 	};
+	
+	app.controller('MainCtrl', function($scope) {
+		  $scope.var1 = '07-2013';
+		});
 
 })();

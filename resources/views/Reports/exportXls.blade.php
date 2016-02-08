@@ -23,15 +23,19 @@
 	
 	<table>		
 		<tbody>
-			<tr>
-				@foreach($columns as $column)
-					<th align="center">{!!$column['name']!!}</th>
-				@endforeach
-			</tr>
+			@if($theadRaw)
+				{!!$theadRaw!!}
+			@else
+				<tr>
+					@foreach($columns as $column)
+						<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
+					@endforeach
+				</tr>
+			@endif			
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
-						<td align="left">
+						<td align="left" style="wrap-text:true">
 							@if(is_object($record) && isset($record->$row))
 								@if(false !== strpos($row,'date'))
 									{{ date('m/d/Y', strtotime($record->$row)) }}
@@ -55,7 +59,7 @@
 					<th>Total</th>
 					@foreach($rows as $key=>$row)
 						@if($key > 0)
-							<th>
+							<th align="left" style="wrap-text:true">
 								@if(is_object($summary) && isset($summary->$row))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')

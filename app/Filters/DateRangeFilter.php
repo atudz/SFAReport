@@ -4,6 +4,7 @@ namespace App\Filters;
 
 use App\Core\FilterCore;
 use Illuminate\Database\Query\Builder;
+use Carbon\Carbon;
 
 class DateRangeFilter extends FilterCore
 {
@@ -51,11 +52,11 @@ class DateRangeFilter extends FilterCore
 		elseif($this->request->get($name.'_from'))
 		{
 			$to = $this->request->get($name.'_to');
+			$end = (new Carbon($this->request->get($name.'_from')))->endOfMonth()->format('Y-m-d');
 			$value = [
-				'from' => $this->request->get($name.'_from'),
-				'to' => $to ? $to : '9999-12-31'
+				'from' => (new Carbon($this->request->get($name.'_from')))->format('Y-m-d'),
+				'to' => $to ? (new Carbon($to))->format('Y-m-d') : $end
 			];
-			
 			$this->setValue($value);
 			//$this->store();
 		}

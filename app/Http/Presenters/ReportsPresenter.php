@@ -66,7 +66,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getSalesCollectionPostingColumns();
     			return $this->view('salesCollectionPosting');
     		case 'summary':
-    			$this->view->customerCode = $this->getCustomerCode();
+    			$this->view->customerCode = $this->getCompanyCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->area = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesCollectionSummaryColumns();
@@ -846,7 +846,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesCollectionSummary();
     	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
+    	$data['records'] = $this->populateScrInvoice($result->items());
     	 
     	$data['summary'] = '';
     	if($result->total())
@@ -857,8 +857,62 @@ class ReportsPresenter extends PresenterCore
     	    	 
     	$data['total'] = $result->total();
     	
-    	return response()->json($data);  }
+    	return response()->json($data);  
+    }
     
+    public function populateScrInvoice($items = [])
+    {
+    	foreach($items as $k=>$item)
+    	{
+    		$date = (new Carbon($item->invoice_date))->format('Y-m-d');
+    		$minInvoice = $this->getSO('min(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\'');
+    		$maxInvoice = $this->getSO('max(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\'');
+    		$minInvoice = array_shift($minInvoice);
+    		$items[$k]->invoice_number_from = $minInvoice ? $minInvoice->invoice_number : '';
+    		$maxInvoice = array_shift($maxInvoice);
+    		$items[$k]->invoice_number_to = $maxInvoice ? $maxInvoice->invoice_number : '';
+    		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->invoice_date))->format('mdY');;
+    	}
+    	//dd($items);
+    	return $items;
+    }
+    
+    
+    public function getSO($select='*',$where=' 1 ')
+    {
+    	$query = '
+    			select '.$select. ' FROM
+    			(select '.$select. '						
+						from txn_sales_order_header tsoh
+						inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
+    					where '.$where.'
+						group by tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number
+			    	
+						union all
+			    	
+						select '.$select.'							
+						from txn_sales_order_header tsoh
+						inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
+						where '.$where.'
+						group by tsoh.so_number,
+							tsoh.reference_num,
+							tsoh.salesman_code,
+							tsoh.customer_code,
+							tsoh.so_date,
+							tsoh.sfa_modified_date,
+							tsoh.invoice_number
+					) tsoh			
+    			';	
+    	
+    	//dd($query);
+    	return \DB::select(\DB::raw($query));
+    }
     
     /**
      * Get prepared sales & collection summary
@@ -867,24 +921,29 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedSalesCollectionSummary($summary = false)
     {
+    	$area = $this->request->get('area') ? ' AND ac.area_code=\''.$this->request->get('area').'\'' : '';
+    	$salesman = $this->request->get('salesman') ? ' AND tas.salesman_code=\''.$this->request->get('salesman').'\'' : '';
+    	$company = $this->request->get('company_code') ? ' AND tas.customer_code LIKE \''.$this->request->get('company_code').'%\'' : '';
+    	
+    	$invoice = '';
+    	if($from = $this->request->get('invoice_date_from'))
+    	{
+    		$dateFrom = (new Carbon($from))->format('Y-m-d');
+    		$dateTo = (new Carbon($from))->endOfMonth()->format('Y-m-d');
+    		$invoice = ' AND (sotbl.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
+    	}
+    	
     	$query = '
     		select
-				tas.activity_code,
-    			aps.salesman_code,
-				aps.salesman_name,
-				tas.customer_code,
-				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
-				remarks.remarks,
-				sotbl.invoice_number,
-				(IF(sotbl.so_total_served,sotbl.so_total_served,0.00) - IF(sotbl.so_total_item_discount,sotbl.so_total_item_discount,0.00) - IF(sotbl.so_total_ewt_deduction,sotbl.so_total_ewt_deduction,0.00) - IF(rtntbl.rtn_net_amount,rtntbl.rtn_net_amount,0.00)) total_invoice_net_amount,
-				sotbl.so_date invoice_date,
-				sotbl.sfa_modified_date invoice_posting_date,
-				coltbl.or_number,
-				coltbl.or_amount,
-				coltbl.or_date,
-				coltbl.sfa_modified_date collection_posting_date,
-    			IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated	
-			    	
+    		tas.salesman_code,
+			tas.customer_code,
+    		sotbl.invoice_number,
+    		ac.area_code,
+			sotbl.so_date invoice_date,	
+    		SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00))) total_collected_amount,
+    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00))))/1.12)*0.12 sales_tax,
+    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00))))/1.12) amt_to_commission
+				   			    	
 			from txn_activity_salesman tas
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
 			left join app_customer ac on ac.customer_code = tas.customer_code
@@ -900,8 +959,7 @@ class ReportsPresenter extends PresenterCore
 					all_so.sfa_modified_date,
 					sum(all_so.total_served) as so_total_served,
 					sum(all_so.total_discount) as so_total_item_discount,
-					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
-    				all_so.updated
+					sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction
 				from (
 						select
 							tsoh.so_number,
@@ -912,8 +970,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
 							sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
-							sum(tsod.discount_amount) as total_discount,
-    						IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
+							sum(tsod.discount_amount) as total_discount
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
 						group by tsoh.so_number,
@@ -935,8 +992,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
 							sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
-							0.00 as total_discount,
-    						IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
+							0.00 as total_discount
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
 						group by tsoh.so_number,
@@ -975,11 +1031,7 @@ class ReportsPresenter extends PresenterCore
 				select
 					trh.reference_num,
 					trh.salesman_code,
-					trh.customer_code,
-					sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)
-									- sum(trhd.collective_discount_amount)
-									as rtn_net_amount,
-    				IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
+					trh.customer_code
 				from txn_return_header trh
 				inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
 				left join
@@ -1007,7 +1059,8 @@ class ReportsPresenter extends PresenterCore
 					tch.or_amount,
     				tch.or_date,
 					tch.sfa_modified_date,
-    				IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated					
+    				tcd.payment_method_code,
+					IF(tcd.payment_amount,tcd.payment_amount,0.00) payment_amount				
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
@@ -1017,35 +1070,58 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE tas.activity_code like \'%SO%\'
+			WHERE tas.activity_code like \'%SO%\''.$area.$salesman.$company.$invoice.
+    		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
 			    
     			';
-    	
     	$select = '
-    			collection.activity_code,
-				collection.salesman_name,
-				collection.customer_code,
-				collection.customer_name,
-				collection.remarks
+				collection.invoice_number,
+				collection.invoice_date,
+    			collection.salesman_code,
+    			collection.total_collected_amount,
+    			collection.sales_tax,
+    			collection.amt_to_commission
+    					
     			'; 
+    	
+    	if($summary)
+    	{
+    		$select = '
+    			SUM(collection.total_collected_amount) total_collected_amount,
+    			SUM(collection.sales_tax) sales_tax,
+    			SUM(collection.amt_to_commission) amt_to_commission				
+    			';
+    	}
     	
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))
     					->selectRaw($select);
     	
-    	$codeFilter = FilterFactory::getInstance('Text','Company Code');
-    	$prepare = $codeFilter->addFilter($prepare,'code');
+    	/* $codeFilter = FilterFactory::getInstance('Text');
+    	$prepare = $codeFilter->addFilter($prepare,'code',
+    				function($self, $model){
+    					return $model->where('collection.code','LIKE',$self->getValue().'%');
+    				});
     	
-    	$salesmanFilter = FilterFactory::getInstance('Select','Salesman',SelectFilter::SINGLE_SELECT);
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman');
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
+    				function($self, $model){
+    					return $model->where('collection.salesman','=',$self->getValue());
+    				});
     	
-    	$monthDateFilter = FilterFactory::getInstance('DateRange','Month');
-    	$prepare = $monthDateFilter->addFilter($prepare,'invoice_date');
-    	
-    	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
-    	$prepare = $areaFilter->addFilter($prepare,'area');
+    	$monthDateFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $monthDateFilter->addFilter($prepare,'invoice_date',
+    			function($self, $model){    				
+    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
+    			});
+        	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    					return $model->where('collection.area_code','=',$self->getValue());
+    				}); */
     	
     	return $prepare;
     }
@@ -3673,6 +3749,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$records = [];
     	$columns = [];
+    	$theadRaw = '';
     	$rows = [];
     	$summary = [];
     	$header = '';
@@ -3680,7 +3757,7 @@ class ReportsPresenter extends PresenterCore
     	$filename = 'Report';
     	$prepare = '';
     	$vaninventory = false;
-    	
+    	$salesSummary = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1) ? 0 : $offset;
@@ -3705,12 +3782,30 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Sales & Collection Posting Date Report';
     			break;
     		case 'salescollectionsummary':
-    			$columns = $this->getTableColumns($report);
+    			//$columns = $this->getTableColumns($report);
+    			$theadRaw = '
+    					<tr>
+							<th rowspan="2" align="center">SCR#</th>
+							<th colspan="2" align="center">Invoice Number</th>
+							<th rowspan="2" align="center">Invoice Date</th>
+							<th rowspan="2" align="center" style="wrap-text:true">Total Collected Amount</th>
+							<th rowspan="2" align="center" style="wrap-text:true">12% Sales Tax</th>
+							<th rowspan="2" align="center" style="wrap-text:true">Amount Subject To Commission</th>
+						</tr>
+    					<tr>
+							<th align="center"></th>
+    						<th align="center">From</th>
+							<th align="center">To</th>    						
+						</tr>
+    					'; 
     			$prepare = $this->getPreparedSalesCollectionSummary();
-    			$rows = $this->getSalesCollectionSummaryColumns();
+    			$rows = $this->getSalesCollectionSummarySelectColumns();
+    			$summary = $this->getPreparedSalesCollectionSummary(true)->first();
     			$header = 'Summary of Sales';
     			$filters = $this->getSalesCollectionSummaryFilterData();
     			$filename = 'Summary of Sales';
+    			$salesSummary = true;
+    			break;
     		case 'bir';
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedBir();
@@ -3840,27 +3935,33 @@ class ReportsPresenter extends PresenterCore
     	{
 	    	$prepare = $prepare->skip($offset)->take($limit);
 	    	$records = $prepare->get();
+	    	if($salesSummary)
+	    	{
+	    		$records = $this->populateScrInvoice($records);
+	    	}
     	}
     	//dd($rows);
     	//dd($records);
     	/* $this->view->columns = $columns;    	    
     	$this->view->rows = $rows;
     	$this->view->header = $header;
+    	$this->view->theadRaw = $theadRaw;
     	$this->view->filters = $filters;
     	$this->view->records = $records; 
     	$this->view->summary = $summary;
-    	return $this->view('exportXls'); */
+    	return $this->view('exportXls'); */ 
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw){
 	    			$params['columns'] = $columns;
+	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
 	    			$params['records'] = $records;
 	    			$params['summary'] = $summary;
 	    			$params['header'] = $header;
 	    			$params['filters'] = $filters;
-	    			$sheet->loadView('Reports.exportXls', $params);
+	    			$sheet->loadView('Reports.exportXls', $params);	    			
 	    		});
 	    	
 	    	})->export($type);
@@ -4216,14 +4317,13 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummarySelectColumns()
     {
     	return [
-    			'customer_code',
-    			'customer_name',
-    			'remarks',
-    			'invoice_number',
+    			'scr_number',
+    			'invoice_number_from',
+    			'invoice_number_to',
     			'invoice_date',
-    			'so_total_served',
-    			'so_total_item_discount',
-    			'so_total_collective_discount',    			
+    			'total_collected_amount',
+    			'sales_tax',
+    			'amt_to_commission',    			
     	];
     }
     
@@ -4600,13 +4700,13 @@ class ReportsPresenter extends PresenterCore
     	$customer = $this->request->get('customer_code') ?  $this->request->get('customer_code') : 'All';
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    	$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
+    	$invoice = $this->request->get('invoice_date_from') ? (new Carbon($this->request->get('invoice_date_from')))->format('F Y') : '';
     	 
     	$filters = [
-    			'Customer Code' => $customer,
+    			'Company Code' => $customer,
     			'Salesman' => $salesman,
     			'Area' => $area,
-    			'Posting Date' => $postingDate,
+    			'Month' => $invoice,
     	];
     
     	return $filters;
