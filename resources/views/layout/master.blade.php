@@ -12,8 +12,8 @@
 		<div data-ng-view>
 			<!-- @yield('content') -->			
 		</div>		
-	</div><!--/.row-->
-	@include('layout.footer')
+		@include('layout.footer')
+	</div><!--/.row-->	
 	@include('layout.assets.js')
 </body>
 
