@@ -47,8 +47,8 @@
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date'))
 									{{ date('m/d/Y', strtotime($record[$row])) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
+								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
+									{!!number_format($record[$row],2,'.',',')!!}	
 								@else
 									{!!$record[$row]!!}
 								@endif									
