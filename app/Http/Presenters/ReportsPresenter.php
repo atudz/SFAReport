@@ -1173,7 +1173,7 @@ class ReportsPresenter extends PresenterCore
     			'short_over_stocks' => [],
     			'stock_on_hand' => [],
     			'stocks' => [],
-    			'toal' => 0	
+    			'total' => 0	
     		];
     		
     		return response()->json($data);
@@ -1202,6 +1202,20 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
     	
     	$replenishment = $prepare->first();
+    	
+    	if($this->request->get('reference_number') && !$replenishment)
+    	{
+    		$data = [
+    				'records' => [],
+    				'replenishment' => [],
+    				'short_over_stocks' => [],
+    				'stock_on_hand' => [],
+    				'stocks' => [],
+    				'total' => 0
+    		];
+    	
+    		return $reports ? [] : response()->json($data);
+    	}
     			 
     	$replenishmentItems = [];
     	$tempActualCount = [];
@@ -1238,6 +1252,20 @@ class ReportsPresenter extends PresenterCore
     	// Get Van Inventory stock transfer data
     	$prepare = $this->getPreparedVanInventoryStocks();
     	$stocks = $prepare->get();
+    	
+    	if($this->request->get('stock_transfer_number') && !$stocks)
+    	{
+    		$data = [
+    				'records' => [],
+    				'replenishment' => [],
+    				'short_over_stocks' => [],
+    				'stock_on_hand' => [],
+    				'stocks' => [],
+    				'total' => 0
+    		];
+    		
+    		return $reports ? [] : response()->json($data);
+    	}
     	
     	$stockItems = [];
     	$tempStockTransfer = [];
