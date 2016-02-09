@@ -1251,6 +1251,49 @@
 	    }
 
 	};
+
+	/**
+	 * User List controller
+	 */
+	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log', UserGroupList]);
+	
+	function UserGroupList($scope, $resource, $window, $uibModal, $log) {
+
+		// Filter flag
+		$scope.toggleFilter = true;
+		
+	    // Fetch table data from server
+	    $scope.records = [];	    
+	    
+	    var API = $resource('/reports/getdata/usergrouplist');
+	    var params = {};
+	    
+	    toggleLoading(true);
+	    API.get(params,function(data){
+	    	$scope.records = data.records;
+	    	$scope.total = data.total;
+	    	$log.info(data);	    	
+	    	toggleLoading();
+	    	togglePagination(data.total);
+	    });	    	    
+	    
+	    params = {
+	    	id: 'id',
+	    	name: 'name',
+	    };
+	    
+	    //Sort table records
+	    $scope.sortColumn = '';
+		$scope.sortDirection = 'asc';
+		sortColumn($scope,API,params,$log);
+	    
+	    // Filter table records	    
+	    filterSubmit($scope,API,params,$log);
+		
+	    // Paginate table records	    
+	    pagination($scope,API,params,$log);	  
+
+	};
 	
 	/**
 	 * Format date

@@ -23,6 +23,17 @@ class UserPresenter extends PresenterCore
 		return $this->view('users');
 	}
 
+	/**
+	 * Return User Group Rights view
+	 * @param string $type
+	 * @return string The rendered html view
+	 */
+	public function userGroupRights()
+	{
+		$this->view->tableHeaders = $this->getRoleTableColumns();
+		return $this->view('userGroupRights');
+	}
+
 	
 	/**
 	 * Display add edit form
@@ -150,16 +161,6 @@ class UserPresenter extends PresenterCore
 		];
 	}
 	
-	/**
-	 * Return User Group Rights view
-	 * @param string $type
-	 * @return string The rendered html view
-	 */
-	public function userGroupRights()
-	{
-		return $this->view('userGroupRights');
-	}
-	
 	public function getUsers()
 	{
 		$select = '
@@ -225,6 +226,27 @@ class UserPresenter extends PresenterCore
 		
 	}
 	
+
+	public function getUserGroup()
+	{
+		$select = 'id, name';
+		
+		$prepare = \DB::table('user_group')
+						->selectRaw($select);	
+		 
+		//dd($prepare->toSql());
+		$result = $this->paginate($prepare);
+		
+		$items = $result->items();
+		
+		$data['records'] = $items;
+		$data['total'] = $result->total();
+		
+		return response()->json($data);
+		
+		
+	}
+
 	/**
 	 * Get User Table Columns
 	 * @return multitype:multitype:string
@@ -239,6 +261,20 @@ class UserPresenter extends PresenterCore
 				['name'=>'Assignment', 'sort'=>'assignment'],
 				['name'=>'Date Created', 'sort'=>'created_at'],
 				['name'=>'Actions'],				
+		];
+		 
+		return $headers;
+	}
+
+	/**
+	 * Get UserGroup Table Columns
+	 * @return multitype:multitype:string
+	 */
+	public function getRoleTableColumns()
+	{
+		$headers = [
+				['name'=>'ID', 'sort'=>'id'],
+				['name'=>'Name', 'sort'=>'name']		
 		];
 		 
 		return $headers;

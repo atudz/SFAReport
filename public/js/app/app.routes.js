@@ -131,8 +131,8 @@
 
 				.when('/usergroup.rights',{
 					templateUrl: '/user/group/rights',
-					/*controller: 'Sync',
-					controllerAs: 'sync'*/
+					controller: 'UserGroupList',
+					/*controllerAs: 'sync'*/
 				})
 				
 

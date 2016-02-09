@@ -245,7 +245,9 @@ class ReportsPresenter extends PresenterCore
     		case 'conditioncodes':
     			return $this->getConditionCodes();
     		case 'userlist':
-    			return PresenterFactory::getInstance('User')->getUsers();	
+    			return PresenterFactory::getInstance('User')->getUsers();
+            case 'usergrouplist':
+                return PresenterFactory::getInstance('User')->getUserGroup();	
     	}
     }
     
