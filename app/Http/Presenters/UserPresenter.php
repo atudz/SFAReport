@@ -34,7 +34,7 @@ class UserPresenter extends PresenterCore
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(!$this->hasAdminRole());
 		return $this->view('addEdit');
 	}
 	
@@ -60,7 +60,7 @@ class UserPresenter extends PresenterCore
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(!$this->hasAdminRole());
 		return $this->view('edit');
 	}
 	
@@ -73,7 +73,9 @@ class UserPresenter extends PresenterCore
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$admin = $this->hasAdminRole();
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(!$admin);
+		$this->view->readOnly = $admin ? '' : 'readonly';
 		return $this->view('myProfile');
 	}
 	
