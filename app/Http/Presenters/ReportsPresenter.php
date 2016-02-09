@@ -2291,7 +2291,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	 
     	$prepare = \DB::table(\DB::raw('('.$querySales.' UNION '.$queryReturns.') sales'))
-    	->selectRaw($select);
+    					->selectRaw($select);
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
@@ -2346,7 +2346,6 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
     			});
-    	
     	
     	return $prepare;	
     }
@@ -3491,7 +3490,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
-    			['name'=>'Collective Discount Rate'],
+    			['name'=>'Collective Discount Rate' ,'sort'=>'collective_discount_rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
