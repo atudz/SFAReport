@@ -563,6 +563,7 @@
 			scope.toggleFilter = true;
 			toggleLoading();
 	    	scope.items = []
+	    	$('#no_records_div').removeClass('hide');
 	    	$('#load_more').addClass('hide');
 	    }
 	}
