@@ -177,7 +177,7 @@ class ReportsPresenter extends PresenterCore
     public function bir()
     {
     	$this->view->salesman = $this->getSalesman();
-    	$this->view->area = $this->getArea();
+    	$this->view->area = $this->getArea(false,false);
     	$this->view->tableHeaders = $this->getBirColumns();
     	return $this->view('bir');
     }
@@ -1175,7 +1175,7 @@ class ReportsPresenter extends PresenterCore
     			'short_over_stocks' => [],
     			'stock_on_hand' => [],
     			'stocks' => [],
-    			'toal' => 0	
+    			'total' => 0	
     		];
     		
     		return response()->json($data);
@@ -1204,6 +1204,20 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
     	
     	$replenishment = $prepare->first();
+    	
+    	if($this->request->get('reference_number') && !$replenishment)
+    	{
+    		$data = [
+    				'records' => [],
+    				'replenishment' => [],
+    				'short_over_stocks' => [],
+    				'stock_on_hand' => [],
+    				'stocks' => [],
+    				'total' => 0
+    		];
+    	
+    		return $reports ? [] : response()->json($data);
+    	}
     			 
     	$replenishmentItems = [];
     	$tempActualCount = [];
@@ -1240,6 +1254,20 @@ class ReportsPresenter extends PresenterCore
     	// Get Van Inventory stock transfer data
     	$prepare = $this->getPreparedVanInventoryStocks();
     	$stocks = $prepare->get();
+    	
+    	if($this->request->get('stock_transfer_number') && !$stocks)
+    	{
+    		$data = [
+    				'records' => [],
+    				'replenishment' => [],
+    				'short_over_stocks' => [],
+    				'stock_on_hand' => [],
+    				'stocks' => [],
+    				'total' => 0
+    		];
+    		
+    		return $reports ? [] : response()->json($data);
+    	}
     	
     	$stockItems = [];
     	$tempStockTransfer = [];
@@ -2087,6 +2115,7 @@ class ReportsPresenter extends PresenterCore
 				tsoh.device_code,
 				tsoh.salesman_code,
 				aps.salesman_name,
+    			aa.area_code,
 				aa.area_name area,
 				tsoh.invoice_number,
 				tsoh.so_date invoice_date,
@@ -2166,6 +2195,7 @@ class ReportsPresenter extends PresenterCore
 				trh.device_code,
 				trh.salesman_code,
 				aps.salesman_name,
+    			aa.area_code,
 				aa.area_name area,
 				trh.return_slip_num invoice_number,
 				trh.return_date invoice_date,
@@ -2293,7 +2323,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	 
     	$prepare = \DB::table(\DB::raw('('.$querySales.' UNION '.$queryReturns.') sales'))
-    	->selectRaw($select);
+    					->selectRaw($select);
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
@@ -2349,6 +2379,10 @@ class ReportsPresenter extends PresenterCore
     				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
     			});
     	
+    	if(!$this->hasAdminRole())
+    	{
+    		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
+    	}
     	
     	return $prepare;	
     }
@@ -2397,6 +2431,7 @@ class ReportsPresenter extends PresenterCore
 				tsoh.device_code,
 				tsoh.salesman_code,
 				aps.salesman_name,
+    			aa.area_code,
 				aa.area_name area,
 				tsoh.invoice_number,
 				tsoh.so_date invoice_date,
@@ -2478,6 +2513,7 @@ class ReportsPresenter extends PresenterCore
 				trh.device_code,
 				trh.salesman_code,
 				aps.salesman_name,
+    			aa.area_code,
 				aa.area_name area,
 				trh.return_slip_num invoice_number,
 				trh.return_date invoice_date,
@@ -2656,7 +2692,11 @@ class ReportsPresenter extends PresenterCore
 			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
 			    			});
 
-
+		if(!$this->hasAdminRole())
+		{
+			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
+		}
+		
 		return $prepare;	
     }
     
@@ -2817,6 +2857,11 @@ class ReportsPresenter extends PresenterCore
 			    			});
 		
 		$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
+		
+		if(!$this->hasAdminRole())
+		{
+			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+		}
 			    	
 		return $prepare;	    	
     	
@@ -2970,6 +3015,11 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
     	
+    	if(!$this->hasAdminRole())
+    	{
+    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	
     	return $prepare;
     }
     
@@ -3045,6 +3095,11 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
+    	if(!$this->hasAdminRole())
+    	{
+    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	
     	return $prepare;
     }
     
@@ -3116,6 +3171,11 @@ class ReportsPresenter extends PresenterCore
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	
+    	if(!$this->hasAdminRole())
+    	{
+    		$prepare->where('salesman_customer.area_code','=',auth()->user()->location_assignment_code);
+    	}
     	
     	return $prepare;
     }
@@ -3189,6 +3249,10 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
+    	if(!$this->hasAdminRole())
+    	{
+    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    	}
     	return $prepare;
     }
     
@@ -3409,7 +3473,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Vat Registration No.'],
     			['name'=>'Sales-Exempt'],
     			['name'=>'Sales-0%'],
-    			['name'=>'Sales-12%','sort'=>'sales'],
+    			['name'=>'Services'],
+    			['name'=>'Sales-12%','sort'=>'sales'],    			
     			['name'=>'Total Sales','sort'=>'total_sales'],
     			['name'=>'Tax Amount','sort'=>'tax_amount'],
     			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
@@ -3493,7 +3558,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
-    			['name'=>'Collective Discount Rate'],
+    			['name'=>'Collective Discount Rate' ,'sort'=>'collective_discount_rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
@@ -3711,7 +3776,7 @@ class ReportsPresenter extends PresenterCore
      * Get Area
      * @return multitype:
      */
-    public function getArea($sfiOnly=false)
+    public function getArea($sfiOnly=false,$forcePermission=true)
     {
     	$prepare = \DB::table('app_area')
 		    			->where('status','=','A');
@@ -3720,6 +3785,10 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('area_name','like','SFI%');
     	}
     	
+    	if($forcePermission && !$this->hasAdminRole())
+    	{
+    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    	}
     	return $prepare->orderBy('area_name')->lists('area_name','area_code');
     }
 
@@ -4294,6 +4363,7 @@ class ReportsPresenter extends PresenterCore
     			'vat_reg_number',
     			'sales_exempt',
     			'sales_0',
+    			'services',
     			'sales',
     			'total_sales',
     			'tax_amount',

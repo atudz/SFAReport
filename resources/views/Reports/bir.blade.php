@@ -32,6 +32,7 @@
 							<td></td>
 							<td></td>
 							<td></td>
+							<td></td>
 							<td>
 								<span ng-bind="formatNumber(record.sales,record.negate)"></span>
 							</td>
