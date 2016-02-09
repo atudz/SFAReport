@@ -19,7 +19,7 @@ class UserPresenter extends PresenterCore
 		$this->view->roles = $this->getRoles();		
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->tableHeaders = $this->getUserTableColumns();
-		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(!$this->hasAdminRole());
 		return $this->view('users');
 	}
 
