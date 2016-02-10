@@ -1564,7 +1564,8 @@ class ReportsPresenter extends PresenterCore
     	}
     	
     	// Get returns
-    	$prepare = $this->getPreparedVanInventoryReturns();
+    	$prepare = $this->getPreparedVanInventoryReturns(true)
+    				->whereBetween(\DB::raw('DATE(txn_return_header.return_date)'),[$dateStart,$dateFrom]);
     	$results = $prepare->get();
     	
     	foreach($results as $result)
