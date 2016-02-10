@@ -179,6 +179,9 @@ class PresenterCore extends Controller
 	 */
 	public function hasAdminRole()
 	{
+		if(!auth()->user())
+			return false;
+		
 		$group = auth()->user()->group->name;		
 		return in_array($group,['Admin','Auditor']);
 	}
