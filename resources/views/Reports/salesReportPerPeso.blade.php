@@ -71,13 +71,7 @@
 							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
 						</td>
 						<td>[[record.discount_reference_num]]</td>
-						<td>[[record.discount_remarks]]</td>
-						<td>[[record.collective_deduction_rate]]</td>
-						<td>
-							<span ng-bind="formatNumber(record.collective_deduction_amount)"></span>
-						</td>
-						<td>[[record.deduction_reference_num]]</td>
-						<td>[[record.deduction_remarks]]</td>
+						<td>[[record.discount_remarks]]</td>						
 						<td>
 							<span ng-bind="formatNumber(record.total_invoice)"></span>
 						</td>
@@ -114,13 +108,7 @@
 							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
 						</th>
 						<td></td>
-						<td></td>
-						<td></td>
-						<th>
-							<span ng-bind="formatNumber(summary.collective_deduction_amount)"></span>
-						</th>
-						<td></td>
-						<td></td>
+						<td></td>						
 						<th>
 							<span ng-bind="formatNumber(summary.total_invoice)"></span>
 						</th>

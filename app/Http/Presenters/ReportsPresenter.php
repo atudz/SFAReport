@@ -2245,12 +2245,8 @@ class ReportsPresenter extends PresenterCore
 			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
 			    tsohd.discount_remarks,
-			    tsohd.collective_deduction_rate,
-			    tsohd.collective_deduction_amount,
-			    tsohd.deduction_reference_num,
-			    tsohd.deduction_remarks,
 			    tsod.sales_order_detail_id,
-			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount)) total_invoice,
 				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
 				\'txn_sales_order_header\' invoice_table,
@@ -2276,14 +2272,10 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN
 				(
 					select reference_num,
-						   served_deduction_rate as collective_deduction_rate,
 						   served_deduction_rate as collective_discount_rate,
 						   ref_no as discount_reference_num,
 						   remarks as discount_remarks,
-						   ref_no as deduction_reference_num,
-						   remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+						   sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 					from txn_sales_order_header_discount group by reference_num
 				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
 				LEFT JOIN
@@ -2325,11 +2317,7 @@ class ReportsPresenter extends PresenterCore
 				trhd.collective_discount_rate,
 			    trhd.collective_discount_amount,
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,
-				0 collective_deduction_rate,
-			    0 collective_deduction_amount,
-			    0 deduction_reference_num,
-			    0 deduction_remarks,
+			    trhd.discount_remarks,				
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
@@ -2398,12 +2386,8 @@ class ReportsPresenter extends PresenterCore
 			    sales.collective_discount_rate,
 			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
-			    sales.discount_remarks,
-			    sales.collective_deduction_rate,
-			    sales.collective_deduction_amount,
-			    sales.deduction_reference_num,
-			    sales.deduction_remarks,
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+			    sales.discount_remarks,			    
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2427,8 +2411,7 @@ class ReportsPresenter extends PresenterCore
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
 				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
-				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice
+    			   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice
     			';
     	}
     	 
@@ -2553,13 +2536,9 @@ class ReportsPresenter extends PresenterCore
 			    tsohd.collective_discount_rate,	
 			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
-			    tsohd.discount_remarks,
-			    tsohd.collective_deduction_rate,	
-			    tsohd.collective_deduction_amount,
-			    tsohd.deduction_reference_num,
-			    tsohd.deduction_remarks,	
+			    tsohd.discount_remarks,			    	
 			    tsod.sales_order_detail_id,		
-			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount)) total_invoice,
 				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
 			
 				\'txn_sales_order_header\' invoice_table,
@@ -2594,14 +2573,10 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN 
 				(
 					select reference_num,
-						   served_deduction_rate as collective_deduction_rate,
 						   served_deduction_rate as collective_discount_rate,
 						   ref_no as discount_reference_num,
 						   remarks as discount_remarks,
-						   ref_no as deduction_reference_num,
-						   remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+						   sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 					from txn_sales_order_header_discount group by reference_num	
 				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
 				LEFT JOIN
@@ -2636,11 +2611,7 @@ class ReportsPresenter extends PresenterCore
 				trhd.collective_discount_rate,
 			    trhd.collective_discount_amount,
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,
-				0 collective_deduction_rate,	
-			    0 collective_deduction_amount,
-			    0 deduction_reference_num,
-			    0 deduction_remarks,
+			    trhd.discount_remarks,				
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 			
@@ -2712,12 +2683,8 @@ class ReportsPresenter extends PresenterCore
 			    sales.collective_discount_rate,	
 			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
-			    sales.discount_remarks,
-			    sales.collective_deduction_rate,	
-			    sales.collective_deduction_amount,
-			    sales.deduction_reference_num,
-			    sales.deduction_remarks,	
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+			    sales.discount_remarks,			    	
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2739,9 +2706,8 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
-				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
-				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice	
+				   SUM(sales.collective_discount_amount) collective_discount_amount,    			   
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice	
     			';
     	}
     	
@@ -3625,19 +3591,15 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Condition Code','sort'=>'condition_code'],
     			['name'=>'Uom Code'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Collective Deduction Rate'],
-    			['name'=>'Collective Deduction Amount'],
-    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net Amount'],
+    			['name'=>'Remarks'],    			
+    			['name'=>'Total Sales'],
     	];
     
     	return $headers;
@@ -3664,19 +3626,15 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice No/ Return Slip No.','sort'=>'invoice_number'],
     			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
     			['name'=>'Invoice/Return Posting Date','sort'=>'invoice_posting_date'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate' ,'sort'=>'collective_discount_rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Collective Deduction Rate'],
-    			['name'=>'Collective Deduction Amount'],
-    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net Amount'],
+    			['name'=>'Remarks'],    			
+    			['name'=>'Total Sales'],
     	];
     
     	return $headers;
@@ -3709,7 +3667,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Condition Code','sort'=>'condition_code'],
     			['name'=>'Uom Code'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
@@ -3744,7 +3702,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Date','sort'=>'return_date'],
     			['name'=>'Posting Date','sort'=>'return_posting_date'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
@@ -4249,11 +4207,7 @@ class ReportsPresenter extends PresenterCore
     		'collective_discount_rate',
     		'collective_discount_amount',
     		'discount_reference_num',
-    		'discount_remarks',
-    		'collective_deduction_rate',
-    		'collective_deduction_amount',
-    		'deduction_reference_num',
-    		'deduction_remarks',
+    		'discount_remarks',    		
     		'total_invoice',    					
     	]; 
     }
@@ -4386,10 +4340,6 @@ class ReportsPresenter extends PresenterCore
     			'collective_discount_amount',
     			'discount_reference_num',
     			'discount_remarks',
-    			'collective_deduction_rate',
-    			'collective_deduction_amount',
-    			'deduction_reference_num',
-    			'deduction_remarks',
     			'total_invoice',
     	];
     }
@@ -4647,7 +4597,7 @@ class ReportsPresenter extends PresenterCore
     	else
     		$limit = config('system.report_limit_pdf');
     	
-    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']))
+    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']) && !in_array($type,['xls','xlsx']))
     		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
