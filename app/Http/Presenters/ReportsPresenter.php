@@ -1375,11 +1375,11 @@ class ReportsPresenter extends PresenterCore
 	    	
 	    		foreach($returns as $item)
 	    		{
-	    			$result->{'code_'.$item->item_code} = '('.$item->quantity.')';
+	    			$result->{'code_'.$item->item_code} = $item->quantity;
 	    			if(isset($tempInvoices['code_'.$item->item_code]))
-	    				$tempInvoices['code_'.$item->item_code] += $item->quantity;
+	    				$tempInvoices['code_'.$item->item_code] -= $item->quantity;
 	    			else
-	    				$tempInvoices['code_'.$item->item_code] = $item->quantity;
+	    				$tempInvoices['code_'.$item->item_code] = -$item->quantity;
 	    		}
 	    	    		
 	    		$records[] = $result;
@@ -1580,7 +1580,7 @@ class ReportsPresenter extends PresenterCore
     		{
     			if(!isset($tempInvoices['code_'.$item->item_code]))
     				$tempInvoices['code_'.$item->item_code] = 0;
-    			$tempInvoices['code_'.$item->item_code] += $item->quantity;    			
+    			$tempInvoices['code_'.$item->item_code] -= $item->quantity;    			
     		}
     	}
     	
