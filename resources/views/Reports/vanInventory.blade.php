@@ -53,7 +53,7 @@
 							<th>
 								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[item.replenishment.reference_number]]</th>
+							<th>[[item.replenishment.reference_number | uppercase]]</th>
 							@foreach($itemCodes as $item)
 								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
 							@endforeach
@@ -68,7 +68,7 @@
 							<th>
 								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[stock.stock_transfer_number]]</th>
+							<th>[[stock.stock_transfer_number | uppercase]]</th>
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
@@ -82,8 +82,8 @@
 							<td>
 								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>							
 							</td>
-							<td>[[record.invoice_number]]</td>
-							<td>[[record.return_slip_num]]</td>
+							<td>[[record.invoice_number | uppercase]]</td>
+							<td>[[record.return_slip_num | uppercase]]</td>
 							<td></td>
 							<td></td>
 							<td></td>

@@ -28,7 +28,7 @@
 							<td>[[record.customer_code]]</td>
 							<td>[[record.customer_name]]</td>
 							<td>[[record.remarks]]</td>
-							<td>[[record.invoice_number]]</td>
+							<td>[[record.invoice_number | uppercase]]</td>
 							<td>
 								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
 							</td>

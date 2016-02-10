@@ -38,7 +38,7 @@
 						<td>[[record.salesman_code]]</td>
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
-						<td>[[record.return_slip_num]]</td>
+						<td>[[record.return_slip_num | uppercase]]</td>
 						<td>
 							<span ng-bind="formatDate(record.return_date) | date:'MM/dd/yyyy'"></span>
 						</td>
