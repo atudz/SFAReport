@@ -305,9 +305,9 @@ class ReportsPresenter extends PresenterCore
 				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) check_amount,
 				   coltbl.bank,
 				   coltbl.check_number,
-				   coltbl.check_date,
+				   IF(coltbl.payment_method_code=\'CASH\',\'\', coltbl.check_date) check_date,
 				   coltbl.cm_number,
-				   ti.invoice_date cm_date,
+				   IF(coltbl.payment_method_code=\'CASH\',\'\', ti.invoice_date) cm_date,
 			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) credit_amount,
 				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0)) total_collected_amount,
     			
@@ -517,7 +517,7 @@ class ReportsPresenter extends PresenterCore
 				collection.check_number,
 		        collection.check_date,
 				collection.cm_number,
-				collection.invoice_date cm_date,
+				collection.cm_date,
 			   	collection.credit_amount,
 				collection.total_collected_amount,
     			
