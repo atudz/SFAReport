@@ -784,9 +784,15 @@
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
-		    	if(typeof TableFix !== "undefined"){
+		    	
+		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+
+    			if(typeof TableFix !== "undefined"){
 		    		TableFix.tableload();
 		    	}
+				console.log('Paginate Factory. Scroll value: '+scrollpos);
+
+                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
 	    
