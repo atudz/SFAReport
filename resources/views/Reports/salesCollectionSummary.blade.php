@@ -24,10 +24,10 @@
 					<tr>
 						<th rowspan="2">SCR#</th>
 						<th colspan="2" align="center">Invoice Number</th>
-						<th rowspan=2 class="sortable" ng-click="sort('invoice_date')" id="invoice_date">Invoice Date <i class="fa fa-sort"></i></th>
-						<th rowspan=2>Total Collected Amount</th>
-						<th rowspan=2>12% Sales Tax</th>
-						<th rowspan=2>Amount Subject To Commission</th>
+						<th rowspan="2" class="sortable" ng-click="sort('invoice_date')" id="invoice_date">Invoice Date <i class="fa fa-sort"></i></th>
+						<th rowspan="2">Total Collected Amount</th>
+						<th rowspan="2">12% Sales Tax</th>
+						<th rowspan="2">Amount Subject To Commission</th>
 					</tr>
 					<tr>
 						<th style="width:10%">From</th>
@@ -52,29 +52,24 @@
 							<td>
 								<span ng-bind="formatNumber(record.amt_to_commission)"></span>
 							</td>
-							<td>
-								<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
-							</td>									
+															
 						</tr>	
 						
 						<!-- Summary -->
 						<tr id="total_summary">
-							<th>Total</th>
+							<td class="bold">Total</td>
 							<td></td>
 							<td></td>
 							<td></td>
-							<th>
+							<td class="bold">
 								<span ng-bind="formatNumber(summary.total_collected_amount)"></span>
-							</th>
-							<th>
+							</td>
+							<td class="bold">
 								<span ng-bind="formatNumber(summary.sales_tax)"></span>
-							</th>
-							<th>
+							</td>
+							<td class="bold">
 								<span ng-bind="formatNumber(summary.amt_to_commission)"></span>
-							</th>
-							<th>
-								<span ng-bind="formatNumber(summary.total_invoice_net_amount)"></span>
-							</th>										
+							</td>										
 						</tr>
 					</tbody>
 					{!!Html::tfooter(true,8)!!}

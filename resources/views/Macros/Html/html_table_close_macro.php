@@ -72,17 +72,17 @@ Html::macro('tclose', function($paginate=true) {
 				</div>			    			
     		</script>
 
-    		<script type="text/javascript">
-				$(function() {
-				 	$("table.table").floatThead({
-					    position: "absolute",
-					    autoReflow: true,
-					    zIndex: "2",
-					    scrollContainer: function($table){
-					        return $table.closest(".wrapper");
-					    }
-					});
-				});
+   			 <script type="text/javascript">
+			// 	$(function() {
+			// 	 	$("table.table").floatThead({
+			// 		    position: "absolute",
+			// 		    autoReflow: true,
+			// 		    zIndex: "2",
+			// 		    scrollContainer: function($table){
+			// 		        return $table.closest(".wrapper");
+			// 		    }
+			// 		});
+			// 	});
 			</script>
 			
 			
@@ -93,11 +93,11 @@ Html::macro('tclose', function($paginate=true) {
 					<div class="pull-left pagination-detail">
 					<span class="pagination-info">Showing [[((perpage*page)-perpage)+1]] to [[perpage*page]] of [[total]] rows&nbsp;</span>
 					<span class="page-list">
-						<div class="btn-group" uib-dropdown dropdown-append-to-body>
-					      <button id="btn-append-to-body" type="button" class="btn btn-default btn-sm" uib-dropdown-toggle>
+					    <div class="btn-group dropup">
+					      <button id="btn-append-to-body" type="button" class="dropdown-toggle btn btn-default btn-sm" data-toggle="dropdown">
 					        [[perpage]] <span class="caret"></span>
 					      </button>
-					      <ul class="uib-dropdown-menu" role="menu" aria-labelledby="btn-append-to-body">
+					      <ul class="dropdown-menu" role="menu" aria-labelledby="selectDropdown">
 					        <li role="menuitem" class="active" id="limit10" ng-click="paginate(10)"><a href="">10</a></li>
 					        <li role="menuitem"><a href="" id="limit25" ng-click="paginate(25)">25</a></li>
 					        <li role="menuitem"><a href="" id="limit50" ng-click="paginate(50)">50</a></li>					        

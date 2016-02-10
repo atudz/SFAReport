@@ -11,11 +11,10 @@
 	var app = angular.module('app');
 	var defaultDate = '';
 	var fetch = true;
+
+	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
 	
-	
-	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log',SalesCollectionReport]);
-	
-	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log)
+	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 	    var params = [
 		          'company_code',
@@ -33,10 +32,10 @@
 		];
 	    
 	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log, TableFix);
 	    
 	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log);
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	    		
 	}
 	
@@ -45,9 +44,9 @@
 	 * Sales & Collection Posting controller
 	 */
 
-	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log',SalesCollectionPosting]);
+	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionPosting]);
 	
-	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log)
+	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix)
 	{		
 	    var params = [
 		          'company_code',
@@ -64,7 +63,8 @@
 		];
 	    
 	    // main controller 
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log, TableFix);
+
 	}
 	
 	
@@ -72,9 +72,9 @@
 	 * Sales & Collection Summary controller
 	 */
 
-	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log',SalesCollectionSummary]);
+	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionSummary]);
 	
-	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log)
+	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{
 	    var params = [
 		          'company_code',
@@ -85,36 +85,36 @@
 		];
 	    
 	    // main controller 
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log);
+	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
 	}
 	
 	/**
 	 * Van & Inventory (Canned) controller
 	 */
 
-	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log',VanInventoryCanned]);
+	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryCanned]);
 	
-	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log)
+	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
 	{	
-		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log);
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable);
 	}
 	
 	/**
 	 * Van & Inventory (Frozen) controller
 	 */
 
-	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log',VanInventoryFrozen]);
+	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryFrozen]);
 	
-	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
+	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
 	{	        
-		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log);
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable);
 	}
 	
 	
 	/**
 	 * Van Inventory Controller
 	 */
-	function vanInventoryController(scope, resource, modal, window, reportType, log)
+	function vanInventoryController(scope, resource, modal, window, reportType, log, InventoryFixTable)
 	{
 		// Filter flag
 		scope.toggleFilter = true;
@@ -141,10 +141,10 @@
 		          'reference_number'
 		];
 	    
-	    fetchMore(scope,API,params,log);
+	    fetchMore(scope,API,params,log, InventoryFixTable);
 	    	    
 	    // Filter table records	    		
-		filterSubmitVanInventory(scope,API,params,log);
+		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
 		
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, params, log);	    
@@ -434,7 +434,7 @@
 	/**
 	 * Get more data
 	 */
-	function fetchMore(scope, API, filter, log, loadMore)
+	function fetchMore(scope, API, filter, log, loadMore, InventoryFixTable)
 	{
 		var params = {};
 		$.each(filter, function(key,val){
@@ -465,27 +465,43 @@
 			    	});
 	    			$('#no_records_div').hide();
 	    			fetch = false;
-	    	//		log.info('fetch false');
 	    		}
 	    		else
 	    		{
-	    			if(!loadMore && !scope.items.length)
+	    			if(!loadMore && !scope.items.length){
 	    				$('#no_records_div').show();
+	    			}
+	    			
 	    		}
-	    		
 	    		toggleLoading();
-		    	log.info(scope.items);
-		    	
+	    		log.info(scope.items);
+
+	    		if (scope.items.length){
+	    			$('#no_records_div').hide();
+	    			$("table.table").floatThead({
+					    position: "absolute",
+					    autoReflow: true,
+					    zIndex: "2",
+					    scrollContainer: function($table){
+					        return $table.closest(".wrapper");
+					    }
+					});
+				    console.log('Build table');
+	    		} else {
+	    			$('#no_records_div').show();
+	    			$("table.table").floatThead('destroy');
+		    		console.log('Destroy table');
+	    		}
 		});				
 	}
 	
 	/**
 	 * Centralized filter function
 	 */
-	function filterSubmitVanInventory(scope, API, filter, log)
+	function filterSubmitVanInventory(scope, API, filter, log, InventoryFixTable)
 	{
 		scope.filter = function(){
-	    	
+
 			var hasError = false;			
 			$.each(filter, function(key,val){
 				if(val.indexOf('_from') != -1)
@@ -511,6 +527,10 @@
 			
 			if(!hasError)
 			{
+				if(typeof InventoryFixTable !== "undefined"){
+		    		InventoryFixTable.ift();
+		    	}
+
 				var dateFrom = new Date($('#transaction_date_from').val());
 				var dateTo = new Date($('#transaction_date_to').val());
 				
@@ -530,7 +550,7 @@
 					log.info(scope.dateRanges);
 					log.info(scope.dateValue);
 					
-					fetchMore(scope, API, filter, log);
+					fetchMore(scope, API, filter, log, InventoryFixTable);
 				}
 			}
 	    }
@@ -543,11 +563,11 @@
 				{
 					scope.dateValue = scope.dateRanges.shift();
 					if(!scope.dateRanges.length)
-						$('#load_more').addClass('hide');	
+					$('#load_more').addClass('hide');	
 					log.info(scope.dateRanges);
 					log.info(scope.dateValue);
 					
-					fetchMore(scope, API, filter, log, true);	
+					fetchMore(scope, API, filter, log, true, InventoryFixTable);
 				}
 				else
 				{
@@ -564,13 +584,18 @@
 			toggleLoading();
 	    	scope.items = []
 	    	$('#load_more').addClass('hide');
+
+	    	if(typeof InventoryFixTable !== "undefined"){
+	    		InventoryFixTable.ift();
+	    	}
+
 	    }
 	}
 	
 	/**
 	 * Centralized filter function
 	 */
-	function filterSubmit(scope, API, filter, log, report)
+	function filterSubmit(scope, API, filter, log, report, TableFix)
 	{
 		var params = {};
 		
@@ -608,11 +633,14 @@
 				toggleLoading(true);
 				API.save(params,function(data){
 		    		log.info(data);
-		    		togglePagination(data.total);
 			    	scope.records = data.records;
 			    	scope.total = data.total;
 			    	scope.summary = data.summary;
-			    	toggleLoading();			    	
+			    	toggleLoading();
+			    	if(typeof value !== "undefined"){
+			    		TableFix.tableload();
+			    	}
+			    	togglePagination(data.total);			 	
 			    });
 			}
 			
@@ -654,10 +682,10 @@
 	/**
 	 * Centralized method for sorting
 	 */
-	function sortColumn(scope, API, filter, log)
+	function sortColumn(scope, API, filter, log, TableFix)
 	{
 		var params = {};
-		
+
 		scope.sort = function(col) {
 			scope.sortColumn = col;
 			var el = $('th[id="'+col+'"]');
@@ -697,6 +725,18 @@
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
+
+		    	$("table.table").floatThead({
+				    position: "absolute",
+				    autoReflow: true,
+				    zIndex: "2",
+				    scrollContainer: function($table){
+				        return $table.closest(".wrapper");
+				    }
+				});
+			    
+			    $(".floatThead-wrapper .wrapper").scrollLeft(0);
+		    	console.log('Refresh table');
 			});
 		}
 	}
@@ -704,7 +744,7 @@
 	/**
 	 * Centralized pagination function
 	 */
-	function pagination(scope, API, filter, log, vaninventory)
+	function pagination(scope, API, filter, log, vaninventory, TableFix)
 	{
 		var params  = {};
 		
@@ -735,6 +775,9 @@
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
+		    	if(typeof TableFix !== "undefined"){
+		    		TableFix.tableload();
+		    	}
 			});
 		}
 	    
@@ -775,6 +818,9 @@
 					scope.records = data.records;					
 			    	scope.toggleFilter = true;
 			    	toggleLoading();
+			    	if(typeof TableFix !== "undefined"){
+			    		TableFix.tableload();
+			    	}
 				});
 	    	}
 		}
@@ -784,7 +830,7 @@
 	/**
 	 * Edit table records
 	 */
-	function editTable(scope, modal, resource, window, options, log)
+	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 		
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal){
@@ -862,6 +908,8 @@
 				    }
 				}
 			});
+
+
 		}		
 		
 	}
@@ -937,7 +985,7 @@
 	/**
 	 * Centralized controller codes
 	 */
-	function reportController(scope, resource, modal, window, report, filter, log)
+	function reportController(scope, resource, modal, window, report, filter, log, TableFix)
 	{
 		// Filter flag
 		scope.toggleFilter = true;
@@ -976,7 +1024,12 @@
 	    	scope.total = data.total;
 	    	log.info(data);	    	
 	    	toggleLoading();
-	    	togglePagination(data.total);	    	
+	    	
+	    	if(typeof TableFix !== "undefined"){
+	    		TableFix.tableload();
+	    	}
+
+	    	togglePagination(data.total);
 	    });	    	    
 	    
 	    params = filter;
@@ -984,13 +1037,13 @@
 	    //Sort table records
 	    scope.sortColumn = '';
 		scope.sortDirection = 'asc';
-		sortColumn(scope,API,params,log);
+		sortColumn(scope,API,params,log, TableFix);
 	    
 	    // Filter table records	    
-	    filterSubmit(scope,API,params,log, report);
+	    filterSubmit(scope,API,params,log, report, TableFix);
 		
 	    // Paginate table records	    
-	    pagination(scope,API,params,log);
+	    pagination(scope,API,params,log, TableFix);
 	    
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, filter, log);	    
@@ -1013,6 +1066,16 @@
 		    $('#pagination_div').addClass('show');
 		    $('#no_records_div').hide();
 		    $('#total_summary').show();
+
+		    $("table.table").floatThead({
+			    position: "absolute",
+			    autoReflow: true,
+			    zIndex: "2",
+			    scrollContainer: function($table){
+			        return $table.closest(".wrapper");
+			    }
+			});
+		    console.log('Build table');
 		}
 		else
 		{
@@ -1020,6 +1083,9 @@
 		    $('#pagination_div').addClass('hidden');
 		    $('#no_records_div').show();
 		    $('#total_summary').hide();
+
+		    $("table.table").floatThead('destroy');
+		    console.log('Destroy table');
 		}		
 	}
 	
@@ -1078,9 +1144,9 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', EditTableRecord]);
+	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
 	
-	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log) {
+	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
 		$scope.params = params;		
 		$log.info(params);
@@ -1109,7 +1175,12 @@
 					if($scope.params.getTotal)
 						$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 				}					
-				$('#'+$scope.params.index).addClass('modified');				
+				$('#'+$scope.params.index).addClass('modified');
+
+				if(typeof EditableFixTable !== 'undefined'){
+					EditableFixTable.eft();
+				}
+
 			});
 			
 			$uibModalInstance.dismiss('cancel');

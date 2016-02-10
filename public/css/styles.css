@@ -4,7 +4,6 @@ Version 1.0
 
 
 /*Global Styles*/
-
 body {
 	background: #f1f4f7;
 	padding-top: 50px;
@@ -506,6 +505,15 @@ a.bg-danger:hover {
 
 .navbar-toggle-2 .icon-bar+.icon-bar {
     margin-top: 4px;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.up { 
+	bottom:100% !important; 
+	top:auto !important; 
 }
 
 @media (max-width: 765px) {

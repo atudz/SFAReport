@@ -28,51 +28,51 @@
 																
 						<!-- Beginning balance -->
 						<tr ng-show="item.replenishment.total">
-							<th>Beginning Balance</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
+							<td class="bold">Beginning Balance</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
 							@foreach($itemCodes as $item)
-								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
+								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>											
 						
 						
 						<!-- Actual Count -->
 						<tr style="background-color:#ccccff;" ng-show="item.replenishment.total">
-							<th>Actual Count</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th>
+							<td class="bold">Actual Count</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold">
 								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
-							</th>
-							<th>[[item.replenishment.reference_number]]</th>
+							</td>
+							<td class="bold">[[item.replenishment.reference_number]]</td>
 							@foreach($itemCodes as $item)
-								<th>[[item.replenishment.{{'code_'.$item->item_code}}]]</th>
+								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
 						
 						<!-- Stock count -->
 						<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks">
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold">
 								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
-							</th>
-							<th>[[stock.stock_transfer_number]]</th>
-							<th></th>
-							<th></th>
+							</td>
+							<td class="bold">[[stock.stock_transfer_number]]</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
 							@foreach($itemCodes as $item)
-								<th>[[stock.{{'code_'.$item->item_code}}]]</th>
+								<td class="bold">[[stock.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
 						
@@ -95,39 +95,39 @@
 						
 						<!-- Stock on Hand -->
 						<tr style="background-color: #ccffcc" ng-show="item.showBody">
-							<th>Stock On Hand</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
+							<td class="bold">Stock On Hand</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
 							@foreach($itemCodes as $item)
-								<th>[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</th>
+								<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
 												
 						<!-- Short over stocks -->
 						<tr style="background-color:#edc4c4;" ng-show="item.short_over_stocks.total">
-							<th>Short/Over Stocks</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
+							<td class="bold">Short/Over Stocks</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
 							@foreach($itemCodes as $item)
-								<th>[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</th>
+								<td class="bold">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
 																		
 					</tbody>	
 					<tr id="no_records_div" style="background-color:white;">
-							<td colspan="{{8+count($itemCodes)}}">
+						<td colspan="{{8+count($itemCodes)}}">
 								No records found.
-							</td>
+						</td>
 					</tr>
 						
 					</tbody>				

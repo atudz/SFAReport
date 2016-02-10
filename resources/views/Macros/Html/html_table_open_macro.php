@@ -20,11 +20,11 @@ Html::macro('topen', function($options=[]) {
 	if(!$no_download)
 	{						
 		$html.= '<div class="pull-right">					
-		      		<div class="btn-group" uib-dropdown dropdown-append-to-body>
-					      <button id="btn-append-to-body" type="button" class="btn btn-success btn-sm" uib-dropdown-toggle>
+		      		<div class="btn-group">
+					      <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
 					        <i class="fa fa-download"></i> Download <span class="caret"></span>
 					      </button>
-					      <ul class="uib-dropdown-menu" role="menu" aria-labelledby="btn-append-to-body">
+					      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
 							';
 		if(!isset($options['no_xls']))
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'xlsx\')">Excel</a></li>';
@@ -33,7 +33,8 @@ Html::macro('topen', function($options=[]) {
 							      
 		$html .= '	      </ul>
     				</div>
-		      	</div>';
+		      	</div>
+		      	';
 	}
 	
 	$html .= '<div class="col-sm-7 col-sm-offset-5 show" id="loading_div">

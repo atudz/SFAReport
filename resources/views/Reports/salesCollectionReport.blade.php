@@ -50,7 +50,7 @@
 						<span ng-bind="formatNumber(record.so_total_item_discount)"></span>
 					</td>
 					<td>
-						<span ng-bind="formatNumber([record.so_total_collective_discount)"></span>
+						<span ng-bind="formatNumber([record.so_total_collective_discount])"></span>
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
@@ -129,53 +129,53 @@
 				
 				<!-- Summary -->
 				<tr id="total_summary">
-					<th>Total</th>
+					<td class="bold">Total</td>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
-					<th>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.so_total_served)"></span>
-					</th>
+					</td>
 					<td></td>
-					<th>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.so_total_collective_discount)"></span>
-					</th>
-					<th>
+					</td>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.total_invoice_amount)"></span>
-					</th>
+					</td>
 					<td></td>
 					<td></td>
 					<td></td>
-					<th>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.RTN_total_gross)"></span>
-					</th>
-					<th>
+					</td>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.RTN_total_collective_discount)"></span>
-					</th>
-					<th>
+					</td>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.RTN_net_amount)"></span>
-					</th>
-					<th>
+					</td>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.total_invoice_net_amount)"></span>
-					</th>
+					</td>
 					<td></td>
 					<td></td>
-					<th>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.cash_amount)"></span>
-					</th>
-					<th>
+					</td>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.check_amount)"></span>
-					</th>
+					</td>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
-					<th>
+					<td class="bold">
 						<span ng-bind="formatNumber(summary.total_collected_amount)"></span>
-					</th>									
+					</td>									
 				</tr>
 				</tbody>
 				{!!Html::tfooter(true,27)!!}
