@@ -157,6 +157,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
     			$this->view->type = 'canned';
+    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
@@ -165,6 +166,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
     			$this->view->type = 'frozen';
+    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('vanInventory');
     	}
     }
@@ -1630,7 +1632,10 @@ class ReportsPresenter extends PresenterCore
     	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
     	
     	$prepare = \DB::table('txn_stock_transfer_in_header')
-    					->selectRaw('txn_stock_transfer_in_header.modified_date transaction_date,txn_stock_transfer_in_header.stock_transfer_number')
+    					->selectRaw('txn_stock_transfer_in_header.stock_transfer_in_header_id,
+    								txn_stock_transfer_in_header.modified_date transaction_date,
+    								txn_stock_transfer_in_header.stock_transfer_number,
+    								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
     					->join(\DB::raw(
     						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
     						), function ($join){

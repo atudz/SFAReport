@@ -26,14 +26,28 @@ class ReportsController extends ControllerCore
 			$value = new \DateTime($request->get('value'));
 		$id = $request->get('id');
 		
+		$stockTransNum = '';
 		$syncTables = config('sync.sync_tables');
 		if($pk = array_shift($syncTables[$table]))
 		{
+			if($table == 'txn_stock_transfer_in_header')
+			{
+				$stockTransNum = \DB::table($table)->where($pk,$id)->value($column);
+			}
 			\DB::table($table)->where($pk,$id)->update([
 					$column => $value,
 					'updated_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
 			]);	
+		}
+		
+		if($table == 'txn_stock_transfer_in_header' && $stockTransNum)
+		{
+			\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
+					$column => $value,
+					'updated_at' => new \DateTime(),
+					'updated_by' => auth()->user()->id,
+			]);
 		}
 		
 		$data['success'] = true;

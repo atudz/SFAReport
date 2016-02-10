@@ -97,6 +97,9 @@
 	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log)
 	{	
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log);
+		
+		//editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 	
 	/**
@@ -108,6 +111,9 @@
 	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log)
 	{	        
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log);
+		
+		//editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 	
 	
@@ -788,7 +794,7 @@
 	function editTable(scope, modal, resource, window, options, log)
 	{
 		
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex){
 			
 			var selectOptions = options;
 			/*if(selectAPI)
@@ -846,6 +852,7 @@
 					total: total,
 					old: scope.oldVal,
 					getTotal: getTotal,
+					parentIndex: parentIndex,
 					type: inputType
 			};
 			
@@ -1098,19 +1105,37 @@
 			API.save($scope.params, function(data){
 				$log.info(data);
 				$log.info($scope.params.value);
-				if($scope.params.alias)
+				
+				// Van Inventory customization
+				if($scope.params.table == 'txn_stock_transfer_in_header')
 				{
-					$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
-					if($scope.params.getTotal)
-						$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
-				}					
+					var stocks = 'stocks';
+					if($scope.params.alias)
+					{
+						$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;						
+					}					
+					else
+					{
+						$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
+					}					
+					$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
+				}
 				else
 				{
-					$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
-					if($scope.params.getTotal)
-						$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
-				}					
-				$('#'+$scope.params.index).addClass('modified');				
+					if($scope.params.alias)
+					{
+						$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
+						if($scope.params.getTotal)
+							$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
+					}					
+					else
+					{
+						$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+						if($scope.params.getTotal)
+							$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
+					}					
+					$('#'+$scope.params.index).addClass('modified');
+				}								
 			});
 			
 			$uibModalInstance.dismiss('cancel');

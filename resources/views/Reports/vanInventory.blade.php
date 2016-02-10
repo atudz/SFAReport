@@ -60,7 +60,7 @@
 						</tr>
 						
 						<!-- Stock count -->
-						<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks">
+						<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks" id="[[$parent.$index]]_[[$index]]" class=[[stock.updated]]>
 							<th></th>
 							<th></th>
 							<th></th>
@@ -68,7 +68,15 @@
 							<th>
 								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
 							</th>
-							<th>[[stock.stock_transfer_number | uppercase]]</th>
+							<th>
+								@if($isAdmin)
+									<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',stock.stock_transfer_in_header_id,stock.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index)">
+	    								[[stock.stock_transfer_number | uppercase]]
+	  								</a>
+	  							@else
+	  								[[stock.stock_transfer_number | uppercase]]
+	  							@endif
+							</th>
 							<th></th>
 							<th></th>
 							@foreach($itemCodes as $item)
