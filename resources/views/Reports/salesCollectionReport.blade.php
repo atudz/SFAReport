@@ -35,7 +35,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
-    						[[ record.invoice_number ]]
+    						[[ record.invoice_number | uppercase ]]
   						</a>
 					</td>
 					<td>
@@ -57,7 +57,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM Number','cm_number')">
-    						[[ record.cm_number ]]
+    						[[ record.cm_number | uppercase ]]
   						</a>
 					</td>
 					<td>
@@ -65,7 +65,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
-    						[[record.return_slip_num]]
+    						[[record.return_slip_num | uppercase]]
   						</a>
 					</td>
 					<td>
@@ -87,7 +87,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')">
-    						[[record.or_number]]
+    						[[record.or_number | uppercase]]
   						</a>
 					</td>
 					<td>
@@ -98,7 +98,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
-    						[[record.bank]]
+    						[[record.bank | uppercase]]
   						</a>
 					</td>
 					<td>
@@ -113,7 +113,7 @@
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')">
-    						[[record.cm_number]]
+    						[[record.cm_number | uppercase]]
   						</a>
 					</td>
 					<td>

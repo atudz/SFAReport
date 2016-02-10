@@ -141,13 +141,13 @@
 						 	<p class="input-group">
 						 		<input type="text" id="assignment_date_from" name="assignment_date_from" show-weeks="true" ng-click="open($event,'assignment_date_from')" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-valid-date" uib-datepicker-popup="MM/dd/yyyy" ng-model="from" is-open="assignment_date_from" datepicker-options="dateOptions" close-text="Close" placeholder="From" onkeydown="return false;" {{$readOnly}}><!-- ngIf: isOpen -->
 						 		<span class="input-group-btn">
-						 			<button type="button" class="btn btn-default btn-sm" ng-click="open($event,'assignment_date_from')"><i class="glyphicon glyphicon-calendar"></i></button>
+						 			<button @if($readOnly) disabled @endif type="button" class="btn btn-default btn-sm" ng-click="open($event,'assignment_date_from')"><i class="glyphicon glyphicon-calendar"></i></button>
 						 		</span>
 						 	</p>
 						    <p class="input-group">
 			              		<input type="text" id="assignment_date_to" name="assignment_date_to" show-weeks="true" ng-click="open($event,'assignment_date_to')" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-valid-date" uib-datepicker-popup="MM/dd/yyyy" ng-model="to" is-open="assignment_date_to" datepicker-options="dateOptions" close-text="Close" placeholder="To" onkeydown="return false;" {{$readOnly}}><!-- ngIf: isOpen -->
 			              		<span class="input-group-btn">
-			                		<button type="button" class="btn btn-default btn-sm" ng-click="open($event,'assignment_date_to')"><i class="glyphicon glyphicon-calendar"></i></button>
+			                		<button @if($readOnly) disabled @endif type="button" class="btn btn-default btn-sm" ng-click="open($event,'assignment_date_to')"><i class="glyphicon glyphicon-calendar"></i></button>
 			              		</span>
 			                </p>
 			                <p class="indent error hide" id="assignment_date_error">Invalid date range.</p>				

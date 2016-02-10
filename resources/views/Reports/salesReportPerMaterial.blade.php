@@ -46,7 +46,7 @@
 						<td>[[record.area]]</td>
 						<td>
 							<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number')">
-    							[[ record.invoice_number ]]
+    							[[ record.invoice_number | uppercase]]
   							</a>
 						</td>
 						<td>
@@ -88,13 +88,7 @@
 							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
 						</td>
 						<td>[[record.discount_reference_num]]</td>
-						<td>[[record.discount_remarks]]</td>
-						<td>[[record.collective_deduction_rate]]</td>
-						<td>
-							<span ng-bind="formatNumber(record.collective_deduction_amount)"></span>
-						</td>
-						<td>[[record.deduction_reference_num]]</td>
-						<td>[[record.deduction_remarks]]</td>
+						<td>[[record.discount_remarks]]</td>						
 						<td>
 							<span ng-bind="formatNumber(record.total_invoice)"></span>
 						</td>
@@ -139,13 +133,7 @@
 							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
 						</th>
 						<td></td>
-						<td></td>
-						<td></td>
-						<th>
-							<span ng-bind="formatNumber(summary.collective_deduction_amount)"></span>
-						</th>
-						<td></td>
-						<td></td>
+						<td></td>						
 						<th>
 							<span ng-bind="formatNumber(summary.total_invoice)"></span>
 						</th>

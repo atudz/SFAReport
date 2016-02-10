@@ -38,8 +38,8 @@
 					<tbody>
 						<tr ng-repeat="record in records|filter:query">
 							<td>[[record.scr_number]]</td>
-							<td>[[record.invoice_number_from]]</td>
-							<td>[[record.invoice_number_to]]</td>
+							<td>[[record.invoice_number_from | uppercase]]</td>
+							<td>[[record.invoice_number_to | uppercase]]</td>
 							<td>
 								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
 							</td>

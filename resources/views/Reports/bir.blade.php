@@ -28,7 +28,7 @@
 							<td>[[record.name]]</td>
 							<td>[[record.customer_address]]</td>
 							<td>[[record.depot]]</td>
-							<td>[[record.reference]]</td>
+							<td>[[record.reference | uppercase]]</td>
 							<td></td>
 							<td></td>
 							<td></td>

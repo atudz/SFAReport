@@ -157,6 +157,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
     			$this->view->type = 'canned';
+    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
@@ -165,6 +166,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
     			$this->view->type = 'frozen';
+    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('vanInventory');
     	}
     }
@@ -305,9 +307,9 @@ class ReportsPresenter extends PresenterCore
 				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) check_amount,
 				   coltbl.bank,
 				   coltbl.check_number,
-				   coltbl.check_date,
+				   IF(coltbl.payment_method_code=\'CASH\',\'\', coltbl.check_date) check_date,
 				   coltbl.cm_number,
-				   ti.invoice_date cm_date,
+				   IF(coltbl.payment_method_code=\'CASH\',\'\', ti.invoice_date) cm_date,
 			   	   IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) credit_amount,
 				   (IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0)) total_collected_amount,
     			
@@ -517,7 +519,7 @@ class ReportsPresenter extends PresenterCore
 				collection.check_number,
 		        collection.check_date,
 				collection.cm_number,
-				collection.invoice_date cm_date,
+				collection.cm_date,
 			   	collection.credit_amount,
 				collection.total_collected_amount,
     			
@@ -1302,41 +1304,90 @@ class ReportsPresenter extends PresenterCore
     	$data['total_stocks'] = $stocks ? count($stocks) : 0;    	
     	$data['stocks'] = (array)$stocks;    	
     	
-    	
-    	// Get Cusomter List
-    	$prepare = $this->getPreparedVanInventory();    	
-    	$results = $prepare->get();
-			
+    		
     	//dd($results);
     	$records = [];
     	$tempInvoices = [];
-    	$tempReturns = [];
+    	//$tempReturns = [];
     	//dd($results);
-    	foreach($results as $result)
+    	
+    	
+    	if(!$this->request->get('return_slip_num'))
     	{
-    		$sales = \DB::table('txn_sales_order_detail')
-			    		->select(['item_code','served_qty'])
-			    		->where('so_number','=',$result->so_number)
-			    		->whereIn('item_code',$codes)
-			    		->get();
-
-    		foreach($sales as $item)
-    		{
-    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';
-    			if(isset($tempInvoices['code_'.$item->item_code]))
-    				$tempInvoices['code_'.$item->item_code] += $item->served_qty;
-    			else
-    				$tempInvoices['code_'.$item->item_code] = $item->served_qty;    			
-    		}	
+	    	// Get Cusomter List
+	    	$prepare = $this->getPreparedVanInventory();
+	    	$results = $prepare->get();
+	    	
+	    	foreach($results as $result)
+	    	{
+	    		$sales = \DB::table('txn_sales_order_detail')
+				    		->select(['item_code','served_qty'])
+				    		->where('so_number','=',$result->so_number)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+	
+	    		foreach($sales as $item)
+	    		{
+	    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';
+	    			if(isset($tempInvoices['code_'.$item->item_code]))
+	    				$tempInvoices['code_'.$item->item_code] += $item->served_qty;
+	    			else
+	    				$tempInvoices['code_'.$item->item_code] = $item->served_qty;    			
+	    		}	
+	    		
+	    		/* if(isset($temp['code_'.$result->item_code]))
+	    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
+	    		else
+	    			$tempReturns['code_'.$result->item_code] = $result->quantity;
+	 			*/    		
+	    		$records[] = $result;
+	    		if($reports)
+	    			$reportRecords[] = (array)$result;
+	    	}
+    	}
+    	
+    	
+    	// Get returns
+    	$prepare = $this->getPreparedVanInventoryReturns();
+    	$results = $prepare->get();
+    	
+    	if($this->request->get('return_slip_num') && !$results)
+    	{
+    		$data = [
+    				'records' => [],
+    				'replenishment' => [],
+    				'short_over_stocks' => [],
+    				'stock_on_hand' => [],
+    				'stocks' => [],
+    				'total' => 0
+    		];
+    	
+    		return $reports ? [] : response()->json($data);
+    	}
     		
-    		if(isset($temp['code_'.$result->item_code]))
-    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
-    		else
-    			$tempReturns['code_'.$result->item_code] = $result->quantity;
-    		
-    		$records[] = $result;
-    		if($reports)
-    			$reportRecords[] = (array)$result;
+    	if(!$this->request->get('invoice_number'))
+    	{
+	    	foreach($results as $result)
+	    	{
+	    		$returns = \DB::table('txn_return_detail')
+				    		->select(['item_code','quantity'])
+				    		->where('return_txn_number','=',$result->so_number)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+	    	
+	    		foreach($returns as $item)
+	    		{
+	    			$result->{'code_'.$item->item_code} = $item->quantity;
+	    			if(isset($tempInvoices['code_'.$item->item_code]))
+	    				$tempInvoices['code_'.$item->item_code] -= $item->quantity;
+	    			else
+	    				$tempInvoices['code_'.$item->item_code] = -$item->quantity;
+	    		}
+	    	    		
+	    		$records[] = $result;
+	    		if($reports)
+	    		 	$reportRecords[] = (array)$result;
+	    	}
     	}
     	
     	// Compute Stock on Hand
@@ -1349,14 +1400,14 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount[$code] = 0;
     		if(!isset($tempStockTransfer[$code]))
     			$tempStockTransfer[$code] = 0;
-    		if(!isset($tempReturns[$code]))
-    			$tempReturns[$code] = 0;
+    		/* if(!isset($tempReturns[$code]))
+    			$tempReturns[$code] = 0; */
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     		
@@ -1365,7 +1416,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	//dd($tempPrevStockTransfer, $tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
     	$data['records'] = $records;
-    	$data['total'] = $reports ? count($records) : count($results);
+    	$data['total'] = count($records);
     	
     	$data['stock_on_hand'] = $stockOnHand;
     	if($reports && $data['total'])
@@ -1507,11 +1558,32 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] += $item->served_qty;    			
     		}	
     		
-    		if(isset($temp['code_'.$result->item_code]))
+    		/* if(isset($temp['code_'.$result->item_code]))
     			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
     		else
-    			$tempReturns['code_'.$result->item_code] = $result->quantity;
+    			$tempReturns['code_'.$result->item_code] = $result->quantity; */
     		
+    	}
+    	
+    	// Get returns
+    	$prepare = $this->getPreparedVanInventoryReturns(true)
+    				->whereBetween(\DB::raw('DATE(txn_return_header.return_date)'),[$dateStart,$dateFrom]);
+    	$results = $prepare->get();
+    	
+    	foreach($results as $result)
+    	{
+    		$returns = \DB::table('txn_return_detail')
+				    		->select(['item_code','quantity'])
+				    		->where('return_txn_number','=',$result->so_number)
+				    		->whereIn('item_code',$itemCodes)
+				    		->get();
+    		 
+    		foreach($returns as $item)
+    		{
+    			if(!isset($tempInvoices['code_'.$item->item_code]))
+    				$tempInvoices['code_'.$item->item_code] = 0;
+    			$tempInvoices['code_'.$item->item_code] -= $item->quantity;    			
+    		}
     	}
     	
     	// Compute Stock on Hand
@@ -1523,12 +1595,12 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount[$code] = 0;
     		if(!isset($tempStockTransfer[$code]))
     			$tempStockTransfer[$code] = 0;
-    		if(!isset($tempReturns[$code]))
-    			$tempReturns[$code] = 0;
+    		/* if(!isset($tempReturns[$code]))
+    			$tempReturns[$code] = 0; */
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = $tempStockTransfer[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     	}
@@ -1560,7 +1632,10 @@ class ReportsPresenter extends PresenterCore
     	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
     	
     	$prepare = \DB::table('txn_stock_transfer_in_header')
-    					->selectRaw('txn_stock_transfer_in_header.modified_date transaction_date,txn_stock_transfer_in_header.stock_transfer_number')
+    					->selectRaw('txn_stock_transfer_in_header.stock_transfer_in_header_id,
+    								txn_stock_transfer_in_header.modified_date transaction_date,
+    								txn_stock_transfer_in_header.stock_transfer_number,
+    								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
     					->join(\DB::raw(
     						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
     						), function ($join){
@@ -1596,9 +1671,6 @@ class ReportsPresenter extends PresenterCore
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
-    			   txn_return_header.return_slip_num,
-    			   txn_return_detail.item_code,
-    			   txn_return_detail.quantity,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
@@ -1611,12 +1683,7 @@ class ReportsPresenter extends PresenterCore
     						), function ($join){
 					    		$join->on('txn_sales_order_header.reference_num','=','tsod.reference_num');
 			    	})
-    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')			    	
-			    	->leftJoin('txn_return_header', function ($join){
-			    		$join->on('txn_sales_order_header.reference_num','=','txn_return_header.reference_num')
-			    		->where('txn_sales_order_header.salesman_code','=','txn_return_header.salesman_code');
-			    	})
-			    	->leftJoin('txn_return_detail','txn_return_header.return_txn_number','=','txn_return_detail.return_txn_number');
+    				->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code');
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
@@ -1633,12 +1700,6 @@ class ReportsPresenter extends PresenterCore
     	$invoiceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $invoiceNumFilter->addFilter($prepare,'invoice_number');
     	
-    	$returnSlipNumFilter = FilterFactory::getInstance('Text');
-    	$prepare = $returnSlipNumFilter->addFilter($prepare,'return_slip_num',
-    					function($self,$model){    						
-    						return $model->where('txn_return_header.return_slip_num','LIKE',$self->getValue().'%');
-    				});
-    	    	
     	/* $status = $this->request->get('status') ? $this->request->get('status') : 'A';
     	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
     	$codes = [];
@@ -1649,6 +1710,60 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */    	
     	
     	$prepare->orderBy('txn_sales_order_header.invoice_number');
+    	return $prepare;
+    }
+    
+    
+    /**
+     * Return prepared statement for van inventory returns
+     * @return unknown
+     */
+    public function getPreparedVanInventoryReturns($noTransaction=false)
+    {
+    	$select = '
+    			   app_customer.customer_name,
+				   txn_return_header.return_date invoice_date,    				
+				   txn_return_header.return_slip_num,
+    			   txn_return_header.return_txn_number so_number,
+    			   IF(txn_return_header.updated_by,\'modified\',\'\') updated
+    			';
+    
+    	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
+    
+    	$prepare = \DB::table('txn_return_header')
+			    	->selectRaw($select)
+			    	->join(\DB::raw(
+			    			'(select reference_num from txn_return_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY reference_num) trd'
+			    	), function ($join){
+			    		$join->on('txn_return_header.reference_num','=','trd.reference_num');
+			    	})
+			    	->leftJoin('app_customer','txn_return_header.customer_code','=','app_customer.customer_code');
+    	 
+    	$salesmanFilter = FilterFactory::getInstance('Select');
+    	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    
+    	if(!$noTransaction)
+    	{
+    		$transactionFilter = FilterFactory::getInstance('Date');
+    		$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+    				function($self, $model){
+    					return $model->where(\DB::raw('DATE(txn_return_header.return_date)'),'=',$self->getValue());
+    				});
+    	}
+    
+    	$returnFilter = FilterFactory::getInstance('Text');
+    	$prepare = $returnFilter->addFilter($prepare,'return_slip_num');
+    	 
+    	/* $status = $this->request->get('status') ? $this->request->get('status') : 'A';
+    	 $item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
+    	 $codes = [];
+    	 foreach($item_codes as $item)
+    	 {
+    	 $codes[] = $item->item_code;
+    	 }
+    	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */
+    	 
+    	$prepare->orderBy('txn_return_header.return_slip_num');
     	return $prepare;
     }
     
@@ -2135,12 +2250,8 @@ class ReportsPresenter extends PresenterCore
 			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
 			    tsohd.discount_remarks,
-			    tsohd.collective_deduction_rate,
-			    tsohd.collective_deduction_amount,
-			    tsohd.deduction_reference_num,
-			    tsohd.deduction_remarks,
 			    tsod.sales_order_detail_id,
-			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount)) total_invoice,
 				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
 				\'txn_sales_order_header\' invoice_table,
@@ -2166,14 +2277,10 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN
 				(
 					select reference_num,
-						   served_deduction_rate as collective_deduction_rate,
 						   served_deduction_rate as collective_discount_rate,
 						   ref_no as discount_reference_num,
 						   remarks as discount_remarks,
-						   ref_no as deduction_reference_num,
-						   remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+						   sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 					from txn_sales_order_header_discount group by reference_num
 				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
 				LEFT JOIN
@@ -2215,11 +2322,7 @@ class ReportsPresenter extends PresenterCore
 				trhd.collective_discount_rate,
 			    trhd.collective_discount_amount,
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,
-				0 collective_deduction_rate,
-			    0 collective_deduction_amount,
-			    0 deduction_reference_num,
-			    0 deduction_remarks,
+			    trhd.discount_remarks,				
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
@@ -2288,12 +2391,8 @@ class ReportsPresenter extends PresenterCore
 			    sales.collective_discount_rate,
 			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
-			    sales.discount_remarks,
-			    sales.collective_deduction_rate,
-			    sales.collective_deduction_amount,
-			    sales.deduction_reference_num,
-			    sales.deduction_remarks,
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+			    sales.discount_remarks,			    
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2317,8 +2416,7 @@ class ReportsPresenter extends PresenterCore
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
 				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
-				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice
+    			   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice
     			';
     	}
     	 
@@ -2379,7 +2477,7 @@ class ReportsPresenter extends PresenterCore
     				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
     			});
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -2443,13 +2541,9 @@ class ReportsPresenter extends PresenterCore
 			    tsohd.collective_discount_rate,	
 			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
-			    tsohd.discount_remarks,
-			    tsohd.collective_deduction_rate,	
-			    tsohd.collective_deduction_amount,
-			    tsohd.deduction_reference_num,
-			    tsohd.deduction_remarks,	
+			    tsohd.discount_remarks,			    	
 			    tsod.sales_order_detail_id,		
-			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount + tsohd.collective_deduction_amount)) total_invoice,
+			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount)) total_invoice,
 				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
 			
 				\'txn_sales_order_header\' invoice_table,
@@ -2484,14 +2578,10 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN 
 				(
 					select reference_num,
-						   served_deduction_rate as collective_deduction_rate,
 						   served_deduction_rate as collective_discount_rate,
 						   ref_no as discount_reference_num,
 						   remarks as discount_remarks,
-						   ref_no as deduction_reference_num,
-						   remarks as deduction_remarks,
-							sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_deduction_amount,
-							sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
+						   sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 					from txn_sales_order_header_discount group by reference_num	
 				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
 				LEFT JOIN
@@ -2526,11 +2616,7 @@ class ReportsPresenter extends PresenterCore
 				trhd.collective_discount_rate,
 			    trhd.collective_discount_amount,
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,
-				0 collective_deduction_rate,	
-			    0 collective_deduction_amount,
-			    0 deduction_reference_num,
-			    0 deduction_remarks,
+			    trhd.discount_remarks,				
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 			
@@ -2602,12 +2688,8 @@ class ReportsPresenter extends PresenterCore
 			    sales.collective_discount_rate,	
 			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
-			    sales.discount_remarks,
-			    sales.collective_deduction_rate,	
-			    sales.collective_deduction_amount,
-			    sales.deduction_reference_num,
-			    sales.deduction_remarks,	
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice,
+			    sales.discount_remarks,			    	
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2629,9 +2711,8 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
-				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM(sales.collective_deduction_amount) collective_deduction_amount,
-				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount + sales.collective_deduction_amount)) total_invoice	
+				   SUM(sales.collective_discount_amount) collective_discount_amount,    			   
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice	
     			';
     	}
     	
@@ -2692,7 +2773,7 @@ class ReportsPresenter extends PresenterCore
 			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
 			    			});
 
-		if(!$this->hasAdminRole())
+		if(!$this->hasAdminRole() && auth()->user())
 		{
 			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
 		}
@@ -2858,7 +2939,7 @@ class ReportsPresenter extends PresenterCore
 		
 		$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
 		
-		if(!$this->hasAdminRole())
+		if(!$this->hasAdminRole() && auth()->user())
 		{
 			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
 		}
@@ -3015,7 +3096,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3095,7 +3176,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3172,7 +3253,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('salesman_customer.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3249,7 +3330,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3515,19 +3596,15 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Condition Code','sort'=>'condition_code'],
     			['name'=>'Uom Code'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Collective Deduction Rate'],
-    			['name'=>'Collective Deduction Amount'],
-    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net Amount'],
+    			['name'=>'Remarks'],    			
+    			['name'=>'Total Sales'],
     	];
     
     	return $headers;
@@ -3554,19 +3631,15 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice No/ Return Slip No.','sort'=>'invoice_number'],
     			['name'=>'Invoice Date/ Return Date','sort'=>'invoice_date'],
     			['name'=>'Invoice/Return Posting Date','sort'=>'invoice_posting_date'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate' ,'sort'=>'collective_discount_rate'],
     			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Collective Deduction Rate'],
-    			['name'=>'Collective Deduction Amount'],
-    			['name'=>'Reference No.','sort'=>'deduction_reference_num'],
-    			['name'=>'Remarks'],
-    			['name'=>'Total Invoice/Return Net Amount'],
+    			['name'=>'Remarks'],    			
+    			['name'=>'Total Sales'],
     	];
     
     	return $headers;
@@ -3599,7 +3672,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Condition Code','sort'=>'condition_code'],
     			['name'=>'Uom Code'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
@@ -3634,7 +3707,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Date','sort'=>'return_date'],
     			['name'=>'Posting Date','sort'=>'return_posting_date'],
-    			['name'=>'Gross Amount'],
+    			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
@@ -3785,7 +3858,7 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('area_name','like','SFI%');
     	}
     	
-    	if($forcePermission && !$this->hasAdminRole())
+    	if($forcePermission && !$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -4139,11 +4212,7 @@ class ReportsPresenter extends PresenterCore
     		'collective_discount_rate',
     		'collective_discount_amount',
     		'discount_reference_num',
-    		'discount_remarks',
-    		'collective_deduction_rate',
-    		'collective_deduction_amount',
-    		'deduction_reference_num',
-    		'deduction_remarks',
+    		'discount_remarks',    		
     		'total_invoice',    					
     	]; 
     }
@@ -4276,10 +4345,6 @@ class ReportsPresenter extends PresenterCore
     			'collective_discount_amount',
     			'discount_reference_num',
     			'discount_remarks',
-    			'collective_deduction_rate',
-    			'collective_deduction_amount',
-    			'deduction_reference_num',
-    			'deduction_remarks',
     			'total_invoice',
     	];
     }
@@ -4537,7 +4602,7 @@ class ReportsPresenter extends PresenterCore
     	else
     		$limit = config('system.report_limit_pdf');
     	
-    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']))
+    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']) && !in_array($type,['xls','xlsx']))
     		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
