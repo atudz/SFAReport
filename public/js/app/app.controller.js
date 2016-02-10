@@ -733,6 +733,8 @@
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
 
+		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+			    
 		    	$("table.table").floatThead({
 				    position: "absolute",
 				    autoReflow: true,
@@ -742,8 +744,8 @@
 				    }
 				});
 			    
-			    $(".floatThead-wrapper .wrapper").scrollLeft(0);
-		    	console.log('Refresh table');
+		    	console.log('Refresh table. Scroll value: '+scrollpos);
+		    	$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
 	}

@@ -7,8 +7,12 @@
 	app.factory('EditableFixTable',function(){
         return {
             eft: function(){
+                var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+
     			$("table.table").floatThead('reflow');
-				console.log('Load Editable Factory!');
+				console.log('Load Editable Factory. Scroll value: '+scrollpos);
+
+                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
             }
         };
     });
