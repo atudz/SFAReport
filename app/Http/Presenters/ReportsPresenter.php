@@ -2488,7 +2488,7 @@ class ReportsPresenter extends PresenterCore
     				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
     			});
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -2801,7 +2801,7 @@ class ReportsPresenter extends PresenterCore
 			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
 			    			});
 
-		if(!$this->hasAdminRole())
+		if(!$this->hasAdminRole() && auth()->user())
 		{
 			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
 		}
@@ -2967,7 +2967,7 @@ class ReportsPresenter extends PresenterCore
 		
 		$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
 		
-		if(!$this->hasAdminRole())
+		if(!$this->hasAdminRole() && auth()->user())
 		{
 			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
 		}
@@ -3124,7 +3124,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3204,7 +3204,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3281,7 +3281,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('salesman_customer.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3358,7 +3358,7 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
-    	if(!$this->hasAdminRole())
+    	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
@@ -3894,7 +3894,7 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('area_name','like','SFI%');
     	}
     	
-    	if($forcePermission && !$this->hasAdminRole())
+    	if($forcePermission && !$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
