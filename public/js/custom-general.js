@@ -36,10 +36,23 @@
 					$('#sidebar-collapse').animate({ "left": "-="+sc+"px" }, "fast" );
 					$('.main').removeClass('col-sm-offset-3 col-lg-offset-2 col-lg-10 col-sm-9');
 					$('.main').addClass('col-lg-12 col-sm-12');
+					var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
+
+	    			$("table.table").floatThead('reflow');
+					console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+
+	                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+
 				} else {
 					$('#sidebar-collapse').animate({ "left": "+="+sc+"px" }, "600" );
 					$('.main').addClass('col-sm-offset-3 col-lg-offset-2 col-lg-10 col-sm-9');
 					$('.main').removeClass('col-lg-12 col-sm-12');
+					var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
+
+	    			$("table.table").floatThead('reflow');
+					console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+
+	                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 				}
 
 			});
@@ -51,6 +64,12 @@
 				$('#sidebar-collapse').css({"left": "0px", "display":"block"});
 				$('.main').addClass('col-sm-offset-3 col-lg-offset-2 col-lg-10 col-sm-9');
 				$('.main').removeClass('col-lg-12 col-sm-12');
+				var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
+
+    			$("table.table").floatThead('reflow');
+				console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+
+                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			}
 		});
 

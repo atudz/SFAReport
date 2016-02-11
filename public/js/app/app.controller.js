@@ -1088,6 +1088,7 @@
 		    $('#no_records_div').hide();
 		    $('#total_summary').show();
 
+		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;	
 		    $("table.table").floatThead({
 			    position: "absolute",
 			    autoReflow: true,
@@ -1097,6 +1098,7 @@
 			    }
 			});
 		    console.log('Build table');
+		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}
 		else
 		{
@@ -1105,8 +1107,10 @@
 		    $('#no_records_div').show();
 		    $('#total_summary').hide();
 
+		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
 		    $("table.table").floatThead('destroy');
 		    console.log('Destroy table');
+		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}		
 	}
 	
