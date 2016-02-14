@@ -2222,73 +2222,151 @@ class ReportsPresenter extends PresenterCore
     {
     	$querySales = '
     			SELECT
-				tsoh.so_number,
-				tsoh.reference_num,
+				all_so.so_number,
+				all_so.reference_num,
 				tas.activity_code,
-				tsoh.customer_code,
+				all_so.customer_code,
 				ac.customer_name,
 			    remarks.remarks,
 			    remarks.evaluated_objective_id,
-				tsoh.van_code,
-				tsoh.device_code,
-				tsoh.salesman_code,
+				all_so.van_code,
+				all_so.device_code,
+				all_so.salesman_code,
 				aps.salesman_name,
     			aa.area_code,
 				aa.area_name area,
-				tsoh.invoice_number,
-				tsoh.so_date invoice_date,
-				tsoh.sfa_modified_date invoice_posting_date,
+				all_so.invoice_number,
+				all_so.so_date invoice_date,
+				all_so.sfa_modified_date invoice_posting_date,
 				aim.segment_code,
 				aim.item_code,
 				aim.description,
-			    tsod.served_qty quantity,
+			    all_so.served_qty quantity,
 			    0 return_detail_id,
 				\'\' condition_code,
-				tsod.uom_code,
-				tsod.gross_served_amount,
-				tsod.vat_amount,
-				tsod.discount_rate,
-				tsod.discount_amount,
-			    tsohd.collective_discount_rate,
-			    tsohd.discount_reference_num,
-			    tsohd.discount_remarks,
-			    tsod.sales_order_detail_id,
-			    ((tsod.gross_served_amount + tsod.vat_amount) - (tsod.discount_amount + tsohd.collective_discount_amount)) total_invoice,
-				IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', IF(remarks.updated_by,\'modified\',\'\'))) updated,
-		
+				all_so.uom_code,
+				all_so.gross_served_amount,
+				all_so.vat_amount,
+				all_so.discount_rate,
+				all_so.discount_amount,
+			    all_so.collective_discount_rate,
+			    all_so.discount_reference_num,
+			    all_so.discount_remarks,
+			    all_so.total_sales total_invoice,
+				IF(all_so.updated =\'modified\',\'modified\',IF(remarks.updated_by,\'modified\',\'\')) updated,		
 				\'txn_sales_order_header\' invoice_table,
 				\'invoice_number\' invoice_number_column,
 				\'so_date\' invoice_date_column,
 				\'sfa_modified_date\' invoice_posting_date_column,
-				tsoh.sales_order_header_id invoice_pk_id,
-				\'txn_sales_order_detail\' quantity_table,
-				\'served_qty\' quantity_column,
-				tsod.sales_order_detail_id quantity_pk_id,
+				all_so.sales_order_header_id invoice_pk_id,
+				all_so.quantity_table,
+				all_so.quantity_column,
+				all_so.quantity_pk_id,
 				\'\' condition_code_table,
 				\'\' condition_code_column,
 				0 condition_code_pk_id
 		
 		
-				FROM txn_sales_order_header tsoh
-				LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)
+				FROM 
+    			(
+    				 -- For SO Regular Skus --
+						 select 
+    							tsoh.sales_order_header_id,
+    							\'txn_sales_order_detail\' quantity_table,
+								\'served_qty\' quantity_column,
+								tsod.sales_order_detail_id quantity_pk_id,
+    							tsoh.so_number, 
+								tsoh.reference_num,
+    							tsoh.customer_code, 
+								tsoh.salesman_code, 
+				    			tsoh.van_code,
+								tsoh.device_code,				
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number,    							
+    							tsoh.so_date,    			
+    							tsod.uom_code,
+    							tsod.item_code,
+								tsod.gross_served_amount,
+								tsod.vat_amount,
+								tsod.discount_rate,
+								tsod.discount_amount,
+    							tsod.served_qty,    			
+    							tsohd.served_deduction_rate collective_discount_rate,
+			    				tsohd.ref_no discount_reference_num,
+			    				tsohd.remarks discount_remarks,
+								(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.discount_amount+tsohd.served_deduction_amount),0.00)) total_sales,
+    							IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', \'\')) updated
+    			
+								from txn_sales_order_header tsoh
+								inner join txn_sales_order_detail tsod
+								on tsoh.reference_num = tsod.reference_num
+								and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
+    							left join (
+    								select 
+    									reference_num,
+    									served_deduction_rate,
+			    						ref_no,
+			    						remarks, 
+    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
+										from txn_sales_order_header_discount
+										group by reference_num
+    							) tsohd on tsoh.reference_num = tsohd.reference_num
+								
+
+							union all
+
+							-- For SO Deals --
+								select
+    							tsoh.sales_order_header_id, 
+    							\'txn_sales_order_deal\' quantity_table,
+								\'regular_served_qty\' quantity_column,
+								tsodeal.so_detail_deal_id quantity_pk_id,
+    							tsoh.so_number, 
+								tsoh.reference_num,
+    							tsoh.customer_code, 
+								tsoh.salesman_code, 
+				    			tsoh.van_code,
+								tsoh.device_code,				
+								tsoh.sfa_modified_date,
+								tsoh.invoice_number,
+    							tsoh.so_date,    			
+    							tsodeal.uom_code,
+    							tsodeal.item_code,
+								tsodeal.gross_served_amount,
+								tsodeal.vat_served_amount vat_amount,
+								0.00 discount_rate,
+								0.00 discount_amount,  
+    							tsodeal.regular_served_qty served_qty,
+    							tsohd.served_deduction_rate collective_discount_rate,
+			    				tsohd.ref_no discount_reference_num,
+			    				tsohd.remarks discount_remarks,  			
+								(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce(tsohd.served_deduction_amount)) total_sales,
+    							IF(tsoh.updated_by,\'modified\', IF(tsodeal.updated_by,\'modified\', \'\')) updated
+    			
+								from txn_sales_order_header tsoh
+								inner join txn_sales_order_deal tsodeal
+								on tsoh.reference_num = tsodeal.reference_num
+    							left join (
+    								select 
+    									reference_num,
+    									served_deduction_rate,
+			    						ref_no,
+			    						remarks, 
+    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
+										from txn_sales_order_header_discount
+										group by reference_num
+    							) tsohd on tsoh.reference_num = tsohd.reference_num
+								
+    			) all_so
+				LEFT JOIN app_customer ac ON(ac.customer_code=all_so.customer_code)
 				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
-				LEFT JOIN app_salesman aps ON(aps.salesman_code=tsoh.salesman_code)
-				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=tsoh.reference_num AND tas.salesman_code=tsoh.salesman_code)
-				LEFT JOIN  txn_sales_order_detail tsod ON(tsod.reference_num=tsoh.reference_num)
-				LEFT JOIN app_item_master aim ON(tsod.item_code=aim.item_code)
-				LEFT JOIN
-				(
-					select reference_num,
-						   served_deduction_rate as collective_discount_rate,
-						   ref_no as discount_reference_num,
-						   remarks as discount_remarks,
-						   sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
-					from txn_sales_order_header_discount group by reference_num
-				) tsohd ON(tsohd.reference_num = tsoh.reference_num)
+				LEFT JOIN app_salesman aps ON(aps.salesman_code=all_so.salesman_code)
+				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)
+				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)				
 				LEFT JOIN
 				(
 					select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
-				) remarks ON(remarks.reference_num=tsoh.reference_num)
+				) remarks ON(remarks.reference_num=all_so.reference_num)
     			';
     	 
     	$queryReturns = '
@@ -2320,11 +2398,10 @@ class ReportsPresenter extends PresenterCore
 				trd.vat_amount,
 				0 discount_rate,
 				trd.discount_amount,
-				trhd.collective_discount_rate,			    
-			    trhd.discount_reference_num,
-			    trhd.discount_remarks,	
-    			trd.return_detail_id sales_order_detail_id,							
-			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
+				trhd.deduction_rate collective_discount_rate,
+			    trhd.ref_no discount_reference_num,
+			    trhd.remarks discount_remarks,							
+			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
 			    \'txn_return_header\' invoice_table,
@@ -2345,16 +2422,18 @@ class ReportsPresenter extends PresenterCore
 			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
 			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
 			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
-			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)
-			LEFT JOIN
-			(
-				select reference_num,
-					   deduction_rate as collective_discount_rate,
-					   ref_no as discount_reference_num,
-					   remarks as discount_remarks,
-					   sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) as collective_discount_amount
-			    from txn_return_header_discount group by reference_num
-			) trhd ON(trh.reference_num=trhd.reference_num)
+			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)			
+    		LEFT JOIN 
+    		(
+    			select 
+    				reference_num,
+			    	ref_no,
+			    	remarks, 
+    				deduction_rate,
+    				sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) served_deduction_amount
+					from  txn_return_header_discount
+					group by reference_num
+    		) trhd ON(trhd.reference_num=trh.reference_num)
 			LEFT JOIN
 			(
 				select evaluated_objective_id,remarks,reference_num,updated_by
@@ -2392,7 +2471,7 @@ class ReportsPresenter extends PresenterCore
 			    sales.collective_discount_rate,
 			    sales.discount_reference_num,
 			    sales.discount_remarks,			    
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice,
+			    sales.total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2415,7 +2494,7 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
-				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice
+				   SUM(sales.total_invoice) total_invoice
     			';
     	}
     	 
