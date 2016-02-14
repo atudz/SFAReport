@@ -7,12 +7,12 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6">
+					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::select('company_code','Company', $companyCode)!!}
 						{!!Html::select('salesman','Salesman', $salesman)!!}											
 						{!!Html::select('customer','Customer', $customers)!!}
 					</div>					
-					<div class="pull-right col-sm-6">	
+					<div class="pull-right col-sm-6 col-xs-12">	
 						{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
 						{!!Html::input('text','invoice_number','Invoice #')!!}
 					</div>			

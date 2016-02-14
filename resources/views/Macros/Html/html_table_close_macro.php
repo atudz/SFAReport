@@ -111,10 +111,10 @@ Html::macro('tclose', function($paginate=true) {
 				
 				<div class="pull-right pagination">
 					<ul class="pagination">
-						<li class="page-first"><a href="" ng-click="pager(1,1)">&lt;&lt;</a></li>
-						<li class="page-pre"><a href="" ng-click="pager(-1)">&lt;</a></li>
-						<li class="page-next"><a href="" ng-click="pager(1)">&gt;</a></li>
-						<li class="page-last"><a href="" ng-click="pager(1,0,1)">&gt;&gt;</a></li>
+						<li class="page-first"><a href="" ng-click="pager(1,1)">First</a></li>
+						<li class="page-pre"><a href="" ng-click="pager(-1)">Prev</a></li>
+						<li class="page-next"><a href="" ng-click="pager(1)">Next</a></li>
+						<li class="page-last"><a href="" ng-click="pager(1,0,1)">Last</a></li>
 						<input type="hidden" name="page" id="page" value="1">
 					</ul>
 				</div>

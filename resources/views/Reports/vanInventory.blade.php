@@ -7,13 +7,13 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6">
+					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
 						{!!Html::select('status','Status', $statuses,'')!!}
 						{!!Html::input('text','invoice_number','Invoice #')!!}
 						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}
 					</div>					
-					<div class="pull-right col-sm-6">
+					<div class="pull-right col-sm-6 col-xs-12">
 						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}	
 						{!!Html::input('text','return_slip_num','Return Slip #')!!}
 						{!!Html::input('text','reference_number','Replenishment #')!!}					

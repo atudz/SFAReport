@@ -7,11 +7,11 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6">
+					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::datepicker('transaction_date','Transaction Date','true')!!}
 						{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
 					</div>					
-					<div class="pull-right col-sm-6">	
+					<div class="pull-right col-sm-6 col-xs-12">	
 						{!!Html::select('salesman','Salesman', $salesman)!!}							 			
 						{!!Html::datepicker('posting_date','Posting Date','true')!!}
 					</div>			

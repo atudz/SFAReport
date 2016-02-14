@@ -53,7 +53,7 @@ Html::macro('topen', function($options=[]) {
 			                <li ng-repeat="item in params.chunks">
 			                    <div class="radio">
 			  						<label>
-			    						<input type="radio" ng-click="selectItem([[item.from]])"> [[item.from]] - [[item.to]]
+			    						<input type="radio" name="exportdoc" ng-click="selectItem([[item.from]])"> [[item.from]] - [[item.to]]
 			  						</label>
 								</div>
 			                </li>

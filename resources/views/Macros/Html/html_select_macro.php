@@ -16,9 +16,9 @@ Html::macro('select', function($name, $label, $list=[], $default='All') {
 			$list = [$default] + $list;
 	}	
 	
-	$html = '<div class="form-group form-group-sm">
-			 	<label for="'.$name.'" class="col-sm-3 control-label">'.$label.'</label>
-			 	<div class="col-sm-6">'.
+	$html = '<div class="form-group">
+			 	<label for="'.$name.'" class="col-xs-12 col-md-5 col-sm-5 control-label">'.$label.'</label>
+			 	<div class="col-xs-12 col-sm-6">'.
 			 		Form::select($name, $list, null, $options).
 			 '	</div>
 			 </div>';
