@@ -2250,7 +2250,6 @@ class ReportsPresenter extends PresenterCore
 				tsod.discount_rate,
 				tsod.discount_amount,
 			    tsohd.collective_discount_rate,
-			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
 			    tsohd.discount_remarks,
 			    tsod.sales_order_detail_id,
@@ -2321,8 +2320,7 @@ class ReportsPresenter extends PresenterCore
 				trd.vat_amount,
 				0 discount_rate,
 				trd.discount_amount,
-				trhd.collective_discount_rate,
-			    trhd.collective_discount_amount,
+				trhd.collective_discount_rate,			    
 			    trhd.discount_reference_num,
 			    trhd.discount_remarks,	
     			trd.return_detail_id sales_order_detail_id,							
@@ -2392,10 +2390,9 @@ class ReportsPresenter extends PresenterCore
 				sales.discount_rate,
 				sales.discount_amount,
 			    sales.collective_discount_rate,
-			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
 			    sales.discount_remarks,			    
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2418,8 +2415,7 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
-				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice
     			';
     	}
     	 
@@ -3604,7 +3600,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate'],
-    			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],    			
     			['name'=>'Total Sales'],
@@ -4053,9 +4048,7 @@ class ReportsPresenter extends PresenterCore
 	    		$header = 'Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
-    			break;    			
-    		case 'bir':
-    			return $this->getBir();
+    			break; 
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
     			$rows = $this->getSalesReportMaterialSelectColumns();
@@ -4213,7 +4206,6 @@ class ReportsPresenter extends PresenterCore
     		'discount_rate',
     		'discount_amount',
     		'collective_discount_rate',
-    		'collective_discount_amount',
     		'discount_reference_num',
     		'discount_remarks',    		
     		'total_invoice',    					

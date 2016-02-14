@@ -1178,54 +1178,62 @@
 		
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
+			var error = false;
 			if($scope.params.type == 'datetime')
 			{
 				var val = $scope.params.value;
 				$log.info('date_value ' + val);
 				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 			}
+			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined))
+			{
+				error = true;
+			}
 			$log.info($scope.params);
-			API.save($scope.params, function(data){
-				$log.info(data);
-				$log.info($scope.params.value);
-				
-				// Van Inventory customization
-				if($scope.params.table == 'txn_stock_transfer_in_header')
-				{
-					var stocks = 'stocks';
-					if($scope.params.alias)
+			if(!error)
+			{
+				API.save($scope.params, function(data){
+					$log.info(data);
+					$log.info($scope.params.value);
+					
+					// Van Inventory customization
+					if($scope.params.table == 'txn_stock_transfer_in_header')
 					{
-						$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;						
-					}					
-					else
-					{
-						$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
-					}					
-					$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
-				}
-				else
-				{
-					if($scope.params.alias)
-					{
-						$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
-						if($scope.params.getTotal)
-							$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
-					}					
-					else
-					{
-						$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
-						if($scope.params.getTotal)
-							$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
-					}					
-					$('#'+$scope.params.index).addClass('modified');
-
-					if(typeof EditableFixTable !== 'undefined'){
-						EditableFixTable.eft();
+						var stocks = 'stocks';
+						if($scope.params.alias)
+						{
+							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;						
+						}					
+						else
+						{
+							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
+						}					
+						$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
 					}
-				}								
-			});
-			
-			$uibModalInstance.dismiss('cancel');
+					else
+					{
+						if($scope.params.alias)
+						{
+							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
+							if($scope.params.getTotal)
+								$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
+						}					
+						else
+						{
+							$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
+							if($scope.params.getTotal)
+								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
+						}					
+						$('#'+$scope.params.index).addClass('modified');
+
+						if(typeof EditableFixTable !== 'undefined'){
+							EditableFixTable.eft();
+						}
+					}								
+				});
+				
+				$uibModalInstance.dismiss('cancel');
+			}
 		};
 		
 		$scope.cancel = function () {
