@@ -2184,6 +2184,9 @@ class ReportsPresenter extends PresenterCore
     				});
     	
     	$prepare->where('app_customer.customer_name','like','1000%');
+    	$prepare->where('app_customer.customer_name','not like','%Adjustment%');
+    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %');
+    	
     	return $prepare;
     }
     
@@ -2313,7 +2316,6 @@ class ReportsPresenter extends PresenterCore
 				trd.quantity,
 				trd.return_detail_id,
 				trd.condition_code,
-				trd.return_detail_id sales_order_detail_id,
 				trd.uom_code,
 				trd.gross_amount gross_served_amount,
 				trd.vat_amount,
@@ -2322,7 +2324,8 @@ class ReportsPresenter extends PresenterCore
 				trhd.collective_discount_rate,
 			    trhd.collective_discount_amount,
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,				
+			    trhd.discount_remarks,	
+    			trd.return_detail_id sales_order_detail_id,							
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
@@ -3554,12 +3557,12 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Vat Registration No.'],
     			['name'=>'Sales-Exempt'],
     			['name'=>'Sales-0%'],
-    			['name'=>'Services'],
     			['name'=>'Sales-12%','sort'=>'sales'],    			
     			['name'=>'Total Sales','sort'=>'total_sales'],
     			['name'=>'Tax Amount','sort'=>'tax_amount'],
     			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
     			['name'=>'Local Sales','sort'=>'local_sales'],
+    			['name'=>'Services'],    			 
     			['name'=>'Term-Cash','sort'=>'term_cash'],
     			['name'=>'Term-on-Account'],
     			['name'=>'Sales Group','sort'=>'sales_group'],
