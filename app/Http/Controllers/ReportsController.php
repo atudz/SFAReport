@@ -38,7 +38,17 @@ class ReportsController extends ControllerCore
 					$column => $value,
 					'updated_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
-			]);	
+			]);
+
+			\DB::table('table_logs')->insert([
+					'table' => $table,
+					'column' => $column,
+					'pk_id' => $id,
+					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value, 
+					'updated_at' => new \DateTime(),
+					'created_at' => new \DateTime(),
+					'updated_by' => auth()->user()->id,
+			]);
 		}
 		
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum)
@@ -46,6 +56,16 @@ class ReportsController extends ControllerCore
 			\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
 					$column => $value,
 					'updated_at' => new \DateTime(),
+					'updated_by' => auth()->user()->id,
+			]);
+			
+			\DB::table('table_logs')->insert([
+					'table' => $table,
+					'column' => $column,
+					'pk_id' => $id,
+					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+					'updated_at' => new \DateTime(),
+					'created_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
 			]);
 		}

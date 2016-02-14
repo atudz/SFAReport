@@ -2184,6 +2184,9 @@ class ReportsPresenter extends PresenterCore
     				});
     	
     	$prepare->where('app_customer.customer_name','like','1000%');
+    	$prepare->where('app_customer.customer_name','not like','%Adjustment%');
+    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %');
+    	
     	return $prepare;
     }
     
@@ -2247,7 +2250,6 @@ class ReportsPresenter extends PresenterCore
 				tsod.discount_rate,
 				tsod.discount_amount,
 			    tsohd.collective_discount_rate,
-			    tsohd.collective_discount_amount,
 			    tsohd.discount_reference_num,
 			    tsohd.discount_remarks,
 			    tsod.sales_order_detail_id,
@@ -2313,16 +2315,15 @@ class ReportsPresenter extends PresenterCore
 				trd.quantity,
 				trd.return_detail_id,
 				trd.condition_code,
-				trd.return_detail_id sales_order_detail_id,
 				trd.uom_code,
 				trd.gross_amount gross_served_amount,
 				trd.vat_amount,
 				0 discount_rate,
 				trd.discount_amount,
-				trhd.collective_discount_rate,
-			    trhd.collective_discount_amount,
+				trhd.collective_discount_rate,			    
 			    trhd.discount_reference_num,
-			    trhd.discount_remarks,				
+			    trhd.discount_remarks,	
+    			trd.return_detail_id sales_order_detail_id,							
 			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
@@ -2389,10 +2390,9 @@ class ReportsPresenter extends PresenterCore
 				sales.discount_rate,
 				sales.discount_amount,
 			    sales.collective_discount_rate,
-			    sales.collective_discount_amount,
 			    sales.discount_reference_num,
 			    sales.discount_remarks,			    
-			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice,
+			    ((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice,
 				sales.updated,
 				sales.evaluated_objective_id,
     			sales.invoice_table,
@@ -2415,8 +2415,7 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
-				   SUM(sales.collective_discount_amount) collective_discount_amount,
-    			   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount + sales.collective_discount_amount)) total_invoice
+				   SUM((sales.gross_served_amount + sales.vat_amount) - (sales.discount_amount)) total_invoice
     			';
     	}
     	 
@@ -3554,12 +3553,12 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Vat Registration No.'],
     			['name'=>'Sales-Exempt'],
     			['name'=>'Sales-0%'],
-    			['name'=>'Services'],
     			['name'=>'Sales-12%','sort'=>'sales'],    			
     			['name'=>'Total Sales','sort'=>'total_sales'],
     			['name'=>'Tax Amount','sort'=>'tax_amount'],
     			['name'=>'Total Invoice Amount','sort'=>'total_invoice_amount'],
     			['name'=>'Local Sales','sort'=>'local_sales'],
+    			['name'=>'Services'],    			 
     			['name'=>'Term-Cash','sort'=>'term_cash'],
     			['name'=>'Term-on-Account'],
     			['name'=>'Sales Group','sort'=>'sales_group'],
@@ -3601,7 +3600,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
     			['name'=>'Discount Amount Per Item'],
     			['name'=>'Collective Discount Rate'],
-    			['name'=>'Collective Discount Amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],    			
     			['name'=>'Total Sales'],
@@ -4050,9 +4048,7 @@ class ReportsPresenter extends PresenterCore
 	    		$header = 'Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
-    			break;    			
-    		case 'bir':
-    			return $this->getBir();
+    			break; 
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
     			$rows = $this->getSalesReportMaterialSelectColumns();
@@ -4210,7 +4206,6 @@ class ReportsPresenter extends PresenterCore
     		'discount_rate',
     		'discount_amount',
     		'collective_discount_rate',
-    		'collective_discount_amount',
     		'discount_reference_num',
     		'discount_remarks',    		
     		'total_invoice',    					
