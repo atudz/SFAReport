@@ -2990,7 +2990,7 @@ class ReportsPresenter extends PresenterCore
 				SUM(txn_return_detail.gross_amount) gross_amount,
 				SUM(txn_return_detail.vat_amount) vat_amount,
 				SUM(trhd.collective_discount_amount) collective_discount_amount,
-    			SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount)) total_invoice    			
+    			SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice    			
     			';
     	}
     	elseif($summaryCollectiveAmount)
