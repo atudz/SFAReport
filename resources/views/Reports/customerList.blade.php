@@ -8,12 +8,12 @@
 				
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6">
+					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('status','Status', $statuses)!!}						
 					</div>					
-					<div class="pull-right col-sm-6">	
+					<div class="pull-right col-sm-6 col-xs-12">	
 						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}																			 		
 					</div>			

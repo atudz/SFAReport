@@ -1506,9 +1506,17 @@
 	    	$scope.records = data;
 	    	$log.info(data);
 	    	$scope.id = data.id;
-	    	$scope.age = Number(data.age);	    	
-	    	$scope.from = new Date(data.location_assignment_from)
-	    	$scope.to = new Date(data.location_assignment_to)	    	
+	    	$scope.age = Number(data.age);	
+	    	
+
+	    	if(data.location_assignment_from){
+	    		$scope.from = new Date(data.location_assignment_from);
+	    	}
+	    	if(data.location_assignment_to){
+	    		$scope.to = new Date(data.location_assignment_to);
+	    	}
+
+	    	
 	    });
 	    
 	    // Save user profile
@@ -1570,6 +1578,7 @@
 			{
 				personalInfoErrors.push('Invalid email address.');
 			}
+
 		/*	if($('#email').val() && $.inArray($('#email').val(),$scope.emailList))
 			{
 				personalInfoErrors.push('Email must be unique.');
@@ -1605,7 +1614,12 @@
 				{
 					personalInfoErrors.push('Password don\'t match.')
 				}
-			}			
+			}	
+
+			if(!$('#age').val())
+			{
+				personalInfoErrors.push('Age is a required field.');
+			}		
 			
 			if(personalInfoErrors.length > 0)
 			{

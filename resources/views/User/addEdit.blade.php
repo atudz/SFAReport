@@ -48,10 +48,10 @@
 						{!!Html::select('gender','Gender', $gender, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('number','age','Age','',['min'=>0])!!}
+						{!!Html::input('number','age','Age *','',['min'=>15])!!}
 					</div>					
 					<div class="row form-input-field">
-						{!!Html::input('text','address','Adddress')!!}
+						{!!Html::input('text','address','Address')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','telephone','Telephone No.','',['pattern'=>'[0-9]*'])!!}

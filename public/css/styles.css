@@ -516,6 +516,13 @@ a.bg-danger:hover {
 	top:auto !important; 
 }
 
+.button-filter .col-xs-12{
+	padding-left: 30px;
+}
+.pagination li a{
+	color:#666;
+}
+
 @media (max-width: 765px) {
 	.navbar-toggle-2{
 		display: none;
@@ -686,6 +693,9 @@ a.bg-danger:hover {
 	}
 	.navbar-header {
 		width: 100%;
+	}
+	.table-options{
+		padding:0 0 20px;
 	}
 }
 
@@ -1069,6 +1079,7 @@ h5.page-header
  
  .table-options {
   	margin-bottom: 10px;
+  	clear: both;
  }
  
  .sortable{cursor: pointer;}

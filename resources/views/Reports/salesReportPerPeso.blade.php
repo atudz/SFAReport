@@ -8,12 +8,12 @@
 				
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6">
+					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::datepicker('return_date','Invoice Date/ Return Date',true)!!}
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}			
 						{!!Html::input('text','invoice_number','Invoice #')!!}			
 					</div>					
-					<div class="pull-right col-sm-6">	
+					<div class="pull-right col-sm-6 col-xs-12">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('customer','Customer', $customers)!!}

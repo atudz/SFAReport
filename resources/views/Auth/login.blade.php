@@ -7,7 +7,7 @@
                 <div class="logo-login">
                     <img src="img/sfi_logo.jpg" />
                 </div>
-                <div class="panel-heading">SFA Reports - LOGIN</div>
+                <div class="panel-heading">SFA SFI Reports - {{ env('SETUP') }} LOGIN</div>
                 <div class="panel-body">
                 
                 {{--*/ $msg = session('successMsg') ?  session('successMsg') : ''; /*--}}
@@ -46,4 +46,8 @@
             </div>
         </div><!-- /.col-->
     </div><!-- /.row -->    
+
+    <div style="text-align:center">
+        <p class="mute text-center">Copyright 2016 <strong>{{env('PRODUCT')}} {{ env('SETUP') }} {{env('VERSION')}}</strong></p> 
+    </div>
 @stop
