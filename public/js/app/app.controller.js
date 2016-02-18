@@ -348,7 +348,11 @@
 		          'item_code',
 		          'status',
 		          'sfa_modified_date_from',
-		          'sfa_modified_date_to'
+		          'sfa_modified_date_to',
+		          'effective_date1_from',
+		          'effective_date1_to',
+		          'effective_date2_from',
+		          'effective_date2_to',
 		];
 	    
 	    // main controller

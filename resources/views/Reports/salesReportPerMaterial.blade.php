@@ -79,7 +79,10 @@
 						<td>
 							<span ng-bind="formatNumber(record.vat_amount)"></span>
 						</td>
-						<td>[[record.discount_rate]]</td>						
+						<td>[[record.discount_rate]]</td>
+						<td>
+							<span ng-bind="formatNumber(record.discount_amount)"></span>
+						</td>						
 						<td>[[record.collective_discount_rate]]</td>
 						<td>
 							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
@@ -126,6 +129,9 @@
 							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
 						</th>
 						<td></td>						
+						<th>
+							<span ng-bind="formatNumber(summary.collective_discount_amount)"></span>
+						</th>
 						<td></td>
 						<td></td>						
 						<th>

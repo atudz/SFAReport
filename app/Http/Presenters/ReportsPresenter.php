@@ -120,6 +120,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->areas = $this->getArea();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->companyCode = $this->getCompanyCode();
+    			$this->view->priceGroup = $this->getPriceGroup();
     			$this->view->tableHeaders = $this->getCustomerListColumns();
     			return $this->view('customerList');
     		case 'salesmanlist':
@@ -1807,13 +1808,17 @@ class ReportsPresenter extends PresenterCore
      * @param string $summary
      * @return unknown
      */
-    public function getPreparedUnpaidInvoice($summary=false)
+    public function getPreparedUnpaidInvoice($summary=false,$sync=false)
     {
     	if($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to'))
     	{
     		$from = date_create($this->request->get('invoice_date_from'));
             $to = date_create($this->request->get('invoice_date_to'));
             $filterInvoice = "DATE(%sinvoice_date) BETWEEN '".date_format($from, 'Y-m-d')."' and '".date_format($to, 'Y-m-d')."'";
+    	}
+    	elseif($sync)
+    	{
+    		$filterInvoice = 'DATE(%sinvoice_date) <= \''.date('Y-m-d').'\'';
     	}
     	else
     	{
@@ -2250,6 +2255,7 @@ class ReportsPresenter extends PresenterCore
 				all_so.discount_rate,
 				all_so.discount_amount,
 			    all_so.collective_discount_rate,
+    			all_so.collective_discount_amount,
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,
 			    all_so.total_sales total_invoice,
@@ -2294,24 +2300,15 @@ class ReportsPresenter extends PresenterCore
     							tsohd.served_deduction_rate collective_discount_rate,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,
-								(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.discount_amount+tsohd.served_deduction_amount),0.00)) total_sales,
+    							coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100) collective_discount_amount,
+								(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.discount_amount+coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)),0.00)) total_sales,
     							IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod
 								on tsoh.reference_num = tsod.reference_num
 								and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
-    							left join (
-    								select 
-    									reference_num,
-    									served_deduction_rate,
-			    						ref_no,
-			    						remarks, 
-    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
-										from txn_sales_order_header_discount
-										group by reference_num
-    							) tsohd on tsoh.reference_num = tsohd.reference_num
-								
+    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num    							
 
 							union all
 
@@ -2339,23 +2336,15 @@ class ReportsPresenter extends PresenterCore
     							tsodeal.regular_served_qty served_qty,
     							tsohd.served_deduction_rate collective_discount_rate,
 			    				tsohd.ref_no discount_reference_num,
-			    				tsohd.remarks discount_remarks,  			
-								(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce(tsohd.served_deduction_amount)) total_sales,
+			    				tsohd.remarks discount_remarks,  		
+    							coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100) collective_discount_amount,	
+								(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) total_sales,
     							IF(tsoh.updated_by,\'modified\', IF(tsodeal.updated_by,\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
-    							left join (
-    								select 
-    									reference_num,
-    									served_deduction_rate,
-			    						ref_no,
-			    						remarks, 
-    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
-										from txn_sales_order_header_discount
-										group by reference_num
-    							) tsohd on tsoh.reference_num = tsohd.reference_num
+    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num
 								
     			) all_so
 				LEFT JOIN app_customer ac ON(ac.customer_code=all_so.customer_code)
@@ -2399,9 +2388,10 @@ class ReportsPresenter extends PresenterCore
 				0 discount_rate,
 				trd.discount_amount,
 				trhd.deduction_rate collective_discount_rate,
+    			(coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,							
-			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
+			    ((trd.gross_amount + trd.vat_amount) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 		
 			    \'txn_return_header\' invoice_table,
@@ -2469,6 +2459,7 @@ class ReportsPresenter extends PresenterCore
 				sales.discount_rate,
 				sales.discount_amount,
 			    sales.collective_discount_rate,
+    			sales.collective_discount_amount,
 			    sales.discount_reference_num,
 			    sales.discount_remarks,			    
 			    sales.total_invoice,
@@ -2494,6 +2485,7 @@ class ReportsPresenter extends PresenterCore
 				   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
+    			   SUM(sales.collective_discount_amount) collective_discount_amount,
 				   SUM(sales.total_invoice) total_invoice
     			';
     	}
@@ -2650,10 +2642,10 @@ class ReportsPresenter extends PresenterCore
 								SUM(tsod.discount_rate) discount_rate,
 								SUM(tsod.discount_amount)discount_amount,
     							tsohd.served_deduction_rate collective_discount_rate,
-    							tsohd.served_deduction_amount collective_discount_amount,
+    							SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) collective_discount_amount,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,
-								SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.discount_amount+tsohd.served_deduction_amount),0.00)) total_sales,
+								SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) total_sales,
     							IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
@@ -2691,10 +2683,10 @@ class ReportsPresenter extends PresenterCore
 								0.00 discount_rate,
 								0.00 discount_amount,  
     							tsohd.served_deduction_rate collective_discount_rate,
-    							tsohd.served_deduction_amount collective_discount_amount,
+    							SUM(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) collective_discount_amount,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,  			
-								SUM(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce(tsohd.served_deduction_amount)) total_sales,
+								SUM(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) total_sales,
     							IF(tsoh.updated_by,\'modified\', IF(tsodeal.updated_by,\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
@@ -2746,10 +2738,10 @@ class ReportsPresenter extends PresenterCore
 				0 discount_rate,
 				trd.discount_amount,
 				trhd.deduction_rate collective_discount_rate,
-			    trhd.served_deduction_amount collective_discount_amount,
+			    SUM((coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    ((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
+			    SUM((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
 			
 			    \'txn_return_header\' invoice_table,
@@ -2839,6 +2831,7 @@ class ReportsPresenter extends PresenterCore
     			   SUM(sales.gross_served_amount) gross_served_amount,
     			   SUM(sales.discount_amount) discount_amount,
 				   SUM(sales.vat_amount) vat_amount,
+    			   SUM(sales.collective_discount_amount) collective_discount_amount,
 				   SUM(sales.total_invoice) total_invoice
     			';
     	}
@@ -2971,7 +2964,7 @@ class ReportsPresenter extends PresenterCore
 				\'0\' discount_rate,
 				txn_return_detail.discount_amount,
 				trhd.collective_discount_rate,	
-    			trhd.collective_discount_amount,
+    			(coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)) collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
     			((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice,
@@ -3304,6 +3297,19 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->where('app_area.area_code','=',$self->getValue());
     			});
+    	
+    	/* $priceGroup = FilterFactory::getInstance('Select');
+    	$prepare = $priceGroup->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('app_area.area_code','=',$self->getValue());
+    			});
+    	
+    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('app_area.area_code','=',$self->getValue());
+    			}); */
     	 
     	$statusFilter = FilterFactory::getInstance('Select');
     	$prepare = $statusFilter->addFilter($prepare,'status');
@@ -3351,28 +3357,20 @@ class ReportsPresenter extends PresenterCore
     	$select = '
     			app_salesman.salesman_code,
     			app_salesman.salesman_name,
-    			salesman_customer.area_code,
-				salesman_customer.area_name,
+    			app_area.area_code,
+				app_area.area_name,
     			app_salesman_van.van_code,
     			app_salesman.sfa_modified_date,
 				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
     			';
     	 
     	$prepare = \DB::table('app_salesman')
-    			->distinct()
 		    	->selectRaw($select)		    	
-		    	->leftJoin(
-		    		\DB::raw('(
-		    				SELECT salesman_code,ac.area_code,aa.area_name
-							FROM app_salesman_customer apsc
-							JOIN app_customer ac ON ( ac.customer_code = apsc.customer_code ) 
-							JOIN app_area aa ON ( aa.area_code = ac.area_code ) 
-							GROUP BY ac.area_code) salesman_customer'), function($join){
-		    						    			 	$join->on('salesman_customer.salesman_code','=','app_salesman.salesman_code');
-		    						    			 }
-				)
-		    	->leftJoin('app_salesman_van','app_salesman.salesman_code','=','app_salesman_van.salesman_code');
-    	
+		    	->leftJoin('app_salesman_customer','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
+		    	->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+		    	->leftJoin('app_area','app_area.area_code','=','app_customer.area_code')
+		    	->leftJoin('app_salesman_van','app_salesman_van.salesman_code','=','app_salesman.salesman_code');
+		    	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	
@@ -3393,6 +3391,17 @@ class ReportsPresenter extends PresenterCore
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	
+    	
+    	$prepare->where('app_salesman_customer.status','=','A');
+    	$prepare->where('app_customer.status','=','A');
+    	$prepare->where('app_area.status','=','A');
+    	$prepare->where('app_salesman_van.status','=','A');
+    	
+    	$prepare->groupBy('app_salesman.salesman_code');
+    	$prepare->groupBy('app_salesman.salesman_name');
+    	$prepare->groupBy('app_area.area_code');
+    	$prepare->groupBy('app_salesman_van.van_code');
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
@@ -3427,7 +3436,7 @@ class ReportsPresenter extends PresenterCore
     	$select = '
     			app_item_master.item_code,
     			app_item_master.description,
-    			app_item_master_uom.uom_code,
+    			app_item_price.uom_code,
 				app_item_master.segment_code,
     			app_item_price.unit_price,
     			app_item_price.customer_price_group,
@@ -3438,20 +3447,17 @@ class ReportsPresenter extends PresenterCore
 				IF(app_item_master.status=\'A\',\'Active\',IF(app_item_master.status=\'I\',\'Inactive\',\'Deleted\')) status
     			';
     	
-    	$prepare = \DB::table('app_item_master')
-    				->distinct()
-			    	->selectRaw($select)
-			    	->leftJoin('app_item_master_uom','app_item_master.item_code','=','app_item_master_uom.item_code')
-			    	->leftJoin('app_item_price','app_item_master.item_code','=','app_item_price.item_code')
-			    	->leftJoin(\DB::raw('
-			    			(select customer_price_group, area_code from app_customer group by customer_price_group) app_customer 
-			    			'), function($join){
-			    				$join->on('app_customer.customer_price_group','=','app_item_price.customer_price_group');
-			    			})
-			    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
+    	$prepare = \DB::table('app_item_price')
+    				->selectRaw($select)
+    				->join('app_item_master','app_item_master.item_code','=','app_item_price.item_code')
+    				->join('app_customer','app_customer.customer_price_group','=','app_item_price.customer_price_group')
+			    	->join('app_area','app_customer.area_code','=','app_area.area_code');
 
 		$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+    	
+    	$itemFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemFilter->addFilter($prepare,'item_code');
     	
     	$areaFilter = FilterFactory::getInstance('Select');
     	$prepare = $areaFilter->addFilter($prepare,'area',
@@ -3470,6 +3476,35 @@ class ReportsPresenter extends PresenterCore
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	
+    	$effectiveDateFromFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $effectiveDateFromFilter->addFilter($prepare,'effective_date1',
+							function($self, $model){
+								return $model->whereBetween('app_item_price.effective_date_from',$self->getValue());
+							});
+    	
+    	$effectiveDateToFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $effectiveDateToFilter->addFilter($prepare,'effective_date2',
+							function($self, $model){
+								return $model->whereBetween('app_item_price.effective_date_to',$self->getValue());
+							});
+    	
+    	$prepare->where('app_item_price.status','=','A');
+    	$prepare->where('app_item_master.status','=','A');
+    	$prepare->where('app_customer.status','=','A');
+    	$prepare->where('app_area.status','=','A');
+    	 
+    	$prepare->groupBy('app_item_price.item_code');
+    	$prepare->groupBy('app_item_master.description');
+    	$prepare->groupBy('app_item_price.uom_code');
+    	$prepare->groupBy('app_item_master.segment_code');
+    	$prepare->groupBy('app_item_price.unit_price');
+    	$prepare->groupBy('app_item_price.customer_price_group');
+    	$prepare->groupBy('app_item_price.effective_date_from');
+    	$prepare->groupBy('app_item_price.effective_date_to');
+    	$prepare->groupBy('app_area.area_name');
+    	$prepare->groupBy('app_item_price.sfa_modified_date');
+    	$prepare->groupBy('app_item_price.status');
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
@@ -3740,8 +3775,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
-    			['name'=>'Discount Amount Per Item'],
+    			['name'=>'Discount Amount Per Item','sort'=>'discount_rate_amount'],
     			['name'=>'Collective Discount Rate'],
+    			['name'=>'Collective Discount Amount','sort'=>'collective_discount_amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],    			
     			['name'=>'Total Sales'],
@@ -3983,6 +4019,18 @@ class ReportsPresenter extends PresenterCore
 		    			->selectRaw('DISTINCT(SUBSTRING(customer_code,1,4)) company_code')
 				    	->orderBy('company_code')
 				    	->lists('company_code','company_code');
+    }
+    
+    
+    /**
+     * Get Company Code
+     * @return multitype:
+     */
+    public function getPriceGroup()
+    {
+    	return \DB::table('app_item_price')
+				    	->orderBy('customer_price_group')
+				    	->lists('customer_price_group','customer_price_group');
     }
     
 	/**
@@ -4348,6 +4396,7 @@ class ReportsPresenter extends PresenterCore
     		'discount_rate',
     		'discount_amount',
     		'collective_discount_rate',
+    		'collective_discount_amount',
     		'discount_reference_num',
     		'discount_remarks',    		
     		'total_invoice',    					
@@ -5055,7 +5104,7 @@ class ReportsPresenter extends PresenterCore
     public function updateReportSummary()
     {
     	$salesCollection = $this->getDataCount('salescollectionreport');
-    	$unpaid = $this->getDataCount('unpaidinvoice');
+    	$unpaid = $this->getPreparedUnpaidInvoice(false,true)->getCountForPagination();
     	$van = $this->getDataCount('vaninventorycanned');
     	$bir = $this->getDataCount('bir');
     	$sales = $this->getDataCount('salesreportpermaterial');
@@ -5063,7 +5112,7 @@ class ReportsPresenter extends PresenterCore
     	$today = new \DateTime();
     	$data = [
     		['report'=>'salescollection','count'=>$salesCollection->getData()->total,'created_at'=>$today,'updated_at'=>$today],
-    		['report'=>'unpaidinvoice','count'=>$unpaid->getData()->total,'created_at'=>$today,'updated_at'=>$today],
+    		['report'=>'unpaidinvoice','count'=>$unpaid,'created_at'=>$today,'updated_at'=>$today],
     		['report'=>'van','count'=>$van->getData()->total,'created_at'=>$today,'updated_at'=>$today],
     		['report'=>'bir','count'=>$bir->getData()->total,'created_at'=>$today,'updated_at'=>$today],
     		['report'=>'salesreport','count'=>$sales->getData()->total,'created_at'=>$today,'updated_at'=>$today],
