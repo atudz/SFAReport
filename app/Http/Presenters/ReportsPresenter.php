@@ -1297,7 +1297,8 @@ class ReportsPresenter extends PresenterCore
 
     	// pull previous stock transfer
     	$tempPrevStockTransfer = [];
-    	$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
+    	if(!$stocks)
+    		$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
     	//dd($tempPrevStockTransfer);
 
     	//dd($stocks);
