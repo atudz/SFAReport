@@ -1444,6 +1444,9 @@ class ReportsPresenter extends PresenterCore
     	if($reports && $displayShort)
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
     	
+    	if($reports && $replenishment && isset($replenishment->total) && $replenishment->total)
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$stockOnHand);
+    	
     	unset($replenishment->replenishment_date);
     	unset($replenishment->reference_number);	    	    
     	
@@ -1469,7 +1472,7 @@ class ReportsPresenter extends PresenterCore
     	// Get previous stock transfer
     	$prepare = $this->getPreparedVanInventoryStocks(true);
     	$prepare = $prepare->where(\DB::raw('DATE(sfa_modified_date)'),'<',$dateFrom);    	
-    	$prepare = $prepare->orderBy('sfa_modified_date');
+    	$prepare = $prepare->orderBy('sfa_modified_date','desc');
     	
     	$stockStart = $prepare->first();
     	if(!$stockStart)

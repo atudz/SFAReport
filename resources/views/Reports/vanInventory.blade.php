@@ -132,6 +132,21 @@
 								<td class="bold">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
+						
+						<!-- Beginning balance -->
+						<tr ng-show="item.replenishment.total">
+							<td class="bold">Beginning Balance</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							@foreach($itemCodes as $item)
+								<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
+							@endforeach
+						</tr>
 																		
 					</tbody>	
 					<tr id="no_records_div" style="background-color:white;">
