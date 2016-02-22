@@ -2250,7 +2250,8 @@ class ReportsPresenter extends PresenterCore
 				aim.segment_code,
 				aim.item_code,
 				aim.description,
-			    all_so.served_qty quantity,
+			    IF(\'Adjustment\'=SUBSTR(ac.customer_name,6),all_so.order_qty,
+    				IF(\'Van to Warehouse Transaction\'=SUBSTR(ac.customer_name,6),all_so.order_qty,all_so.served_qty)) quantity,
 			    0 return_detail_id,
 				\'\' condition_code,
 				all_so.uom_code,
@@ -2283,7 +2284,8 @@ class ReportsPresenter extends PresenterCore
 						 select 
     							tsoh.sales_order_header_id,
     							\'txn_sales_order_detail\' quantity_table,
-								\'served_qty\' quantity_column,
+								IF(\'Adjustment\'=SUBSTR(ac.customer_name,6),\'order_qty\',
+    								IF(\'Van to Warehouse Transaction\'=SUBSTR(ac.customer_name,6),\'order_qty\',\'serverd_qty\')) quantity_column,
 								tsod.sales_order_detail_id quantity_pk_id,
     							tsoh.so_number, 
 								tsoh.reference_num,
@@ -2300,7 +2302,8 @@ class ReportsPresenter extends PresenterCore
 								tsod.vat_amount,
 								tsod.discount_rate,
 								tsod.discount_amount,
-    							tsod.served_qty,    			
+    							tsod.served_qty,
+    							tsod.order_qty,    			
     							tsohd.served_deduction_rate collective_discount_rate,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,
@@ -2312,7 +2315,8 @@ class ReportsPresenter extends PresenterCore
 								inner join txn_sales_order_detail tsod
 								on tsoh.reference_num = tsod.reference_num
 								and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
-    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num    							
+    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num
+    							LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)    							
 
 							union all
 
@@ -2320,7 +2324,8 @@ class ReportsPresenter extends PresenterCore
 								select
     							tsoh.sales_order_header_id, 
     							\'txn_sales_order_deal\' quantity_table,
-								\'regular_served_qty\' quantity_column,
+    							IF(\'Adjustment\'=SUBSTR(ac.customer_name,6),\'regular_order_qty\',
+    								IF(\'Van to Warehouse Transaction\'=SUBSTR(ac.customer_name,6),\'regular_order_qty\',\'regular_served_qty\')) quantity_column,
 								tsodeal.so_detail_deal_id quantity_pk_id,
     							tsoh.so_number, 
 								tsoh.reference_num,
@@ -2338,6 +2343,7 @@ class ReportsPresenter extends PresenterCore
 								0.00 discount_rate,
 								0.00 discount_amount,  
     							tsodeal.regular_served_qty served_qty,
+    							tsodeal.regular_order_qty order_qty,
     							tsohd.served_deduction_rate collective_discount_rate,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,  		
@@ -2349,6 +2355,7 @@ class ReportsPresenter extends PresenterCore
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
     							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num
+    							LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)	
 								
     			) all_so
 				LEFT JOIN app_customer ac ON(ac.customer_code=all_so.customer_code)
