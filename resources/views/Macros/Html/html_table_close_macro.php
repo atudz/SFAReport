@@ -98,8 +98,8 @@ Html::macro('tclose', function($paginate=true) {
 					        [[perpage]] <span class="caret"></span>
 					      </button>
 					      <ul class="dropdown-menu" role="menu" aria-labelledby="selectDropdown">
-					        <li role="menuitem" class="active" id="limit10" ng-click="paginate(10)"><a href="">10</a></li>
-					        <li role="menuitem"><a href="" id="limit25" ng-click="paginate(25)">25</a></li>
+					        <li style="display:none" role="menuitem"  id="limit10" ng-click="paginate(10)"><a href="">10</a></li>
+					        <li role="menuitem" class="active"><a href="" id="limit25" ng-click="paginate(25)">25</a></li>
 					        <li role="menuitem"><a href="" id="limit50" ng-click="paginate(50)">50</a></li>					        
 					        <li role="menuitem"><a href="" id="limit100" ng-click="paginate(100)">100</a></li>
 					      </ul>

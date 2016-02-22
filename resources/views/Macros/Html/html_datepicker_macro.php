@@ -7,7 +7,9 @@ Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=fals
 	$options = $monthOnly ? '{minMode: \'month\'}' : 'dateOptions'; 
 	
 	$html = '<div class="form-group">
-			 	<label for="'.$name.'" class="col-xs-12 col-md-5 col-sm-5 control-label">'.$label.'</label>
+			 	<div class="col-xs-12 col-md-5 col-sm-5 control-label">
+			 		<label for="'.$name.'" class="">'.$label.'</label>
+			 	</div>
 			 	<div class="col-xs-12  col-sm-6" data-ng-controller="'.$controller.'">
 			 	<p class="input-group">
 			 		<input type="text" id="'.$name.'_from" name="'.$name.'_from" show-weeks="true" ng-click="open($event,\''.$name.'_from\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="'.$name.'_from" datepicker-options="'.$options.'" close-text="Close"'.$placeholderFrom.' onkeydown="return false;"/>

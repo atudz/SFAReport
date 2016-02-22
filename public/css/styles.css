@@ -1115,6 +1115,10 @@ tr.modified {
 	margin-bottom: 10px;
 }
 
+.sidebar ul.nav .active a, .sidebar ul.nav li.parent a.active, .sidebar ul.nav .active > a:hover, .sidebar ul.nav li.parent a.active:hover, .sidebar ul.nav .active > a:focus, .sidebar ul.nav li.parent a.active:focus {
+    background-color: #eee;
+}
+
 @media (max-width: 400px) {
 	.navbar-brand>img{
 		display: none;
@@ -1122,8 +1126,18 @@ tr.modified {
 	}
 }
 
+
+@media (max-width: 380px) {
+	.panel-heading{
+		font-size:14px;
+	}
+}
+
+
 .error {
 	color: red;
 }
+
+
 
  
