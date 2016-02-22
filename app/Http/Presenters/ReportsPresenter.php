@@ -1297,7 +1297,7 @@ class ReportsPresenter extends PresenterCore
 
     	// pull previous stock transfer
     	$tempPrevStockTransfer = [];
-    	if(!$stocks)
+    	if(!$tempActualCount)
     		$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
     	//dd($tempPrevStockTransfer);
 
@@ -1310,7 +1310,6 @@ class ReportsPresenter extends PresenterCore
     	//dd($results);
     	$records = [];
     	$tempInvoices = [];
-    	//$tempReturns = [];
     	//dd($results);
     	
     	
@@ -1366,7 +1365,8 @@ class ReportsPresenter extends PresenterCore
     	
     		return $reports ? [] : response()->json($data);
     	}
-    		
+
+    	$tempReturns = [];    	   
     	if(!$this->request->get('invoice_number'))
     	{
 	    	foreach($results as $result)
@@ -1380,10 +1380,10 @@ class ReportsPresenter extends PresenterCore
 	    		foreach($returns as $item)
 	    		{
 	    			$result->{'code_'.$item->item_code} = $item->quantity;
-	    			if(isset($tempInvoices['code_'.$item->item_code]))
-	    				$tempInvoices['code_'.$item->item_code] -= $item->quantity;
+	    			if(isset($tempReturns['code_'.$item->item_code]))
+	    				$tempReturns['code_'.$item->item_code] += $item->quantity;
 	    			else
-	    				$tempInvoices['code_'.$item->item_code] = -$item->quantity;
+	    				$tempReturns['code_'.$item->item_code] = $item->quantity;
 	    		}
 	    	    		
 	    		$records[] = $result;
@@ -1402,14 +1402,15 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount[$code] = 0;
     		if(!isset($tempStockTransfer[$code]))
     			$tempStockTransfer[$code] = 0;
-    		/* if(!isset($tempReturns[$code]))
-    			$tempReturns[$code] = 0; */
+    		if(!isset($tempReturns[$code]))
+    			$tempReturns[$code] = 0;
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		//$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     		
