@@ -114,7 +114,7 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.quantity)"></span>
+							<span ng-bind="summary.quantity"></span>
 						</th>
 						<td></td>
 						<td></td>
