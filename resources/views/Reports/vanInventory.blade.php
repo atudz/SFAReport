@@ -27,7 +27,7 @@
 					<tbody ng-repeat="item in items">
 																
 						<!-- Beginning balance -->
-						<tr ng-show="item.replenishment.total">
+						<tr ng-show="item.first_upload">
 							<td class="bold">Beginning Balance</td>
 							<td class="bold"></td>
 							<td class="bold"></td>
@@ -39,25 +39,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
-						</tr>											
-						
-						
-						<!-- Actual Count -->
-						<tr style="background-color:#ccccff;" ng-show="item.replenishment.total">
-							<td class="bold">Actual Count</td>
-							<td class="bold"></td>
-							<td class="bold"></td>
-							<td class="bold"></td>
-							<td class="bold"></td>
-							<td class="bold"></td>
-							<td class="bold">
-								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
-							</td>
-							<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
-							@foreach($itemCodes as $item)
-								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
-							@endforeach
-						</tr>
+						</tr>																	
 						
 						<!-- Stock count -->
 						<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks" id="[[$parent.$index]]_[[$index]]" class=[[stock.updated]]>
@@ -117,9 +99,26 @@
 								<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
+							
+						<!-- Actual Count -->
+						<tr style="background-color:#ccccff;" ng-show="item.showReplenishment">
+							<td class="bold">Actual Count</td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold"></td>
+							<td class="bold">
+								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
+							</td>
+							<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
+							@foreach($itemCodes as $item)
+								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
+							@endforeach
+						</tr>
 												
 						<!-- Short over stocks -->
-						<tr style="background-color:#edc4c4;" ng-show="item.short_over_stocks.total">
+						<tr style="background-color:#edc4c4;" ng-show="item.replenishment.total">
 							<td class="bold">Short/Over Stocks</td>
 							<td class="bold"></td>
 							<td class="bold"></td>

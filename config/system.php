@@ -29,4 +29,7 @@ return [
 		
 	// Report limit data export xls
 	'report_limit_pdf' => '100',
+		
+	// Go live date for van inventory
+	'go_live_date' => '2016-02-01',
 ];

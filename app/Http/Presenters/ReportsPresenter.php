@@ -1168,9 +1168,26 @@ class ReportsPresenter extends PresenterCore
      * @return multitype:array NULL
      */
     public function getVanInventory($reports=false,$offset=0)
-    {
+    {    	
     	// This is a required field so return empty if there's none
     	if(!$this->request->get('transaction_date'))
+    	{
+    		$data = [
+    			'records' => [],
+    			'replenishment' => [],
+    			'short_over_stocks' => [],
+    			'stock_on_hand' => [],
+    			'stocks' => [],
+    			'total' => 0	
+    		];
+    		
+    		return response()->json($data);
+    	}
+    	
+    	$goLiveDate = config('system.go_live_date');
+    	$from = new Carbon($goLiveDate);
+    	$to = new Carbon($this->request->get('transaction_date'));
+    	if($to->lt($from))
     	{
     		$data = [
     			'records' => [],
@@ -1197,16 +1214,20 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table('txn_replenishment_header')
     					->select(['replenishment_date','reference_number']);
     	
-    	$transactionFilter = FilterFactory::getInstance('Date');
-    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
-    			function($self, $model){
-    				return $model->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$self->getValue());
-    			});
+    	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
+    	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
     	
     	$referenceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
     	
     	$replenishment = $prepare->first();
+    	
+    	$firstUpload = false;
+    	if($replenishment && (new Carbon($replenishment->replenishment_date))->format('Y-m-d') == $goLiveDate)
+    	{    		
+    		$firstUpload = true; 
+    	}
+    	$data['first_upload'] = $firstUpload;
     	
     	if($this->request->get('reference_number') && !$replenishment)
     	{
@@ -1243,14 +1264,14 @@ class ReportsPresenter extends PresenterCore
     	{
     		$replenishment['total'] = 0;
     	}
-    			 
+		$hasReplenishment = !empty($tempActualCount);
+    	
     	$data['replenishment'] = (array)$replenishment;
-    	if($reports && $replenishment && isset($replenishment->total) && $replenishment->total)
+    	if($reports && $hasReplenishment && $firstUpload)
     	{
     		$beginningBalance = (array)$replenishment;
     		unset($beginningBalance['reference_number'],$beginningBalance['replenishment_date']);
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);    		
     	}
     			
     	
@@ -1296,22 +1317,15 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	// pull previous stock transfer
-    	$tempPrevStockTransfer = [];
-    	if(!$tempActualCount)
-    		$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
+    	$tempPrevStockTransfer = [];    	
+    	$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
     	//dd($tempPrevStockTransfer);
 
-    	//dd($stocks);
-    	
     	$data['total_stocks'] = $stocks ? count($stocks) : 0;    	
     	$data['stocks'] = (array)$stocks;    	
-    	
-    		
-    	//dd($results);
+    	    		
     	$records = [];
     	$tempInvoices = [];
-    	//dd($results);
-    	
     	
     	if(!$this->request->get('return_slip_num'))
     	{
@@ -1335,12 +1349,7 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$tempInvoices['code_'.$item->item_code] = $item->served_qty;    			
 	    		}	
-	    		
-	    		/* if(isset($temp['code_'.$result->item_code]))
-	    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
-	    		else
-	    			$tempReturns['code_'.$result->item_code] = $result->quantity;
-	 			*/    		
+	    			
 	    		$records[] = $result;
 	    		if($reports)
 	    			$reportRecords[] = (array)$result;
@@ -1409,7 +1418,10 @@ class ReportsPresenter extends PresenterCore
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		if($hasReplenishment)
+    			$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		else
+    			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		//$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
@@ -1417,7 +1429,7 @@ class ReportsPresenter extends PresenterCore
     		if($stockOnHand[$code])
     			$hasStockOnHand = true;
     	}
-    	//dd($tempPrevStockTransfer, $tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
+    	//dd($tempPrevStockTransfer, $tempActualCount,$tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
     	$data['records'] = $records;
     	$data['total'] = count($records);
     	
@@ -1427,26 +1439,28 @@ class ReportsPresenter extends PresenterCore
     	
     	// Short over stocks
     	$shortOverStocks = [];
-    	$displayShort = false;
-    	foreach($stockOnHand as $code => $stock)
+    	if($replenishment)
     	{
-    		if($replenishment && isset($replenishment->{$code}))
-    		{    			
-    			$shortOverStocks[$code] = isset($stockOnHand[$code]) ? ($replenishment->{$code}-$stockOnHand[$code]) : $replenishment->{$code};
-    			$shortOverStocks[$code] = $shortOverStocks[$code] == 0 ? '' : $shortOverStocks[$code];
-    			$shortOverStocks[$code] = $this->negate($shortOverStocks[$code]);
-    			
-    			if($shortOverStocks[$code] && $data['total_stocks'])
-    				$displayShort = true;
-    		}    		    		
+    		foreach($codes as $code)
+    		{
+    			$code = 'code_'.$code;
+    			if(!isset($tempPrevStockTransfer[$code]))
+    				$tempPrevStockTransfer[$code] = 0;
+    			$shortOverStocks[$code] = isset($replenishment->{$code}) ? $replenishment->{$code} - $tempPrevStockTransfer[$code] : $tempPrevStockTransfer[$code];
+    		}    		
     	}
-    	$shortOverStocks['total'] = $displayShort ? 1 : 0;
-    	$data['short_over_stocks'] = $shortOverStocks;
-    	if($reports && $displayShort)
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
     	
-    	if($reports && $replenishment && isset($replenishment->total) && $replenishment->total)
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$stockOnHand);
+    	$data['short_over_stocks'] = $shortOverStocks;
+    	if($reports && $hasReplenishment)
+    	{
+    		$beginningBalance = (array)$replenishment;
+    		unset($beginningBalance['reference_number'],$beginningBalance['replenishment_date']);
+    		if(!$firstUpload)
+    			$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
+    	}
+    	
     	
     	unset($replenishment->replenishment_date);
     	unset($replenishment->reference_number);	    	    
@@ -1468,28 +1482,57 @@ class ReportsPresenter extends PresenterCore
     		$codes[] = $item->item_code;
     	}
     	
-    	$dateFrom = (new \DateTime($dateFrom))->format('Y-m-d');
+
+    	$goLiveDate = config('system.go_live_date');
     	
-    	// Get previous stock transfer
-    	$prepare = $this->getPreparedVanInventoryStocks(true);
-    	$prepare = $prepare->where(\DB::raw('DATE(sfa_modified_date)'),'<',$dateFrom);    	
-    	$prepare = $prepare->orderBy('sfa_modified_date','desc');
-    	
-    	$stockStart = $prepare->first();
-    	if(!$stockStart)
+    	$from = new Carbon($goLiveDate);
+    	$to = new Carbon($dateFrom);
+    	if($to->lt($from))
+    	{
     		return [];
+    	}
     	
+    	// Get previous date
     	$dateFrom = date('Y-m-d', strtotime('-1 day', strtotime($dateFrom)));
+    	 
+    	// Beginning Balance / Actual Count
+    	// Get Replenishment data
+    	$prepare = \DB::table('txn_replenishment_header')->select(['replenishment_date','reference_number']);
+    	 
+    	$prepare->whereBetween(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),[$goLiveDate,$dateFrom]);
+    	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');    	 
+    	$replenishment = $prepare->first();
+
+    	$tempActualCount = [];
+    	if($replenishment)
+    	{
+    		$replenishmentItems = \DB::table('txn_replenishment_detail')
+							    		->select(['item_code','quantity'])
+							    		->whereIn('item_code',$codes)
+							    		->where('reference_number','=',$replenishment->reference_number)
+							    		->get();
+    		foreach($replenishmentItems as $item)
+    		{    			
+    			if(!isset($tempInvoices['code_'.$item->item_code]))
+    				$tempActualCount['code_'.$item->item_code] = 0;
+    			$tempActualCount['code_'.$item->item_code] += $item->quantity;
+    		}    	
+    	}    	
     	
-    	$dateStart = (new \DateTime($stockStart->transaction_date))->format('Y-m-d');
+    	if($replenishment)
+    	{
+    		$dateStart = (new \DateTime($replenishment->replenishment_date))->format('Y-m-d');
+    	}
+    	else 
+    	{
+    		$dateStart = $goLiveDate;
+    	}	
+    	 
     	$prepare = $this->getPreparedVanInventoryStocks(true);
     	$prepare = $prepare->whereBetween(\DB::raw('DATE(sfa_modified_date)'),[$dateStart,$dateFrom]);
     	$prepare = $prepare->orderBy('sfa_modified_date');
-    	$stockTransfer = $prepare->get();    	
-    					
-    	if(!$stockTransfer)
-    		return [];
-    	
+    	$stockTransfer = $prepare->get();
+    
     	// Stock Transfer
     	$tempStockTransfer = [];
     	if($stockTransfer)
@@ -1504,38 +1547,7 @@ class ReportsPresenter extends PresenterCore
     				$tempStockTransfer['code_'.$item->item_code] = 0;
     			$tempStockTransfer['code_'.$item->item_code] += $item->quantity;    			
     		}
-    	}    	
-    	
-    	// Beginning Balance / Actual Count
-    	// Get Replenishment data     	
-    	$prepare = \DB::table('txn_replenishment_header')
-    					->select('reference_number')
-    					->whereBetween(\DB::raw('DATE(replenishment_date)'),[$dateStart,$dateFrom]);
-    	
-    	$referenceNumFilter = FilterFactory::getInstance('Text');
-    	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
-    	$replenishment = $prepare->get(); 
-    	
-    	$tempActualCount = [];
-    	if($replenishment)
-    	{
-    		$refNumbers = [];
-    		foreach($replenishment as $rep)
-    			$refNumbers[] = $rep->reference_number;
-    			
-    		$replenishmentItems = \DB::table('txn_replenishment_detail')
-			    			->select(['item_code','quantity','replenishment_detail_id'])
-			    			->whereIn('item_code',$codes)
-			    			->whereIn('reference_number',$refNumbers)
-			    			->get();
-    		foreach($replenishmentItems as $item)
-    		{
-    			if(!isset($tempActualCount['code_'.$item->item_code]))
-    				$tempActualCount['code_'.$item->item_code] = 0;
-    			$tempActualCount['code_'.$item->item_code] += $item->quantity;
-    		}	
-    		    		    			    			    
-    	}
+    	}   
     	
     	// Get Invoice 
     	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
@@ -1562,12 +1574,7 @@ class ReportsPresenter extends PresenterCore
     			if(!isset($tempInvoices['code_'.$item->item_code]))
     				$tempInvoices['code_'.$item->item_code] = 0;
     			$tempInvoices['code_'.$item->item_code] += $item->served_qty;    			
-    		}	
-    		
-    		/* if(isset($temp['code_'.$result->item_code]))
-    			$tempReturns['code_'.$result->item_code] += (int)$result->quantity;
-    		else
-    			$tempReturns['code_'.$result->item_code] = $result->quantity; */
+    		}
     		
     	}
     	
@@ -1591,7 +1598,7 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] -= $item->quantity;    			
     		}
     	}
-    	
+
     	// Compute Stock on Hand
     	$stockOnHand = [];    	 
     	foreach($codes as $code)
@@ -1606,11 +1613,11 @@ class ReportsPresenter extends PresenterCore
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempStockTransfer[$code] - $tempInvoices[$code];
-    		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
-    		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
+    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] - $tempInvoices[$code];
+    		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];    		
     	}
     	 
+    	//dd($tempInvoices, $tempStockTransfer,$stockOnHand);
     	return $stockOnHand;
     }
     
@@ -4792,7 +4799,11 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'vaninventorycanned':
     		case 'vaninventoryfrozen':
-    			$prepare = $this->getPreparedVanInventory();   
+    			$prepare = $this->getPreparedVanInventory(true);
+    			$from = (new Carbon($this->request->get('transaction_date_from')))->format('Y-m-d');
+    			$to = (new Carbon($this->request->get('transaction_date_to')))->format('Y-m-d');
+    			$prepare->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$from,$to]);    			
+    			break;   
     		case 'salesreportpermaterial':
     			$prepare = $this->getPreparedSalesReportMaterial();
     			break;
