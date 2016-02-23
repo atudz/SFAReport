@@ -3334,6 +3334,30 @@ class ReportsPresenter extends PresenterCore
     	 
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+
+    	$prepare->where('app_salesman_customer.status','=','A');
+    	$prepare->where('app_area.status','=','A');
+    	$prepare->where('app_salesman.status','=','A');
+    	$prepare->where('app_salesman_van.status','=','A');
+    	 
+    	$prepare->groupBy('app_customer.customer_code');
+    	$prepare->groupBy('app_customer.customer_name');
+    	$prepare->groupBy('app_customer.address_1');
+    	$prepare->groupBy('app_customer.area_code');
+    	$prepare->groupBy('app_area.area_name');
+    	$prepare->groupBy('app_customer.storetype_code');
+    	$prepare->groupBy('app_storetype.storetype_name');
+    	$prepare->groupBy('app_customer.vatposting_code');
+    	$prepare->groupBy('app_customer.vat_ex_flag');
+    	$prepare->groupBy('app_customer.customer_price_group');
+    	$prepare->groupBy('app_salesman_customer.salesman_code');
+    	$prepare->groupBy('app_salesman.salesman_name');    	
+    	$prepare->groupBy('app_salesman_van.van_code');
+    	$prepare->groupBy('app_customer.sfa_modified_date');
+    	$prepare->groupBy('app_customer.status');
+    	
+    	$prepare->groupBy('app_salesman_van.van_code');
+    	 
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
