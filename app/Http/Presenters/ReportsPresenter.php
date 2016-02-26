@@ -1522,7 +1522,7 @@ class ReportsPresenter extends PresenterCore
     	
     	if($replenishment)
     	{
-    		$dateStart = (new \DateTime($replenishment->replenishment_date))->format('Y-m-d');
+    		$dateStart = (new Carbon($replenishment->replenishment_date))->addDays(1)->format('Y-m-d');    		
     	}
     	else 
     	{
