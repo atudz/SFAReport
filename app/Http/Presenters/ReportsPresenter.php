@@ -1445,9 +1445,9 @@ class ReportsPresenter extends PresenterCore
     		foreach($codes as $code)
     		{
     			$code = 'code_'.$code;
-    			if(!isset($tempPrevStockTransfer[$code]))
-    				$tempPrevStockTransfer[$code] = 0;
-    			$shortOverStocks[$code] = isset($replenishment->{$code}) ? $replenishment->{$code} - $tempPrevStockTransfer[$code] : $tempPrevStockTransfer[$code];
+    			if(!isset($stockOnHand[$code]))
+    				$stockOnHand[$code] = 0;
+    			$shortOverStocks[$code] = isset($replenishment->{$code}) ? $replenishment->{$code} - $stockOnHand[$code] : $stockOnHand[$code];
     		}    		
     	}
     	
