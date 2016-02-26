@@ -1418,7 +1418,7 @@ class ReportsPresenter extends PresenterCore
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
     		
-    		if($hasReplenishment)
+    		if($firstUpload)
     			$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		else
     			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
@@ -1430,6 +1430,7 @@ class ReportsPresenter extends PresenterCore
     			$hasStockOnHand = true;
     	}
     	//dd($tempPrevStockTransfer, $tempActualCount,$tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
+    	//dd($stockOnHand);
     	$data['records'] = $records;
     	$data['total'] = count($records);
     	
@@ -4253,7 +4254,7 @@ class ReportsPresenter extends PresenterCore
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
     				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
-    				$records = array_merge($records,$this->getVanInventory(true, $offset));
+    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
     			}
     			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned',$status);
