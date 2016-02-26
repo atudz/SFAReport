@@ -8,15 +8,15 @@
 			<!-- Filter -->			
 			{!!Html::fopen('Toggle Filter')!!}
 				<div class="pull-left col-sm-6 col-xs-12">
-					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
-					{!!Html::datepicker('collection_date','Collection Date','true')!!}
+					{!!Html::select('salesman','Salesman', $salesman)!!}
+					{!!Html::select('company_code','Company Code', $companyCode)!!}
+					{!!Html::input('text','customer_name','Customer Name')!!}						
 					{!!Html::input('text','invoice_number','Invoice #')!!}
 					{!!Html::input('text','or_number','OR #')!!}
 				</div>					
 				<div class="pull-right col-sm-6 col-xs-12">	
-					{!!Html::input('text','customer_name','Customer Name')!!}
-					{!!Html::select('company_code','Company Code', $companyCode)!!}
-					{!!Html::select('salesman','Salesman', $salesman)!!}							 			
+					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
+					{!!Html::datepicker('collection_date','Collection Date','true')!!}																									 			
 					{!!Html::datepicker('posting_date','Posting Date','true')!!}
 				</div>			
 			{!!Html::fclose()!!}

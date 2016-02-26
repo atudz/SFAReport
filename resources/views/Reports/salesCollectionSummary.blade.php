@@ -9,8 +9,8 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6 col-xs-12">
-						{!!Html::select('company_code','Company Code', $customerCode)!!}
-						{!!Html::select('salesman','Salesman', $salesman,'')!!}						
+						{!!Html::select('salesman','Salesman', $salesman,'')!!}
+						{!!Html::select('company_code','Company Code', $customerCode)!!}											
 						{!!Html::select('area','Area', $area)!!}						
 					</div>					
 					<div class="pull-right col-sm-6 col-xs-12">														 			

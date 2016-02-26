@@ -3238,6 +3238,12 @@ class ReportsPresenter extends PresenterCore
 				function($self, $model){
 					return $model->where('txn_return_header.return_slip_num','LIKE','%'.$self->getValue().'%');
 				});
+
+		$customerFilter = FilterFactory::getInstance('Text');
+		$prepare = $customerFilter->addFilter($prepare,'customer',
+				function($self, $model){
+					return $model->where('app_customer.customer_name','LIKE','%'.$self->getValue().'%');
+				});
 		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date');
@@ -4939,7 +4945,7 @@ class ReportsPresenter extends PresenterCore
     					'Segment' => $segment,
     					'Invoice Date/Return Date' => $returnDate,
     					'Posting Date' => $postingDate,
-    					'Invoice Number' => $invoiceNum
+    					'Return Slip #' => $invoiceNum
     			];		
     			break;
     		case 'returnperpeso':
@@ -4958,7 +4964,7 @@ class ReportsPresenter extends PresenterCore
     						'Company Code' => $company_code,
     						'Invoice Date/Return Date' => $returnDate,
     						'Posting Date' => $postingDate,
-    						'Invoice Number' => $invoiceNum
+    						'Return Slip #' => $invoiceNum
     				];
     				break;
     		 case 'customerlist':

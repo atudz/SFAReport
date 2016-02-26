@@ -7,15 +7,16 @@
 			<div class="panel-body">
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6 col-xs-12">
+					<div class="pull-right col-sm-6 col-xs-12">
 						{!!Html::datepicker('return_date','Return Date',true)!!}
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}
-						{!!Html::input('text','invoice_number','Invoice #')!!}						
+						{!!Html::input('text','invoice_number','Return Slip #')!!}						
 					</div>					
-					<div class="pull-right col-sm-6 col-xs-12">	
+					<div class="pull-left col-sm-6 col-xs-12">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
-						{!!Html::select('company_code','Company', $companyCode)!!}													 			
+						{!!Html::select('company_code','Company', $companyCode)!!}
+						{!!Html::select('customer','Customer', $customers)!!}													 			
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

@@ -8,8 +8,8 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6 col-xs-12">
-						{!!Html::select('area','Area', $area)!!}
-						{!!Html::select('salesman','Salesman', $salesman)!!}			
+						{!!Html::select('salesman','Salesman', $salesman)!!}
+						{!!Html::select('area','Area', $area)!!}									
 						{!!Html::input('text','reference','Reference #')!!}								
 					</div>					
 					<div class="pull-right col-sm-6 col-xs-12">	
