@@ -487,7 +487,7 @@
 	    		toggleLoading();
 	    		log.info(scope.items);
 
-	    		if (scope.items.length){
+	    		/*if (scope.items.length){
 	    			$('#no_records_div').hide();
 	    			$("table.table").floatThead({
 					    position: "absolute",
@@ -502,7 +502,7 @@
 	    			$('#no_records_div').show();
 	    			$("table.table").floatThead('destroy');
 		    		console.log('Destroy table');
-	    		}
+	    		}*/
 		});				
 	}
 	
