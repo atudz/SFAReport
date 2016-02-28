@@ -4815,7 +4815,7 @@ class ReportsPresenter extends PresenterCore
     		case 'vaninventorycanned':
     		case 'vaninventoryfrozen':
     			$prepare = $this->getPreparedVanInventory(true);
-    			$from = (new Carbon($this->request->get('transaction_date_from')))->format('Y-m-d');
+    			$from = (new Carbon(config('system.go_live_date')))->format('Y-m-d');
     			$to = (new Carbon($this->request->get('transaction_date_to')))->format('Y-m-d');
     			$prepare->whereBetween(\DB::raw('DATE(txn_sales_order_header.so_date)'),[$from,$to]);    			
     			break;   
