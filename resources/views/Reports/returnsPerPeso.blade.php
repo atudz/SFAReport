@@ -16,7 +16,7 @@
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}
-						{!!Html::select('customer','Customer', $customers)!!}													 			
+						{!!Html::input('text','customer','Customer Name')!!}													 			
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

@@ -282,6 +282,7 @@
 		          'return_date_to',
 		          'salesman_code',
 		          'area',
+		          'customer',
 		          'company_code',
 		          'invoice_number',
 		          'material',
