@@ -4281,7 +4281,7 @@ class ReportsPresenter extends PresenterCore
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
     				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
-    				$records = array_merge($records,$this->getVanInventory(true, $offset));
+    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
     			}
     			
 	    		$rows = $this->getVanInventorySelectColumns('frozen',$status);
