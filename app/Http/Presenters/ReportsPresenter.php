@@ -1538,8 +1538,8 @@ class ReportsPresenter extends PresenterCore
     	}	
     	 
     	$prepare = $this->getPreparedVanInventoryStocks(true);
-    	$prepare = $prepare->whereBetween(\DB::raw('DATE(sfa_modified_date)'),[$dateStart,$dateFrom]);
-    	$prepare = $prepare->orderBy('sfa_modified_date');
+    	$prepare = $prepare->whereBetween(\DB::raw('DATE(transfer_date)'),[$dateStart,$dateFrom]);
+    	$prepare = $prepare->orderBy('transfer_date');
     	$stockTransfer = $prepare->get();
     
     	// Stock Transfer
@@ -1654,7 +1654,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare = \DB::table('txn_stock_transfer_in_header')
     					->selectRaw('txn_stock_transfer_in_header.stock_transfer_in_header_id,
-    								txn_stock_transfer_in_header.modified_date transaction_date,
+    								txn_stock_transfer_in_header.transfer_date transaction_date,
     								txn_stock_transfer_in_header.stock_transfer_number,
     								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
     					->join(\DB::raw(
@@ -1668,7 +1668,7 @@ class ReportsPresenter extends PresenterCore
 	    	$transactionFilter = FilterFactory::getInstance('Date');
 	    	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
 			    			function($self, $model){
-			    				return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.sfa_modified_date)'),'=',$self->getValue());
+			    				return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.transfer_date)'),'=',$self->getValue());
 			    			});
     	}
     	$salesmanFilter = FilterFactory::getInstance('Select');
