@@ -1440,10 +1440,15 @@ class ReportsPresenter extends PresenterCore
     	//dd($tempPrevStockTransfer, $tempActualCount,$tempStockTransfer, $tempReturns, $tempInvoices, $stockOnHand);
     	//dd($stockOnHand);
     	$data['records'] = $records;
-    	$data['total'] = count($records);
+    	if($records)
+    		$data['total'] = count($records);
+    	elseif($replenishment)
+    		$data['total'] = count($replenishment);
+    	elseif($stocks)
+    		$data['total'] = count($stocks);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	if($reports && $data['total'])
+    	if($reports && ($data['total'] || $stocks || $replenishment))
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
