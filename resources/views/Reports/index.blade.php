@@ -3,75 +3,85 @@
     <hr />
     <div class="row">
 
-        <div class="col-xs-12 col-md-6 col-lg-3">
-            <div class="panel panel-red panel-widget ">
-                <div class="row no-padding">
-                    <div class="col-sm-3 col-lg-5 widget-left">
-                        <em class="glyphicon glyphicon-list-alt glyphicon-l"></em>
-                    </div>
-                    <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$salescollection or 0}}</div>
-                        <div class="text-muted">Sales &amp; Collections</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    	@if($menuList['Sales & Collection'])
+	        <div class="col-xs-12 col-md-6 col-lg-3">
+	            <div class="panel panel-red panel-widget ">
+	                <div class="row no-padding">
+	                    <div class="col-sm-3 col-lg-5 widget-left">
+	                        <em class="glyphicon glyphicon-list-alt glyphicon-l"></em>
+	                    </div>
+	                    <div class="col-sm-9 col-lg-7 widget-right">
+	                        <div class="large">{{$salescollection or 0}}</div>
+	                        <div class="text-muted">Sales &amp; Collections</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    @endif
 
-        <div class="col-xs-12 col-md-6 col-lg-3">
-            <div class="panel panel-teal panel-widget">
-                <div class="row no-padding">
-                    <div class="col-sm-3 col-lg-5 widget-left">
-                        <em class="glyphicon glyphicon-barcode glyphicon-l"></em>
-                    </div>
-                    <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$van or 0}}</div>
-                        <div class="text-muted">Van Inventory</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+	    @if($menuList['Van Inventory'])
+	        <div class="col-xs-12 col-md-6 col-lg-3">
+	            <div class="panel panel-teal panel-widget">
+	                <div class="row no-padding">
+	                    <div class="col-sm-3 col-lg-5 widget-left">
+	                        <em class="glyphicon glyphicon-barcode glyphicon-l"></em>
+	                    </div>
+	                    <div class="col-sm-9 col-lg-7 widget-right">
+	                        <div class="large">{{$van or 0}}</div>
+	                        <div class="text-muted">Van Inventory</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    @endif
 
-        <div class="col-xs-12 col-md-6 col-lg-3">
-            <div class="panel panel-orange panel-widget">
-                <div class="row no-padding">
-                    <div class="col-sm-3 col-lg-5 widget-left">
-                        <em class="glyphicon glyphicon-credit-card glyphicon-l"></em>
-                    </div>
-                    <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$unpaidinvoice or 0}}</div>
-                        <div class="text-muted">Unpaid Invoice</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-         <div class="col-xs-12 col-md-6 col-lg-3">
-            <div class="panel panel-gold panel-widget">
-                <div class="row no-padding">
-                    <div class="col-sm-3 col-lg-5 widget-left">
-                        <em class="glyphicon glyphicon-stats glyphicon-l"></em>
-                    </div>
-                    <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$salesreport or 0}}</div>
-                        <div class="text-muted">Sales Report</div>
-                    </div>
-                </div>
-            </div>
-        </div> 
+	    @if($menuList['Unpaid Invoice'])
+	        <div class="col-xs-12 col-md-6 col-lg-3">
+	            <div class="panel panel-orange panel-widget">
+	                <div class="row no-padding">
+	                    <div class="col-sm-3 col-lg-5 widget-left">
+	                        <em class="glyphicon glyphicon-credit-card glyphicon-l"></em>
+	                    </div>
+	                    <div class="col-sm-9 col-lg-7 widget-right">
+	                        <div class="large">{{$unpaidinvoice or 0}}</div>
+	                        <div class="text-muted">Unpaid Invoice</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+		@endif
+		
+		@if($menuList['Sales Report'])
+	         <div class="col-xs-12 col-md-6 col-lg-3">
+	            <div class="panel panel-gold panel-widget">
+	                <div class="row no-padding">
+	                    <div class="col-sm-3 col-lg-5 widget-left">
+	                        <em class="glyphicon glyphicon-stats glyphicon-l"></em>
+	                    </div>
+	                    <div class="col-sm-9 col-lg-7 widget-right">
+	                        <div class="large">{{$salesreport or 0}}</div>
+	                        <div class="text-muted">Sales Report</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div> 
+	    @endif
         
-        <div class="col-xs-12 col-md-6 col-lg-3">
-            <div class="panel panel-blue panel-widget">
-                <div class="row no-padding">
-                    <div class="col-sm-3 col-lg-5 widget-left">
-                        <em class="glyphicon glyphicon-th-list glyphicon-l"></em>
-                    </div>
-                    <div class="col-sm-9 col-lg-7 widget-right">
-                        <div class="large">{{$bir or 0}}</div>
-                        <div class="text-muted">BIR</div>
-                    </div>
-                </div>
-            </div>
-        </div>   
+        @if($menuList['BIR'])
+	        <div class="col-xs-12 col-md-6 col-lg-3">
+	            <div class="panel panel-blue panel-widget">
+	                <div class="row no-padding">
+	                    <div class="col-sm-3 col-lg-5 widget-left">
+	                        <em class="glyphicon glyphicon-th-list glyphicon-l"></em>
+	                    </div>
+	                    <div class="col-sm-9 col-lg-7 widget-right">
+	                        <div class="large">{{$bir or 0}}</div>
+	                        <div class="text-muted">BIR</div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>   
+	     @endif
     </div><!--/.row-->
 
     <hr />

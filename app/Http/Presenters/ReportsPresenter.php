@@ -37,9 +37,17 @@ class ReportsPresenter extends PresenterCore
      */
     public function index()
     {
+    	$menus = \DB::table('navigation')->get();
+    	$menuList = [];
+    	foreach($menus as $menu)
+    	{
+    		$menuList[$menu->name] = $menu->active; 
+    	}
+    	$this->view->menuList = $menuList;    	
+    	
     	$summary = \DB::table('report_summary')->get();
     	foreach($summary as $report)
-    	{
+    	{    	
     		$this->view->{$report->report} = $report->count;
     	}
     	return $this->view('index');
