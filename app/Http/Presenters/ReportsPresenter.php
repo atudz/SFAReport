@@ -1558,9 +1558,8 @@ class ReportsPresenter extends PresenterCore
     		}
     	}   
     	
-    	// Get Invoice 
-    	$status = $this->request->get('status') ? $this->request->get('status') : 'A';
-    	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code', $status);
+    	// Get Invoice     	
+    	$item_codes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');
     	$itemCodes = [];
     	foreach($item_codes as $item)
     	{
@@ -4256,9 +4255,8 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Unpaid Invoice Report';
     			break;
     		case 'vaninventorycanned';
-    			$vaninventory = true; 				
-    			$status = $this->request->get('status') ? $this->request->get('status') : 'A';
-    			$columns = $this->getVanInventoryColumns('canned',$status);
+    			$vaninventory = true; 				    			
+    			$columns = $this->getVanInventoryColumns('canned');
     			
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
@@ -4277,9 +4275,8 @@ class ReportsPresenter extends PresenterCore
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
     		case 'vaninventoryfrozen';
-    			$vaninventory = true;
-    			$status = $this->request->get('status') ? $this->request->get('status') : 'A';
-    			$columns = $this->getVanInventoryColumns('frozen',$status);
+    			$vaninventory = true;    			
+    			$columns = $this->getVanInventoryColumns('frozen');
 
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
