@@ -67,7 +67,7 @@
 	        </div> 
 	    @endif
         
-        @if($menuList['BIR'])
+        @if($menuList['BIR Report'])
 	        <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-blue panel-widget">
 	                <div class="row no-padding">
