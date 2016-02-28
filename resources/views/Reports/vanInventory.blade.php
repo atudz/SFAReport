@@ -9,7 +9,6 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="pull-left col-sm-6 col-xs-12">
 						{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
-						{!!Html::select('status','Status', $statuses,'')!!}
 						{!!Html::input('text','invoice_number','Invoice #')!!}
 						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}
 					</div>					
