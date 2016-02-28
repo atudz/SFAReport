@@ -10,7 +10,7 @@
 					<div class="pull-right col-sm-6 col-xs-12">
 						{!!Html::datepicker('return_date','Return Date',true)!!}
 						{!!Html::datepicker('posting_date','Posting Date',true)!!}
-						{!!Html::input('text','invoice_number','Return Slip #')!!}						
+						{!!Html::input('text','invoice_number','Return Slip No.')!!}						
 					</div>					
 					<div class="pull-left col-sm-6 col-xs-12">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
