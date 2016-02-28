@@ -5036,7 +5036,7 @@ class ReportsPresenter extends PresenterCore
     	$filters = [];
     	 
     	$salesman = $this->request->get('salesman_code') ? $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
-    	$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
+//    	$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
     	
     	$invoiceNum = $this->request->get('invoice_number');
     	$stockTransNum = $this->request->get('stock_transfer_number');
@@ -5047,7 +5047,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$filters = [
     			'Salesman' => $salesman,
-    			'Status' => $status,
+  //  			'Status' => $status,
     			'Invoice #' => $invoiceNum,
     			'Stock Transfer #' => $stockTransNum,
     			'Return Slip #' => $returnSlipNum,
