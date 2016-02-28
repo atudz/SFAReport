@@ -4269,7 +4269,7 @@ class ReportsPresenter extends PresenterCore
     				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
     			}
     			    			
-	    		$rows = $this->getVanInventorySelectColumns('canned',$status);
+	    		$rows = $this->getVanInventorySelectColumns('canned');
 	    		$header = 'Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
@@ -4289,7 +4289,7 @@ class ReportsPresenter extends PresenterCore
     				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
     			}
     			
-	    		$rows = $this->getVanInventorySelectColumns('frozen',$status);
+	    		$rows = $this->getVanInventorySelectColumns('frozen');
 	    		$header = 'Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
