@@ -25,7 +25,7 @@
 					{!!Html::error('personalInfoError','error_list_personal')!!}
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-			 				<label for="fname" class="col-sm-3 control-label">First Name *</label>
+			 				<label for="fname" class="col-sm-3 control-label">First Name <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<input placeholder="" class="form-control" id="fname" name="fname" type="text" ng-model="records.firstname">
 			 				</div>
@@ -49,7 +49,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">						
-							<label for="email" class="col-sm-3 control-label">Email *</label>
+							<label for="email" class="col-sm-3 control-label">Email <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<input placeholder="" class="form-control" id="email" name="email" type="text" ng-model="records.email">
 			 				</div>			 				
@@ -65,7 +65,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">						
-							<label for="password" class="col-sm-3 control-label">Password *</label>
+							<label for="password" class="col-sm-3 control-label">Password <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<input class="form-control" id="password" name="password" type="password" placeholder="Leave this blank if no change">
 			 				</div>			 				
@@ -73,7 +73,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">						
-							<label for="confirm_pass" class="col-sm-3 control-label">Confirm Password *</label>
+							<label for="confirm_pass" class="col-sm-3 control-label">Confirm Password <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<input class="form-control" id="confirm_pass" name="confirm_pass" type="password" placeholder="Leave this blank if no change">
 			 				</div>			 				
@@ -130,7 +130,7 @@
 					{!!Html::error('locationInfoError','error_list_location')!!}
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-			 				<label for="role" class="col-sm-3 control-label">Role *</label>
+			 				<label for="role" class="col-sm-3 control-label">Role <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<select class="form-control" id="role" name="role" ng-model="records.user_group_id">
 			 						@foreach($roles as $id=>$role)
@@ -158,7 +158,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-			 				<label for="role" class="col-sm-3 control-label">Branch *</label>
+			 				<label for="role" class="col-sm-3 control-label">Branch <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<select class="form-control" id="area" name="area" ng-model="records.location_assignment_code">
 			 						@foreach($areas as $id=>$area)
@@ -170,7 +170,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-			 				<label for="role" class="col-sm-3 control-label">Assignment *</label>
+			 				<label for="role" class="col-sm-3 control-label">Assignment <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<select class="form-control" id="assignment_type" name="assignment_type" ng-model="records.location_assignment_type">
 			 						@foreach($assignmentOptions as $id=>$val)

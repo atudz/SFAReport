@@ -24,7 +24,7 @@
 					<h4 style="margin-bottom: 20px;">Personal Information</h4>
 					{!!Html::error('personalInfoError','error_list_personal')!!}
 					<div class="row form-input-field">
-						{!!Html::input('text','fname','First Name *')!!}
+						{!!Html::input('text','fname','First Name <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','lname','Last Name')!!}
@@ -33,22 +33,22 @@
 						{!!Html::input('text','mname','Middle Name')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','email','Email *')!!}
+						{!!Html::input('text','email','Email <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','username','Username')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('password','password','Password *')!!}
+						{!!Html::input('password','password','Password <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('password','confirm_pass','Confirm Password *')!!}
+						{!!Html::input('password','confirm_pass','Confirm Password <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::select('gender','Gender', $gender, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('number','age','Age *','',['min'=>15])!!}
+						{!!Html::input('number','age','Age <span class="required">*</span>','',['min'=>15])!!}
 					</div>					
 					<div class="row form-input-field">
 						{!!Html::input('text','address','Address')!!}
@@ -66,13 +66,13 @@
 					<h4 style="margin-bottom: 20px;">Access & Location</h4>
 					{!!Html::error('locationInfoError','error_list_location')!!}
 					<div class="row form-input-field">
-						{!!Html::select('role','Role *', $roles, '')!!}
+						{!!Html::select('role','Role <span class="required">*</span>', $roles, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::select('area','Branch *', $areas, '')!!}
+						{!!Html::select('area','Branch <span class="required">*</span>', $areas, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::select('assignment_type','Assignment *', $assignmentOptions, '')!!}
+						{!!Html::select('assignment_type','Assignment <span class="required">*</span>', $assignmentOptions, '')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::datepicker('assignment_date','Date From & To', true)!!}							

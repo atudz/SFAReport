@@ -1134,7 +1134,8 @@ tr.modified {
 }
 
 
-.error {
+.error,
+.required {
 	color: red;
 }
 
