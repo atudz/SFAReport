@@ -1442,13 +1442,13 @@ class ReportsPresenter extends PresenterCore
     	$data['records'] = $records;
     	if($records)
     		$data['total'] = count($records);
-    	elseif($replenishment)
+    	elseif($hasReplenishment)
     		$data['total'] = count($replenishment);
     	elseif($stocks)
     		$data['total'] = count($stocks);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	if($reports && ($data['total'] || $stocks || $replenishment))
+    	if($reports && ($records || $stocks || $hasReplenishment))
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
