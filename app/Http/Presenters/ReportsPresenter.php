@@ -1350,18 +1350,24 @@ class ReportsPresenter extends PresenterCore
 	    	foreach($results as $result)
 	    	{
 	    		$sales = \DB::table('txn_sales_order_detail')
-				    		->select(['item_code','served_qty'])
+				    		->select(['item_code','served_qty','order_qty'])
 				    		->where('so_number','=',$result->so_number)
 				    		->whereIn('item_code',$codes)
 				    		->get();
 	
 	    		foreach($sales as $item)
 	    		{
-	    			$result->{'code_'.$item->item_code} = '('.$item->served_qty.')';
+	    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+	    				$col = 'order_qty';
+	    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+	    				$col = 'order_qty';
+	    			else 
+	    				$col = 'served_qty';	    			
+	    			$result->{'code_'.$item->item_code} = '('.$item->{$col}.')';
 	    			if(isset($tempInvoices['code_'.$item->item_code]))
-	    				$tempInvoices['code_'.$item->item_code] += $item->served_qty;
+	    				$tempInvoices['code_'.$item->item_code] += $item->{$col};
 	    			else
-	    				$tempInvoices['code_'.$item->item_code] = $item->served_qty;    			
+	    				$tempInvoices['code_'.$item->item_code] = $item->{$col};    			
 	    		}	
 	    			
 	    		$records[] = $result;
@@ -1590,16 +1596,22 @@ class ReportsPresenter extends PresenterCore
     	foreach($invoices as $result)
     	{
     		$sales = \DB::table('txn_sales_order_detail')
-			    		->select(['item_code','served_qty'])
+			    		->select(['item_code','served_qty','order_qty'])
 			    		->where('so_number','=',$result->so_number)
 			    		->whereIn('item_code',$itemCodes)
 			    		->get();
 
     		foreach($sales as $item)
     		{
+    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+	    				$col = 'order_qty';
+	    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+	    				$col = 'order_qty';
+	    			else 
+	    				$col = 'served_qty';
     			if(!isset($tempInvoices['code_'.$item->item_code]))
     				$tempInvoices['code_'.$item->item_code] = 0;
-    			$tempInvoices['code_'.$item->item_code] += $item->served_qty;    			
+    			$tempInvoices['code_'.$item->item_code] += $item->{$col};    			
     		}
     		
     	}
