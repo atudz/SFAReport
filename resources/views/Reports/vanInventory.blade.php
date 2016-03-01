@@ -142,7 +142,7 @@
 							<td class="bold"></td>
 							<td class="bold"></td>
 							@foreach($itemCodes as $item)
-								<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
+								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
 						</tr>
 																		
