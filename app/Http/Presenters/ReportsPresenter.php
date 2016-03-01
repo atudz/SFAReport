@@ -1219,14 +1219,20 @@ class ReportsPresenter extends PresenterCore
     	
     	// Beginning Balance / Actual Count
     	// Get Replenishment data 
-    	$prepare = \DB::table('txn_replenishment_header')
-    					->select(['replenishment_date','reference_number']);
+    	$prepare = \DB::table('txn_replenishment_header')    					
+    					->select(['replenishment_date','reference_number'])
+    					->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
     	
     	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
     	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
     	
     	$referenceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+    	
+    	if($this->request->has('salesman_code'))
+    	{
+    		$prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
+    	}
     	
     	$replenishment = $prepare->first();
     	
@@ -1511,8 +1517,15 @@ class ReportsPresenter extends PresenterCore
     	 
     	// Beginning Balance / Actual Count
     	// Get Replenishment data
-    	$prepare = \DB::table('txn_replenishment_header')->select(['replenishment_date','reference_number']);
-    	 
+    	$prepare = \DB::table('txn_replenishment_header')
+    					->select(['replenishment_date','reference_number'])
+    					->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+
+    	if($this->request->has('salesman_code'))
+    	{
+    		$prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
+    	}
+    	
     	$prepare->whereBetween(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),[$goLiveDate,$dateFrom]);
     	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');    	 
     	$replenishment = $prepare->first();
