@@ -37,11 +37,11 @@
 			</tr>
 			<tr>
 				<th align="right">Area Name:</th>
-				<th style="text-decoration: underline">Test123</th>
+				<th style="text-decoration: underline">__________</th>
 				<th align="right">Period Covered:</th>
-				<th style="text-decoration: underline">Test123</th>
+				<th style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
 				<th align="right">To:</th>
-				<th style="text-decoration: underline">Test123</th>
+				<th style="text-decoration: underline">{{request()->get('invoice_date_to')}}</th>
 				<th align="right">Date Remitted:</th>
 				<th>__________</th>				
 			</tr>
@@ -62,7 +62,7 @@
 					@endforeach
 				</tr>
 			@endif			
-			@foreach($records as $record)
+			@foreach($current as $record)
 				<tr>
 					@foreach($rows as $row)
 						<td align="left" style="wrap-text:true">
@@ -88,38 +88,38 @@
 				</tr>
 			@endforeach	
 			
-			@if(isset($summary) && $summary)
+			@if(isset($currentSummary) && $currentSummary)
 				<tr>
 					<th>Total</th>
 					@foreach($rows as $key=>$row)
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
-								@if(is_object($summary) && isset($summary->$row))
+								@if(is_object($currentSummary) && isset($currentSummary->$row))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!$summary->$row!!}
+											{!!$currentSummary->$row!!}
 										@else
-											({!!number_format($summary->$row,2,'.',',')!!})
+											({!!number_format($currentSummary->$row,2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!$summary->$row!!}
+											{!!$currentSummary->$row!!}
 										@else
-											{!!number_format($summary->$row,2,'.',',')!!}
+											{!!number_format($currentSummary->$row,2,'.',',')!!}
 										@endif
 									@endif									
-								@elseif(is_array($summary) && isset($summary[$row]))
+								@elseif(is_array($currentSummary) && isset($currentSummary[$row]))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!$summary[$row]!!}
+											{!!$currentSummary[$row]!!}
 										@else
-											({!!number_format($summary[$row],2,'.',',')!!})
+											({!!number_format($currentSummary[$row],2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!$summary[$row]!!}
+											{!!$currentSummary[$row]!!}
 										@else
-											{!!number_format($summary[$row],2,'.',',')!!}
+											{!!number_format($currentSummary[$row],2,'.',',')!!}
 										@endif
 									@endif
 								@endif													
@@ -144,7 +144,7 @@
 					@endforeach
 				</tr>
 			@endif			
-			@foreach($records as $record)
+			@foreach($previous as $record)
 				<tr>
 					@foreach($rows as $row)
 						<td align="left" style="wrap-text:true">
@@ -170,38 +170,38 @@
 				</tr>
 			@endforeach	
 			
-			@if(isset($summary) && $summary)
+			@if(isset($previousSummary) && $previousSummary)
 				<tr>
 					<th>Total</th>
 					@foreach($rows as $key=>$row)
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
-								@if(is_object($summary) && isset($summary->$row))
+								@if(is_object($previousSummary) && isset($previousSummary->$row))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!$summary->$row!!}
+											{!!$previousSummary->$row!!}
 										@else
-											({!!number_format($summary->$row,2,'.',',')!!})
+											({!!number_format($previousSummary->$row,2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!$summary->$row!!}
+											{!!$previousSummary->$row!!}
 										@else
-											{!!number_format($summary->$row,2,'.',',')!!}
+											{!!number_format($previousSummary->$row,2,'.',',')!!}
 										@endif
 									@endif									
-								@elseif(is_array($summary) && isset($summary[$row]))
+								@elseif(is_array($previousSummary) && isset($previousSummary[$row]))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!$summary[$row]!!}
+											{!!$previousSummary[$row]!!}
 										@else
-											({!!number_format($summary[$row],2,'.',',')!!})
+											({!!number_format($previousSummary[$row],2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!$summary[$row]!!}
+											{!!$previousSummary[$row]!!}
 										@else
-											{!!number_format($summary[$row],2,'.',',')!!}
+											{!!number_format($previousSummary[$row],2,'.',',')!!}
 										@endif
 									@endif
 								@endif													

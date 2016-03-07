@@ -290,7 +290,7 @@ class ReportsPresenter extends PresenterCore
      * Return Prepared Sales Collection 
      * @return unknown
      */
-    public function getPreparedSalesCollection($summary = false)
+    public function getPreparedSalesCollection($summary = false, $noInvoice=false)
     {
     	$query = ' SELECT
     			   tas.salesman_code,
@@ -590,11 +590,14 @@ class ReportsPresenter extends PresenterCore
     				return $model->where('collection.customer_name','LIKE','%'.$self->getValue().'%');
     			});
     	
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
-    			function($self, $model){
-    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
-    			});
+    	if(!$noInvoice)
+    	{
+	    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+	    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
+	    			function($self, $model){
+	    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
+	    			});
+    	}
     	
     	$collectionDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date',
@@ -603,7 +606,7 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$postingDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'posting_date',
+    	$prepare = $postingDateFilter->addFilter($prepare,'posting_date',
     			function($self, $model){
     				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
     			});
@@ -2055,7 +2058,7 @@ class ReportsPresenter extends PresenterCore
 						ALL_SO.so_date,
 						ALL_SO.sfa_modified_date,
 						ALL_SO.invoice_number,
-						sum(ALL_SO.total_vat) as SO_total_vat,						
+						(sum(ALL_SO.total_vat) - sum(tsohd.collective_discount_amount)) as SO_total_vat,						
 						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,						
 						sum(ALL_SO.so_amount) as SO_amount,
 						sum(ALL_SO.net_amount) as SO_net_amount,
@@ -4211,6 +4214,10 @@ class ReportsPresenter extends PresenterCore
     	$summary = [];
     	$header = '';
     	$filters = [];
+    	$previous = [];
+    	$current = [];
+    	$currentSummary = [];
+    	$previousSummary = [];
     	$filename = 'Report';
     	$prepare = '';
     	$fontSize = '11px';
@@ -4225,11 +4232,24 @@ class ReportsPresenter extends PresenterCore
     		case 'salescollectionreport':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedSalesCollection();
-    			$rows = $this->getSalesCollectionSelectColumns();
-    			$summary = $this->getPreparedSalesCollection(true)->first();
+    			$prepare = $prepare->skip($offset)->take($limit);
+    			$previous = $prepare->get();
+    			$previousSummary = $this->getPreparedSalesCollection(true)->first();
+    			
+    			$prepare = $this->getPreparedSalesCollection(false,true);
+    			$now = date('Y-m-d');
+    			$prepare = $prepare->where(\DB::raw('collection.invoice_date'),'=',$now);
+    			$prepare = $prepare->skip($offset)->take($limit);
+    			$current = $prepare->get();
+    			$prepare = $this->getPreparedSalesCollection(true,true);
+    			$prepare = $prepare->where(\DB::raw('collection.invoice_date'),'=',$now);
+    			$currentSummary = $prepare->first();
+    			    			
+    			$rows = $this->getSalesCollectionSelectColumns();    			
     			$header = 'Sales & Collection Report';
     			$filters = $this->getSalesCollectionFilterData();
     			$filename = 'Sales & Collection Report';
+    			$vaninventory = true;
     			break;
     		case 'salescollectionposting':
     			$columns = $this->getTableColumns($report);
@@ -4405,7 +4425,7 @@ class ReportsPresenter extends PresenterCore
 	    	}
     	}
     	//dd($rows);
-    	//dd($records);
+    	//dd($filters);
     	/* $this->view->columns = $columns;    	    
     	$this->view->rows = $rows;
     	$this->view->header = $header;
@@ -4417,8 +4437,8 @@ class ReportsPresenter extends PresenterCore
     	return $this->view('exportSalesCollection'); */ 
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary){
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
@@ -4426,6 +4446,10 @@ class ReportsPresenter extends PresenterCore
 	    			$params['summary'] = $summary;
 	    			$params['header'] = $header;
 	    			$params['filters'] = $filters;
+	    			$params['current'] = $current;
+	    			$params['previous'] = $previous;
+	    			$params['currentSummary'] = $currentSummary;
+	    			$params['previousSummary'] = $previousSummary;
 	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
 	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
 	    		});
