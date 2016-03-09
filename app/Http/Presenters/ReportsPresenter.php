@@ -4232,17 +4232,17 @@ class ReportsPresenter extends PresenterCore
     		case 'salescollectionreport':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedSalesCollection();
+    			$prepare->where('collection.total_collected_amount','>',0);
     			$prepare = $prepare->skip($offset)->take($limit);
     			$previous = $prepare->get();
-    			$previousSummary = $this->getPreparedSalesCollection(true)->first();
+    			$prepare = $this->getPreparedSalesCollection(true);
+    			$prepare->where('collection.total_collected_amount','>',0);
+    			$previousSummary = $prepare->first();
     			
-    			$prepare = $this->getPreparedSalesCollection(false,true);
-    			$now = date('Y-m-d');
-    			$prepare = $prepare->where(\DB::raw('collection.invoice_date'),'=',$now);
+    			$prepare = $this->getPreparedSalesCollection();
     			$prepare = $prepare->skip($offset)->take($limit);
     			$current = $prepare->get();
-    			$prepare = $this->getPreparedSalesCollection(true,true);
-    			$prepare = $prepare->where(\DB::raw('collection.invoice_date'),'=',$now);
+    			$prepare = $this->getPreparedSalesCollection(true);
     			$currentSummary = $prepare->first();
     			    			
     			$rows = $this->getSalesCollectionSelectColumns();    			
@@ -4250,6 +4250,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesCollectionFilterData();
     			$filename = 'Sales & Collection Report';
     			$vaninventory = true;
+    			$fontSize = '7px';
     			break;
     		case 'salescollectionposting':
     			$columns = $this->getTableColumns($report);
@@ -4433,8 +4434,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->filters = $filters;
     	$this->view->records = $records; 
     	$this->view->summary = $summary;
-    	$this->view->fontSize = $fontSize;
-    	return $this->view('exportSalesCollection'); */ 
+    	$this->view->previous = $previous;
+    	$this->view->previousSummary = $previousSummary;
+    	$this->view->current = $current;
+    	$this->view->currentSummary = $currentSummary;    	
+    	$this->view->fontSize = '7px';
+    	return $this->view('exportSalesCollectionPdf'); */
+    	  
     	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary){
@@ -4470,7 +4476,7 @@ class ReportsPresenter extends PresenterCore
     		$params['previous'] = $previous;
     		$params['currentSummary'] = $currentSummary;
     		$params['previousSummary'] = $previousSummary;
-    		$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportPdf';
+    		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		$pdf = \PDF::loadView('Reports.'.$view, $params);    	
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
