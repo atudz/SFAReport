@@ -4466,6 +4466,10 @@ class ReportsPresenter extends PresenterCore
     		$params['header'] = $header;
     		$params['filters'] = $filters;
     		$params['fontSize'] = $fontSize;
+    		$params['current'] = $current;
+    		$params['previous'] = $previous;
+    		$params['currentSummary'] = $currentSummary;
+    		$params['previousSummary'] = $previousSummary;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportPdf';
     		$pdf = \PDF::loadView('Reports.'.$view, $params);    	
     		unset($params,$records,$prepare);	    		
@@ -4723,12 +4727,12 @@ class ReportsPresenter extends PresenterCore
     			'vat_reg_number',
     			'sales_exempt',
     			'sales_0',
-    			'services',
     			'sales',
     			'total_sales',
     			'tax_amount',
     			'total_invoice_amount',
     			'local_sales',
+    			'services',
     			'term_cash',
     			'term_on_acount',
     			'sales_group',
