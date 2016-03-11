@@ -2044,8 +2044,8 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,
 					SOtbl.so_date document_date,
 					coalesce(SOtbl.invoice_number, \'\') reference,
-					coalesce(SOtbl.SO_total_vat, 0.00) tax_amount,					
-					coalesce(SOtbl.SO_amount, 0.00) total_sales,
+					coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) tax_amount,					
+					coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00) total_sales,
 					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount,
     				SOtbl.updated					
 
@@ -2060,9 +2060,9 @@ class ReportsPresenter extends PresenterCore
 						ALL_SO.so_date,
 						ALL_SO.sfa_modified_date,
 						ALL_SO.invoice_number,
-						(sum(ALL_SO.total_vat) - sum(tsohd.collective_discount_amount)) as SO_total_vat,						
+						sum(coalesce(ALL_SO.total_vat,0.00)) as SO_total_vat,						
 						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,						
-						sum(coalesce(ALL_SO.so_amount, 0.00)-coalesce(tsohd.collective_discount_amount, 0.00)) as SO_amount,
+						sum(coalesce(ALL_SO.so_amount, 0.00)) as SO_amount,
 						sum(ALL_SO.net_amount) as SO_net_amount,
     					ALL_SO.updated
 						from (
@@ -2150,7 +2150,7 @@ class ReportsPresenter extends PresenterCore
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference,
 					(coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) tax_amount,
-					(coalesce(RTNtbl.RTN_total_amount, 0.00) - - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) total_sales,
+					(coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) total_sales,
 					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount,
     			    RTNtbl.updated					
 
@@ -2247,10 +2247,10 @@ class ReportsPresenter extends PresenterCore
     					return $model->where('bir.reference','LIKE','%'.$self->getValue().'%');
     				});
     	
-    	$prepare->where('bir.tax_amount','<>','0');
-    	/* $prepare->where('bir.customer_name','like','1000%');
+    	//$prepare->where('bir.tax_amount','<>','0');
+    	$prepare->where('app_customer.customer_name','like','1000%');
     	$prepare->where('app_customer.customer_name','not like','%Adjustment%');
-    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %'); */
+    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %');
     	//print_r($prepare->toSql());exit;
     	return $prepare;
     }
