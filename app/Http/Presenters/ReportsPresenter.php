@@ -2035,6 +2035,8 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedBir()
     {
+    	
+    	$special = $this->getSpecialCustomerCode();
     	$querySales = '    			
 				select 
     				0 negate,
@@ -2060,7 +2062,7 @@ class ReportsPresenter extends PresenterCore
 						ALL_SO.invoice_number,
 						(sum(ALL_SO.total_vat) - sum(tsohd.collective_discount_amount)) as SO_total_vat,						
 						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,						
-						sum(ALL_SO.so_amount) as SO_amount,
+						sum(coalesce(ALL_SO.so_amount, 0.00)-coalesce(tsohd.collective_discount_amount, 0.00)) as SO_amount,
 						sum(ALL_SO.net_amount) as SO_net_amount,
     					ALL_SO.updated
 						from (
@@ -2072,14 +2074,15 @@ class ReportsPresenter extends PresenterCore
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
-								(sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12)*0.12 as total_vat,
-								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount)/1.12 as so_amount,
+								(sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00))/1.12)*0.12 as total_vat,
+								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00))/1.12 as so_amount,
 								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount,
     							IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod
 								on tsoh.reference_num = tsod.reference_num
-								and tsoh.salesman_code = tsod.modified_by 
+								and tsoh.salesman_code = tsod.modified_by
+    							where tsoh.customer_code LIKE \'1000%\' and tsoh.customer_code NOT IN(\''.implode("','",$special).'\') 
 								group by tsoh.so_number, 
 								tsoh.reference_num, 
 								tsoh.salesman_code, 
@@ -2097,13 +2100,14 @@ class ReportsPresenter extends PresenterCore
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
-								(sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12)*0.12 as total_vat,
-								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount)/1.12 as so_amount,
-								sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as net_amount,
+								(sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00))/1.12)*0.12 as total_vat,
+								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00))/1.12 as so_amount,
+								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as net_amount,
     							IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
+    							where tsoh.customer_code LIKE \'1000%\' and tsoh.customer_code NOT IN(\''.implode("','",$special).'\')
 								group by tsoh.so_number, 
 								tsoh.reference_num, 
 								tsoh.salesman_code, 
@@ -2145,8 +2149,8 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference,
-					coalesce(RTNtbl.RTN_total_vat, 0.00) tax_amount,
-					coalesce(RTNtbl.RTN_total_amount, 0.00) total_sales,
+					(coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) tax_amount,
+					(coalesce(RTNtbl.RTN_total_amount, 0.00) - - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) total_sales,
 					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount,
     			    RTNtbl.updated					
 
@@ -2161,7 +2165,7 @@ class ReportsPresenter extends PresenterCore
 						trh.return_date, 
 						trh.sfa_modified_date,
 						trh.return_slip_num,
-
+						sum(trhd.collective_discount_amount) as RTN_total_collective_discount,    			
 						(sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12)*0.12 as RTN_total_vat,												
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
 						- sum(trhd.collective_discount_amount)
@@ -2181,6 +2185,8 @@ class ReportsPresenter extends PresenterCore
     				) trhd
 					on trh.reference_num = trhd.reference_num
 					
+    				where trh.customer_code LIKE \'1000%\' and trh.customer_code NOT IN(\''.implode("','",$special).'\')
+    				
 					group by trh.return_txn_number,
 					trh.reference_num, 
 					trh.salesman_code, 
@@ -2241,11 +2247,33 @@ class ReportsPresenter extends PresenterCore
     					return $model->where('bir.reference','LIKE','%'.$self->getValue().'%');
     				});
     	
-    	$prepare->where('app_customer.customer_name','like','1000%');
+    	$prepare->where('bir.tax_amount','<>','0');
+    	/* $prepare->where('bir.customer_name','like','1000%');
     	$prepare->where('app_customer.customer_name','not like','%Adjustment%');
-    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %');
-    	
+    	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %'); */
+    	//print_r($prepare->toSql());exit;
     	return $prepare;
+    }
+    
+    /**
+     * Get special customer's code
+     * @return multitype:
+     */
+    public function getSpecialCustomerCode()
+    {
+    	$codes = [];
+    	
+    	$customers = \DB::table('app_customer')
+    					->where('customer_name','like','%Adjustment%')
+    					->where('customer_name','like','%Van to Warehouse %','or')
+    					->get(['customer_id','customer_code']);
+    	
+    	foreach($customers as $customer)
+    	{
+    		$codes[] = $customer->customer_code;
+    	}
+    	
+    	return $codes;
     }
     
     /**
