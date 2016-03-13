@@ -4320,9 +4320,9 @@ class ReportsPresenter extends PresenterCore
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedBir();
     			$rows = $this->getBirSelectColumns();
-    			$header = 'Bir Report';
+    			$header = 'BIR Report';
     			$filters = $this->getBirFilterData();
-    			$filename = 'Bir Report';
+    			$filename = 'BIR Report';
     			break;
     		case 'unpaidinvoice';
     			$columns = $this->getTableColumns($report);
