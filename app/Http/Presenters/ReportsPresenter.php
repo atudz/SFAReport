@@ -2033,7 +2033,7 @@ class ReportsPresenter extends PresenterCore
      * Return Prepared Bir
      * @return unknown
      */
-    public function getPreparedBir()
+    public function getPreparedBir($report=false)
     {
     	
     	$special = $this->getSpecialCustomerCode();
@@ -2142,16 +2142,18 @@ class ReportsPresenter extends PresenterCore
 				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')    			
     			';
     	
+    	$negate1 = $report ? 'CONCAT(\'(\',TRUNCATE(' : '';
+    	$negate2 = $report ? ',2),\')\')' : '';
     	$queryRtn = '
     			select 
     				1 negate,
 					ACT.salesman_code sales_group, 
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
-					coalesce(RTNtbl.return_slip_num, \'\') reference,
-					(coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) tax_amount,
-					(coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) total_sales,
-					coalesce(RTNtbl.RTN_net_amount, 0.00) total_invoice_amount,
+					coalesce(RTNtbl.return_slip_num, \'\') reference, '.
+					$negate1 . '(coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))' .$negate2 . ' tax_amount,'.
+					$negate1 . '(coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))'.$negate2 .' total_sales,'.
+					$negate1 . 'coalesce(RTNtbl.RTN_net_amount, 0.00) '.$negate2.' total_invoice_amount,
     			    RTNtbl.updated					
 
 					from txn_activity_salesman ACT 
@@ -4318,7 +4320,7 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'bir';
     			$columns = $this->getTableColumns($report);
-    			$prepare = $this->getPreparedBir();
+    			$prepare = $this->getPreparedBir(true);
     			$rows = $this->getBirSelectColumns();
     			$header = 'BIR Report';
     			$filters = $this->getBirFilterData();
