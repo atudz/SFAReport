@@ -56,7 +56,11 @@
 				<th>&nbsp;</th>
 				<th>&nbsp;</th>				
 				<th align="right">SCR No.:</th>				
-				<th align="left">__________</th>				
+				@if($scr) 
+					<th align="left" style="text-decoration: underline">{{$scr}}</th>
+				@else 
+					<th align="left">__________</th>
+				@endif				
 			</tr>						
 			<tr>
 				<th align="right">Salesman:</th>

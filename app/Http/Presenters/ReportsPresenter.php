@@ -603,10 +603,10 @@ class ReportsPresenter extends PresenterCore
     	
     	$postingDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $postingDateFilter->addFilter($prepare,'posting_date',
-    			function($self, $model){
+    			function($self, $model){    				
     				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
     			});
-    	
+
     	return $prepare;
     }
     
@@ -895,7 +895,7 @@ class ReportsPresenter extends PresenterCore
     		$items[$k]->invoice_number_from = $minInvoice ? $minInvoice->invoice_number : '';
     		$maxInvoice = array_shift($maxInvoice);
     		$items[$k]->invoice_number_to = $maxInvoice ? $maxInvoice->invoice_number : '';
-    		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->invoice_date))->format('mdY');;
+    		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->invoice_date))->format('mdY');
     	}
     	//dd($items);
     	return $items;
@@ -4243,6 +4243,7 @@ class ReportsPresenter extends PresenterCore
     	$currentSummary = [];
     	$previousSummary = [];
     	$filename = 'Report';
+    	$scr = '';
     	$prepare = '';
     	$fontSize = '11px';
     	$vaninventory = false;
@@ -4261,7 +4262,22 @@ class ReportsPresenter extends PresenterCore
     			$current = $prepare->get();
     			$prepare = $this->getPreparedSalesCollection(true);
     			$currentSummary = $prepare->first();
-    			    			
+    			
+    			$from = new Carbon($this->request->get('invoice_date_from'));
+    			$endOfWeek = (new Carbon($this->request->get('invoice_date_from')))->endOfWeek();
+    			$to = new Carbon($this->request->get('invoice_date_to'));
+    			if($from->eq($to))
+    			{
+    				$scr = $this->request->get('salesman').'-'.$from->format('mdY');
+    			}
+    			elseif($from->lt($to) && $to->lte($endOfWeek))
+    			{
+    				$golive = new Carbon(config('system.go_live_date'));
+    				$numOfWeeks = ($to->diff($golive)->days)/7;
+    				$code = str_pad($numOfWeeks,5,'0',STR_PAD_LEFT);
+    				$scr = $this->request->get('salesman').'-'.$code;
+    			}
+    			
     			$rows = $this->getSalesCollectionSelectColumns();    			
     			$header = 'Sales & Collection Report';
     			$filters = $this->getSalesCollectionFilterData();
@@ -4452,6 +4468,7 @@ class ReportsPresenter extends PresenterCore
     	$this->view->records = $records; 
     	$this->view->summary = $summary;
     	$this->view->previous = $previous;
+    	$this->view->scr = $scr;
     	$this->view->previousSummary = $previousSummary;
     	$this->view->current = $current;
     	$this->view->currentSummary = $currentSummary;    	
@@ -4460,14 +4477,15 @@ class ReportsPresenter extends PresenterCore
     	  
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr){
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
 	    			$params['records'] = $records;
 	    			$params['summary'] = $summary;
 	    			$params['header'] = $header;
+	    			$params['scr'] = $scr;
 	    			$params['filters'] = $filters;
 	    			$params['current'] = $current;
 	    			$params['previous'] = $previous;
@@ -4487,6 +4505,7 @@ class ReportsPresenter extends PresenterCore
     		$params['records'] = $records;
     		$params['summary'] = $summary;
     		$params['header'] = $header;
+    		$params['scr'] = $scr;
     		$params['filters'] = $filters;
     		$params['fontSize'] = $fontSize;
     		$params['current'] = $current;

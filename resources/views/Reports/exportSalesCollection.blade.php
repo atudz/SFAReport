@@ -23,7 +23,11 @@
 				<th></th>
 				<th></th>
 				<th align="right">SCR No.:</th>
-				<th>__________</th>				
+				@if($scr) 
+					<th style="text-decoration: underline">{{$scr}}</th>
+				@else 
+					<th>__________</th>
+				@endif				
 			</tr>
 			<tr>
 				<th align="right">Salesman:</th>
