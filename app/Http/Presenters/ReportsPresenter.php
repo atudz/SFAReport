@@ -3028,7 +3028,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedReturnMaterial($summary=false,$summaryCollectiveAmount=0)
     {
-    	$select = '
+        $selectTotalInvoice = '((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + IF(trhd.collective_discount_amount IS NULL, 0, trhd.collective_discount_amount))) total_invoice';
+    	
+        $select = '
     			txn_return_header.return_txn_number,
 				txn_return_header.reference_num,
 				txn_activity_salesman.activity_code,
@@ -3057,7 +3059,7 @@ class ReportsPresenter extends PresenterCore
     			(coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)) collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
-    			((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice,
+    			'.$selectTotalInvoice.',
     			IF(txn_return_header.updated_by,\'modified\',
 	    					IF(txn_return_detail.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
@@ -3073,8 +3075,7 @@ class ReportsPresenter extends PresenterCore
 				SUM(txn_return_detail.gross_amount) gross_amount,
 				SUM(txn_return_detail.vat_amount) vat_amount,
 				SUM(trhd.collective_discount_amount) collective_discount_amount,
-    			SUM((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + trhd.collective_discount_amount)) total_invoice    			
-    			';
+    			SUM'.$selectTotalInvoice;
     	}
     	elseif($summaryCollectiveAmount)
     	{
@@ -3200,6 +3201,8 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedReturnPeso($summary=false)
     {
+        $selectTotalInvoice = '((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + IF(trhd.collective_discount_amount IS NULL, 0, trhd.collective_discount_amount))) total_invoice';
+
     	$select = '
     			txn_return_header.return_txn_number,
 				txn_return_header.reference_num,
@@ -3223,7 +3226,7 @@ class ReportsPresenter extends PresenterCore
     			trhd.collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
-    			((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice,
+    			'.$selectTotalInvoice.',
 	    		IF(txn_return_header.updated_by,\'modified\',
 	    					IF(trd.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
@@ -3240,8 +3243,7 @@ class ReportsPresenter extends PresenterCore
 				SUM(trd.discount_amount) discount_amount,
 				SUM(trhd.collective_discount_amount) collective_discount_amount,
     			SUM(trhd.collective_deduction_amount) collective_deduction_amount,
-				SUM((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.collective_discount_amount)) total_invoice
-    			';
+				SUM'.$selectTotalInvoice;
     	}
     	
     	$prepare = \DB::table('txn_return_header')
