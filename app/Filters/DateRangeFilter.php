@@ -97,11 +97,16 @@ class DateRangeFilter extends FilterCore
 	public function formatValues($values, $format='Y-m-d')
 	{
 		$formatted = [];
-		foreach($values as $val)
+		$count = 0;
+		foreach($values as $k=>$val)
 		{
-			$formatted[] = date_format(new \DateTime($val), $format);
+			if(!$count)
+				$formatted[] = (new Carbon($val))->startOfDay();
+			else 
+				$formatted[] = (new Carbon($val))->endOfDay();
+			$count++;
+				
 		}
-		
 		return $formatted;
 	}
 }

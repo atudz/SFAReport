@@ -8,8 +8,8 @@
 			<!-- Filter -->			
 			{!!Html::fopen('Toggle Filter')!!}
 				<div class="pull-left col-sm-6 col-xs-12">
-					{!!Html::select('salesman','Salesman', $salesman)!!}
-					{!!Html::select('company_code','Company Code', $companyCode)!!}
+					{!!Html::select('salesman','Salesman', $salesman,'')!!}
+					{!!Html::select('company_code','Company Code', $companyCode,'')!!}
 					{!!Html::input('text','customer_name','Customer Name')!!}						
 					{!!Html::input('text','invoice_number','Invoice #')!!}
 					{!!Html::input('text','or_number','OR #')!!}
