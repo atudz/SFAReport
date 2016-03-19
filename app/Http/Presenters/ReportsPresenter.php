@@ -345,14 +345,10 @@ class ReportsPresenter extends PresenterCore
 							all_so.invoice_number,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
-							sum(all_so.total_vat) as so_total_vat,
 							sum(all_so.total_discount) as so_total_item_discount,
 						
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
-							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
-						
-							sum(all_so.so_amount) as so_amount,
-							sum(all_so.net_amount) as so_net_amount,
+							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,						
     			
     						all_so.updated
 						from (
@@ -365,11 +361,11 @@ class ReportsPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
-									sum(IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00)) as total_served,
-									(sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00))/1.12)*0.12 as total_vat,
-									sum(IF(tsod.discount_amount,tsod.discount_amount,0.00)) as total_discount,
-									sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00))/1.12 as so_amount,
-									sum((IF(tsod.gross_served_amount,tsod.gross_served_amount,0.00) + IF(tsod.vat_amount,tsod.vat_amount,0.00))-IF(tsod.discount_amount,tsod.discount_amount,0.00)) as net_amount,
+									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
+									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
+									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
+									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as so_amount,
+									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as net_amount,
     								IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
@@ -393,11 +389,11 @@ class ReportsPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
-									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00)) as total_served,
-									(sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00))/1.12)*0.12 as total_vat,
+									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
+									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
-									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00))/1.12 as so_amount,
-									sum(IF(tsodeal.gross_served_amount,tsodeal.gross_served_amount,0.00) + IF(tsodeal.vat_served_amount,tsodeal.vat_served_amount,0.00)) as net_amount,
+									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as so_amount,
+									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as net_amount,
     								IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
@@ -2044,8 +2040,8 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,
 					SOtbl.so_date document_date,
 					coalesce(SOtbl.invoice_number, \'\') reference,
-					coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) tax_amount,					
-					coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00) total_sales,
+					((coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))/1.12)*0.12 tax_amount,					
+					(coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12 total_sales,
 					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount,
     				SOtbl.updated					
 
@@ -2074,8 +2070,8 @@ class ReportsPresenter extends PresenterCore
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
-								(sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00))/1.12)*0.12 as total_vat,
-								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00))/1.12 as so_amount,
+								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
+								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as so_amount,
 								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount,
     							IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
@@ -2100,8 +2096,8 @@ class ReportsPresenter extends PresenterCore
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
-								(sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00))/1.12)*0.12 as total_vat,
-								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00))/1.12 as so_amount,
+								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
+								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as so_amount,
 								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as net_amount,
     							IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
@@ -2151,9 +2147,9 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference, '.
-					$negate1 . '(coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))' .$negate2 . ' tax_amount,'.
-					$negate1 . '(coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))'.$negate2 .' total_sales,'.
-					$negate1 . 'coalesce(RTNtbl.RTN_net_amount, 0.00) '.$negate2.' total_invoice_amount,
+					$negate1 . '(((coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12)' .$negate2 . ' tax_amount,'.
+					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*1.12)'.$negate2 .' total_sales,'.
+					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)- coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) '.$negate2.' total_invoice_amount,
     			    RTNtbl.updated					
 
 					from txn_activity_salesman ACT 
@@ -2168,12 +2164,10 @@ class ReportsPresenter extends PresenterCore
 						trh.sfa_modified_date,
 						trh.return_slip_num,
 						sum(trhd.collective_discount_amount) as RTN_total_collective_discount,    			
-						(sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12)*0.12 as RTN_total_vat,												
-						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) 
-						- sum(trhd.collective_discount_amount)
-						as RTN_net_amount,
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_vat,												
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_net_amount,
 						
-						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12 as RTN_total_amount,
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_amount,
     					IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 					from txn_return_header trh
 					inner join txn_return_detail trd on trh.reference_num = trd.reference_num  and trh.salesman_code = trd.modified_by
