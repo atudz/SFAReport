@@ -4255,13 +4255,6 @@ class ReportsPresenter extends PresenterCore
     	{
     		case 'salescollectionreport':
     			$columns = $this->getTableColumns($report);
-    			$prepare = $this->getPreparedSalesCollection();
-    			$prepare->where('collection.total_collected_amount','>',0);
-    			$prepare = $prepare->skip($offset)->take($limit);
-    			$previous = $prepare->get();
-    			$prepare = $this->getPreparedSalesCollection(true);
-    			$prepare->where('collection.total_collected_amount','>',0);
-    			$previousSummary = $prepare->first();
     			
     			$prepare = $this->getPreparedSalesCollection();
     			$prepare = $prepare->skip($offset)->take($limit);

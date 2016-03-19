@@ -38,46 +38,49 @@
 			 margin: auto;
     		 width: 65%;
 		}
+		
+		.page-header > tbody > tr > th {
+			width: 150px;
+		}
 	</style>
 </head>
 <body>
 	<strong>&nbsp;SUNPRIDE FOODS, INC.</strong><br>
-	<table class="no-border">
+	<table class="no-border page-header">
 		<tbody>
 			<tr>
-				<th>Sales & Collection Report</th>
-				<th colspan="35"></th>
-				<th align="right">SCR No.:</th>
-				<th>__________</th>				
-			</tr>
-			<tr>
-				<th colspan="38"></th>				
-			</tr>
-			<tr>
-				<th colspan="38"></th>				
-			</tr>
+				<th align="left">Sales & Collection Report</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>				
+				<th align="right">SCR No.:</th>				
+				<th align="left">__________</th>				
+			</tr>						
 			<tr>
 				<th align="right">Salesman:</th>
 				<th align="left" style="text-decoration: underline">{{$filters['Salesman']}}</th>
-				<th colspan="17"></th>
 				<th align="right">Salesman Code:</th>
 				<th align="left" style="text-decoration: underline">{{$filters['Salesman']}}</th>
-				<th colspan="17"></th>				
+				<th>&nbsp;</th>				
+				<th>&nbsp;</th>				
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>		
 			</tr>
 			<tr>
 				<th align="right">Area Name:</th>
-				<th colspan="11" align="left" style="text-decoration: underline">__________</th>
+				<th align="left" style="text-decoration: underline">__________</th>
 				<th align="right">Period Covered:</th>
-				<th colspan="11" align="left" style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
+				<th align="left" style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
 				<th align="right">To:</th>
-				<th colspan="11"align="left" style="text-decoration: underline">{{request()->get('invoice_date_to')}}</th>
+				<th align="left" style="text-decoration: underline">{{request()->get('invoice_date_to')}}</th>
 				<th align="right">Date Remitted:</th>
 				<th align="left" style="text-decoration: underline">{{date('m/d/Y')}}</th>				
 			</tr>
 		</tbody>
 	</table>
 	<br>
-	<strong>SALES & COLLECTION: CURRENT TRANSACTION</strong>
 	<table class="table-data">		
 		<tbody>			
 			@if($theadRaw)
@@ -158,87 +161,6 @@
 		</tbody>
 	</table>	
 	
-	<br>
-	<strong>SALES & COLLECTION: PREVIOUS TRANSACTION</strong>
-	<table class="table-data">		
-		<tbody>
-			@if($theadRaw)
-				{!!$theadRaw!!}
-			@else
-				<tr>
-					@foreach($columns as $column)
-						<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
-					@endforeach
-				</tr>
-			@endif			
-			@foreach($previous as $record)
-				<tr>
-					@foreach($rows as $row)
-						<td align="left" style="wrap-text:true">
-							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date'))
-									{{ date('m/d/Y', strtotime($record->$row)) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record->$row!!}
-								@endif
-							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date'))
-									{{ date('m/d/Y', strtotime($record[$row])) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record[$row]!!}
-								@endif									
-							@endif
-						</td>
-					@endforeach
-				</tr>
-			@endforeach	
-			
-			@if(isset($previousSummary) && $previousSummary)
-				<tr>
-					<th>Total</th>
-					@foreach($rows as $key=>$row)
-						@if($key > 0)
-							<th align="left" style="wrap-text:true">
-								@if(is_object($previousSummary) && isset($previousSummary->$row))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$previousSummary->$row!!}
-										@else
-											({!!number_format($previousSummary->$row,2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$previousSummary->$row!!}
-										@else
-											{!!number_format($previousSummary->$row,2,'.',',')!!}
-										@endif
-									@endif									
-								@elseif(is_array($previousSummary) && isset($previousSummary[$row]))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$previousSummary[$row]!!}
-										@else
-											({!!number_format($previousSummary[$row],2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$previousSummary[$row]!!}
-										@else
-											{!!number_format($previousSummary[$row],2,'.',',')!!}
-										@endif
-									@endif
-								@endif													
-							</th>
-						@endif						
-					@endforeach
-				</tr>			
-			@endif			
-		</tbody>
-	</table>
 	
 	<br><br>
 	<table class="no-border">
