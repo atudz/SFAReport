@@ -607,6 +607,8 @@ class ReportsPresenter extends PresenterCore
     				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
     			});
 
+    	$prepare->orderBy('collection.invoice_date','desc');
+    	
     	return $prepare;
     }
     
@@ -858,6 +860,12 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->whereBetween('collection.collection_posting_date',$self->formatValues($self->getValue()));
     			});
+    	
+    	
+    	if(!$this->request->has('sort'))
+    	{
+    		$prepare->orderBy('collection.invoice_date','desc');
+    	}
     	
     	return $prepare;
     }
