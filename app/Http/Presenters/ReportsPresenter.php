@@ -4275,7 +4275,7 @@ class ReportsPresenter extends PresenterCore
     			elseif($from->lt($to) && $to->lte($endOfWeek))
     			{
     				$golive = new Carbon(config('system.go_live_date'));
-    				$numOfWeeks = ($to->diff($golive)->days)/7;
+    				$numOfWeeks = floor(($to->diff($golive)->days)/7);    			
     				$code = str_pad($numOfWeeks,5,'0',STR_PAD_LEFT);
     				$scr = $this->request->get('salesman').'-'.$code;
     			}
