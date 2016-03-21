@@ -2985,6 +2985,8 @@ class ReportsPresenter extends PresenterCore
 			    				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
 			    			});
 
+        $prepare->orderBy('sales.invoice_date', 'desc');
+
 		if(!$this->hasAdminRole() && auth()->user())
 		{
 			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
