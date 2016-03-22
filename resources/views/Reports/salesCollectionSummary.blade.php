@@ -22,7 +22,7 @@
 				{!!Html::topen()!!}
 				<thead>
 					<tr>
-						<th rowspan="2">SCR#</th>
+						<th rowspan="2" class="sortable" ng-click="sort('scr_number')" id="scr_number">SCR# <i class="fa fa-sort"></i></th>
 						<th colspan="2" align="center">Invoice Number</th>
 						<th rowspan="2" class="sortable" ng-click="sort('invoice_date')" id="invoice_date">Invoice Date <i class="fa fa-sort"></i></th>
 						<th rowspan="2">Total Collected Amount</th>

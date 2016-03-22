@@ -965,9 +965,11 @@ class ReportsPresenter extends PresenterCore
     		$invoice = ' AND (sotbl.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
     	}
     	
+        //scr_number in the select query below is only used for sorting
     	$query = '
     		select
     		tas.salesman_code,
+            CONCAT(tas.salesman_code, "-", DATE_FORMAT(sotbl.so_date,"%Y%m%d")) scr_number,
 			tas.customer_code,
     		sotbl.invoice_number,
     		ac.area_code,
