@@ -207,7 +207,7 @@
 	    	API = $resource('/reports/getdata/conditioncodes');
 	    	API.get({},function(data){
 		    	$scope.codes = data;
-		    	$log.info(data);
+		    	//$log.info(data);
 		    });
 	    }
 	    
@@ -456,8 +456,8 @@
 		$('p[id$="_error"]').addClass('hide');
 		scope.toggleFilter = true;
 		toggleLoading(true);
-		log.info(params);
-		log.info(scope.dateValue);
+		//log.info(params);
+		//log.info(scope.dateValue);
 			
 	    API.save(params,function(data){
 	    		
@@ -486,7 +486,7 @@
 	    			
 	    		}
 	    		toggleLoading();
-	    		log.info(scope.items);
+	    		//log.info(scope.items);
 
 	    		if (scope.items.length){
 	    			$('#no_records_div').hide();
@@ -549,21 +549,20 @@
 				scope.items = [];
 				scope.dateRanges = getDates(dateFrom,dateTo);
 				
-				while(scope.dateRanges.length)
-				{
-					scope.dateValue = scope.dateRanges.shift();			
-					log.info(scope.dateRanges.length);
-					
-					if(!scope.dateRanges.length)
-						$('#load_more').addClass('hide');			
-					else
-						$('#load_more').removeClass('hide');
-					
-					log.info(scope.dateRanges);
-					log.info(scope.dateValue);
-					
-					fetchMore(scope, API, filter, log, InventoryFixTable);
-				}
+				$.each(scope.dateRanges, function(i, range){
+					setTimeout(function(){
+						scope.dateValue = range;
+						scope.dateRanges.shift();
+
+						if(!scope.dateRanges.length)
+							$('#load_more').addClass('hide');
+						else
+							$('#load_more').removeClass('hide');
+
+						fetchMore(scope, API, filter, log, InventoryFixTable);
+
+					}, i * 2000);
+				});
 			}
 	    }
 		
@@ -576,8 +575,8 @@
 					scope.dateValue = scope.dateRanges.shift();
 					if(!scope.dateRanges.length)
 					$('#load_more').addClass('hide');	
-					log.info(scope.dateRanges);
-					log.info(scope.dateValue);
+					//log.info(scope.dateRanges);
+					//log.info(scope.dateValue);
 					
 					fetchMore(scope, API, filter, log, true, InventoryFixTable);
 				}
@@ -636,7 +635,7 @@
 				}
 					
 			});
-			log.info(params);
+			//log.info(params);
 						
 			
 			if(!hasError)
@@ -645,7 +644,7 @@
 				scope.toggleFilter = true;
 				toggleLoading(true);
 				API.save(params,function(data){
-		    		log.info(data);
+		    		//log.info(data);
 			    	scope.records = data.records;
 			    	scope.total = data.total;
 			    	scope.summary = data.summary;
@@ -669,7 +668,7 @@
 			$.each(filter, function(key,val){
 				params[val] = '';
 			});
-			log.info(filter);
+			//log.info(filter);
 			$('p[id$="_error"]').addClass('hide');
 			
 			if(report == 'salescollectionreport')
@@ -677,13 +676,13 @@
 		    	var currentDate = new Date();
 		    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 		    	params = {invoice_date_from:formatted,invoice_date_to:formatted};	  
-		    	log.info(params);
+		    	//log.info(params);
 		    }
 			
 			scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
-	    		log.info(data);
+	    		//log.info(data);
 	    		togglePagination(data.total);
 		    	scope.records = data.records;		    			    	
 		    	toggleLoading();		    	
@@ -729,12 +728,12 @@
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
 			});
-			log.info(params);
+			//log.info(params);
 
 			scope.toggleFilter = true;
 			toggleLoading(true);
 			API.save(params, function(data){
-				log.info(data);
+				//log.info(data);
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
@@ -782,11 +781,11 @@
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
 			});
-			log.info(params);
+			//log.info(params);
 			
 			toggleLoading(true);
 			API.save(params, function(data){
-				log.info(data);
+				//log.info(data);
 				scope.records = data.records;		    	
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
@@ -831,11 +830,11 @@
 	    		$.each(filter, function(key,val){
 					params[val] = $('#'+val).val();
 				});
-				log.info(params);
+				//log.info(params);
 				
 	    		toggleLoading(true);
 	    		API.save(params, function(data){
-					log.info(data);
+					//log.info(data);
 					scope.records = data.records;					
 			    	scope.toggleFilter = true;
 			    	toggleLoading();
@@ -864,10 +863,10 @@
 			var selectOptions = options;
 			/*if(selectAPI)
 			{
-				log.info(selectAPI);
+				//log.info(selectAPI);
 				var API = resource(selectAPI);
 				API.get({},function(data){
-					log.info(data);
+					//log.info(data);
 					selectOptions = data.options;
 				});
 			}*/
@@ -902,9 +901,9 @@
 					inputType = 'text';
 					break;	
 			}
-			log.info(value);
+			//log.info(value);
 			
-			log.info(selectOptions);
+			//log.info(selectOptions);
 			var params = {
 					table: table,
 					column: column,
@@ -957,12 +956,12 @@
 				query += delimeter + val + '=' + $('#'+val).val();				
 			});
 			url += query;
-			log.info(url);
+			//log.info(url);
 			
 			var API = resource(url);
 			API.get({}, function(data){
 			
-				log.info(data);
+				//log.info(data);
 				if(!data.total)
 				{
 					var params = {message:'No data to export.'};		    
@@ -1034,14 +1033,14 @@
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
-	    	log.info(params);
+	    	//log.info(params);
 	    }
 	    else if(report == 'salescollectionsummary')
 	    {
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 	    	params = {salesman:$('#salesman').val()};
-	    	log.info(params);
+	    	//log.info(params);
 	    }
 	    
 	    toggleLoading(true);
@@ -1049,7 +1048,7 @@
 	    	scope.records = data.records;
 	    	scope.summary = data.summary;
 	    	scope.total = data.total;
-	    	log.info(data);	    	
+	    	//log.info(data);	    	
 	    	toggleLoading();
 	    	
 	    	if(typeof TableFix !== "undefined"){
@@ -1162,7 +1161,7 @@
 					delimeter = '&';
 				url += delimeter + val + '=' + $('#'+val).val();				
 			});
-			$log.info(url);
+			//$log.info(url);
 			$window.location.href = url;
 		};
 
@@ -1180,7 +1179,7 @@
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
 		$scope.params = params;		
-		$log.info(params);
+		//$log.info(params);
 		
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
@@ -1188,19 +1187,19 @@
 			if($scope.params.type == 'datetime')
 			{
 				var val = $scope.params.value;
-				$log.info('date_value ' + val);
+				//$log.info('date_value ' + val);
 				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 			}
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined))
 			{
 				error = true;
 			}
-			$log.info($scope.params);
+			//$log.info($scope.params);
 			if(!error)
 			{
 				API.save($scope.params, function(data){
-					$log.info(data);
-					$log.info($scope.params.value);
+					//$log.info(data);
+					//$log.info($scope.params.value);
 					
 					// Van Inventory customization
 					if($scope.params.table == 'txn_stock_transfer_in_header')
@@ -1298,7 +1297,7 @@
 	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
-	    	$log.info(data);	    	
+	    	//$log.info(data);	    	
 	    	toggleLoading();
 	    	togglePagination(data.total);
 	    });	    	    
@@ -1398,7 +1397,7 @@
 	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
-	    	$log.info(data);	    	
+	    	//$log.info(data);	    	
 	    	toggleLoading();
 	    	togglePagination(data.total);
 	    });	    	    
@@ -1518,7 +1517,7 @@
 	    
 	    API.get(params,function(data){
 	    	$scope.records = data;
-	    	$log.info(data);
+	    	//$log.info(data);
 	    	$scope.id = data.id;
 	    	$scope.age = Number(data.age);	
 	    	
@@ -1556,26 +1555,26 @@
 			var API;
 			/*var API = $resource('user/getemails');
 			API.get({}, function(data){
-				//$log.info(data);
+				////$log.info(data);
 				var emails = [];
 				$.each(data, function(index,val){
-					$log.info(val);
+					//$log.info(val);
 					emails.push(val);
 				})
 				$scope.emailList = emails;
 			});
-			$log.info($scope.emailList);
+			//$log.info($scope.emailList);
 			
 			API = $resource('user/getusernames');
 			API.get({}, function(data){
-				//$log.info(data);
+				////$log.info(data);
 				var usernames = [];
 				$.each(data, function(index,val){
 					usernames.push(val);
 				})
 				$scope.usernameList = usernames;
 			});
-			$log.info($scope.usernameList);*/
+			//$log.info($scope.usernameList);*/
 			
 			// validate personal info
 			if(!$('#fname').val())
@@ -1712,9 +1711,9 @@
 				};
 				
 				API = resource('controller/user/save');				
-				log.info(params);
+				//log.info(params);
 				API.save(params, function(data){
-					log.info(data);
+					//log.info(data);
 					scope.success = true;
 					if(!profile)
 						location.path('user.list');
@@ -1763,8 +1762,8 @@
 	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log) {
 
 		$scope.params = params;		
-		$log.info(params);
-		$log.info($scope);
+		//$log.info(params);
+		//$log.info($scope);
 		$scope.ok = function () {				
 			switch($scope.params.action)
 			{
@@ -1772,21 +1771,21 @@
 					var API = $resource('/controller/user/activate/'+$scope.params.id);		    
 				    API.get({},function(data){
 				    	$scope.$parent.records[$scope.params.row].active = true;
-				    	$log.info(data);
+				    	//$log.info(data);
 				    });
 					break;
 				case 'deactivate':
 			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);		    
 				    API.get({},function(data){
 				    	$scope.$parent.records[$scope.params.row].active = false;				    	
-				    	$log.info(data);
+				    	//$log.info(data);
 				    });
 					break;
 				case 'delete':
 					var API = $resource('/controller/user/delete/'+$scope.params.id);		    
 				    API.get({},function(data){
 				    	$('#'+$scope.params.id).remove();
-				    	$log.info(data);
+				    	//$log.info(data);
 				    });
 					break;
 			}
@@ -1831,7 +1830,7 @@
 				errorList.push('Password don\'t match.');
 			}
 			
-			$log.info(errorList);
+			//$log.info(errorList);
 			if(errorList.length > 0)
 			{
 				var i = 0;
@@ -1853,10 +1852,10 @@
 			
 			
 	    	var params = {old_pass:$('#old_password').val(),new_pass:$('#new_password').val()};
-	    	$log.info(params);
+	    	//$log.info(params);
 	    	var API = $resource('controller/user/changepass');				
 			API.save(params, function(data){
-				$log.info(data);
+				//$log.info(data);
 				if(data.success)
 				{
 					$scope.success = true;
@@ -1889,7 +1888,7 @@
 	    
 	    API.get(params,function(data){
 	    	$scope.records = data;
-	    	$log.info(data);
+	    	//$log.info(data);
 	    	$scope.id = data.id;
 	    	$scope.age = Number(data.age);
 	    	if(data.location_assignment_from != '0000-00-00 00:00:00' && data.location_assignment_from != null)
@@ -1911,7 +1910,7 @@
 	function Info($scope, $uibModalInstance, params, $log) {
 
 		$scope.params = params;		
-		$log.info(params);
+		//$log.info(params);
 		
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
