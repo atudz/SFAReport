@@ -1307,7 +1307,6 @@
 	    	user_group_id: 'user_group_id',
 	    	location_assignment_code: 'location_assignment_code',
 	    	location_assignment_type: 'location_assignment_type',
-	    	user_group_id: 'user_group_id',
 	    	created_at_from: 'created_at_from',
 	    	created_at_to: 'created_at_to'
 	    };
@@ -1516,6 +1515,10 @@
 	    var params = {};
 	    
 	    API.get(params,function(data){
+
+	    	//angular acts weird with integer option values
+	    	data.user_group_id = String(data.user_group_id);
+	    	
 	    	$scope.records = data;
 	    	//$log.info(data);
 	    	$scope.id = data.id;
