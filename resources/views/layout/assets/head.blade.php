@@ -1,3 +1,4 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SFA SFI Reports</title>
+
+<title>SFA SFI Reports - {{getenv('SETUP')}}</title>

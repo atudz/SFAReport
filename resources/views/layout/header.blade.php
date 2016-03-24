@@ -15,7 +15,7 @@
 					<span class="icon-bar"></span>
 				</button>
 
-				<a class="navbar-brand" href="/"><img src="img/sfi_home.jpg" /> <span>SFA SFI</span> Reports </a>
+				<a class="navbar-brand" href="/"><img src="img/sfi_home.jpg" /> <span>SFA SFI</span> Reports - {{getenv('SETUP')}}</a>
 				<ul class="user-menu">
 					<li class="dropdown pull-right">
 						<a href="" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span> {{Auth::User()->firstname}} {{Auth::User()->lastname}} <span class="caret"></span></a>
