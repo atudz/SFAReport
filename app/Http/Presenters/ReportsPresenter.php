@@ -271,6 +271,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesCollection();
     	$result = $this->paginate($prepare);
+    	//dd($result->items());
     	$data['records'] = $result->items();
     	
     	$data['summary'] = '';
@@ -293,6 +294,8 @@ class ReportsPresenter extends PresenterCore
     public function getPreparedSalesCollection($summary = false, $noInvoice=false)
     {
     	$query = ' SELECT
+    			   sotbl.so_number,
+    			   tas.reference_num,
     			   tas.salesman_code,
 				   tas.customer_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
@@ -494,13 +497,15 @@ class ReportsPresenter extends PresenterCore
 						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 					) remarks ON(remarks.reference_num=tas.reference_num)
 			
-					WHERE tas.activity_code like \'%SO%\'
+					WHERE tas.activity_code like \'%SO%\' OR tas.activity_code like \'%C%\'
 					ORDER BY tas.reference_num ASC,
 					 		 tas.salesman_code ASC,
 							 tas.customer_code ASC
     			';
     	 
     	$select = '
+    			collection.so_number,
+    			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
 				collection.remarks,
@@ -608,6 +613,7 @@ class ReportsPresenter extends PresenterCore
     			});
 
     	$prepare->orderBy('collection.invoice_date','desc');
+    	$prepare->orderBy('collection.customer_code','asc');
     	
     	return $prepare;
     }
