@@ -26,58 +26,58 @@
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
 				<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
-					<td>[[record.customer_code]]</td>
-					<td>[[record.customer_name]]</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_code]]</td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_name]]</td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
     						[[ record.remarks ]]
   						</a>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
     						[[ record.invoice_number | uppercase ]]
   						</a>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
     						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
   						</a>						
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.so_total_served)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.so_total_item_discount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber([record.so_total_collective_discount])"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM Number','cm_number')">
     						[[ record.cm_number | uppercase ]]
   						</a>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.other_deduction_amount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
     						[[record.return_slip_num | uppercase]]
   						</a>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.RTN_total_gross)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.RTN_total_collective_discount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.RTN_net_amount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
 					</td>
 					<td>
@@ -122,7 +122,7 @@
 					<td>
 						<span ng-bind="formatNumber(record.credit_amount)"></span>
 					</td>
-					<td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.total_collected_amount)"></span>
 					</td>									
 				</tr>
@@ -179,7 +179,7 @@
 				</tr>
 				</tbody>
 				{!!Html::tfooter(true,27)!!}
-			{!!Html::tclose()!!}
+			{!!Html::tclose(false)!!}
 	
 		</div>		
 		</div>		

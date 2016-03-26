@@ -270,21 +270,84 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionReport()
     {
     	$prepare = $this->getPreparedSalesCollection();
-    	$result = $this->paginate($prepare);
-    	//dd($result->items());
-    	$data['records'] = $result->items();
+    	$result = $this->formatSalesCollection($prepare->get());    	
+    	$data['records'] = $result;
     	
     	$data['summary'] = '';
-    	if($result->total())
+    	if($result)
     	{
     		$prepare = $this->getPreparedSalesCollection(true);
     		$data['summary'] = $prepare->first();
     	}
     	 
     	
-    	$data['total'] = $result->total();
+    	$data['total'] = count($result);
     	 
     	return response()->json($data);
+    }
+    
+    /**
+     * Format sales collection
+     * @param unknown $data
+     * @return unknown
+     */
+    public function formatSalesCollection($data)
+    {
+
+    	//dd($data);
+    	$formatted = [];
+    	$prevSoNum = 0;
+    	$customerCode = '';
+    	$total = 0;
+    	$index = 0;
+    	$row = 1;
+    	foreach($data as $k=>$rec)
+    	{    	    		
+    		if(($prevSoNum !== $rec->so_number || $prevSoNum === $rec->so_number) && $customerCode != $rec->customer_code)
+    		{
+    			if($k)
+    			{
+    				$formatted[$index]->total_collected_amount = $total;
+    				$formatted[$index]->rowspan = $row;
+    				$formatted[$index]->show = $row > 1 ? true : false;
+    			}
+    			
+    			$prevSoNum = $rec->so_number;
+    			$customerCode = $rec->customer_code;
+    			$row = 1;
+    			$rec->rowspan = $row;
+    			$rec->show = true;
+    			$formatted[] = $rec;    			    			    			
+    			$index = $k;  
+    			$total = $rec->total_collected_amount;
+    		}
+    		else
+    		{
+    			$rec->customer_code = null;
+    			$rec->customer_name = null;
+    			$rec->remarks = null;
+    			$rec->invoice_number = null;
+    			$rec->invoice_date = null;
+    			$rec->so_total_served = null;
+    			$rec->so_total_item_discount = null;
+    			$rec->so_total_collective_discount = null;
+    			$rec->total_invoice_amount = null;
+    			$rec->other_deduction_amount = null;
+    			$rec->return_slip_num = null;
+    			$rec->RTN_total_gross = null;
+    			$rec->RTN_total_collective_discount = null;
+    			$rec->RTN_net_amount = null;
+    			$rec->total_invoice_net_amount = null;
+    			$total += $rec->total_collected_amount;
+    			$rec->total_collected_amount = null;
+    			$rec->rowspan = 1;
+    			$rec->show = false;
+    			$row++;
+    			$formatted[] = $rec;
+    		}
+    	}
+    	//dd($formatted);
+    	return $formatted;
     }
     
     /**
@@ -313,6 +376,7 @@ class ReportsPresenter extends PresenterCore
 				   rtntbl.RTN_total_collective_discount,
 				   (rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount) RTN_net_amount,
 				   ((sotbl.so_total_served - sotbl.so_total_collective_discount) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - (rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount)) total_invoice_net_amount,
+    			
 				   coltbl.or_date,
 	               coltbl.or_number,
 				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) cash_amount,
@@ -613,7 +677,8 @@ class ReportsPresenter extends PresenterCore
     			});
 
     	$prepare->orderBy('collection.invoice_date','desc');
-    	$prepare->orderBy('collection.customer_code','asc');
+    	$prepare->orderBy('collection.customer_name','asc');
+    	$prepare->orderBy('collection.so_number','asc');
     	
     	return $prepare;
     }
@@ -4279,7 +4344,7 @@ class ReportsPresenter extends PresenterCore
     			
     			$prepare = $this->getPreparedSalesCollection();
     			$prepare = $prepare->skip($offset)->take($limit);
-    			$current = $prepare->get();
+    			$current = $this->formatSalesCollection($prepare->get());
     			$prepare = $this->getPreparedSalesCollection(true);
     			$currentSummary = $prepare->first();
     			
@@ -4491,9 +4556,10 @@ class ReportsPresenter extends PresenterCore
     	$this->view->scr = $scr;
     	$this->view->previousSummary = $previousSummary;
     	$this->view->current = $current;
+    	//dd($current);
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
-    	return $this->view('exportSalesCollectionPdf'); */
+    	return $this->view('exportSalesCollection'); */
     	  
     	if(in_array($type,['xls','xlsx']))
     	{    

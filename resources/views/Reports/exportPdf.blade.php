@@ -76,7 +76,7 @@
 					@foreach($rows as $row)
 						<td align="left" >
 							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date'))
+								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!number_format($record->$row,2,'.',',')!!}
@@ -84,7 +84,7 @@
 									{!!$record->$row!!}
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date'))
+								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!number_format($record[$row],2,'.',',')!!}								
