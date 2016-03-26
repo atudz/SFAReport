@@ -1904,18 +1904,6 @@ class ReportsPresenter extends PresenterCore
      */
     public function getUnpaidInvoice()
     {
-    	// This is a required field so return empty if there's none
-    	if(!$this->request->get('invoice_date_from'))
-    	{
-    		$data = [
-    				'records' => [],
-    				'summary' => [],
-    				'total' => 0
-    		];
-    	
-    		return response()->json($data);
-    	}
-    	
     	$prepare = $this->getPreparedUnpaidInvoice();
     	
     	$result = $this->paginate($prepare);
@@ -1948,11 +1936,11 @@ class ReportsPresenter extends PresenterCore
     	}
     	elseif($sync)
     	{
-    		$filterInvoice = 'DATE(%sinvoice_date) <= \''.date('Y-m-d').'\'';
+    		$filterInvoice = "DATE(%sinvoice_date) BETWEEN '".date_format(date_create(config('system.go_live_date')), 'Y-m-d')."' and '".date_format(date_create(), 'Y-m-d')."'";
     	}
     	else
     	{
-    		$filterInvoice = 'DATE(%sinvoice_date) = \''.date('Y-m-d').'\'';
+    		$filterInvoice = "DATE(%sinvoice_date) BETWEEN '".date_format(date_create(config('system.go_live_date')), 'Y-m-d')."' and '".date_format(date_create(), 'Y-m-d')."'";
     	}
     	
     	// VW_INV temporary table
