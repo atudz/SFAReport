@@ -31,10 +31,10 @@
 							<td>[[record.reference | uppercase]]</td>
 							<td></td>
 							<td></td>
-							<td></td>
 							<td>
 								<span ng-bind="formatNumber(record.sales,record.negate)"></span>
 							</td>
+							<td></td>							
 							<td>
 								<span ng-bind="formatNumber(record.total_sales,record.negate)"></span>
 							</td>
