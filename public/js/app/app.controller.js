@@ -455,7 +455,7 @@
 					
 		$('p[id$="_error"]').addClass('hide');
 		scope.toggleFilter = true;
-		toggleLoading(true);
+		//toggleLoading(true);
 		//log.info(params);
 		//log.info(scope.dateValue);
 			
@@ -485,7 +485,7 @@
 	    			}
 	    			
 	    		}
-	    		toggleLoading();
+	    		//toggleLoading();
 	    		//log.info(scope.items);
 
 	    		if (scope.items.length){
@@ -500,6 +500,7 @@
 					});
 				    console.log('Build table');
 	    		} else {
+	    			toggleLoading();
 	    			$('#no_records_div').show();
 	    			$("table.table").floatThead('destroy');
 		    		console.log('Destroy table');
@@ -548,9 +549,19 @@
 				
 				scope.items = [];
 				scope.dateRanges = getDates(dateFrom,dateTo);
-				
+				var maxIndex = scope.dateRanges.length - 1;
+
 				$.each(scope.dateRanges, function(i, range){
 					setTimeout(function(){
+
+						if(i == 0)
+						{
+							toggleLoading(true);
+						}
+						else if(i == maxIndex)
+						{
+							toggleLoading();
+						}
 						scope.dateValue = range;
 						scope.dateRanges.shift();
 
