@@ -24,7 +24,7 @@ class UserGroupToNavSeeder extends Seeder
             'Sales & Collection',
             'Unpaid Invoice',
             'Van Inventory',
-            'BIR',
+            'BIR Report',
             'Sync Data',
             'Dashboard',
             'Sales Report',
