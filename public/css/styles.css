@@ -952,6 +952,7 @@ h1.page-header {
 /*Tables*/
 .table {
 	background: #fff;
+	overflow-wrap: break-word
 }
 
 .fixed-table-container {
