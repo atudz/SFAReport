@@ -33,7 +33,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')
+        /* $schedule->command('inspire')
                  ->hourly();
+ */        
+        $schedule->command('sync:sfa')
+        			->dailyAt('3:00')
+        			->withoutOverlapping()
+        			->appendOutputTo(storage_path('logs/cron').'/cron.log');
     }
 }
