@@ -47,7 +47,13 @@
 							<td class="bold"></td>
 							<td class="bold"></td>
 							<td class="bold">
-								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
+								@if($isAdmin)
+									<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',stock.stock_transfer_in_header_id,stock.transaction_date,$index,'Transaction Date','transaction_date',false,$parent.$index)">
+	    								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
+	  								</a>
+	  							@else
+	  								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
+	  							@endif								
 							</td>
 							<td>
 								@if($isAdmin)

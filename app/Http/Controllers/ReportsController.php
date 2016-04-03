@@ -51,7 +51,7 @@ class ReportsController extends ControllerCore
 			]);
 		}
 		
-		if($table == 'txn_stock_transfer_in_header' && $stockTransNum)
+		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
 		{
 			\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
 					$column => $value,
