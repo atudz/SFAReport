@@ -10,7 +10,7 @@
                 var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
 
     			$("table.table").floatThead('reflow');
-				console.log('Load Editable Factory. Scroll value: '+scrollpos);
+				//console.log('Load Editable Factory. Scroll value: '+scrollpos);
 
                 $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
             }
@@ -30,7 +30,7 @@
 				        return $table.closest(".wrapper");
 				    }
 				});
-    			console.log('Load TableFix Factory!');
+    			//console.log('Load TableFix Factory!');
 
             }
         };
@@ -49,7 +49,7 @@
 				        return $table.closest(".wrapper");
 				    }
 				});
-    			console.log('Load Inventory Factory!');
+    			//console.log('Load Inventory Factory!');
 
             }
         };

@@ -296,23 +296,24 @@ class ReportsPresenter extends PresenterCore
 
     	//dd($data);
     	$formatted = [];
-    	$prevSoNum = 0;
+    	$prevInvoiceNum = 0;
     	$customerCode = '';
     	$total = 0;
     	$index = 0;
     	$row = 1;
+    	$max = count($data) - 1;
     	foreach($data as $k=>$rec)
     	{    	    		
-    		if(($prevSoNum !== $rec->so_number || $prevSoNum === $rec->so_number) && $customerCode != $rec->customer_code)
+    		if($prevInvoiceNum !== $rec->invoice_number)
     		{
     			if($k)
     			{
     				$formatted[$index]->total_collected_amount = $total;
     				$formatted[$index]->rowspan = $row;
-    				$formatted[$index]->show = $row > 1 ? true : false;
+    				$formatted[$index]->show = $row > 1 || $row == 1 ? true : false;
     			}
     			
-    			$prevSoNum = $rec->so_number;
+    			$prevInvoiceNum = $rec->invoice_number;
     			$customerCode = $rec->customer_code;
     			$row = 1;
     			$rec->rowspan = $row;
@@ -323,6 +324,7 @@ class ReportsPresenter extends PresenterCore
     		}
     		else
     		{
+    			
     			$rec->customer_code = null;
     			$rec->customer_name = null;
     			$rec->remarks = null;
@@ -344,6 +346,14 @@ class ReportsPresenter extends PresenterCore
     			$rec->show = false;
     			$row++;
     			$formatted[] = $rec;
+    			
+    			if($k == $max)
+    			{
+    				$formatted[$index]->total_collected_amount = $total;
+    				$formatted[$index]->rowspan = $row;
+    				$formatted[$index]->show = true;
+    			}
+    			 
     		}
     	}
     	//dd($formatted);
@@ -548,12 +558,13 @@ class ReportsPresenter extends PresenterCore
 							tcd.cm_number,
     						tch.collection_header_id,
     						tcd.collection_detail_id,
+    						tci.invoice_number,
     						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
 			
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-					) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+					) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
@@ -676,6 +687,9 @@ class ReportsPresenter extends PresenterCore
     				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
     			});
 
+    	$prepare->where('collection.customer_name','not like','%Adjustment%');
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
+    	
     	$prepare->orderBy('collection.invoice_date','desc');
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
@@ -846,12 +860,13 @@ class ReportsPresenter extends PresenterCore
 					tch.or_number,
 					tch.or_amount,
     				tch.or_date,
+    				tci.invoice_number,
 					tch.sfa_modified_date,
     				IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated					
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-			) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+			) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -937,6 +952,10 @@ class ReportsPresenter extends PresenterCore
     	{
     		$prepare->orderBy('collection.invoice_date','desc');
     	}
+    	
+    	$prepare->where('collection.customer_name','not like','%Adjustment%');
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
+    	 
     	
     	return $prepare;
     }
@@ -1041,6 +1060,7 @@ class ReportsPresenter extends PresenterCore
     		select
     		tas.salesman_code,
             CONCAT(tas.salesman_code, "-", DATE_FORMAT(sotbl.so_date,"%Y%m%d")) scr_number,
+    		ac.customer_name,
 			tas.customer_code,
     		sotbl.invoice_number,
     		ac.area_code,
@@ -1163,13 +1183,14 @@ class ReportsPresenter extends PresenterCore
 					tch.or_number,
 					tch.or_amount,
     				tch.or_date,
+    				tci.invoice_number,
 					tch.sfa_modified_date,
     				tcd.payment_method_code,
 					IF(tcd.payment_amount,tcd.payment_amount,0.00) payment_amount				
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-			) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+			) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -1184,6 +1205,7 @@ class ReportsPresenter extends PresenterCore
     			';
     	$select = '
 				collection.invoice_number,
+    			collection.customer_name,
 				collection.invoice_date,
     			collection.salesman_code,
     			collection.total_collected_amount,
@@ -1227,6 +1249,10 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     					return $model->where('collection.area_code','=',$self->getValue());
     				}); */
+    	
+    	$prepare->where('collection.customer_name','not like','%Adjustment%');
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
+    	 
     	
     	return $prepare;
     }
@@ -3539,7 +3565,7 @@ class ReportsPresenter extends PresenterCore
      * Return Salesman List prepared statement
      * @return unknown
      */
-    public function getPreparedSalesmanList()
+    public function getPreparedSalesmanList($salesman='')
     {
     	$select = '
     			app_salesman.salesman_code,
@@ -3593,6 +3619,11 @@ class ReportsPresenter extends PresenterCore
     	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('salesman_customer.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	
+    	if($salesman)
+    	{
+    		$prepare->where('app_salesman.salesman_code','=',$salesman);
     	}
     	
     	return $prepare;
@@ -4317,6 +4348,7 @@ class ReportsPresenter extends PresenterCore
     	$previousSummary = [];
     	$filename = 'Report';
     	$scr = '';
+    	$area = '';
     	$prepare = '';
     	$fontSize = '11px';
     	$vaninventory = false;
@@ -4343,14 +4375,19 @@ class ReportsPresenter extends PresenterCore
     			{
     				$scr = $this->request->get('salesman').'-'.$from->format('mdY');
     			}
-    			elseif($from->lt($to) && $to->lte($endOfWeek))
+    			elseif($from->lt($to) && $to->lte($endOfWeek) && 
+    				($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to') && $to->diffInDays($from) < 8))
     			{
     				$golive = new Carbon(config('system.go_live_date'));
-    				$numOfWeeks = floor(($to->diff($golive)->days)/7);    			
+    				$numOfWeeks = $to->diffInWeeks($golive) + 1;    				    		
     				$code = str_pad($numOfWeeks,5,'0',STR_PAD_LEFT);
     				$scr = $this->request->get('salesman').'-'.$code;
     			}
     			
+    			$prepareArea = $this->getPreparedSalesmanList($this->request->get('salesman'));
+    			$resultArea = $prepareArea->first();
+    			$area = $resultArea ? $resultArea->area_name : '';
+    			    			
     			$rows = $this->getSalesCollectionSelectColumns();    			
     			$header = 'Sales & Collection Report';
     			$filters = $this->getSalesCollectionFilterData();
@@ -4551,8 +4588,8 @@ class ReportsPresenter extends PresenterCore
     	  
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
@@ -4565,6 +4602,7 @@ class ReportsPresenter extends PresenterCore
 	    			$params['previous'] = $previous;
 	    			$params['currentSummary'] = $currentSummary;
 	    			$params['previousSummary'] = $previousSummary;
+	    			$params['area'] = $area;
 	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
 	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
 	    		});
@@ -4586,6 +4624,7 @@ class ReportsPresenter extends PresenterCore
     		$params['previous'] = $previous;
     		$params['currentSummary'] = $currentSummary;
     		$params['previousSummary'] = $previousSummary;
+    		$params['area'] = $area;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		$pdf = \PDF::loadView('Reports.'.$view, $params);    	
     		unset($params,$records,$prepare);	    		

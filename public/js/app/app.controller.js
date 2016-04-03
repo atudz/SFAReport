@@ -498,7 +498,7 @@
 					        return $table.closest(".wrapper");
 					    }
 					});
-				    console.log('Build table');
+				    //console.log('Build table');
 	    		} else {
 	    			toggleLoading();
 	    			$('#no_records_div').show();
@@ -1113,7 +1113,7 @@
 			        return $table.closest(".wrapper");
 			    }
 			});
-		    console.log('Build table');
+		    //console.log('Build table');
 		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}
 		else
@@ -1125,7 +1125,7 @@
 
 		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
 		    $("table.table").floatThead('destroy');
-		    console.log('Destroy table');
+		    //console.log('Destroy table');
 		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}		
 	}

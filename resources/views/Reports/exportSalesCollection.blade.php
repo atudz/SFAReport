@@ -41,7 +41,7 @@
 			</tr>
 			<tr>
 				<th align="right">Area Name:</th>
-				<th style="text-decoration: underline">__________</th>
+				<th style="text-decoration: underline">{{$area}}</th>
 				<th align="right">Period Covered:</th>
 				<th style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
 				<th align="right">To:</th>

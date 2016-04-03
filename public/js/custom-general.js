@@ -39,7 +39,7 @@
 					var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
 
 	    			$("table.table").floatThead('reflow');
-					console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+					//console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
 
 	                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 
@@ -50,7 +50,7 @@
 					var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
 
 	    			$("table.table").floatThead('reflow');
-					console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+					//console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
 
 	                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 				}
@@ -67,7 +67,7 @@
 				var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 5;
 
     			$("table.table").floatThead('reflow');
-				console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
+				//console.log('Trigger Menu reBuild Table. Scroll value: '+scrollpos);
 
                 $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			}

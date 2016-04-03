@@ -74,7 +74,7 @@
 			</tr>
 			<tr>
 				<th align="right">Area Name:</th>
-				<th align="left" style="text-decoration: underline">__________</th>
+				<th align="left" style="text-decoration: underline">{{$area}}</th>
 				<th align="right">Period Covered:</th>
 				<th align="left" style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
 				<th align="right">To:</th>
@@ -98,10 +98,11 @@
 			@endif			
 			@foreach($current as $record)
 				<tr>
-					@foreach($rows as $row)
-						<td align="left" style="wrap-text:true">
+					@foreach($rows as $k=>$row)
+						@if($record->show || (!$record->show && $k > 15 && $k < 26 ))						
+						<td align="left" style="wrap-text:true" rowspan="@if($k < 16 || $k == 26) {{$record->rowspan}} @else 1 @endif">							
 							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date'))
+								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!number_format($record->$row,2,'.',',')!!}	
@@ -109,7 +110,7 @@
 									{!!$record->$row!!}
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date'))
+								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!number_format($record->$row,2,'.',',')!!}	
@@ -118,7 +119,8 @@
 								@endif									
 							@endif
 						</td>
-					@endforeach
+						@endif						
+					@endforeach	
 				</tr>
 			@endforeach	
 			
