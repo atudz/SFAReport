@@ -2453,7 +2453,7 @@ class ReportsPresenter extends PresenterCore
     							tsoh.sales_order_header_id,
     							\'txn_sales_order_detail\' quantity_table,
 								IF(\'Adjustment\'=SUBSTR(ac.customer_name,6),\'order_qty\',
-    								IF(\'Van to Warehouse Transaction\'=SUBSTR(ac.customer_name,6),\'order_qty\',\'serverd_qty\')) quantity_column,
+    								IF(\'Van to Warehouse Transaction\'=SUBSTR(ac.customer_name,6),\'order_qty\',\'served_qty\')) quantity_column,
 								tsod.sales_order_detail_id quantity_pk_id,
     							tsoh.so_number, 
 								tsoh.reference_num,
