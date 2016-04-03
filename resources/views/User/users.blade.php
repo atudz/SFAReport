@@ -7,12 +7,12 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="pull-left col-sm-6 col-xs-12">
+					<div class="col-md-6">
 						{!!Html::input('text','fullname','Full Name')!!}
 						{!!Html::select('user_group_id','Role', $roles)!!}
 						{!!Html::select('location_assignment_code','Branch', $areas)!!}						
 					</div>					
-					<div class="pull-right col-sm-6 col-xs-12">
+					<div class="col-md-6">
 						{!!Html::datepicker('created_at','Date Created',true)!!}		
 						{!!Html::select('location_assignment_type','Assignment', $assignmentOptions)!!}				
 					</div>			
