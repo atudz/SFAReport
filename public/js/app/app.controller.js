@@ -1792,17 +1792,13 @@
 			{
 				case 'activate':
 					var API = $resource('/controller/user/activate/'+$scope.params.id);		    
-				    API.get({},function(data){
-				    	$scope.$parent.records[$scope.params.row].active = true;
-				    	//$log.info(data);
-				    });
+				    API.get();
+				    $scope.$parent.records[$scope.params.row].active = true;
 					break;
 				case 'deactivate':
 			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);		    
-				    API.get({},function(data){
-				    	$scope.$parent.records[$scope.params.row].active = false;				    	
-				    	//$log.info(data);
-				    });
+				    API.get();
+				    $scope.$parent.records[$scope.params.row].active = false;
 					break;
 				case 'delete':
 					var API = $resource('/controller/user/delete/'+$scope.params.id);		    
@@ -1812,6 +1808,9 @@
 				    });
 					break;
 			}
+
+			$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
+
 			$uibModalInstance.dismiss('cancel');
 		};
 		

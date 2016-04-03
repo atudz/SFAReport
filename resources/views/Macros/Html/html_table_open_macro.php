@@ -40,7 +40,7 @@ Html::macro('topen', function($options=[]) {
 	$html .= '<div class="col-sm-7 col-sm-offset-5 show" id="loading_div">
 					<span><i class="fa fa-spinner fa-lg fa-pulse"></i> Loading..</span>
 				</div>				
-
+				<div class="text-center alert alert-success hide" id="table_success"></div>
 				<script type="text/ng-template" id="exportModal">
         			<div class="modal-header">
             			<h3 class="modal-title">[[params.title]]</h3>
