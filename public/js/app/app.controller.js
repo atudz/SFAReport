@@ -774,7 +774,7 @@
 		var params  = {};
 		
 		scope.page = 1;
-		if(scope.perpage == 25)
+		if(scope.perpage == 25 || !scope.perpage)
 			scope.perpage = 25;
 	    scope.total = 0;
 	    
