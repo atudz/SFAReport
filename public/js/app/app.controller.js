@@ -774,7 +774,8 @@
 		var params  = {};
 		
 		scope.page = 1;
-	    scope.perpage = 25;
+		if(scope.perpage == 25)
+			scope.perpage = 25;
 	    scope.total = 0;
 	    
 		// Paginate table records	    
@@ -1045,6 +1046,12 @@
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
 	    	//log.info(params);
+	    }
+	    else if(report == 'salescollectionposting')
+	    {
+	    	params = {invoice_date_from:formatted,invoice_date_to:formatted,page_limit:50};
+	    	scope.page = 1;
+		    scope.perpage = 50;
 	    }
 	    else if(report == 'salescollectionsummary')
 	    {
