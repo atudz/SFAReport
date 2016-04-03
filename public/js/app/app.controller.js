@@ -1057,8 +1057,10 @@
 	    {
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {salesman:$('#salesman').val()};
+	    	params = {salesman:$('#salesman').val(),page_limit:50};
 	    	//log.info(params);
+	    	scope.page = 1;
+		    scope.perpage = 50;
 	    }
 	    
 	    toggleLoading(true);
