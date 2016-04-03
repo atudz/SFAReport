@@ -4603,6 +4603,7 @@ class ReportsPresenter extends PresenterCore
 	    			$params['currentSummary'] = $currentSummary;
 	    			$params['previousSummary'] = $previousSummary;
 	    			$params['area'] = $area;
+	    			$params['report'] = $report;
 	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
 	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
 	    		});
