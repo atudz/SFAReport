@@ -2138,7 +2138,8 @@ class ReportsPresenter extends PresenterCore
 					((coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))/1.12)*0.12 tax_amount,					
 					(coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12 total_sales,
 					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount,
-    				SOtbl.updated					
+    				SOtbl.updated,
+    				app_customer.area_code					
 
 					from txn_activity_salesman ACT 
 
@@ -2230,6 +2231,9 @@ class ReportsPresenter extends PresenterCore
 				) SOtbl 
 				on SOtbl.reference_num = ACT.reference_num
 				and SOtbl.salesman_code = ACT.salesman_code
+
+    			left join app_customer on app_customer.customer_code = ACT.customer_code
+    									
 				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')    			
     			';
     	
@@ -2245,7 +2249,8 @@ class ReportsPresenter extends PresenterCore
 					$negate1 . '(((coalesce(RTNtbl.RTN_total_vat, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12)' .$negate2 . ' tax_amount,'.
 					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00) - coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*1.12)'.$negate2 .' total_sales,'.
 					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)- coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) '.$negate2.' total_invoice_amount,
-    			    RTNtbl.updated					
+    			    RTNtbl.updated,
+					app_customer.area_code					
 
 					from txn_activity_salesman ACT 
 
@@ -2289,6 +2294,9 @@ class ReportsPresenter extends PresenterCore
 				) RTNtbl
 				on RTNtbl.reference_num = ACT.reference_num
 				and RTNtbl.salesman_code = ACT.salesman_code
+
+    			left join app_customer on app_customer.customer_code = ACT.customer_code			
+    						
 				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')
     			';
     	
@@ -2307,7 +2315,8 @@ class ReportsPresenter extends PresenterCore
     			bir.total_invoice_amount term_cash,
 				bir.sales_group,
     			bir.updated,
-				app_salesman.salesman_name assignment
+				app_salesman.salesman_name assignment,
+    			bir.area_code
     			';
     	$from = '( '.$querySales.' UNION ' .$queryRtn . ' ) bir';
     	
@@ -2343,6 +2352,11 @@ class ReportsPresenter extends PresenterCore
     	$prepare->where('app_customer.customer_name','not like','%Adjustment%');
     	$prepare->where('app_customer.customer_name','not like','%Van to Warehouse %');
     	//print_r($prepare->toSql());exit;
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('bir.area_code','=',auth()->user()->location_assignment_code);
+    	}
     	return $prepare;
     }
     
