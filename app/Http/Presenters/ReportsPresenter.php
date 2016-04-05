@@ -2838,7 +2838,7 @@ class ReportsPresenter extends PresenterCore
     							SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) collective_discount_amount,
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,
-								SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)-coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) total_sales,
+                                SUM( coalesce( (tsod.gross_served_amount + tsod.vat_amount),0.00 ) - (discount_amount + coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) ) total_sales,
     							IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
