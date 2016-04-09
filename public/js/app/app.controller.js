@@ -1448,8 +1448,9 @@
 		// @Function
 	    // Description  : Triggered while displaying expiry date in Customer Details screen.
 	    scope.formatDate = function(date){
-	    	  if(!date) return '';	
-	          var dateOut = new Date(date);
+	    	  if(!date) return '';
+	    	  date = date.replace(/-/g, '/');
+	    	  var dateOut = new Date(date);
 	          return dateOut;
 	    };
 	}
