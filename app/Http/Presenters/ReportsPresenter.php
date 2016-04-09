@@ -2076,7 +2076,7 @@ class ReportsPresenter extends PresenterCore
     				);    	
     	
     	
-    	$prepare = $prepare->where(\DB::raw('coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)'),'>','0.01');
+    	$prepare = $prepare->where(\DB::raw('coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0)'),'>=','0.1');
     	
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
