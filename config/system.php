@@ -31,5 +31,5 @@ return [
 	'report_limit_pdf' => '100',
 		
 	// Go live date for van inventory
-	'go_live_date' => '2016-03-01',
+	'go_live_date' => '2015-10-01',
 ];
