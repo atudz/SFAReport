@@ -4919,7 +4919,7 @@ class ReportsPresenter extends PresenterCore
     {
     	return [
     			'item_code',
-    			'item_description',
+    			'description',
     			'uom_code',
     			'segment_code',
     			'unit_price',
