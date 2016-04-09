@@ -105,8 +105,6 @@
 						<td></td>
 						<td></td>
 						<td></td>
-						<td></td>
-						<td></td>
 						<th>
 							<span ng-bind="summary.quantity"></span>
 						</th>
@@ -134,7 +132,7 @@
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,33)!!}					
+					{!!Html::tfooter(true,31)!!}					
 				{!!Html::tclose()!!}
 			</div>			
 		</div>

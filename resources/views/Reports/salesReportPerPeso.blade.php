@@ -82,8 +82,6 @@
 						<td></td>
 						<td></td>
 						<td></td>
-						<td></td>
-						<td></td>
 						<td></td>						
 						<td></td>
 						<td></td>
@@ -109,7 +107,7 @@
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,27)!!}
+					{!!Html::tfooter(true,25)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			
