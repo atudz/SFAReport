@@ -92,9 +92,15 @@
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.cash_amount)"></span>
+						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.cash_amount,$index,'Cash','cash_amount','','','0.01')">
+							<span ng-bind="formatNumber(record.cash_amount)"></span>
+  						</a> -->						
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.check_amount)"></span>
+						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.check_amount,$index,'Cash','check_amount','','','0.01')">
+							<span ng-bind="formatNumber(record.check_amount)"></span>
+						</a> -->
 					</td>
 					<td>
 						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">

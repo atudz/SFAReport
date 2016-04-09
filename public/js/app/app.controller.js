@@ -879,7 +879,7 @@
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 		
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			
 			var selectOptions = options;
 			/*if(selectAPI)
@@ -892,6 +892,9 @@
 				});
 			}*/
 			
+			var stepInterval = 1;			
+			if(step)
+				stepInterval = step;
 			var total = column;
 			if(alias)
 				total = alias;
@@ -938,7 +941,8 @@
 					old: scope.oldVal,
 					getTotal: getTotal,
 					parentIndex: parentIndex,
-					type: inputType
+					type: inputType,
+					step: stepInterval
 			};
 			
 			

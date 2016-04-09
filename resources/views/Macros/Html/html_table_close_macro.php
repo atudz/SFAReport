@@ -11,7 +11,7 @@ Html::macro('tclose', function($paginate=true) {
 					<p>[[params.name]]</p>	
 					<form class="form-inline">
 				         <div class="form-group">
-							<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control input-sm">
+							<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control input-sm" step="[[params.step]]">
 						 </div>
 						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
 						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
