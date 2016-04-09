@@ -9,15 +9,15 @@
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
-						{!!Html::datepicker('return_date','Invoice Date/ Return Date',true)!!}
-						{!!Html::datepicker('posting_date','Posting Date',true)!!}			
-						{!!Html::input('text','invoice_number','Invoice #')!!}			
-					</div>					
-					<div class="col-md-6">	
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}
-						{!!Html::select('customer','Customer', $customers)!!}																			 		
+						{!!Html::select('customer','Customer', $customers)!!}								
+					</div>					
+					<div class="col-md-6">							
+						{!!Html::datepicker('return_date','Invoice Date/ Return Date',true)!!}
+						{!!Html::datepicker('posting_date','Posting Date',true)!!}			
+						{!!Html::input('text','invoice_number','Invoice #')!!}																			 		
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
