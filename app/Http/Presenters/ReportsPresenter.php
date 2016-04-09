@@ -2735,6 +2735,11 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
     	}
     	
+    	if(!$this->request->has('sort'))
+    	{
+    		$prepare->orderBy('sales.invoice_date','desc');
+    	}
+    	
     	return $prepare;	
     }
     
@@ -3064,6 +3069,11 @@ class ReportsPresenter extends PresenterCore
 			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
 		}
 		
+		if(!$this->request->has('sort'))
+		{
+			$prepare->orderBy('sales.invoice_date','desc');
+		}
+		
 		return $prepare;	
     }
     
@@ -3244,7 +3254,11 @@ class ReportsPresenter extends PresenterCore
 		{
 			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
 		}
-			    	
+
+		if(!$this->request->has('sort'))
+		{
+			$prepare->orderBy('txn_return_header.return_date','desc');
+		}
 		return $prepare;	    	
     	
     }
@@ -3407,6 +3421,11 @@ class ReportsPresenter extends PresenterCore
     	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	
+    	if(!$this->request->has('sort'))
+    	{
+    		$prepare->orderBy('txn_return_header.return_date','desc');
     	}
     	
     	return $prepare;
