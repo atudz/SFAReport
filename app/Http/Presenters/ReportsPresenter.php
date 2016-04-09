@@ -205,6 +205,10 @@ class ReportsPresenter extends PresenterCore
     	$this->view->customers = $this->getCustomer();
     	$this->view->companyCode = $this->getCompanyCode();
     	$this->view->tableHeaders = $this->getUnpaidColumns();
+    	
+    	$this->view->from = (new Carbon(config('system.go_live_date')))->format('m/d/Y');
+    	$this->view->to = (new Carbon())->format('m/d/Y');
+    	
     	return $this->view('unpaidInvoice');
     }
     /**

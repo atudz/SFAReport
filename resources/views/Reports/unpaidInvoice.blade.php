@@ -13,7 +13,7 @@
 						{!!Html::select('customer','Customer', $customers)!!}
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
+						{!!Html::datepicker('invoice_date','Invoice Date','true',false,$from,$to)!!}
 						{!!Html::input('text','invoice_number','Invoice #')!!}
 					</div>			
 				{!!Html::fclose()!!}
