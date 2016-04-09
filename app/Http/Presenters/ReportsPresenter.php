@@ -3991,11 +3991,9 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'SO number'],
-    			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],    			
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
@@ -4032,11 +4030,9 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'SO number'],
-    			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
@@ -4661,11 +4657,9 @@ class ReportsPresenter extends PresenterCore
     {
     	return [
     		'so_number',
-    		'reference_num',
     		'activity_code',
     		'customer_code',
     		'customer_name',
-    		'remarks',
     		'van_code',
     		'device_code',
     		'salesman_code',
@@ -4799,11 +4793,9 @@ class ReportsPresenter extends PresenterCore
     {
     	return [
     			'so_number',
-    			'reference_num',
     			'activity_code',
     			'customer_code',
     			'customer_name',
-    			'remarks',
     			'van_code',
     			'device_code',
     			'salesman_code',

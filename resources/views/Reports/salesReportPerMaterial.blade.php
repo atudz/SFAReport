@@ -30,15 +30,9 @@
 					<tbody>
 					<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 						<td>[[record.so_number]]</td>						
-						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
-						<td> 
-  							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
-    							[[ record.remarks ]]
-  							</a>
-  						</td>
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>
 						<td>[[record.salesman_code]]</td>
