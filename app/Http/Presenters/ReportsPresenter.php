@@ -2420,13 +2420,10 @@ class ReportsPresenter extends PresenterCore
     	$querySales = '
     			SELECT
 				all_so.so_number,
-				all_so.reference_num,
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
-			    remarks.remarks,
-			    remarks.evaluated_objective_id,
-				all_so.van_code,
+			    all_so.van_code,
 				all_so.device_code,
 				all_so.salesman_code,
 				aps.salesman_name,
@@ -2452,7 +2449,7 @@ class ReportsPresenter extends PresenterCore
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,
 			    all_so.total_sales total_invoice,
-				IF(all_so.updated =\'modified\',\'modified\',IF(remarks.updated_by,\'modified\',\'\')) updated,		
+				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,		
 				\'txn_sales_order_header\' invoice_table,
 				\'invoice_number\' invoice_number_column,
 				\'so_date\' invoice_date_column,
@@ -2550,22 +2547,15 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
 				LEFT JOIN app_salesman aps ON(aps.salesman_code=all_so.salesman_code)
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)
-				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)				
-				LEFT JOIN
-				(
-					select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
-				) remarks ON(remarks.reference_num=all_so.reference_num)
+				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)								
     			';
     	 
     	$queryReturns = '
     			SELECT
 				trh.return_txn_number so_number,
-				trh.reference_num,
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
-				remarks.remarks,
-			    remarks.evaluated_objective_id,
 				trh.van_code,
 				trh.device_code,
 				trh.salesman_code,
@@ -2591,7 +2581,7 @@ class ReportsPresenter extends PresenterCore
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,							
 			    ((trd.gross_amount + trd.vat_amount) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))) total_invoice,
-			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
+			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 		
 			    \'txn_return_header\' invoice_table,
 				\'return_slip_num\' invoice_number_column,
@@ -2622,24 +2612,15 @@ class ReportsPresenter extends PresenterCore
     				sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) served_deduction_amount
 					from  txn_return_header_discount
 					group by reference_num
-    		) trhd ON(trhd.reference_num=trh.reference_num)
-			LEFT JOIN
-			(
-				select evaluated_objective_id,remarks,reference_num,updated_by
-				from txn_evaluated_objective
-			    group by reference_num
-			) remarks ON(remarks.reference_num=trh.reference_num)
-    
+    		) trhd ON(trhd.reference_num=trh.reference_num)			
     			';
     	 
     	$select = '
     			sales.so_number,
-				sales.reference_num,
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
-			    sales.remarks,
-				sales.van_code,
+			    sales.van_code,
 				sales.device_code,
 				sales.salesman_code,
 				sales.salesman_name,
@@ -2663,8 +2644,7 @@ class ReportsPresenter extends PresenterCore
 			    sales.discount_remarks,			    
 			    sales.total_invoice,
 				sales.updated,
-				sales.evaluated_objective_id,
-    			sales.invoice_table,
+				sales.invoice_table,
 				sales.invoice_number_column,
 				sales.invoice_date_column,
 				sales.invoice_posting_date_column,
@@ -2788,13 +2768,10 @@ class ReportsPresenter extends PresenterCore
     	$querySales = '
     			SELECT
 				all_so.so_number,
-				all_so.reference_num,
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
-			    remarks.remarks,
-			    remarks.evaluated_objective_id,
-				all_so.van_code,
+			    all_so.van_code,
 				all_so.device_code,
 				all_so.salesman_code,
 				aps.salesman_name,
@@ -2812,7 +2789,7 @@ class ReportsPresenter extends PresenterCore
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,			    	
 			    all_so.total_sales total_invoice,
-				IF(all_so.updated =\'modified\',\'modified\',IF(remarks.updated_by,\'modified\',\'\')) updated,
+				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,
 			
 				\'txn_sales_order_header\' invoice_table,
 				\'invoice_number\' invoice_number_column,
@@ -2908,21 +2885,14 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
 				LEFT JOIN app_salesman aps ON(aps.salesman_code=all_so.salesman_code)
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)				
-				LEFT JOIN
-				(
-					select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
-				) remarks ON(remarks.reference_num=all_so.reference_num)	
-    			';
+				';
     	
     	$queryReturns = '
     			SELECT
 				trh.return_txn_number so_number,
-				trh.reference_num,
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
-				remarks.remarks,
-			    remarks.evaluated_objective_id,
 				trh.van_code,
 				trh.device_code,
 				trh.salesman_code,
@@ -2941,7 +2911,7 @@ class ReportsPresenter extends PresenterCore
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
 			    SUM((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
-			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',IF(remarks.updated_by,\'modified\',\'\'))) updated,
+			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
 				\'return_slip_num\' invoice_number_column,
@@ -2981,22 +2951,14 @@ class ReportsPresenter extends PresenterCore
 					from  txn_return_header_discount
 					group by reference_num
     		) trhd ON(trhd.reference_num=trh.reference_num)
-			LEFT JOIN
-			(
-				select evaluated_objective_id,remarks,reference_num,updated_by
-				from txn_evaluated_objective
-			    group by reference_num
-			) remarks ON(remarks.reference_num=trh.reference_num)    			
-    			';
+				';
     	
     	$select = '
     			sales.so_number,
-				sales.reference_num,
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
-			    sales.remarks,
-				sales.van_code,
+			    sales.van_code,
 				sales.device_code,
 				sales.salesman_code,
 				sales.salesman_name,
@@ -3014,8 +2976,7 @@ class ReportsPresenter extends PresenterCore
 			    sales.discount_remarks,			    	
 			    sales.total_invoice,
 				sales.updated,
-				sales.evaluated_objective_id,
-    			sales.invoice_table,
+				sales.invoice_table,
 				sales.invoice_number_column,
 				sales.invoice_date_column,
 				sales.invoice_posting_date_column,
