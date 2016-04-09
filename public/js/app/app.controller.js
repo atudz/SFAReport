@@ -374,6 +374,7 @@
 		          'area',
 		          'salesman',
 		          'reference',
+		          'customer_name',
 		          'document_date_from',
 		          'document_date_to'
 		];

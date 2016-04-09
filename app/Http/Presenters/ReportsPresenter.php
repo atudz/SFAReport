@@ -2347,6 +2347,12 @@ class ReportsPresenter extends PresenterCore
     					return $model->where('bir.reference','LIKE','%'.$self->getValue().'%');
     				});
     	
+    	$nameFilter = FilterFactory::getInstance('Text');
+    	$prepare = $nameFilter->addFilter($prepare,'customer_name',
+    			function($self, $model){
+    				return $model->where('app_customer.customer_name','LIKE','%'.$self->getValue().'%');
+    			});
+    	
     	//$prepare->where('bir.tax_amount','<>','0');
     	$prepare->where('app_customer.customer_name','like','1000%');
     	$prepare->where('app_customer.customer_name','not like','%Adjustment%');

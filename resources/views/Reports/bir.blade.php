@@ -13,7 +13,8 @@
 						{!!Html::input('text','reference','Reference #')!!}								
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::datepicker('document_date','Document Date','true')!!}						
+						{!!Html::datepicker('document_date','Document Date','true')!!}
+						{!!Html::input('text','customer_name','Customer Name')!!}						
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
