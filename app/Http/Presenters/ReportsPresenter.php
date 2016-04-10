@@ -522,8 +522,8 @@ class ReportsPresenter extends PresenterCore
 							trh.customer_code,
 							trh.return_date,
 							trh.return_slip_num,
-							sum(IF(trd.gross_amount,trd.gross_amount,0.00) + IF(trd.vat_amount,trd.vat_amount,0.00)) as RTN_total_gross,
-							sum(IF(trhd.collective_discount_amount,trhd.collective_discount_amount,0.00)) as RTN_total_collective_discount,
+							sum(coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00)) as RTN_total_gross,
+							coalesce(trhd.collective_discount_amount,0.00) as RTN_total_collective_discount,
     						IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 						from txn_return_header trh
 						inner join txn_return_detail trd on trh.reference_num = trd.reference_num and trh.salesman_code = trd.modified_by
