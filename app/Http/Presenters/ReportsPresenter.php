@@ -3114,7 +3114,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedReturnMaterial($summary=false,$summaryCollectiveAmount=0)
     {
-        $selectTotalInvoice = '((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + IF(trhd.collective_discount_amount IS NULL, 0, trhd.collective_discount_amount))) total_invoice';
+        $selectTotalInvoice = '((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + (coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)))) total_invoice';
     	
         $select = '
     			txn_return_header.return_txn_number,
