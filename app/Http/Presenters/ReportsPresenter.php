@@ -3115,7 +3115,8 @@ class ReportsPresenter extends PresenterCore
     public function getPreparedReturnMaterial($summary=false,$summaryCollectiveAmount=0)
     {
         $selectTotalInvoice = '((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + (coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)))) total_invoice';
-    	
+    	$selectCollectiveDiscountAmount = '(coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100))';
+
         $select = '
     			txn_return_header.return_txn_number,
 				txn_return_header.reference_num,
@@ -3142,7 +3143,7 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(\'0.00\',\'%\') discount_rate,
 				txn_return_detail.discount_amount,
 				CONCAT(coalesce(trhd.collective_discount_rate,0.00),\'%\') collective_discount_rate,	
-    			(coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)) collective_discount_amount,
+    			'.$selectCollectiveDiscountAmount.' collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
     			'.$selectTotalInvoice.',
@@ -3160,7 +3161,7 @@ class ReportsPresenter extends PresenterCore
     			SUM(txn_return_detail.quantity) quantity,
 				SUM(txn_return_detail.gross_amount) gross_amount,
 				SUM(txn_return_detail.vat_amount) vat_amount,
-				SUM(trhd.collective_discount_amount) collective_discount_amount,
+				SUM('.$selectCollectiveDiscountAmount.') collective_discount_amount,
     			SUM'.$selectTotalInvoice;
     	}
     	elseif($summaryCollectiveAmount)
