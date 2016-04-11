@@ -4362,8 +4362,9 @@ class ReportsPresenter extends PresenterCore
     	{
     		case 'salescollectionreport':
     			$columns = $this->getTableColumns($report);
-    			
+			    			
     			$prepare = $this->getPreparedSalesCollection();
+    			$prepare->orderBy('collection.invoice_date','desc');
     			$prepare = $prepare->skip($offset)->take($limit);
     			$current = $this->formatSalesCollection($prepare->get());
     			$prepare = $this->getPreparedSalesCollection(true);
