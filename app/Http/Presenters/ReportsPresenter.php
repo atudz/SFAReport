@@ -1977,38 +1977,49 @@ class ReportsPresenter extends PresenterCore
     	$queryInv = '
     		(select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount, updated
             from (
-                    select salesman_code, customer_code, invoice_number, original_amount as invoice_amount, \'\' updated
-                  	from txn_invoice ti where '.sprintf($filterInvoice,'ti.').'
+                    select ti.salesman_code, ti.customer_code, ti.invoice_number, ti.original_amount as invoice_amount, \'\' updated
+                  	from txn_invoice ti
+    				left join txn_sales_order_header tih
+					on ti.salesman_code = tih.salesman_code
+					and ti.customer_code = tih.customer_code
+					and ti.invoice_number = tih.invoice_number 
+    				where '.sprintf($filterInvoice,'ti.').'
                   	and ti.document_type = \'I\'
                   	and ti.status = \'A\'		
                   	and ti.customer_code in (select customer_code from app_salesman_customer where salesman_code = ti.salesman_code and status =\'A\')
+    				and tih.sales_order_header_id is null		
       
                   	UNION ALL
     	
                   	select tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number,
-                  	case when sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) <= 0 then 0 else
-                  			      sum(so_net_amt - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount,
+                  	case when sum(coalesce(so_net_amt,0) + coalesce(so_deal_net_amt,0) - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) <= 0 then 0 else
+                  			      sum(coalesce(so_net_amt,0) + coalesce(so_deal_net_amt,0) - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount,
                   	IF(tsoh.updated_by,\'modified\',\'\') updated		
                   	from txn_sales_order_header tsoh
 			
-                  	inner join
+                  	left join
 					         (select reference_num,round(sum(gross_served_amount + vat_amount - discount_amount),2) as so_net_amt
 							         from txn_sales_order_detail
 							         group by reference_num) tsod
 					         on tsoh.reference_num = tsod.reference_num
-			
-        					left join
+					left join (select reference_num,round(sum(gross_served_amount + vat_served_amount),2) as so_deal_net_amt 
+									from txn_sales_order_deal 
+							 group by reference_num) tsodeal
+							on tsoh.reference_num = tsodeal.reference_num
+        			left join
         					(select reference_num,round(sum(served_deduction_amount),2) as served_deduction_amount
         							from txn_sales_order_header_discount group by reference_num) tsohd
 					         on tsoh.reference_num = tsohd.reference_num
 			
-        					left join
+        			left join
         					(select reference_num,round(sum(gross_amount + vat_amount - discount_amount),2) as rtn_net_amt
         							from txn_return_detail group by reference_num) trd
         					on tsoh.reference_num = trd.reference_num
 			
-        					left join txn_return_header_discount trhd
-        					on tsoh.reference_num = trhd.reference_num
+        			left join (select reference_num,round(sum(deduction_amount),2) as deduction_amount 
+																	from txn_return_header_discount 
+																	group by reference_num) trhd
+										on tsoh.reference_num = trhd.reference_num
 			
                   where '.str_replace('invoice_date', 'so_date', sprintf($filterInvoice,'tsoh.')).'
                   and tsoh.customer_code in (select customer_code from app_salesman_customer where salesman_code = tsoh.salesman_code and status =\'A\')
@@ -2037,8 +2048,8 @@ class ReportsPresenter extends PresenterCore
 			      app_customer.customer_code,
 			      app_customer.customer_name,
 			      f.remarks,
-			      vw_inv.invoice_number,
-			      txn_sales_order_header.so_date invoice_date,
+    			  vw_inv.invoice_number,
+			      coalesce(txn_sales_order_header.so_date,txn_invoice.invoice_date) invoice_date,
 			      coalesce(vw_inv.invoice_amount,0) original_amount,
 			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) balance_amount,
     			  vw_inv.updated
@@ -2069,8 +2080,17 @@ class ReportsPresenter extends PresenterCore
     				->join('app_area',function($join){
     					$join->on('app_area.area_code','=','app_customer.area_code');
     					$join->where('app_area.status','=','A');
+    				})    				
+    				->leftJoin('txn_sales_order_header',function($join){
+    					$join->on('txn_sales_order_header.invoice_number','=','vw_inv.invoice_number');
+    					/* $join->where('vw_inv.salesman_code','=','txn_sales_order_header.salesman_code');
+    					$join->where('vw_inv.customer_code','=','txn_sales_order_header.customer_code'); */
     				})
-    				->join('txn_sales_order_header','txn_sales_order_header.invoice_number','=','vw_inv.invoice_number')
+    				->leftJoin('txn_invoice',function($join){
+    					$join->on('txn_invoice.invoice_number','=','vw_inv.invoice_number');
+    					$join->where('vw_inv.salesman_code','=','txn_sales_order_header.salesman_code');
+    					$join->where('vw_inv.customer_code','=','txn_sales_order_header.customer_code');
+    				})
     				->leftJoin(\DB::raw('
 			    			(select remarks,reference_num
 			    			 from txn_evaluated_objective

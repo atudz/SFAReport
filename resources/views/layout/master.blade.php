@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html data-ng-app="app">
 <head>
- 	<meta name="csrf-token" content="{{ csrf_token() }}" />  
  	@include('layout.assets.head')
     @include('layout.assets.css')
 </head>
