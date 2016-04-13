@@ -2720,11 +2720,12 @@ class ReportsPresenter extends PresenterCore
     				return $model->where('sales.invoice_number','LIKE','%'.$self->getValue().'%');
     			});
     	
-    	$customerFilter = FilterFactory::getInstance('Select');
+    	
+    	$customerFilter = FilterFactory::getInstance('Text');
     	$prepare = $customerFilter->addFilter($prepare,'customer',
     			function($self, $model){
-    				return $model->where('sales.customer_code','=',$self->getValue());
-    			});
+    				return $model->where('sales.customer_name','LIKE','%'.$self->getValue().'%');
+    			});    	    	
     	 
     	$itemCodeFilter = FilterFactory::getInstance('Select');
     	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
@@ -2824,6 +2825,7 @@ class ReportsPresenter extends PresenterCore
 				\'invoice_number\' invoice_number_column,
 				\'so_date\' invoice_date_column,
 				\'sfa_modified_date\' invoice_posting_date_column,
+    			all_so.sales_order_header_id invoice_pk_id,
 				\'\' condition_code_table,
 				\'\' condition_code_column,
 				0 condition_code_pk_id
@@ -2833,6 +2835,7 @@ class ReportsPresenter extends PresenterCore
     			(
     				 -- For SO Regular Skus --
 						 select 
+    							tsoh.sales_order_header_id,
     							tsoh.so_number, 
 								tsoh.reference_num,
     							tsoh.customer_code, 
@@ -2874,6 +2877,7 @@ class ReportsPresenter extends PresenterCore
 
 							-- For SO Deals --
 								select
+    							tsoh.sales_order_header_id,
     							tsoh.so_number, 
 								tsoh.reference_num,
     							tsoh.customer_code, 
@@ -2946,6 +2950,7 @@ class ReportsPresenter extends PresenterCore
 				\'return_slip_num\' invoice_number_column,
 				\'return_date\' invoice_date_column,
 				\'sfa_modified_date\' invoice_posting_date_column,
+    			trh.return_header_id invoice_pk_id,
 				\'txn_return_detail\' condition_code_table,
 				\'condition_code\' condition_code_column,
 				trd.return_detail_id condition_code_pk_id
@@ -3009,6 +3014,7 @@ class ReportsPresenter extends PresenterCore
 				sales.invoice_number_column,
 				sales.invoice_date_column,
 				sales.invoice_posting_date_column,
+    			sales.invoice_pk_id,
 				sales.condition_code_table,
 				sales.condition_code_column,
 				sales.condition_code_pk_id   		
@@ -3052,11 +3058,11 @@ class ReportsPresenter extends PresenterCore
 							return $model->where('sales.invoice_number','LIKE','%'.$self->getValue().'%');							
 					});
 		
-		$customerFilter = FilterFactory::getInstance('Select');
-		$prepare = $customerFilter->addFilter($prepare,'customer',
-			    			function($self, $model){
-			    				return $model->where('sales.customer_code','=',$self->getValue());
-			    			});
+		$customerFilter = FilterFactory::getInstance('Text');
+    	$prepare = $customerFilter->addFilter($prepare,'customer',
+    			function($self, $model){
+    				return $model->where('sales.customer_name','LIKE','%'.$self->getValue().'%');
+    			});
 			    	 
 		$itemCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
@@ -5125,7 +5131,7 @@ class ReportsPresenter extends PresenterCore
     		case 'salesreportpermaterial':
     			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$customer = $this->request->get('customer');
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
     			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
@@ -5136,7 +5142,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = [
     					'Salesman' => $salesman,
     					'Area' => $area,
-    					'Customer' => $customer,
+    					'Customer Name' => $customer,
     					'Company Code' => $company_code,
     					'Material' => $material,
     					'Segment' => $segment,
@@ -5148,7 +5154,7 @@ class ReportsPresenter extends PresenterCore
     		case 'salesreportperpeso':
     			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$customer = $this->request->get('customer');
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
