@@ -3718,18 +3718,20 @@ class ReportsPresenter extends PresenterCore
 							});
     	
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+    	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date',function($self, $model){    		    						
+								return $model->whereBetween('app_item_master.sfa_modified_date',$self->formatValues($self->getValue()));
+							});
     	
     	$effectiveDateFromFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $effectiveDateFromFilter->addFilter($prepare,'effective_date1',
 							function($self, $model){
-								return $model->whereBetween('app_item_price.effective_date_from',$self->getValue());
+								return $model->whereBetween('app_item_price.effective_date_from',$self->formatValues($self->getValue()));
 							});
     	
     	$effectiveDateToFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $effectiveDateToFilter->addFilter($prepare,'effective_date2',
 							function($self, $model){
-								return $model->whereBetween('app_item_price.effective_date_to',$self->getValue());
+								return $model->whereBetween('app_item_price.effective_date_to',$self->formatValues($self->getValue()));
 							});
     	
     	$prepare->where('app_item_price.status','=','A');
