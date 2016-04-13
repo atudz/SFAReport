@@ -7,16 +7,16 @@
 			<div class="panel-body">
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="col-md-6">
-						{!!Html::datepicker('return_date','Return Date',true)!!}
-						{!!Html::datepicker('posting_date','Posting Date',true)!!}
-						{!!Html::input('text','invoice_number','Return Slip No.')!!}						
-					</div>					
-					<div class="col-md-6">	
+					<div class="col-md-6">						
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('company_code','Company', $companyCode)!!}
-						{!!Html::input('text','customer','Customer Name')!!}													 			
+						{!!Html::input('text','customer','Customer Name')!!}													
+					</div>					
+					<div class="col-md-6">	
+						{!!Html::datepicker('return_date','Return Date',true)!!}
+						{!!Html::datepicker('posting_date','Posting Date',true)!!}
+						{!!Html::input('text','invoice_number','Return Slip No.')!!}													 			
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
