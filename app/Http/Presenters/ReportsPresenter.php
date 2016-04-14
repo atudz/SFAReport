@@ -988,11 +988,18 @@ class ReportsPresenter extends PresenterCore
     
     public function populateScrInvoice($items = [])
     {
+    	
+    	$codes = $this->getSpecialCustomerCode();    	
+    	$except = '';
+    	if($codes)
+    	{
+    		$except = " AND tsoh.customer_code NOT IN('".implode("','",$codes)."')";
+    	}
     	foreach($items as $k=>$item)
     	{
     		$date = (new Carbon($item->invoice_date))->format('Y-m-d');
-    		$minInvoice = $this->getSO('min(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\'');
-    		$maxInvoice = $this->getSO('max(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\'');
+    		$minInvoice = $this->getSO('min(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\''.$except);
+    		$maxInvoice = $this->getSO('max(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\''.$except);
     		$minInvoice = array_shift($minInvoice);
     		$items[$k]->invoice_number_from = $minInvoice ? $minInvoice->invoice_number : '';
     		$maxInvoice = array_shift($maxInvoice);
@@ -1255,7 +1262,7 @@ class ReportsPresenter extends PresenterCore
     				}); */
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse%');
     	 
     	
     	return $prepare;
