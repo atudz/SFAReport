@@ -3147,8 +3147,15 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedReturnMaterial($summary=false,$summaryCollectiveAmount=0)
     {
-        $selectTotalInvoice = '((txn_return_detail.gross_amount + txn_return_detail.vat_amount) - (txn_return_detail.discount_amount + (coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)))) total_invoice';
-    	$selectCollectiveDiscountAmount = '(coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100))';
+        $selectTotalInvoice = '(
+        						coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)
+        						 - coalesce((txn_return_detail.discount_amount 
+        							 + (coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)
+        									*(trhd.collective_discount_rate/100)
+        								)
+        							),0.00)
+        						) total_invoice';
+    	$selectCollectiveDiscountAmount = 'coalesce((coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)),0.00)';
 
         $select = '
     			txn_return_header.return_txn_number,
@@ -3325,7 +3332,10 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreparedReturnPeso($summary=false)
     {
-        $selectTotalInvoice = '((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + IF(trhd.collective_discount_amount IS NULL, 0, trhd.collective_discount_amount))) total_invoice';
+        $selectTotalInvoice = '(
+        						 coalesce((trd.gross_amount + trd.vat_amount),0.00)
+        						 - (trd.discount_amount + coalesce(trhd.collective_discount_amount,0.00))
+        						) total_invoice';
 
     	$select = '
     			txn_return_header.return_txn_number,
@@ -3347,7 +3357,7 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(\'0.00\',\'%\') discount_rate,
 				trd.discount_amount,
 				CONCAT(coalesce(trhd.collective_discount_rate,0.00),\'%\') collective_discount_rate,	
-    			trhd.collective_discount_amount,
+    			coalesce(trhd.collective_discount_amount,0.00) collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
     			'.$selectTotalInvoice.',
