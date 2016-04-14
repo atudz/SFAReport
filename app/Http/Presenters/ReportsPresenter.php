@@ -1221,6 +1221,8 @@ class ReportsPresenter extends PresenterCore
     			collection.salesman_code,
     			collection.total_collected_amount,
     			collection.sales_tax,
+    			collection.area_code,
+    			collection.customer_code,
     			collection.amt_to_commission
     					
     			'; 
@@ -1237,16 +1239,16 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))
     					->selectRaw($select);
     	
-    	/* $codeFilter = FilterFactory::getInstance('Text');
-    	$prepare = $codeFilter->addFilter($prepare,'code',
-    				function($self, $model){
-    					return $model->where('collection.code','LIKE',$self->getValue().'%');
-    				});
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'company_code',
+    			function($self, $model){
+    				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
+    			});
     	
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
     				function($self, $model){
-    					return $model->where('collection.salesman','=',$self->getValue());
+    					return $model->where('collection.salesman_code','=',$self->getValue());
     				});
     	
     	$monthDateFilter = FilterFactory::getInstance('DateRange');
@@ -1259,7 +1261,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $areaFilter->addFilter($prepare,'area',
     			function($self, $model){
     					return $model->where('collection.area_code','=',$self->getValue());
-    				}); */
+    				});
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse%');
