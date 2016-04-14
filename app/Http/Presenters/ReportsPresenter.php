@@ -876,7 +876,7 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE tas.activity_code like \'%SO%\'
+			WHERE tas.activity_code like \'%C%\'
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
@@ -1207,7 +1207,7 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE tas.activity_code like \'%SO%\''.$area.$salesman.$company.$invoice.
+			WHERE tas.activity_code like \'%C%\''.$area.$salesman.$company.$invoice.
     		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
