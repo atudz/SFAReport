@@ -2453,9 +2453,11 @@ class ReportsPresenter extends PresenterCore
     	$querySales = '
     			SELECT
 				all_so.so_number,
+    			all_so.reference_num,
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
+    			remarks.remarks,
 			    all_so.van_code,
 				all_so.device_code,
 				all_so.salesman_code,
@@ -2580,15 +2582,20 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN app_area aa ON(ac.area_code=aa.area_code)
 				LEFT JOIN app_salesman aps ON(aps.salesman_code=all_so.salesman_code)
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)
-				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)								
+				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)
+    			LEFT JOIN (
+    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    			) remarks ON(remarks.reference_num = tas.reference_num)								
     			';
     	 
     	$queryReturns = '
     			SELECT
 				trh.return_txn_number so_number,
+    			trh.reference_num,
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
+    			remarks.remarks,
 				trh.van_code,
 				trh.device_code,
 				trh.salesman_code,
@@ -2645,14 +2652,20 @@ class ReportsPresenter extends PresenterCore
     				sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) served_deduction_amount
 					from  txn_return_header_discount
 					group by reference_num
-    		) trhd ON(trhd.reference_num=trh.reference_num)			
+    		) trhd ON(trhd.reference_num=trh.reference_num)
+
+    		LEFT JOIN (
+    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    		) remarks ON(remarks.reference_num = trh.reference_num)
     			';
     	 
     	$select = '
     			sales.so_number,
+    			sales.reference_num,
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
+    			sales.remarks,
 			    sales.van_code,
 				sales.device_code,
 				sales.salesman_code,
@@ -4023,9 +4036,11 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'SO number'],
+    			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],    			
+    			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
     			['name'=>'Salesman Code','sort'=>'salesman_code'],
@@ -4690,9 +4705,11 @@ class ReportsPresenter extends PresenterCore
     {
     	return [
     		'so_number',
+    		'reference_num',
     		'activity_code',
     		'customer_code',
     		'customer_name',
+    		'remarks',
     		'van_code',
     		'device_code',
     		'salesman_code',
