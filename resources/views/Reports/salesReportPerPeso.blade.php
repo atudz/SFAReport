@@ -27,9 +27,11 @@
 					<tbody>
 					<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 						<td>[[record.so_number]]</td>
+						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
-						<td>[[record.customer_name]]</td>						
+						<td>[[record.customer_name]]</td>
+						<td>[[record.remarks]]</td>						
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>
 						<td>[[record.salesman_code]]</td>
