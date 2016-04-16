@@ -2097,8 +2097,8 @@ class ReportsPresenter extends PresenterCore
     				})
     				->leftJoin('txn_invoice',function($join){
     					$join->on('txn_invoice.invoice_number','=','vw_inv.invoice_number');
-    					$join->where('vw_inv.salesman_code','=','txn_sales_order_header.salesman_code');
-    					$join->where('vw_inv.customer_code','=','txn_sales_order_header.customer_code');
+    					/* $join->where('vw_inv.salesman_code','=','txn_sales_order_header.salesman_code');
+    					$join->where('vw_inv.customer_code','=','txn_sales_order_header.customer_code'); */
     				})
     				->leftJoin(\DB::raw('
 			    			(select remarks,reference_num
