@@ -4660,9 +4660,10 @@ class ReportsPresenter extends PresenterCore
     	$this->view->previousSummary = $previousSummary;
     	$this->view->current = $current;
     	//dd($current);
+    	$this->view->area = $area;
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
-    	return $this->view('exportSalesCollection'); */
+    	return $this->view('exportSalesCollectionPdf'); */
     	  
     	if(in_array($type,['xls','xlsx']))
     	{    
@@ -5404,7 +5405,7 @@ class ReportsPresenter extends PresenterCore
     	$filters = [];
     
     	$customer = $this->request->get('company_code') ?  $this->request->get('company_code') : 'All';
-    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$salesman = $this->request->get('salesman') ? $this->getSalesman(false)[$this->request->get('salesman')] : 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$collectiontDate = ($this->request->get('collection_date_from') && $this->request->get('collection_date_to')) ? $this->request->get('collection_date_from').' - '.$this->request->get('collection_date_to') : 'All';
     	$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';

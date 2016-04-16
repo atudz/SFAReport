@@ -3,8 +3,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<style>
 		
+		@page { margin: 0in; }
+		
 		body {
-			font-size: 10px;
+			font-size: 10px;	
+			margin: 0.5in 0.25in;
 		}
 		
 		table.no-border {
@@ -40,51 +43,110 @@
 		}
 		
 		.page-header > tbody > tr > th {
-			width: 150px;
+			width: 70px;
 		}
+		
+		.pull-right {
+			float: right;
+		}
+		
+		.indent-right {
+			text-align: right;
+		}
+		
+		.row {
+			width: 220px;
+			height: 20px;	
+			word-wrap: break-word;		
+		}
+		
+		.row-company {
+			width: 368px;
+			height: 20px;			
+			word-wrap: break-word;
+		}
+		
+		.label {
+			font-weight: bold;
+			font-size: 12px;
+		}
+		
+		.label-value {
+			font-size: 11px;
+		}
+		
+		.value {
+			font-weight: bold;
+			text-decoration: underline;			
+		}
+		
+		.clear {
+			clear: both;
+		}
+		
+		.underline{
+			text-decoration: underline;
+		}
+		
+		.push-left {
+			padding-right: 5p;x
+		}
+		
 	</style>
 </head>
 <body>
-	<strong>&nbsp;SUNPRIDE FOODS, INC.</strong><br>
-	<table class="no-border page-header">
-		<tbody>
-			<tr>
-				<th align="left">Sales & Collection Report</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>				
-				<th align="right">SCR No.:</th>				
-				@if($scr) 
-					<th align="left" style="text-decoration: underline">{{$scr}}</th>
-				@else 
-					<th align="left">__________</th>
-				@endif				
-			</tr>						
-			<tr>
-				<th align="right">Salesman:</th>
-				<th align="left" style="text-decoration: underline">{{$filters['Salesman']}}</th>
-				<th align="right">Salesman Code:</th>
-				<th align="left" style="text-decoration: underline">{{$filters['Salesman']}}</th>
-				<th>&nbsp;</th>				
-				<th>&nbsp;</th>				
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>		
-			</tr>
-			<tr>
-				<th align="right">Area Name:</th>
-				<th align="left" style="text-decoration: underline">{{$area}}</th>
-				<th align="right">Period Covered:</th>
-				<th align="left" style="text-decoration: underline">{{request()->get('invoice_date_from')}}</th>
-				<th align="right">To:</th>
-				<th align="left" style="text-decoration: underline">{{request()->get('invoice_date_to')}}</th>
-				<th align="right">Date Remitted:</th>
-				<th align="left" style="text-decoration: underline">{{date('m/d/Y')}}</th>				
-			</tr>
-		</tbody>
-	</table>
-	<br>
+	<div class="clear">
+		<div class="row pull-right indent-right label">
+			<strong>SCR No.:</strong>@if($scr) <span class="value">{{$scr}}</span> @else <span>______________</span> @endif
+		</div>
+		<div class="row-company pull-right label">
+			<strong>SUNPRIDE FOODS, INC.</strong>
+		</div>
+	</div>
+	
+	<div class="clear">
+		<div class="row pull-right indent-right label-value">
+			<strong>Period Covered:</strong>&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else ______________ @endif</span>
+		</div>
+		<div class="row pull-right indent-right label-value">
+			<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
+		</div>		
+		<div class="row pull-right indent-right label">
+			<strong>Sales & Collections Report &nbsp;&nbsp;</strong>
+		</div>
+	</div>
+	
+	
+	
+	<div class="clear">
+		<div class="row pull-right indent-right label-value">
+			&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else ______________ @endif</span>
+		</div>
+		<div class="row pull-right indent-right label-value">
+			<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
+		</div>		
+		
+	</div>
+	
+	<div class="clear">
+		<div class="row pull-right indent-right">
+			&nbsp;
+		</div>
+		<div class="row pull-right indent-right label-value">
+			<strong>Area:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
+		</div>		
+		
+	</div>
+	
+	<div class="clear">
+		<div class="row pull-right indent-right label-value">
+			<strong>Date Remitted:</strong><span class="underline">{{date('m/d/Y')}}</span>
+		</div>		
+		
+	</div>
+	
+	<br class="clear">	
+	<br class="clear">
 	<table class="table-data">		
 		<tbody>			
 			@if($theadRaw)
