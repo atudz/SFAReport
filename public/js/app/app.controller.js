@@ -632,6 +632,8 @@
 		var params = {};
 		
 		scope.filter = function(){
+
+	    	scope.page = 1;
 	    	
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
@@ -838,9 +840,15 @@
 	    	else if((scope.page + increment > 0 && scope.page!=(scope.total/scope.perpage))
 	    			|| (increment < 0 && scope.page > 1))
 	    	{
-	    		scope.page = scope.page + increment;
-	    		request = true;
-	    	}	
+	    		var maxPage = scope.total/scope.perpage;
+	    		var nextPage = scope.page + increment;
+
+	    		if(maxPage >= nextPage)
+	    		{
+		    		scope.page = nextPage;
+		    		request = true;
+	    		}
+	    	}
 	    	if(request)
 	    	{
 	    		params['page'] = scope.page;

@@ -89,9 +89,9 @@ Html::macro('tclose', function($paginate=true) {
 			';
 	if($paginate)
 	{
-		$html .= '<div class="col-sm-12 fixed-table-pagination" id="pagination_div">
+		$html .= '<div ng-if="total > 0" class="col-sm-12 fixed-table-pagination" id="pagination_div">
 					<div class="pull-left pagination-detail">
-					<span class="pagination-info">Showing [[((perpage*page)-perpage)+1]] to [[perpage*page]] of [[total]] rows&nbsp;</span>
+					<span class="pagination-info">Showing [[((perpage*page)-perpage)+1]] to [[(perpage*page) > total ? total:perpage*page]] of [[total]] rows&nbsp;</span>
 					<span class="page-list">
 					    <div class="btn-group dropup">
 					      <button id="btn-append-to-body" type="button" class="dropdown-toggle btn btn-default btn-sm" data-toggle="dropdown">
@@ -99,9 +99,9 @@ Html::macro('tclose', function($paginate=true) {
 					      </button>
 					      <ul class="dropdown-menu" role="menu" aria-labelledby="selectDropdown">
 					        <li style="display:none" role="menuitem"  id="limit10" ng-click="paginate(10)"><a href="">10</a></li>
-					        <li role="menuitem" class="active"><a href="" id="limit25" ng-click="paginate(25)">25</a></li>
-					        <li role="menuitem"><a href="" id="limit50" ng-click="paginate(50)">50</a></li>					        
-					        <li role="menuitem"><a href="" id="limit100" ng-click="paginate(100)">100</a></li>
+					        <li ng-if="total > 25" role="menuitem" class="active"><a href="" id="limit25" ng-click="paginate(25)">25</a></li>
+					        <li ng-if="total > 50" role="menuitem"><a href="" id="limit50" ng-click="paginate(50)">50</a></li>					        
+					        <li ng-if="total > 100" role="menuitem"><a href="" id="limit100" ng-click="paginate(100)">100</a></li>
 					      </ul>
 					    </div>
 						 records per page
