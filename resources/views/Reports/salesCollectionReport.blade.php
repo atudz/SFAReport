@@ -15,7 +15,7 @@
 					{!!Html::input('text','or_number','OR #')!!}
 				</div>					
 				<div class="col-md-6">	
-					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
+					{!!Html::datepicker('invoice_date','Invoice Date <span class="required">*</span>','true')!!}
 					{!!Html::datepicker('collection_date','Collection Date','true')!!}																									 			
 					{!!Html::datepicker('posting_date','Posting Date','true')!!}
 				</div>			

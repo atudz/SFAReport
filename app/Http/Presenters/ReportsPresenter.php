@@ -273,6 +273,16 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesCollectionReport()
     {
+    	if(!$this->request->get('invoice_date_from'))
+    	{
+    		$data = [
+    				'records' => '',
+    				'total' => '0',
+    				'summary'=>''
+    		];
+    		return response()->json($data);
+    	}
+    	
     	$prepare = $this->getPreparedSalesCollection();
     	$result = $this->formatSalesCollection($prepare->get());    	
     	$data['records'] = $result;
@@ -576,7 +586,9 @@ class ReportsPresenter extends PresenterCore
 						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 					) remarks ON(remarks.reference_num=tas.reference_num)
 			
-					WHERE tas.activity_code like \'%SO%\' OR tas.activity_code like \'%C%\'
+					WHERE  (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
+    					   OR (tas.activity_code like \'%SO%\')
+    					   OR (tas.activity_code not like \'%C%\')
 					ORDER BY tas.reference_num ASC,
 					 		 tas.salesman_code ASC,
 							 tas.customer_code ASC
@@ -877,7 +889,9 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE tas.activity_code like \'%C%\'
+			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
+    					   OR (tas.activity_code like \'%SO%\')
+    					   OR (tas.activity_code not like \'%C%\')
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
@@ -1004,7 +1018,7 @@ class ReportsPresenter extends PresenterCore
     		$except .= " AND tsoh.salesman_code ='".$this->request->get('salesman')."'";
     	
     	if($this->request->get('company_code'))
-    		$where .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
+    		$except .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
     	
     	foreach($items as $k=>$item)
     	{
@@ -1218,7 +1232,9 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE tas.activity_code like \'%C%\''.$area.$salesman.$company.$invoice.
+			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
+    					   OR (tas.activity_code like \'%SO%\')
+    					   OR (tas.activity_code not like \'%C%\')'.$area.$salesman.$company.$invoice.
     		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
