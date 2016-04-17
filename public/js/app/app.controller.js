@@ -709,7 +709,7 @@
 		    	//log.info(params);
 		    }
 			
-			scope.toggleFilter = true;
+			//scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		//log.info(data);
