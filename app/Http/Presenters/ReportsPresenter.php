@@ -383,7 +383,7 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
-				   coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_collective_discount,0)),0.00) total_invoice_amount,
+				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00)) total_invoice_amount,
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   coalesce(rtntbl.RTN_total_gross,0.00) RTN_total_gross,
@@ -625,6 +625,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$select = '
     				SUM(collection.so_total_served) so_total_served,
+    				SUM(collection.so_total_item_discount) so_total_item_discount,
     				SUM(collection.so_total_collective_discount) so_total_collective_discount,
     				SUM(collection.total_invoice_amount) total_invoice_amount,
     				SUM(collection.RTN_total_gross) RTN_total_gross,

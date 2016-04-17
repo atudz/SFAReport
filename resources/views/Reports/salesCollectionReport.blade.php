@@ -143,7 +143,9 @@
 					<td class="bold">
 						<span ng-bind="formatNumber(summary.so_total_served)"></span>
 					</td>
-					<td></td>
+					<td>
+						<span ng-bind="formatNumber(summary.so_total_item_discount)"></span>
+					</td>
 					<td class="bold">
 						<span ng-bind="formatNumber(summary.so_total_collective_discount)"></span>
 					</td>
