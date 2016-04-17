@@ -1888,6 +1888,8 @@
 				$('#error_list').html(errorHtml);
 				$scope.error = true;
 				$scope.success = false;
+
+				return false;
 			}
 			else
 			{
@@ -1909,6 +1911,7 @@
 				{
 					$('#error_list').html('Incorrect password.');
 					$scope.error = true;
+					$scope.success = false;
 				}
 			});
 	    }
