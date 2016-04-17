@@ -408,6 +408,17 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 		    $scope[elementId] = true;
+
+		    if(elementId.endsWith('_to'))
+		    {
+		    	var baseId = elementId.replace('_to','');
+		    	$scope[baseId+'_from'] = false;
+		    }
+		    else if(elementId.endsWith('_from'))
+		    {
+		    	var baseId = elementId.replace('_from','');
+		    	$scope[baseId+'_to'] = false;
+		    }
 		};
 
 		$scope.dateOptions = {
