@@ -993,13 +993,23 @@ class ReportsPresenter extends PresenterCore
     	$except = '';
     	if($codes)
     	{
-    		$except = " AND tsoh.customer_code NOT IN('".implode("','",$codes)."')";
+    		$except = " AND tsoh.customer_code NOT IN('".implode("','",$codes)."')";    		
     	}
+    	
+    	$selectMin = 'min(tsoh.invoice_number) invoice_number';
+    	$selectMax = 'max(tsoh.invoice_number) invoice_number';
+    	
+    	if($this->request->get('salesman'))
+    		$except .= " AND tsoh.salesman_code ='".$this->request->get('salesman')."'";
+    	
+    	if($this->request->get('company_code'))
+    		$where .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
+    	
     	foreach($items as $k=>$item)
     	{
     		$date = (new Carbon($item->invoice_date))->format('Y-m-d');
-    		$minInvoice = $this->getSO('min(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\''.$except);
-    		$maxInvoice = $this->getSO('max(tsoh.invoice_number) invoice_number','DATE(tsoh.so_date) = \''.$date.'\''.$except);
+    		$minInvoice = $this->getSO($selectMin,'DATE(tsoh.so_date) = \''.$date.'\''.$except);
+    		$maxInvoice = $this->getSO($selectMax,'DATE(tsoh.so_date) = \''.$date.'\''.$except);
     		$minInvoice = array_shift($minInvoice);
     		$items[$k]->invoice_number_from = $minInvoice ? $minInvoice->invoice_number : '';
     		$maxInvoice = array_shift($maxInvoice);
