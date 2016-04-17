@@ -5288,8 +5288,8 @@ class ReportsPresenter extends PresenterCore
     				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     				$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
-    				$sfa_modified_date = $this->request->get('sfa_modified_date') ? $this->request->get('sfa_modified_date') : 'All';
-    					 
+    				$sfa_modified_date = ($this->request->get('sfa_modified_date_from') && $this->request->get('sfa_modified_date_to')) ? $this->request->get('sfa_modified_date_from').' - '.$this->request->get('sfa_modified_date_to') : 'All';
+    				
     				$filters = [
     							'Salesman' => $salesman,
     							'Area' => $area,
