@@ -42,6 +42,8 @@ class UserController extends ControllerCore
      */
     public function save(Request $request)
     {
+        $sanitizeFields = ['firstname', 'lastname', 'middlename', 'username', 'address1', 'telephone', 'mobile'];
+
     	$id = (int)$request->get('id');
         $user = ModelFactory::getInstance('User')->findOrNew($id);
         $user->firstname = $request->get('fname');
@@ -67,6 +69,15 @@ class UserController extends ControllerCore
         
         $user->telephone = $request->get('telephone');
        	$user->mobile = $request->get('mobile');
+
+        foreach($sanitizeFields as $field)
+        {
+            if(isset($user->$field) && $user->$field)
+            {
+                $user->$field = $this->_sanitize($user->$field);
+            }
+        }
+
        	$user->save();
         $response['success'] = true;
         $response['id'] = $user->id;
@@ -122,5 +133,10 @@ class UserController extends ControllerCore
     	    	
     	$response['success'] = true;
     	return response()->json($response);
+    }
+
+    private function _sanitize($value)
+    {
+        return trim($value);
     }
 }
