@@ -2974,15 +2974,15 @@ class ReportsPresenter extends PresenterCore
 				trh.return_slip_num invoice_number,
 				trh.return_date invoice_date,
 				trh.sfa_modified_date invoice_posting_date,				
-				trd.gross_amount gross_served_amount,
-				trd.vat_amount,
+				SUM(coalesce(trd.gross_amount,0.00)) gross_served_amount,
+				SUM(coalesce(trd.vat_amount,0.00)) vat_amount,
 				CONCAT(0.00,\'%\') discount_rate,
-				trd.discount_amount,
-				CONCAT(coalesce(trhd.deduction_rate,0.00),\'%\') collective_discount_rate,
-			    SUM((coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))) collective_discount_amount,
+				SUM(coalesce(trd.discount_amount,0.00)) discount_amount,
+				CONCAT(coalesce(trhd.deduction_rate,0.00),\'%\') collective_discount_rate,    			    			
+			    SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00))*(coalesce(trhd.deduction_rate,0.00)/100)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    SUM((trd.gross_amount + trd.vat_amount) - (trd.discount_amount + trhd.served_deduction_amount)) total_invoice,
+			    SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
@@ -2995,25 +2995,13 @@ class ReportsPresenter extends PresenterCore
 				trd.return_detail_id condition_code_pk_id
 			
     		FROM txn_return_header trh
-    		LEFT JOIN 
-    		(
-    			select 
-    				reference_num,
-    				SUM(gross_amount) gross_amount,
-    				SUM(vat_amount) vat_amount,
-    				SUM(discount_amount) discount_amount,
-    			
-    				updated_by,
-    				return_detail_id
-    			
-    				from txn_return_detail
-    				group by reference_num
-    		) trd ON(trh.reference_num=trd.reference_num)
 			LEFT JOIN app_customer ac ON(ac.customer_code=trh.customer_code)
 			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
 			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
-			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)			
-			LEFT JOIN 
+			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
+			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
+			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)			
+    		LEFT JOIN 
     		(
     			select 
     				reference_num,
@@ -3024,9 +3012,12 @@ class ReportsPresenter extends PresenterCore
 					from  txn_return_header_discount
 					group by reference_num
     		) trhd ON(trhd.reference_num=trh.reference_num)
+
     		LEFT JOIN (
     				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
-    			) remarks ON(remarks.reference_num = tas.reference_num)
+    		) remarks ON(remarks.reference_num = trh.reference_num)
+
+    		GROUP BY trh.return_txn_number
 				';
     	
     	$select = '

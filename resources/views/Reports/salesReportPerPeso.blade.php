@@ -87,6 +87,8 @@
 						<td></td>						
 						<td></td>
 						<td></td>
+						<td></td>
+						<td></td>
 						<th>
 							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
 						</th>
@@ -109,7 +111,7 @@
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,25)!!}
+					{!!Html::tfooter(true,23)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			

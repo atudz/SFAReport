@@ -107,16 +107,18 @@
 						<td></td>
 						<td></td>
 						<td></td>
+						<td></td>
+						<td></td>
 						<th>
 							<span ng-bind="summary.quantity"></span>
 						</th>
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+							<span ng-bind="summary.gross_served_amount"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+							<span ng-bind="summary.vat_amount"></span>
 						</th>
 						<td></td>
 						<th>
@@ -129,7 +131,7 @@
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="summary.total_invoice"></span>
 						</th>
 					</tr>
 					
