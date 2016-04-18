@@ -408,6 +408,17 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 		    $scope[elementId] = true;
+
+		    if(elementId.endsWith('_to'))
+		    {
+		    	var baseId = elementId.replace('_to','');
+		    	$scope[baseId+'_from'] = false;
+		    }
+		    else if(elementId.endsWith('_from'))
+		    {
+		    	var baseId = elementId.replace('_from','');
+		    	$scope[baseId+'_to'] = false;
+		    }
 		};
 
 		$scope.dateOptions = {
@@ -709,7 +720,7 @@
 		    	//log.info(params);
 		    }
 			
-			scope.toggleFilter = true;
+			//scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		//log.info(data);
@@ -1232,7 +1243,7 @@
 				//$log.info('date_value ' + val);
 				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 			}
-			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined))
+			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{
 				error = true;
 			}
@@ -1888,6 +1899,8 @@
 				$('#error_list').html(errorHtml);
 				$scope.error = true;
 				$scope.success = false;
+
+				return false;
 			}
 			else
 			{
@@ -1909,6 +1922,7 @@
 				{
 					$('#error_list').html('Incorrect password.');
 					$scope.error = true;
+					$scope.success = false;
 				}
 			});
 	    }

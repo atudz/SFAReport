@@ -16,7 +16,7 @@
 					</div>					
 					<div class="col-md-6">	
 						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}									
-						{!!Html::select('customer_price_group','Customer Pirce Group', $priceGroup)!!}
+						{!!Html::select('customer_price_group','Customer Price Group', $priceGroup)!!}
 						{!!Html::select('status','Status', $statuses)!!}																															 	
 					</div>			
 				{!!Html::fclose()!!}
