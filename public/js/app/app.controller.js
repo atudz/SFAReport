@@ -660,14 +660,7 @@
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
 						
-					if(!from && !to && report == 'salescollectionreport' && val=='invoice_date_from')
-					{
-						hasError = true;
-						$('#'+val.replace('_from','_error')).html('This field is required.');
-						$('#'+val.replace('_from','_error')).removeClass('hide');
-						
-					}
-					else if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).html('Invalid date range.');
@@ -1080,7 +1073,14 @@
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
 	    
-	    if(report == 'salescollectionposting')
+	    if(report == 'salescollectionreport')
+	    {
+	    	var currentDate = new Date();
+	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
+	    	//log.info(params);
+	    }
+	    else if(report == 'salescollectionposting')
 	    {
 	    	params = {invoice_date_from:formatted,invoice_date_to:formatted,page_limit:50};
 	    	scope.page = 1;
