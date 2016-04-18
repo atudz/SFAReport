@@ -572,23 +572,15 @@
 				var maxIndex = scope.dateRanges.length - 1;
 
 				$.each(scope.dateRanges, function(i, range){
+					toggleLoading(true);
 					setTimeout(function(){
 
-						if(i == 0)
-						{
-							toggleLoading(true);
-						}
-						else if(i == maxIndex)
+						if(i == maxIndex)
 						{
 							toggleLoading();
 						}
 						scope.dateValue = range;
 						scope.dateRanges.shift();
-
-						if(!scope.dateRanges.length)
-							$('#load_more').addClass('hide');
-						else
-							$('#load_more').removeClass('hide');
 
 						fetchMore(scope, API, filter, log, InventoryFixTable);
 

@@ -163,14 +163,6 @@
 				{!!Html::tclose(false)!!}
 				<input type="hidden" id="inventory_type" value="{{$type}}">
 				
-				<div class="rs-mini-toolbar hide" id="load_more">
-					<div class="rs-toolbar-savebtn">
-						<a class="button-primary revgreen" ng-click="more()" id="button_save_slide-tb" original-title="" style="display: block; cursor:pointer;">
-							<i class="fa fa-refresh" style="display: inline-block;vertical-align: middle;width: 25px;height: 20px;background-repeat: no-repeat;"></i>
-							Load more..
-						</a>
-					</div>					
-				</div>
 			</div>			
 		</div>
 	</div>
