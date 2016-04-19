@@ -1231,9 +1231,17 @@
 			var error = false;
 			if($scope.params.type == 'datetime')
 			{
-				var val = $scope.params.value;
-				//$log.info('date_value ' + val);
-				$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
+				if(!$('#date_value').val())
+				{
+					error = true;
+				}
+				else
+				{
+					var val = $scope.params.value;
+					//$log.info('date_value ' + val);
+					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];					
+				}
+
 			}
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{

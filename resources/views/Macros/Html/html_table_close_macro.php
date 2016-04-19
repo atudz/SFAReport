@@ -41,7 +41,7 @@ Html::macro('tclose', function($paginate=true) {
 				         <div class="form-group">
 							<div class="col-sm-8" data-ng-controller="EditableColumnsCalendar" style="padding-left:0px;margin-left:0px;">
 							 	<p class="input-group">
-									<input type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
+									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
 							 		<span class="input-group-btn">
 							 			<button type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
 							 		</span>
