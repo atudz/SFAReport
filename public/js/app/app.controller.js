@@ -1427,6 +1427,10 @@
 			});
 	    }
 
+	    //this should be a filter
+	    $scope.parseDate = function(input) {
+			return new Date(input);
+		}
 	};
 
 	/**

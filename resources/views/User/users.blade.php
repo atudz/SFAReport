@@ -41,7 +41,7 @@
 							<td>[[record.role]]</td>
 							<td>[[record.area_name]]</td>
 							<td>[[record.assignment]]</td>
-							<td>[[record.created_at]]</td>
+							<td>[[parseDate(record.created_at) | date:'MM/dd/yyyy HH:mm:ss']]</td>
 							<td>
 								<a href="#user.edit/[[record.id]]" uib-tooltip="Edit"><i class="fa fa-pencil-square-o fa-lg"></i></a>
 								<a style="cursor:pointer" id="active_link" ng-show="!record.active" ng-click="activate(record.id,$index)"><i class="fa fa-unlock-alt fa-lg" uib-tooltip="Activate"></i></a>
