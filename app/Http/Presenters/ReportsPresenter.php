@@ -883,7 +883,7 @@ class ReportsPresenter extends PresenterCore
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-			) coltbl on coltbl.invoice_number = sotbl.invoice_number
+			) coltbl on coltbl.reference_num = tas.reference_num
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -1226,7 +1226,7 @@ class ReportsPresenter extends PresenterCore
 				from txn_collection_header tch
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-			) coltbl on coltbl.invoice_number = sotbl.invoice_number
+			) coltbl on coltbl.reference_num = tas.reference_num
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num

@@ -7,7 +7,7 @@
 		
 		body {
 			font-size: 10px;	
-			margin: 0.5in 0.20in;
+			margin: 0.5in 0.10in;
 		}
 		
 		table.no-border {
