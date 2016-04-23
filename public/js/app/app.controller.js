@@ -709,8 +709,10 @@
 			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		//log.info(data);
-	    		togglePagination(data.total);
-		    	scope.records = data.records;		    			    	
+			    scope.total = data.total;
+		    	scope.records = data.records;
+			    scope.summary = data.summary;
+	    		togglePagination(data.total);		    			    	
 		    	toggleLoading();		    	
 		    });
 	    	
