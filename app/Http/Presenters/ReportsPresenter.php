@@ -4493,7 +4493,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Customer Address','sort'=>'customer_address'],
     			['name'=>'Depot','sort'=>'depot'],
     			['name'=>'Reference','sort'=>'reference'],
-    			['name'=>'Vat Registration No.'],
+    			['name'=>'VAT Registration No.'],
     			['name'=>'Sales-Exempt'],
     			['name'=>'Sales-12%'],
     			['name'=>'Sales-0%'],  			
