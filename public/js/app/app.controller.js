@@ -1069,12 +1069,14 @@
 	    {
 	    	var currentDate = new Date();
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {invoice_date_from:formatted,invoice_date_to:formatted};
+	    	params = {salesman:$('#salesman').val(),invoice_date_from:formatted,invoice_date_to:formatted};
 	    	//log.info(params);
 	    }
 	    else if(report == 'salescollectionposting')
 	    {
-	    	params = {invoice_date_from:formatted,invoice_date_to:formatted,page_limit:50};
+	    	var currentDate = new Date();
+	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+	    	params = {salesman:$('#salesman').val(),invoice_date_from:formatted,invoice_date_to:formatted};
 	    	scope.page = 1;
 		    scope.perpage = 50;
 	    }

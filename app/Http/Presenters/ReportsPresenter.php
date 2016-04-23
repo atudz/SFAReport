@@ -273,7 +273,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesCollectionReport()
     {
-    	if(!$this->request->get('invoice_date_from'))
+    	/* if(!$this->request->get('invoice_date_from'))
     	{
     		$data = [
     				'records' => '',
@@ -281,7 +281,7 @@ class ReportsPresenter extends PresenterCore
     				'summary'=>''
     		];
     		return response()->json($data);
-    	}
+    	} */
     	
     	$prepare = $this->getPreparedSalesCollection();
     	$result = $this->formatSalesCollection($prepare->get());    	
@@ -4183,19 +4183,19 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionPostingColumns()
     {
     	$headers = [
-    			['name'=>'Activity Code','sort'=>'activity_code'],
-    			['name'=>'Salesman Name','sort'=>'salesman_name'],
-    			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Remarks','sort'=>'remarks'],
-    			['name'=>'Invoice Number','sort'=>'invoice_number'],
+    			['name'=>'Activity Code'],
+    			['name'=>'Salesman Name'],
+    			['name'=>'Customer Code'],
+    			['name'=>'Customer Name'],
+    			['name'=>'Remarks'],
+    			['name'=>'Invoice Number'],
     			['name'=>'Invoice Collectible Amount'],
-    			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice Posting Date','sort'=>'invoice_posting_date'],
-    			['name'=>'OR Number','sort'=>'or_number'],
+    			['name'=>'Invoice Date'],
+    			['name'=>'Invoice Posting Date'],
+    			['name'=>'OR Number'],
     			['name'=>'OR Amount'],
-    			['name'=>'OR Date','sort'=>'or_date'],
-    			['name'=>'Collection Posting Date','sort'=>'collection_posting_date']
+    			['name'=>'OR Date'],
+    			['name'=>'Collection Posting Date']
     	];
     	 
     	return $headers;
