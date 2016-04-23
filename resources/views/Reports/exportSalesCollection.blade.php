@@ -33,7 +33,7 @@
 				<th align="right">Salesman:</th>
 				<th style="text-decoration: underline">{{$filters['Salesman']}}</th>
 				<th align="right">Salesman Code:</th>
-				<th style="text-decoration: underline">{{$filters['Salesman']}}</th>
+				<th style="text-decoration: underline">{{request()->get('salesman')}}</th>
 				<th></th>
 				<th></th>
 				<th></th>
