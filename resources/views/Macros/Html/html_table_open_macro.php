@@ -5,7 +5,7 @@ Html::macro('topen', function($options=[]) {
 	$no_download = isset($options['no_download']);
 	
 	$no_search = isset($options['no_search']);
-	$html = '<div class="col-sm-12 table-options">';
+	$html = '<div class="col-sm-12 form-group row">';
 	
 	if(!$no_search)
 	{
