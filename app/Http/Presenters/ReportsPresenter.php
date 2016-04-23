@@ -4494,6 +4494,12 @@ class ReportsPresenter extends PresenterCore
 								return $model->whereBetween('app_item_price.effective_date_to',$self->formatValues($self->getValue()));
 							});
     	
+    	$segmentFilter = FilterFactory::getInstance('Select');
+    	$prepare = $segmentFilter->addFilter($prepare,'segment_code',
+    			function($self, $model){
+    				return $model->where('app_item_master.segment_code','=',$self->getValue());
+    			});
+    	
     	$prepare->where('app_item_price.status','=','A');
     	$prepare->where('app_item_master.status','=','A');
     	$prepare->where('app_customer.status','=','A');
@@ -5077,7 +5083,7 @@ class ReportsPresenter extends PresenterCore
     	return \DB::table('app_item_segment')
     			->where('status','=','A')
     			->orderBy('segment_code')
-    			->lists('segment_code','item_segment_id');
+    			->lists('segment_code','segment_code');
     }
     
     /**
