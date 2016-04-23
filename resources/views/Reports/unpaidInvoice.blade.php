@@ -9,7 +9,7 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
 						{!!Html::select('salesman','Salesman', $salesman)!!}
-						{!!Html::select('company_code','Company', $companyCode)!!}																	
+						{!!Html::select('company_code','Company Code', $companyCode)!!}																	
 						{!!Html::select('customer','Customer', $customers)!!}
 					</div>					
 					<div class="col-md-6">	
