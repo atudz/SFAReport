@@ -1430,8 +1430,9 @@
 	    }
 
 	    //this should be a filter
-	    $scope.parseDate = function(input) {
-			return new Date(input);
+	    $scope.parseDate = function(date) {
+	    	 date = date.replace(/-/g, '/');	    	 
+			return new Date(date);
 		}
 	};
 
