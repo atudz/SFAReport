@@ -291,7 +291,7 @@ class ReportsPresenter extends PresenterCore
     	$except = $referenceNums ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNums).' \') ' : '';
 
     	$prepare = $this->getPreparedSalesCollection2(false,$except);
-    	$collection2 = $prepare->get();
+    	$collection2 = $this->formatSalesCollection($prepare->get());
     	$result = array_merge($collection1,$collection2);
     	
     	//$result = $this->formatSalesCollection2($result);
@@ -5168,7 +5168,7 @@ class ReportsPresenter extends PresenterCore
     			
     			$prepare = $this->getPreparedSalesCollection2(false,$except);
     			$prepare->orderBy('collection.invoice_date','desc');
-    			$collection2 = $prepare->get();
+    			$collection2 = $this->formatSalesCollection($prepare->get());
     			$current = array_merge($collection1,$collection2);
     			
     			/* $prepare = $this->getPreparedSalesCollection();
