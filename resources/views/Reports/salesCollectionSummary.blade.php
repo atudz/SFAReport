@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Sales & Collection','Monthly Summary'])!!}
-{!!Html::pageheader('Sales & Collection Monthly Summary')!!}
+{!!Html::breadcrumb(['Sales & Collection','Monthly Summary of Sales'])!!}
+{!!Html::pageheader('Sales & Collection Monthly Summary of Sales')!!}
 
 <div class="row">
 	<div class="col-lg-12">
