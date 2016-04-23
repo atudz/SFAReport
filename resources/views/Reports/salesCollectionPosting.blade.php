@@ -54,7 +54,7 @@
 						</tr>					
 					</tbody>
 					{!!Html::tfooter(true,14)!!}	
-				{!!Html::tclose()!!}				
+				{!!Html::tclose(false)!!}				
 				
 			</div>			
 		</div>
