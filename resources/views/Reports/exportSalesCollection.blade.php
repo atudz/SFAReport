@@ -47,7 +47,7 @@
 				<th align="right">To:</th>
 				<th style="text-decoration: underline">{{request()->get('invoice_date_to')}}</th>
 				<th align="right">Date Remitted:</th>
-				<th>__________</th>				
+				<th>{{date('m/d/Y')}}</th>				
 			</tr>
 		</tbody>
 	</table>
