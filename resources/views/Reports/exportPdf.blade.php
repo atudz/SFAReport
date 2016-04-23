@@ -32,7 +32,7 @@
 		
 		.title {
 			 margin: auto;
-    		 width: 10%;
+    		 width: auto;
 		}
 		.records {
 			 margin: auto;
@@ -41,7 +41,7 @@
 	</style>
 </head>
 <body>
-	<div class="title">		
+	<div class="title" align="center">		
 		@if(isset($header))
 			<h3>{{$header}}</h3>			
 		@endif
