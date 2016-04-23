@@ -139,6 +139,11 @@ class SyncLibrary extends LibraryCore
 	public function log($message)
 	{
 		$filename = date('Y-m-d') . '.log';
+		if(file_exists(config('sync.dir').$filename))
+		{
+			chmod(file_exists(config('sync.dir').$filename), 0775);
+		}
+		
 		return file_put_contents(config('sync.dir').$filename, $message, FILE_APPEND);		
 	}
 	
