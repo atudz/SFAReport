@@ -118,7 +118,7 @@
 							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumbersummary.vat_amount)"></span>
+							<span ng-bind="formatNumber(summary.vat_amount)"></span>
 						</th>
 						<td></td>
 						<th>
