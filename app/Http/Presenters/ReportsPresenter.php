@@ -3017,7 +3017,7 @@ class ReportsPresenter extends PresenterCore
 								inner join txn_sales_order_detail tsod
 								on tsoh.reference_num = tsod.reference_num
 								and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
-    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num
+    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num and tsohd.deduction_code <> \'EWT\'
     							LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)    							
 
 							union all
@@ -3056,8 +3056,8 @@ class ReportsPresenter extends PresenterCore
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
 								on tsoh.reference_num = tsodeal.reference_num
-    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num
-    							LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)	
+    							left join txn_sales_order_header_discount tsohd on tsoh.reference_num = tsohd.reference_num and tsohd.deduction_code <> \'EWT\'
+    							LEFT JOIN app_customer ac ON(ac.customer_code=tsoh.customer_code)    							
 								
     			) all_so
 				LEFT JOIN app_customer ac ON(ac.customer_code=all_so.customer_code)
@@ -3131,8 +3131,9 @@ class ReportsPresenter extends PresenterCore
 			    	ref_no,
 			    	remarks, 
     				deduction_rate,
-    				sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) served_deduction_amount
+    				sum(coalesce(deduction_amount,0)) served_deduction_amount
 					from  txn_return_header_discount
+    				where deduction_code <> \'EWT\'
 					group by reference_num
     		) trhd ON(trhd.reference_num=trh.reference_num)
 
@@ -3372,8 +3373,9 @@ class ReportsPresenter extends PresenterCore
     									served_deduction_rate,
 			    						ref_no,
 			    						remarks, 
-    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
+    									sum(coalesce(served_deduction_amount,0)) served_deduction_amount
 										from txn_sales_order_header_discount
+    									where deduction_code <> \'EWT\' 
 										group by reference_num
     							) tsohd on tsoh.reference_num = tsohd.reference_num
     							group by tsoh.so_number 
@@ -3413,8 +3415,9 @@ class ReportsPresenter extends PresenterCore
     									served_deduction_rate,
 			    						ref_no,
 			    						remarks, 
-    									sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) served_deduction_amount
+    									sum(coalesce(served_deduction_amount,0)) served_deduction_amount
 										from txn_sales_order_header_discount
+    									where deduction_code <> \'EWT\'
 										group by reference_num
     							) tsohd on tsoh.reference_num = tsohd.reference_num
     							group by tsoh.so_number
@@ -3480,8 +3483,9 @@ class ReportsPresenter extends PresenterCore
 			    	ref_no,
 			    	remarks, 
     				deduction_rate,
-    				sum(case when deduction_code <> \'EWT\' then coalesce(deduction_amount,0) else 0 end) served_deduction_amount
+    				sum(coalesce(deduction_amount,0)) served_deduction_amount
 					from  txn_return_header_discount
+    				where deduction_code  <> \'EWT\'
 					group by reference_num
     		) trhd ON(trhd.reference_num=trh.reference_num)
 
