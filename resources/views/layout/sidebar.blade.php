@@ -11,11 +11,11 @@
 	 @if(isset($menu))
             @foreach($menu as $nav)
             {{--*/ $counter++ /*--}}
-            <li @if(count($nav['navitems'])) class="parent" @endif>
+            <li @if(count($nav['navitems'])) class="parent" href="#sub-item-{{$counter}}" @endif>
             <a href="@if($nav['url'])#{{$nav['url']}}@endif"><span class="{{$nav['class']}}"></span>             
             	{{$nav['name']}} 
             	@if(count($nav['navitems'])) 
-            		<span href="#sub-item-{{$counter}}" class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
             	@endif
             </a>
             

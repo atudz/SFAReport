@@ -7,10 +7,10 @@
 	  restrict: "A",
 	  link: function(a,b){
 
-		$(document).on("click","ul.nav li.parent > a > span.icon", function(){		  
+		$(document).on("click","ul.nav li.parent", function(){		  
 			$(this).find('em:first').toggleClass("glyphicon-minus");
 			var id = $(this).attr('href');
-			$(this).parent().parent().find(id).slideToggle().toggleClass('in');
+			$(this).find(id).stop().slideToggle().toggleClass('in');
 
 		}); 
 		$(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
