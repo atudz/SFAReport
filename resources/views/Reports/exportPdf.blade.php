@@ -41,11 +41,19 @@
 	</style>
 </head>
 <body>
-	<div class="title" align="center">		
-		@if(isset($header))
-			<h3>{{$header}}</h3>			
-		@endif
-	</div>
+	@if(isset($report) && $report == 'salescollectionsummary')
+		<div class="title" align="left">		
+			@if(isset($header))
+				<h3>{{$header}}</h3>			
+			@endif
+		</div>
+	@else
+		<div class="title" align="center">		
+			@if(isset($header))
+				<h3>{{$header}}</h3>			
+			@endif
+		</div>
+	@endif
 	<table class="no-border">
 			<tbody>				
 				@if(isset($filters))

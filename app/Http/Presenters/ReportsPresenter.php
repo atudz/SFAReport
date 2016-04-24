@@ -5010,9 +5010,9 @@ class ReportsPresenter extends PresenterCore
     			$prepare = $this->getPreparedSalesCollectionSummary();
     			$rows = $this->getSalesCollectionSummarySelectColumns();
     			$summary = $this->getPreparedSalesCollectionSummary(true)->first();
-    			$header = 'Summary of Sales';
+    			$header = 'Monthly Summary of Sales';
     			$filters = $this->getSalesCollectionSummaryFilterData();
-    			$filename = 'Summary of Sales';
+    			$filename = 'Monthly Summary of Sales';
     			$salesSummary = true;
     			break;
     		case 'bir';
@@ -5211,8 +5211,12 @@ class ReportsPresenter extends PresenterCore
     		$params['currentSummary'] = $currentSummary;
     		$params['previousSummary'] = $previousSummary;
     		$params['area'] = $area;
+    		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    		if($report == 'salescollectionsummary')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
+    		else
+    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
