@@ -53,23 +53,23 @@
   							</a>
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_served_amount)"></span>
+							[[record.gross_served_amount]]
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.vat_amount)"></span>
+							[[record.vat_amount]]
 						</td>
 						<td>[[record.discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.discount_amount)"></span>
+							[[record.discount_amount]]
 						</td>
 						<td>[[record.collective_discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
+							[[record.collective_discount_amount]]
 						</td>
 						<td>[[record.discount_reference_num]]</td>
 						<td>[[record.discount_remarks]]</td>						
 						<td>
-							<span ng-bind="formatNumber(record.total_invoice)"></span>
+							[[record.total_invoice]]
 						</td>
 					</tr>
 					
