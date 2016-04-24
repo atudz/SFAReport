@@ -1228,7 +1228,7 @@
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
 		$scope.params = params;		
-		$log.info(params);
+		//$log.info(params);
 		
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
