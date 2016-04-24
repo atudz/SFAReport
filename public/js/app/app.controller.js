@@ -1808,13 +1808,19 @@
 	    	$scope.showLoading = true;
 	    	var API = $resource('controller/reports/sync');				
 			API.get({}, function(data){
-				$scope.syncLogs = data.logs;
-				$scope.showSuccess = true;	
-				$scope.showLoading = false;	
-			},
-			function(error){
-				$scope.showLoading = false;
-				$scope.showError = true;
+				if(data.logs)
+				{
+					$scope.syncLogs = data.logs;
+					$scope.showSuccess = true;	
+					$scope.showLoading = false;
+					$scope.showError = false;
+				}
+				else
+				{
+					$scope.showLoading = false;
+					$scope.showError = true;
+					$scope.showSuccess = false;
+				}
 			});
 	    }
 	}
