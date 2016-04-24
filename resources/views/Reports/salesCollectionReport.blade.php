@@ -56,8 +56,8 @@
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM Number','cm_number')">
-    						[[ record.cm_number | uppercase ]]
+						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
+    						[[ record.ref_no | uppercase ]]
   						</a>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">

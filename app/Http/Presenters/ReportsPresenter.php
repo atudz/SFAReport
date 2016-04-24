@@ -477,6 +477,7 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
 				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00)) total_invoice_amount,
+    			   tsohd2.ref_no,		
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   coalesce(rtntbl.RTN_total_gross,0.00) RTN_total_gross,
@@ -500,7 +501,7 @@ class ReportsPresenter extends PresenterCore
     			   sotbl.sales_order_header_id,
     			   coltbl.collection_header_id,
     			   coltbl.collection_detail_id,
-    			   rtntbl.return_header_id,
+    			   rtntbl.return_header_id,    			   
     			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
     	
 				   from txn_activity_salesman tas
@@ -689,6 +690,7 @@ class ReportsPresenter extends PresenterCore
 				collection.so_total_item_discount,
 				collection.so_total_collective_discount,
 				collection.total_invoice_amount,
+    			collection.ref_no,
 				collection.other_deduction_amount,
 				collection.return_slip_num,
 				collection.RTN_total_gross,
@@ -817,6 +819,7 @@ class ReportsPresenter extends PresenterCore
 				   0.00 so_total_collective_discount,
     			   coltbl.sfa_modified_date invoice_posting_date,
 				   0.00 total_invoice_amount,
+    			   \'\' ref_no,
 			  	   0.00 other_deduction_amount,
 				   \'\' return_slip_num,
 				   0.00 RTN_total_gross,
@@ -897,6 +900,7 @@ class ReportsPresenter extends PresenterCore
 				collection.so_total_item_discount,
 				collection.so_total_collective_discount,
 				collection.total_invoice_amount,
+    			collection.ref_no,
 				collection.other_deduction_amount,
 				collection.return_slip_num,
 				collection.RTN_total_gross,
