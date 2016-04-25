@@ -3765,7 +3765,7 @@ class ReportsPresenter extends PresenterCore
 				});
 		
 		$itemCodeFilter = FilterFactory::getInstance('Select');
-		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+		$prepare = $itemCodeFilter->addFilter($prepare,'material',
 			    			function($self, $model){
 			    				return $model->where('app_item_master.item_code','=',$self->getValue());
 			    			});
@@ -4060,6 +4060,17 @@ class ReportsPresenter extends PresenterCore
 							function($self, $model){
 								return $model->where('app_customer.customer_code','like',$self->getValue().'%');
 							});
+
+        $customerNameFilter = FilterFactory::getInstance('Select');
+        $prepare = $customerNameFilter->addFilter($prepare,'customer_name',
+                            function($self, $model){
+                                return $model->where('app_customer.customer_name','like','%'.$self->getValue().'%');
+                            });
+        $customerPriceGroupFilter = FilterFactory::getInstance('Select');
+        $prepare = $customerPriceGroupFilter->addFilter($prepare,'customer_price_group',
+                            function($self, $model){
+                                return $model->where('app_customer.customer_price_group','=', $self->getValue());
+                            });
     	 
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
@@ -4619,12 +4630,12 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Area','sort'=>'area'],
     			['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Date','sort'=>'return_date'],
-    			['name'=>'Posting Date','sort'=>'return_posting_date'],
+    			['name'=>'Return Posting Date','sort'=>'return_posting_date'],
     			['name'=>'Segment Code','sort'=>'segment_code'],
     			['name'=>'Item Code','sort'=>'item_code'],
     			['name'=>'Material Description','sort'=>'description'],
-    			['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Condition Code','sort'=>'condition_code'],
+                ['name'=>'Quantity','sort'=>'quantity'],
     			['name'=>'Uom Code'],
     			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
