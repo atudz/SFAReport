@@ -4060,6 +4060,12 @@ class ReportsPresenter extends PresenterCore
 							function($self, $model){
 								return $model->where('app_customer.customer_code','like',$self->getValue().'%');
 							});
+
+        $customerNameFilter = FilterFactory::getInstance('Select');
+        $prepare = $customerNameFilter->addFilter($prepare,'customer_name',
+                            function($self, $model){
+                                return $model->where('app_customer.customer_name','like','%'.$self->getValue().'%');
+                            });
     	 
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
