@@ -3765,7 +3765,7 @@ class ReportsPresenter extends PresenterCore
 				});
 		
 		$itemCodeFilter = FilterFactory::getInstance('Select');
-		$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+		$prepare = $itemCodeFilter->addFilter($prepare,'material',
 			    			function($self, $model){
 			    				return $model->where('app_item_master.item_code','=',$self->getValue());
 			    			});
