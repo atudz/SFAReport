@@ -306,6 +306,7 @@
 		          'status',
 		          'company_code',
 		          'customer_name',
+		          'customer_price_group',
 		          'sfa_modified_date_from',
 		          'sfa_modified_date_to',
 		];
