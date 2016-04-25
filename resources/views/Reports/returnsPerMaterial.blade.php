@@ -48,8 +48,8 @@
 						<td>[[record.segment_code]]</td>
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
-						<td>[[record.quantity]]</td>
-						<td>[[record.condition_code]]</td>											
+						<td>[[record.condition_code]]</td>
+						<td>[[record.quantity]]</td>										
 						<td>[[record.uom_code]]</td>
 						<td>
 							<span ng-bind="formatNumber(record.gross_amount)"></span>
