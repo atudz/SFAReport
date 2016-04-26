@@ -268,6 +268,39 @@ class ReportsPresenter extends PresenterCore
     
     
     /**
+     * Get Sales Collection Summary 
+     * @param unknown $data
+     * @return multitype:string unknown
+     */
+    public function getSalesCollectionTotal($data)
+    {    	
+    	$summary = [
+    		'so_total_served'=>0,
+    		'so_total_item_discount'=>0,
+    		'so_total_collective_discount'=>0,
+    	    'total_invoice_amount'=>0,
+    	    'RTN_total_gross'=>0,
+    		'RTN_total_collective_discount'=>0,
+    		'RTN_net_amount'=>0,
+            'total_invoice_net_amount'=>0,
+    		'cash_amount'=>0,
+    		'check_amount'=>0,
+            'total_collected_amount'=>0
+    	];
+    	
+    	$cols = array_keys($summary);
+    	foreach($data as $val)
+    	{
+    		foreach($cols as $key)
+    		{    			
+    			$summary[$key] += $val->$key;
+    		}
+    	}
+    	
+    	return $summary;	
+    }
+    
+    /**
      * Get Sales & Collection Report records
      * @return \Illuminate\Http\JsonResponse
      */
@@ -276,13 +309,6 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare = $this->getPreparedSalesCollection();
     	$collection1 = $this->formatSalesCollection($prepare->get());
-    	
-    	$summary1 = [];
-    	if($collection1)
-    	{
-    		$prepare = $this->getPreparedSalesCollection(true);
-    		$summary1 = (array)$prepare->first();
-    	}
     	
     	$referenceNums = [];
     	foreach($collection1 as $col)
@@ -295,6 +321,12 @@ class ReportsPresenter extends PresenterCore
 
     	$result = array_merge($collection1,$collection2);
 
+    	$summary1 = [];
+    	if($result)
+    	{
+    		$summary1 = $this->getSalesCollectionTotal($result);    		
+    	}
+    	
     	$data['records'] = $result;
     	
     	$data['summary'] = '';
@@ -731,7 +763,7 @@ class ReportsPresenter extends PresenterCore
     				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
     				SUM(collection.cash_amount) cash_amount,
     				SUM(collection.check_amount) check_amount,
-    				SUM(collection.total_collected_amount) total_collected_amount	
+    				(SUM(collection.cash_amount) + SUM(collection.check_amount) + SUM(collection.credit_amount)) total_collected_amount	
     				';
     	}
     	
@@ -4948,14 +4980,13 @@ class ReportsPresenter extends PresenterCore
     			$collection2 = $this->formatSalesCollection($prepare->get());
     			
     			$current = array_merge($collection1,$collection2);  
-    			$current = array_splice($current, $offset, $limit);
     			
     			$currentSummary = [];
-    			if($collection1)
+    			if($current)
     			{
-    				$prepare = $this->getPreparedSalesCollection(true);
-    				$currentSummary = $prepare->first();
-    			}  			
+    				$currentSummary = $this->getSalesCollectionTotal($current);
+    			}    			
+    			$current = array_splice($current, $offset, $limit);    			  		
     			
     			$from = new Carbon($this->request->get('invoice_date_from'));
     			$endOfWeek = (new Carbon($this->request->get('invoice_date_from')))->endOfWeek();
