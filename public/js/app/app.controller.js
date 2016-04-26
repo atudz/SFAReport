@@ -1505,6 +1505,9 @@
 
 	    scope.formatNumber = function(number, negate, round){
 	    	
+	    	  if(number == '')
+	    		  return '';
+	    	  
 	    	  if('string' == typeof number)
 	    	  {
 	    		  number = Number(number);
