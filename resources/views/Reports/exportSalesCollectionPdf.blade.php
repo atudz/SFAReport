@@ -33,10 +33,6 @@
 			word-wrap: break-word;			
 		}
 		
-		.title {
-			 margin: auto;
-    		 width: 10%;
-		}
 		.records {
 			 margin: auto;
     		 width: 65%;
@@ -91,60 +87,76 @@
 		.push-left {
 			padding-right: 5p;x
 		}
-		
+		.title {
+			 margin: auto;
+			 text-align: center;
+		}
+		.header {
+			clear:both;
+			overflow: auto;
+		}
 	</style>
 </head>
 <body>
-	<div class="clear">
-		<div class="row pull-right indent-right label">
-			<strong>SCR No.:</strong>@if($scr) <span class="value">{{$scr}}</span> @else <span>______________</span> @endif
-		</div>
-		<div class="row-company pull-right label">
-			<strong>SUNPRIDE FOODS, INC.</strong>
-		</div>
+	<div class="header">
+		<table width="100%" cellpadding="0">
+			<tr>
+				<td width="30%"></td>
+				<td width="30%" valign="top">
+					<div class="title">
+						<strong>SUNPRIDE FOODS, INC.</strong>
+						<br />
+						<strong>Sales & Collections Report</strong>		
+					</div>
+				</td>
+				<td width="30%" valign="top">
+					<div class="clear">
+						<div class="row pull-right indent-right label">
+							<strong>SCR No.:</strong>@if($scr) <span class="value">{{$scr}}</span> @else <span>______________</span> @endif
+						</div>
+					</div>
+					
+					<div class="clear">
+						<div class="row pull-right indent-right label-value">
+							<strong>Period Covered:</strong>&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else ______________ @endif</span>
+						</div>
+						<div class="row pull-right indent-right label-value">
+							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
+						</div>		
+					</div>
+					
+					
+					
+					<div class="clear">
+						<div class="row pull-right indent-right label-value">
+							&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else ______________ @endif</span>
+						</div>
+						<div class="row pull-right indent-right label-value">
+							<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
+						</div>		
+						
+					</div>
+					
+					<div class="clear">
+						<div class="row pull-right indent-right">
+							&nbsp;
+						</div>
+						<div class="row pull-right indent-right label-value">
+							<strong>Area:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
+						</div>		
+						
+					</div>
+					
+					<div class="clear">
+						<div class="row pull-right indent-right label-value">
+							<strong>Date Remitted:</strong><span class="underline">{{date('m/d/Y')}}</span>
+						</div>		
+						
+					</div>
+				</td>
+			</tr>
+		</table>
 	</div>
-	
-	<div class="clear">
-		<div class="row pull-right indent-right label-value">
-			<strong>Period Covered:</strong>&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else ______________ @endif</span>
-		</div>
-		<div class="row pull-right indent-right label-value">
-			<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
-		</div>		
-		<div class="row pull-right indent-right label">
-			<strong>Sales & Collections Report &nbsp;&nbsp;</strong>
-		</div>
-	</div>
-	
-	
-	
-	<div class="clear">
-		<div class="row pull-right indent-right label-value">
-			&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else ______________ @endif</span>
-		</div>
-		<div class="row pull-right indent-right label-value">
-			<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
-		</div>		
-		
-	</div>
-	
-	<div class="clear">
-		<div class="row pull-right indent-right">
-			&nbsp;
-		</div>
-		<div class="row pull-right indent-right label-value">
-			<strong>Area:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
-		</div>		
-		
-	</div>
-	
-	<div class="clear">
-		<div class="row pull-right indent-right label-value">
-			<strong>Date Remitted:</strong><span class="underline">{{date('m/d/Y')}}</span>
-		</div>		
-		
-	</div>
-	
 	<br class="clear">	
 	<br class="clear">
 	<table class="table-data">		
