@@ -309,19 +309,8 @@ class ReportsPresenter extends PresenterCore
     {
     	
     	$prepare = $this->getPreparedSalesCollection();
-    	$collection1 = $this->formatSalesCollection($prepare->get());
-    	
-    	$referenceNums = [];
-    	foreach($collection1 as $col)
-    		$referenceNums[] = $col->reference_num;    
-    	
-    	$except = $referenceNums ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNums).' \') ' : '';
-
-    	$prepare = $this->getPreparedSalesCollection2(false,$except);
-    	$collection2 = $this->formatSalesCollection($prepare->get());
-
-    	$result = array_merge($collection1,$collection2);
-
+    	$result = $this->formatSalesCollection($prepare->get());
+        
     	$summary1 = [];
     	if($result)
     	{
@@ -4972,20 +4961,7 @@ class ReportsPresenter extends PresenterCore
 
     			$prepare = $this->getPreparedSalesCollection();
     			$prepare->orderBy('collection.invoice_date','desc');
-    			$collection1 = $this->formatSalesCollection($prepare->get());
-    			 
-    			$referenceNums = [];
-    			foreach($collection1 as $col)
-    				$referenceNums[] = $col->reference_num;
-    			 
-    			$except = $referenceNums ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNums).' \') ' : '';
-    			
-    			$prepare = $this->getPreparedSalesCollection2(false,$except);
-    			$prepare->orderBy('collection.invoice_date','desc');
-    			$collection2 = $this->formatSalesCollection($prepare->get());
-    			
-    			$current = array_merge($collection1,$collection2);  
-    			
+    			$current = $this->formatSalesCollection($prepare->get());    			 
     			$currentSummary = [];
     			if($current)
     			{
@@ -5659,18 +5635,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		case 'salescollectionreport';
 	    		$prepare = $this->getPreparedSalesCollection();
-    			$collection1 = $this->formatSalesCollection($prepare->get());
-    	    	    	
-		    	$referenceNums = [];
-		    	foreach($collection1 as $col)
-		    		$referenceNums[] = $col->reference_num;    
-    	
-    			$except = $referenceNums ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNums).' \') ' : '';
-
-		    	$prepare = $this->getPreparedSalesCollection2(false,$except);
-		    	$collection2 = $this->formatSalesCollection($prepare->get());
-
-    			$records = array_merge($collection1,$collection2);
+    			$records = $this->formatSalesCollection($prepare->get());
     			$total = count($records);
     			$special = true;
     			
