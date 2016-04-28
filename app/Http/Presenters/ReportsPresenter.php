@@ -68,6 +68,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionReportColumns();
+    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('salesCollectionReport');
     		case 'posting':
     			$this->view->companyCode = $this->getCompanyCode();

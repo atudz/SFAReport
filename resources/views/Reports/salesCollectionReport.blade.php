@@ -29,19 +29,31 @@
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_code]]</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_name]]</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
-    						[[ record.remarks ]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
+	    						[[ record.remarks ]]
+	  						</a>
+	  					@else
+	  						[[ record.remarks ]]
+	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
-    						[[ record.invoice_number | uppercase ]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
+	    						[[ record.invoice_number | uppercase ]]
+	  						</a>
+	  					@else
+	  						[[ record.invoice_number | uppercase ]]
+	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
-    						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
-  						</a>						
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
+	    						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	  						</a>						
+	  					@else
+	  						<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.so_total_served)"></span>
@@ -56,17 +68,25 @@
 						<span ng-bind="formatNumber(record.total_invoice_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
-    						[[ record.ref_no | uppercase ]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
+	    						[[ record.ref_no | uppercase ]]
+	  						</a>
+	  					@else
+	  						[[ record.ref_no | uppercase ]]
+	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.other_deduction_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
-    						[[record.return_slip_num | uppercase]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
+	    						[[record.return_slip_num | uppercase]]
+	  						</a>
+	  					@else
+	  						[[record.return_slip_num | uppercase]]
+	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="formatNumber(record.RTN_total_gross)"></span>
@@ -81,14 +101,22 @@
 						<span ng-bind="formatNumber(record.total_invoice_net_amount)"></span>
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
-    						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
-  						</a>						
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
+	    						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
+	  						</a>						
+	  					@else
+	  						<span ng-bind="formatDate(record.or_date) | date:'MM/dd/yyyy'"></span>
+	  					@endif
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')">
-    						[[record.or_number | uppercase]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')">
+	    						[[record.or_number | uppercase]]
+	  						</a>
+	  					@else
+	  						[[record.or_number | uppercase]]
+	  					@endif
 					</td>
 					<td>
 						<span ng-bind="formatNumber(record.cash_amount)"></span>
@@ -103,24 +131,40 @@
 						</a> -->
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
-    						[[record.bank | uppercase]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
+	    						[[record.bank | uppercase]]
+	  						</a>
+	  					@else
+	  						[[record.bank | uppercase]]
+	  					@endif
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')">
-    						[[record.check_number]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')">
+	    						[[record.check_number]]
+	  						</a>
+	  					@else
+	  						[[record.check_number]]
+	  					@endif
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
-    						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
-  						</a>						
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
+	    						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+	  						</a>						
+	  					@else
+	  						<span ng-bind="formatDate(record.check_date) | date:'MM/dd/yyyy'"></span>
+	  					@endif	
 					</td>
 					<td>
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')">
-    						[[record.cm_number | uppercase]]
-  						</a>
+						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')">
+	    						[[record.cm_number | uppercase]]
+	  						</a>
+	  					@else
+	  						[[record.cm_number | uppercase]]
+	  					@endif
 					</td>
 					<td>
 						<span ng-bind="formatDate(record.cm_date) | date:'MM/dd/yyyy'"></span>
