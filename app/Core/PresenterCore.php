@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\Paginator;
 use App\Factories\PresenterFactory;
 use Illuminate\Http\Request;
-
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 /**
  * This class is a wrapper class for Laravel's Controller.
  * Its mainly used for the core class for Presenters.
@@ -87,11 +88,17 @@ class PresenterCore extends Controller
 			$name = array_pop($chunks);
 			$name = str_replace(PresenterFactory::getSuffix(), '', $name);
 		}
+
+		$menuLib = LibraryFactory::getInstance('Menu');
 		
-		$menu = LibraryFactory::getInstance('Menu')->getMyMenus();
-		$this->view->menu = $menu;
+		if(!$menuLib->isActionAllowed($template))
+		{
+			return view('errors.403');
+		}
+
+		$this->view->menu = $menuLib->getMyMenus();
 		$templateName = $name.'.'.$template;
-		
+
 		return view($templateName,$data, (array)$this->view);
 	}
 	
