@@ -122,7 +122,12 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 
 	public function isActionAllowed($action)
 	{
-		$groupId = \Auth::user()->group->id;
+		$user = \Auth::user();
+		
+		if(!$user)
+			return true;
+		
+		$groupId = $user->group->id;
 
 		if(isset($this->menuItemExclude[$groupId][$action]))
 		{

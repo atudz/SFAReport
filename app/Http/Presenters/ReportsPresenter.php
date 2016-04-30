@@ -68,7 +68,6 @@ class ReportsPresenter extends PresenterCore
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionReportColumns();
-    			$this->view->isAdmin = $this->isAdmin();
     			return $this->view('salesCollectionReport');
     		case 'posting':
     			$this->view->companyCode = $this->getCompanyCode();
@@ -166,8 +165,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
-    			$this->view->type = 'canned';
-    			$this->view->isAdmin = $this->isAdmin();
+    			$this->view->type = 'canned';    			
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
@@ -175,8 +173,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
-    			$this->view->type = 'frozen';
-    			$this->view->isAdmin = $this->isAdmin();
+    			$this->view->type = 'frozen';    			
     			return $this->view('vanInventory');
     	}
     }

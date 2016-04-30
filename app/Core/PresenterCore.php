@@ -98,6 +98,10 @@ class PresenterCore extends Controller
 
 		$this->view->menu = $menuLib->getMyMenus();
 		$templateName = $name.'.'.$template;
+		
+		$this->view->isAdmin = $this->isAdmin();
+		$this->view->isAuditor = $this->isAuditor();
+		$this->view->isAccounting = $this->isAcounting();
 
 		return view($templateName,$data, (array)$this->view);
 	}
@@ -206,4 +210,32 @@ class PresenterCore extends Controller
 		$group = auth()->user()->group->name;
 		return ('Admin' == $group);
 	}
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
+	public function isAuditor()
+	{
+		if(!auth()->user())
+			return false;
+	
+		$group = auth()->user()->group->name;
+		return ('Auditor' == $group);
+	}
+	
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
+	public function isAcounting()
+	{
+		if(!auth()->user())
+			return false;
+	
+		$group = auth()->user()->group->name;
+		return ('Accounting in charge' == $group);
+	}
+		
 }
