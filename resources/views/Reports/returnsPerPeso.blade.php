@@ -11,7 +11,7 @@
 						{!!Html::select('salesman_code','Salesman', $salesman)!!}
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('company_code','Company Code', $companyCode)!!}
-						{!!Html::input('text','customer','Customer Name')!!}													
+						{!!Html::select('customer','Customer Name', $customers)!!}													
 					</div>					
 					<div class="col-md-6">	
 						{!!Html::datepicker('return_date','Return Date',true)!!}

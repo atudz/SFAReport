@@ -12,7 +12,7 @@ class UpdateMenuSalesCollectionSummary extends Migration
      */
     public function up()
     {
-        DB::table('navigation_item')->where('name','Monthly Summary')->update(['name'=>'Monthly Summary of Sales']);
+        DB::table('navigation_item')->where('name','Monthly Summary Sales Report')->update(['name'=>'Monthly Summary of Sales']);
     }
 
     /**

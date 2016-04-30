@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGroupSeeder::class);
         $this->call(NavigationSeeder::class);
         $this->call(UserGroupToNavSeeder::class);
-        $this->call(NavigationItemsSeeder::class);
+        $this->call(NavigationItemsSeeder::class);        
 
         Model::reguard();
     }

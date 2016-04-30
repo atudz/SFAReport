@@ -118,6 +118,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
     			return $this->view('returnsPerMaterial');
     		case 'returnperpeso':
+    			$this->view->customers = $this->getCustomer();
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->areas = $this->getArea();
@@ -3249,10 +3250,10 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	
-    	$customerFilter = FilterFactory::getInstance('Text');
+    	$customerFilter = FilterFactory::getInstance('Select');
     	$prepare = $customerFilter->addFilter($prepare,'customer',
     			function($self, $model){
-    				return $model->where('sales.customer_name','LIKE','%'.$self->getValue().'%');
+    				return $model->where('sales.customer_code','=',$self->getValue());    				
     			});    	    	
     	 
     	$itemCodeFilter = FilterFactory::getInstance('Select');
@@ -3592,10 +3593,10 @@ class ReportsPresenter extends PresenterCore
 							return $model->where('sales.invoice_number','LIKE','%'.$self->getValue().'%');							
 					});
 		
-		$customerFilter = FilterFactory::getInstance('Text');
+		$customerFilter = FilterFactory::getInstance('Select');
     	$prepare = $customerFilter->addFilter($prepare,'customer',
     			function($self, $model){
-    				return $model->where('sales.customer_name','LIKE','%'.$self->getValue().'%');
+    				return $model->where('sales.customer_code','=',$self->getValue());    				
     			});
 			    	 
 		$itemCodeFilter = FilterFactory::getInstance('Select');
@@ -3811,6 +3812,7 @@ class ReportsPresenter extends PresenterCore
 			    				return $model->whereBetween(\DB::raw('DATE(txn_return_header.sfa_modified_date)'),$self->formatValues($self->getValue()));
 			    			});
 		
+		
 		$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
 		
 		if($summaryCollectiveAmount)
@@ -3972,11 +3974,12 @@ class ReportsPresenter extends PresenterCore
 					return $model->where('txn_return_header.return_slip_num','LIKE','%'.$self->getValue().'%');
 				});
 
-		$customerFilter = FilterFactory::getInstance('Text');
+		$customerFilter = FilterFactory::getInstance('Select');
 		$prepare = $customerFilter->addFilter($prepare,'customer',
 				function($self, $model){
-					return $model->where('app_customer.customer_name','LIKE','%'.$self->getValue().'%');
+					return $model->where('txn_return_header.customer_code','=',$self->getValue());
 				});
+		
 		
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'return_date');
@@ -3988,7 +3991,6 @@ class ReportsPresenter extends PresenterCore
     			});
     	
     	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
-    	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
