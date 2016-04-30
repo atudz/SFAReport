@@ -260,6 +260,7 @@
 		          'company_code',
 		          'invoice_number',
 		          'material',
+		          'customer',
 		          'segment'
 		];
 	    

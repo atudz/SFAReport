@@ -114,6 +114,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->salesman = $this->getSalesman();
     			$this->view->areas = $this->getArea();
     			$this->view->items = $this->getItems();
+    			$this->view->customers = $this->getCustomer();
     			$this->view->segments = $this->getItemSegmentCode();
     			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
     			return $this->view('returnsPerMaterial');
@@ -3793,7 +3794,12 @@ class ReportsPresenter extends PresenterCore
 			    			function($self, $model){
 			    				return $model->where('app_item_master.item_code','=',$self->getValue());
 			    			});
-			    	 
+		$customerFilter = FilterFactory::getInstance('Select');
+		$prepare = $customerFilter->addFilter($prepare,'customer',
+				function($self, $model){
+					return $model->where('txn_return_header.customer_code','=',$self->getValue());
+				});
+		
 		$segmentCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $segmentCodeFilter->addFilter($prepare,'segment_code',
 			    			function($self, $model){
