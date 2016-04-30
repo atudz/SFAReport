@@ -497,7 +497,7 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
-				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00)) total_invoice_amount,
+				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00) - coalesce(sotbl.so_total_collective_discount,0.00)) total_invoice_amount,
     			   tsohd2.ref_no,		
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
