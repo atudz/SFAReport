@@ -1767,8 +1767,7 @@ class ReportsPresenter extends PresenterCore
     				});
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse%');
-    	 
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse%');    	
     	
     	return $prepare;
     }
@@ -5188,6 +5187,11 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$vaninventory)
     	{
+    		if($this->request->get('sort') && $this->request->get('order'))
+    		{
+    			$prepare->orderBy($this->request->get('sort'),$this->request->get('order'));
+    		}
+    		
 	    	$prepare = $prepare->skip($offset)->take($limit);
 	    	$records = $prepare->get();
 	    	if($salesSummary)

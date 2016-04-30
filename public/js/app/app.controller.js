@@ -1028,7 +1028,9 @@
 							limit: data.limit,
 							exportType: type,
 							report: report,
-							filter: filter
+							filter: filter,
+							sort: scope.sortColumn,
+							order: scope.sortDirection,
 					};
 		
 					var modalInstance = modal.open({
@@ -1044,7 +1046,12 @@
 				 }
 				 else
 				 {
-					 window.location.href = '/reports/export/'+type+'/'+report+query;
+					 var exportUrl = '/reports/export/'+type+'/'+report+query;
+					 if(scope.sortColumn)
+						 exportUrl += '&'+'sort='+scope.sortColumn;
+					 if(scope.sortDirection)
+						 exportUrl += '&'+'order='+scope.sortDirection;					 
+					 window.location.href = exportUrl;
 				}
 			});
 		}	
@@ -1213,6 +1220,8 @@
 					delimeter = '&';
 				url += delimeter + val + '=' + $('#'+val).val();				
 			});
+			
+			url += '&sort='+params.sort+'&order='+params.order;
 			//$log.info(url);
 			$window.location.href = url;
 		};
