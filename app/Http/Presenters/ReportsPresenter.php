@@ -504,7 +504,7 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(rtntbl.RTN_total_gross,0.00) RTN_total_gross,
 				   coalesce(rtntbl.RTN_total_collective_discount,0.00) RTN_total_collective_discount,
 				   coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00) RTN_net_amount,
-				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_collective_discount,0)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
+				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
     			
 				   coltbl.or_date,
 	               coltbl.or_number,
