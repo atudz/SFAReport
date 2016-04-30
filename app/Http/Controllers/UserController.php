@@ -44,6 +44,19 @@ class UserController extends ControllerCore
     {
         $sanitizeFields = ['firstname', 'lastname', 'middlename', 'username', 'address1', 'telephone', 'mobile'];
 
+        $roleAdmin = ModelFactory::getInstance('UserGroup')->admin()->first()->id; 
+        if($request->get('role') == $roleAdmin)
+        {
+        	$max = config('system.max_admin_users');
+        	$adminCount = ModelFactory::getInstance('User')->where('user_group_id',$roleAdmin)->count();
+        	if($adminCount >= $max)
+        	{
+        		// Minus 1 to exclude default admin user
+        		$response['error'] = 'Maximum of '.($max-1).' Administrators only.';        		
+        		return response()->json($response);
+        	}
+        }
+        
     	$id = (int)$request->get('id');
         $user = ModelFactory::getInstance('User')->findOrNew($id);
         $user->firstname = $request->get('fname');

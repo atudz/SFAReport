@@ -32,4 +32,7 @@ return [
 		
 	// Go live date for van inventory
 	'go_live_date' => '2016-05-02',
+		
+	// Maximum admin users
+	'max_admin_users' => 6	
 ];

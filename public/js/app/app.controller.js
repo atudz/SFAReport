@@ -1795,9 +1795,19 @@
 				//log.info(params);
 				API.save(params, function(data){
 					//log.info(data);
-					scope.success = true;
-					if(!profile)
-						location.path('user.list');
+					if(data.error)
+					{
+						locationErrorList = '<ul>'+data.error+'</ul>';
+						$('#error_list_location').html(locationErrorList);
+						scope.locationInfoError = true;
+						scope.success = false;
+					}
+					else
+					{
+						scope.success = true;
+						if(!profile)
+							location.path('user.list');
+					}					
 				});
 			}
 		}
