@@ -4,12 +4,12 @@
 	<style>
 		
 		body {
-			font-size: 10px;
+			font-size: {{$textSize}};
 		}
 		
 		table.no-border {
     		border-collapse: collapse;
-    		font-size: 11px;
+    		font-size: {{$textSize}};
 		}		
 		table.no-border,
 		.no-border th,

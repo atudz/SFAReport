@@ -4945,6 +4945,7 @@ class ReportsPresenter extends PresenterCore
     	$area = '';
     	$prepare = '';
     	$fontSize = '11px';
+    	$textSize = '10px';
     	$vaninventory = false;
     	$salesSummary = false;
     	
@@ -5063,6 +5064,8 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Unpaid Invoice Report';
     			$filters = $this->getUnpaidFilterData();
     			$filename = 'Unpaid Invoice Report';
+    			$textSize = '14px';
+    			$fontSize = '15px';
     			break;
     		case 'vaninventorycanned';
     			$vaninventory = true; 				    			
@@ -5238,6 +5241,7 @@ class ReportsPresenter extends PresenterCore
     		$params['scr'] = $scr;
     		$params['filters'] = $filters;
     		$params['fontSize'] = $fontSize;
+    		$params['textSize'] = $textSize;
     		$params['current'] = $current;
     		$params['previous'] = $previous;
     		$params['currentSummary'] = $currentSummary;
