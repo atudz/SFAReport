@@ -4207,7 +4207,7 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('salesman_customer.area_code','=',auth()->user()->location_assignment_code);
+    		$prepare->where('app_customer.area_code','=',auth()->user()->location_assignment_code);
     	}
     	
     	if($salesman)
