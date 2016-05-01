@@ -76,7 +76,6 @@ class UserGroupToNavSeeder extends Seeder
             'Peso Value',
             'Returns (Per Material)',
             'Returns (Peso Value)',
-            'User Management',
             'Master (Customer)',
         	'Master (Salesman)',
         	'Master (Material Price)',
@@ -111,7 +110,6 @@ class UserGroupToNavSeeder extends Seeder
             'Peso Value',
             'Returns (Per Material)',
             'Returns (Peso Value)',
-            'User Management',
             'Master (Customer)',
         	'Master (Salesman)',
         	'Master (Material Price)',
@@ -144,7 +142,6 @@ class UserGroupToNavSeeder extends Seeder
             'Peso Value',
             'Returns (Per Material)',
             'Returns (Peso Value)',
-            'User Management',
             'Master (Customer)',
         	'Master (Material Price)',
             ];
@@ -167,8 +164,7 @@ class UserGroupToNavSeeder extends Seeder
         	$navs = [
         			'Sales & Collection',
         			'Unpaid Invoice',
-        			'Van Inventory',
-        			'Sync Data',
+        			'Van Inventory',        			
         			'Dashboard',
         			'Sales Report',
         			'BIR',
@@ -179,7 +175,6 @@ class UserGroupToNavSeeder extends Seeder
             		'Peso Value',
         			'Returns (Per Material)',
         			'Returns (Peso Value)',
-        			'User Management',
         			'Master (Customer)',
         			'Master (Material Price)',
         			'Master (Salesman)',
@@ -189,7 +184,7 @@ class UserGroupToNavSeeder extends Seeder
         	{
         		if($menuId = DB::table('navigation')->where('name','=',$nav)->value('id'))
         		{
-        			$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$vanID,'created_at' => new DateTime()];
+        			$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$guest1,'created_at' => new DateTime()];
         		}
         	}
         	DB::table('user_group_to_nav')->insert($mappings);
@@ -203,7 +198,6 @@ class UserGroupToNavSeeder extends Seeder
         			'Sales & Collection',
         			'Unpaid Invoice',
         			'Van Inventory',
-        			'Sync Data',
         			'Dashboard',
         			'Sales Report',
         			'Report',
@@ -213,7 +207,6 @@ class UserGroupToNavSeeder extends Seeder
             		'Peso Value',
         			'Returns (Per Material)',
         			'Returns (Peso Value)',
-        			'User Management',
         			'Master (Customer)',
         			'Master (Material Price)',
         	];
@@ -222,7 +215,7 @@ class UserGroupToNavSeeder extends Seeder
         	{
         		if($menuId = DB::table('navigation')->where('name','=',$nav)->value('id'))
         		{
-        			$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$vanID,'created_at' => new DateTime()];
+        			$mappings[] = ['navigation_id'=>$menuId,'user_group_id'=>$guest2,'created_at' => new DateTime()];
         		}
         	}
         	DB::table('user_group_to_nav')->insert($mappings);

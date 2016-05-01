@@ -20,7 +20,7 @@
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 			
-				{!!Html::topen()!!}
+				{!!Html::topen(['no_download'=>$isGuest2])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<tr ng-repeat="record in records|filter:query">

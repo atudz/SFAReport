@@ -2,7 +2,7 @@
 
 Html::macro('topen', function($options=[]) {
 
-	$no_download = isset($options['no_download']);
+	$no_download = isset($options['no_download']) && $options['no_download'];
 	
 	$no_search = isset($options['no_search']);
 	$html = '<div class="col-sm-12 form-group row">';
@@ -17,6 +17,7 @@ Html::macro('topen', function($options=[]) {
 						</div>
 			      	</div>';
 	}
+
 	if(!$no_download)
 	{						
 		$html.= '<div class="pull-right">					
@@ -26,9 +27,9 @@ Html::macro('topen', function($options=[]) {
 					      </button>
 					      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
 							';
-		if(!isset($options['no_xls']))
+		if(!isset($options['no_xls']) || !$options['no_xls'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'xlsx\')">Excel</a></li>';
-		if(!isset($options['no_pdf']))
+		if(!isset($options['no_pdf']) || !$options['no_pdf'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
 							      
 		$html .= '	      </ul>

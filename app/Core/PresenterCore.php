@@ -54,8 +54,7 @@ class PresenterCore extends Controller
 
 	public function __construct()
     {
-        $this->middleware('auth', ['except' => ['login','forgotPassword']]);
-        $this->middleware('page.access', ['except' => ['login','forgotPassword']]);
+        $this->middleware('auth', ['except' => ['login','forgotPassword']]);        
         $this->view = new \stdClass();
         $this->request = app('request');
     }
@@ -104,6 +103,8 @@ class PresenterCore extends Controller
 		$this->view->isAdmin = $this->isAdmin();
 		$this->view->isAuditor = $this->isAuditor();
 		$this->view->isAccounting = $this->isAcounting();
+		$this->view->isGuest1 = $this->isGuest1();
+		$this->view->isGuest2 = $this->isGuest2();
 
 		return view($templateName,$data, (array)$this->view);
 	}
@@ -238,6 +239,32 @@ class PresenterCore extends Controller
 	
 		$group = auth()->user()->group->name;
 		return ('Accounting in charge' == $group);
+	}
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
+	public function isGuest1()
+	{
+		if(!auth()->user())
+			return false;
+	
+		$group = auth()->user()->group->name;
+		return ('Guest1' == $group);
+	}
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
+	public function isGuest2()
+	{
+		if(!auth()->user())
+			return false;
+	
+		$group = auth()->user()->group->name;
+		return ('Guest2' == $group);
 	}
 	
 	/**
