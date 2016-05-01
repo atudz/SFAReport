@@ -492,11 +492,11 @@
 				    	stocks: data.stocks,
 				    	show_stocks: data.total_stocks,
 				    	replenishment: data.replenishment,		    	
-				    	showBody: data.total,
+				    	showBody: !data.first_upload && data.total,
 				    	showReplenishment: !data.first_upload && data.replenishment.total,
 				    	short_over_stocks: data.short_over_stocks,
 				    	stock_on_hand: data.stock_on_hand,
-				    	first_upload: data.first_upload,
+				    	first_upload: data.first_upload
 			    	});
 	    			$('#no_records_div').hide();
 	    			fetch = false;

@@ -206,7 +206,7 @@ class ReportsPresenter extends PresenterCore
     	$this->view->companyCode = $this->getCompanyCode();
     	$this->view->tableHeaders = $this->getUnpaidColumns();
     	
-    	$this->view->from = (new Carbon(config('system.go_live_date')))->format('m/d/Y');
+    	$this->view->from = (new Carbon(config('system.go_live_date')))->subDay()->format('m/d/Y');
     	$this->view->to = (new Carbon())->format('m/d/Y');
     	
     	return $this->view('unpaidInvoice');
@@ -1846,6 +1846,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
     	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
+    	$prepare->orderBy('txn_replenishment_header.replenishment_header_id','desc');
     	
     	$referenceNumFilter = FilterFactory::getInstance('Text');
     	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
@@ -1853,8 +1854,8 @@ class ReportsPresenter extends PresenterCore
     	if($this->request->has('salesman_code'))
     	{
     		$prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
-    	}
-    	
+    	}    	    
+    	    	
     	$replenishment = $prepare->first();
     	
     	$firstUpload = false;
@@ -1904,8 +1905,7 @@ class ReportsPresenter extends PresenterCore
     	$data['replenishment'] = (array)$replenishment;
     	if($reports && $hasReplenishment && $firstUpload)
     	{
-    		$beginningBalance = (array)$replenishment;
-    		unset($beginningBalance['reference_number'],$beginningBalance['replenishment_date']);
+    		$beginningBalance = (array)$replenishment;    		
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);    		
     	}
     			
@@ -2081,7 +2081,7 @@ class ReportsPresenter extends PresenterCore
     		$data['total'] = count($stocks);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	if($reports && ($records || $stocks || $hasReplenishment))
+    	if($reports && ($records || $stocks || $hasReplenishment) && !$firstUpload)
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
@@ -2107,9 +2107,11 @@ class ReportsPresenter extends PresenterCore
     		$beginningBalance = (array)$replenishment;
     		unset($beginningBalance['reference_number'],$beginningBalance['replenishment_date']);
     		if(!$firstUpload)
+    		{
     			$reportRecords[] = array_merge(['customer_name'=>'<strong>Actual Count</strong>'],(array)$replenishment);
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
+    			$reportRecords[] = array_merge(['customer_name'=>'<strong>Short/Over Stocks</strong>'],$shortOverStocks);
+    			$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
+    		}
     	}
     	
     	
