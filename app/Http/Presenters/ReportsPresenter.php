@@ -37,7 +37,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function index()
     {
-    	$menus = \DB::table('navigation')->get();
+    	$menus = \DB::table('navigation')->where('summary',1)->get();
     	$menuList = [];
     	foreach($menus as $menu)
     	{

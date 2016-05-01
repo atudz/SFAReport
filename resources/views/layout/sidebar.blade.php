@@ -11,25 +11,25 @@
 	 @if(isset($menu))
             @foreach($menu as $nav)
             {{--*/ $counter++ /*--}}
-            <li @if(count($nav['navitems'])) class="parent" href="#sub-item-{{$counter}}" @endif>
-            <a href="@if($nav['url'])#{{$nav['url']}}@endif"><span class="{{$nav['class']}}"></span>             
-            	{{$nav['name']}} 
-            	@if(count($nav['navitems'])) 
-            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
-            	@endif
-            </a>
-            
-            @if(count($nav['navitems']))
-            <ul class="children collapse" id="sub-item-{{$counter}}">
-                @foreach($nav['navitems'] as $item)
-                	<li>
-                		<a href="#{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
-                	</li>
-                @endforeach
-            </ul>
-            @endif
-            </li>
-        @endforeach
+	            <li @if(count($nav['sub'])) class="parent" href="#sub-item-{{$counter}}" @endif>
+	            <a href="@if($nav['url'])#{{$nav['url']}}@endif"><span class="{{$nav['class']}}"></span>             
+	            	{{$nav['name']}} 
+	            	@if($nav['sub'] && count($nav['sub'])) 
+	            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+	            	@endif
+	            </a>
+	            
+	            @if($nav['sub'] && count($nav['sub']))	            
+	            <ul class="children collapse" id="sub-item-{{$counter}}">
+	                @foreach($nav['sub'] as $item)
+	                	<li>
+	                		<a href="#{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
+	                	</li>
+	                @endforeach
+	            </ul>
+	            @endif
+	            </li>
+        	@endforeach
     @endif
 	</ul>
 </div><!--/.sidebar-->

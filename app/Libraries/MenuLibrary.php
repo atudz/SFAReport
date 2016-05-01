@@ -5,6 +5,7 @@ namespace App\Libraries;
 use App\Interfaces\SingletonInterface;
 use App\Core\LibraryCore;
 use App\Factories\ModelFactory;
+use App\Factories\LibraryFactory;
 
 /**
  * This is a library class for Menu
@@ -83,40 +84,41 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 	 */
 	protected function prepare()
 	{
-		if(app('session')->has('menu_list'))
+		if(\Session::has('menu_list'))
 		{
 			$this->menuList = app('session')->pull('menu_list');
 		}
 		elseif(\Auth::user())
 		{
 			$userId = \Auth::user()->id;
-			$groupId = \Auth::user()->group->id;
-
-			$excludeGroups = (isset($this->menuItemExclude[$groupId])) ? $this->menuItemExclude[$groupId]:[];
-
-			$userModel = ModelFactory::getInstance('User');
-
-			$user = $userModel->with(['group.navigations' => function($query)
-						{
-							$query->where('navigation.active','=',1);
-						},
-						'group.navigations.navitems' => function($query) use ($excludeGroups)
-						{
-							$query->where('navigation_item.active','=',1);
-							$query->whereNotIn('navigation_item.url', $excludeGroups);
-						}
-					])->find($userId);
-
-			$this->menuList = $user->group->navigations->sortBy(function($navs) {
-									return $navs->id;
-								})->toArray();
-
+			$user = ModelFactory::getInstance('User')
+						->with(['group'=>function($query){
+									$query->select(['user_group.id']);
+								},
+								'group.navigations'=>function($query){
+									$query->select(['navigation.id']);
+								}])
+						->find($userId,['user.id','user.user_group_id']);
+								
+			$navIds = [];
+			foreach($user->group->navigations as $nav)
+			{
+				$navIds[] = $nav->id;						
+			}			
+			
+			$nav = ModelFactory::getInstance('Navigation');
+			$treeLib = LibraryFactory::getInstance('DataTree',$nav,'parent_id');
+			$treeLib->addSort('order');
+			$treeLib->addwhereIn('id', $navIds);
+			$navs = $treeLib->getData();
+			
+			$this->menuList = $navs;
+			
 			// store this to session so that we'll just pull the data from session
 			// and no longer need to Query again
-			
-			//app('session')->put('menu_list', $this->menuList); 
+			\Session::put('menu_list', $this->menuList); 
 		}
-
+		
 		$this->prepared = true;
 	}
 

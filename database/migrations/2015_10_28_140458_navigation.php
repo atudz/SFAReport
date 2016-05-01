@@ -18,6 +18,10 @@ class Navigation extends Migration
 			$table->string('name', 255)->nullable();
             $table->string('url', 255)->nullable();
 			$table->string('class', 255)->nullable();
+			$table->unsignedInteger('parent_id')->index()->default(0);
+			$table->unsignedTinyInteger('active')->default(1);
+			$table->unsignedInteger('order')->default(0);
+			$table->unsignedTinyInteger('summary')->default(0);
 		});
     }
 

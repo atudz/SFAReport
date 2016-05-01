@@ -10,6 +10,7 @@ use App\Factories\PresenterFactory;
 use Illuminate\Http\Request;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use App\Factories\ModelFactory;
 /**
  * This class is a wrapper class for Laravel's Controller.
  * Its mainly used for the core class for Presenters.
@@ -54,6 +55,7 @@ class PresenterCore extends Controller
 	public function __construct()
     {
         $this->middleware('auth', ['except' => ['login','forgotPassword']]);
+        $this->middleware('page.access', ['except' => ['login','forgotPassword']]);
         $this->view = new \stdClass();
         $this->request = app('request');
     }
@@ -236,6 +238,20 @@ class PresenterCore extends Controller
 	
 		$group = auth()->user()->group->name;
 		return ('Accounting in charge' == $group);
+	}
+	
+	/**
+	 * Check if user has access
+	 * @param unknown $name
+	 */
+	public function hasPageAccess($name)
+	{
+		$groupId = auth()->user()->user_group_id;
+		$navId = ModelFactory::getInstance('Navigation')->where('name',$name)->first()->id;
+		return ModelFactory::getInstance('UserGroupToNav')
+					->where('navigation_id',$navId)
+					->where('user_group_id',$groupId)
+					->exists();
 	}
 		
 }
