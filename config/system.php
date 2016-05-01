@@ -31,7 +31,7 @@ return [
 	'report_limit_pdf' => '100',
 		
 	// Go live date for van inventory
-	'go_live_date' => '2016-05-02',
+	'go_live_date' => '2016-05-01',
 		
 	// Maximum admin users
 	'max_admin_users' => 6	
