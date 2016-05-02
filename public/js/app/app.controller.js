@@ -147,7 +147,9 @@
 		          'reference_number'
 		];
 	    
+	    toggleLoading(true);
 	    fetchMore(scope,API,params,log, InventoryFixTable);
+	    toggleLoading();
 	    	    
 	    // Filter table records	    		
 		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
@@ -492,7 +494,7 @@
 				    	stocks: data.stocks,
 				    	show_stocks: data.total_stocks,
 				    	replenishment: data.replenishment,		    	
-				    	showBody: !data.first_upload && data.total,
+				    	showBody: data.total,
 				    	showReplenishment: !data.first_upload && data.replenishment.total,
 				    	short_over_stocks: data.short_over_stocks,
 				    	stock_on_hand: data.stock_on_hand,
@@ -523,7 +525,7 @@
 					});
 				    //console.log('Build table');
 	    		} else {
-	    			toggleLoading();
+	    			//toggleLoading();
 	    			$('#no_records_div').show();
 	    			$("table.table").floatThead('destroy');
 		    		console.log('Destroy table');

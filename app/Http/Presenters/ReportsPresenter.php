@@ -1835,7 +1835,7 @@ class ReportsPresenter extends PresenterCore
     			'total' => 0	
     		];
     		
-    		return response()->json($data);
+    		return $reports ? [] : response()->json($data);
     	} 
     	
     	$reportRecords = [];    	
@@ -2089,7 +2089,7 @@ class ReportsPresenter extends PresenterCore
     		$data['total'] = count($stocks);
     	
     	$data['stock_on_hand'] = $stockOnHand;
-    	if($reports && ($records || $stocks || $hasReplenishment) && !$firstUpload)
+    	if($reports && ($records || $stocks || $hasReplenishment))
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Stock On Hand</strong>'],$stockOnHand);
     	
     	// Short over stocks
