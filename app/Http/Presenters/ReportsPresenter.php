@@ -507,7 +507,7 @@ class ReportsPresenter extends PresenterCore
 				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
     			
 				   coltbl.or_date,
-	               coltbl.or_number,
+	               UPPER(coltbl.or_number) or_number,
 				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) cash_amount,
 				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) check_amount,
 				   coltbl.bank,

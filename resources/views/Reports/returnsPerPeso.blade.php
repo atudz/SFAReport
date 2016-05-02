@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Sales Report','Returns (Per Peso)'])!!}
-{!!Html::pageheader('Returns (Per Peso)')!!}
+{!!Html::breadcrumb(['Sales Report','Returns (Peso Value)'])!!}
+{!!Html::pageheader('Returns Peso Value')!!}
 
 <div class="row">
 	<div class="col-lg-12">
