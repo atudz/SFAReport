@@ -8,7 +8,11 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
-						{!!Html::select('salesman','Salesman', $salesman)!!}
+						@if($isSalesman)
+							{!!Html::select('salesman','Salesman', $salesman,'')!!}
+						@else
+							{!!Html::select('salesman','Salesman', $salesman)!!}
+						@endif
 						{!!Html::select('company_code','Company Code', $companyCode)!!}																	
 						{!!Html::select('customer','Customer', $customers)!!}
 					</div>					

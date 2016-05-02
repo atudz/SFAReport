@@ -100,7 +100,8 @@ class ReportsPresenter extends PresenterCore
     			$this->view->areas = $this->getArea();
     			$this->view->items = $this->getItems();
     			$this->view->segments = $this->getItemSegmentCode();
-    			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();    			 
+    			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('salesReportPerMaterial');
     		case 'perpeso':
     			$this->view->companyCode = $this->getCompanyCode();    			
@@ -108,6 +109,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->customers = $this->getCustomer();    			 
     			$this->view->areas = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesReportPesoColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('salesReportPerPeso');
     		case 'returnpermaterial':
     			$this->view->companyCode = $this->getCompanyCode();
@@ -117,13 +119,15 @@ class ReportsPresenter extends PresenterCore
     			$this->view->customers = $this->getCustomer();
     			$this->view->segments = $this->getItemSegmentCode();
     			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('returnsPerMaterial');
     		case 'returnperpeso':
     			$this->view->customers = $this->getCustomer();
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->areas = $this->getArea();
-    			$this->view->tableHeaders = $this->getReturnReportPerPesoColumns();    			
+    			$this->view->tableHeaders = $this->getReturnReportPerPesoColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('returnsPerPeso');
     		case 'customerlist':
     			$this->view->salesman = $this->getSalesman();
@@ -132,6 +136,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->priceGroup = $this->getPriceGroup();
     			$this->view->tableHeaders = $this->getCustomerListColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('customerList');
     		case 'salesmanlist':
     			$this->view->salesman = $this->getSalesman();
@@ -139,6 +144,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->tableHeaders = $this->getSalesmanListColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('salesmanList');
     		case 'materialpricelist':
     			$this->view->segmentCodes = $this->getItemSegmentCode();
@@ -147,6 +153,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->tableHeaders = $this->getMaterialPriceListColumns();
+    			$this->view->isSalesman = $this->isSalesman();
     			return $this->view('materialPriceList');
     	}
     }
@@ -202,12 +209,13 @@ class ReportsPresenter extends PresenterCore
     public function unpaidInvoice()
     {
     	$this->view->salesman = $this->getSalesman();
-    	$this->view->customers = $this->getCustomer($this->isSalesman());
+    	$this->view->customers = $this->getCustomer();
     	$this->view->companyCode = $this->getCompanyCode();
     	$this->view->tableHeaders = $this->getUnpaidColumns();
     	
     	$this->view->from = (new Carbon(config('system.go_live_date')))->subDay()->format('m/d/Y');
     	$this->view->to = (new Carbon())->format('m/d/Y');
+    	$this->view->isSalesman = $this->isSalesman();
     	
     	return $this->view('unpaidInvoice');
     }
@@ -2644,6 +2652,11 @@ class ReportsPresenter extends PresenterCore
     				return $model->where('vw_inv.invoice_number','LIKE','%'.$self->getValue().'%');
     			});
     	 
+    	if($this->isSalesman())
+    	{
+    		$prepare->where('vw_inv.salesman_code',auth()->user()->salesman_code);
+    	}
+    	
     	return $prepare;
     }
     
@@ -3287,6 +3300,11 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
     	}
     	
+    	if($this->isSalesman())
+    	{
+    		$prepare->where('sales.salesman_code',auth()->user()->salesman_code);
+    	}
+    	
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('sales.invoice_date','desc');
@@ -3632,6 +3650,11 @@ class ReportsPresenter extends PresenterCore
 			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
 		}
 		
+		if($this->isSalesman())
+		{
+			$prepare->where('sales.salesman_code',auth()->user()->salesman_code);
+		}
+		
 		if(!$this->request->has('sort'))
 		{
 			$prepare->orderBy('sales.invoice_date','desc');
@@ -3832,6 +3855,11 @@ class ReportsPresenter extends PresenterCore
 			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
 		}
 
+		if($this->isSalesman())
+		{
+			$prepare->where('txn_return_header.salesman_code',auth()->user()->salesman_code);	
+		}
+		
 		if(!$this->request->has('sort'))
 		{
 			$prepare->orderBy('txn_return_header.return_date','desc');
@@ -4003,6 +4031,11 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
     	
+    	if($this->isSalesman())
+    	{
+    		$prepare->where('txn_return_header.salesman_code',auth()->user()->salesman_code);
+    	}
+    	
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('txn_return_header.return_date','desc');
@@ -4069,20 +4102,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $areaFilter->addFilter($prepare,'area',
     			function($self, $model){
     				return $model->where('app_area.area_code','=',$self->getValue());
-    			});
-    	
-    	/* $priceGroup = FilterFactory::getInstance('Select');
-    	$prepare = $priceGroup->addFilter($prepare,'area',
-    			function($self, $model){
-    				return $model->where('app_area.area_code','=',$self->getValue());
-    			});
-    	
-    	
-    	$areaFilter = FilterFactory::getInstance('Select');
-    	$prepare = $areaFilter->addFilter($prepare,'area',
-    			function($self, $model){
-    				return $model->where('app_area.area_code','=',$self->getValue());
-    			}); */
+    			});    	
     	 
     	$statusFilter = FilterFactory::getInstance('Select');
     	$prepare = $statusFilter->addFilter($prepare,'status');
@@ -4106,6 +4126,9 @@ class ReportsPresenter extends PresenterCore
     	 
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
+
+    	if($this->isSalesman())
+			$prepare->where('app_salesman.salesman_code',auth()->user()->salesman_code);
 
     	$prepare->where('app_salesman_customer.status','=','A');
     	$prepare->where('app_area.status','=','A');
@@ -4201,6 +4224,8 @@ class ReportsPresenter extends PresenterCore
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'sfa_modified_date');
     	
+    	if($this->isSalesman())
+    		$prepare->where('app_salesman.salesman_code',auth()->user()->salesman_code);
     	
     	$prepare->where('app_salesman_customer.status','=','A');
     	$prepare->where('app_customer.status','=','A');
@@ -4792,7 +4817,7 @@ class ReportsPresenter extends PresenterCore
      * Get Salesman 
      * @return multitype:
      */
-    public function getSalesman($withCode=true)
+    public function getSalesman($withCode=true, $strictSalesman=true)
     {
     	$select = 'salesman_code, salesman_name name';
     	if($withCode)
@@ -4800,11 +4825,15 @@ class ReportsPresenter extends PresenterCore
     		$select = 'salesman_code, CONCAT(salesman_code,\' - \',salesman_name) name';
     	}
     	
-    	return \DB::table('app_salesman')
-    				->selectRaw($select)
-    				->where('status','=','A')
-    				->orderBy('name')    				
-    				->lists('name','salesman_code');
+    	$prepare = \DB::table('app_salesman')
+	    				->selectRaw($select)
+	    				->where('status','=','A')
+	    				->orderBy('name');
+    	
+    	if($strictSalesman && $this->isSalesman())
+    		$prepare->where('salesman_code',auth()->user()->salesman_code);
+    	
+    	return $prepare->lists('name','salesman_code');
     }
     
     
@@ -4812,13 +4841,13 @@ class ReportsPresenter extends PresenterCore
      * Get Customers
      * @return multitype:
      */
-    public function getCustomer($myCustomerOnly=false)
+    public function getCustomer($strictSalesman=true)
     {
     	$prepare = \DB::table('app_customer')
 			    	->where('status','=','A')
 			    	->orderBy('customer_name');
     	
-    	if($myCustomerOnly)
+    	if($strictSalesman && $this->isSalesman())
     	{
     		$customers = \DB::table('app_salesman_customer')
 	    					->distinct()

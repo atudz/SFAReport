@@ -10,7 +10,11 @@
 				<!-- Filter -->			
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">						
-						{!!Html::select('salesman_code','Salesman', $salesman)!!}
+						@if($isSalesman)
+							{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
+						@else
+							{!!Html::select('salesman_code','Salesman', $salesman)!!}
+						@endif
 						{!!Html::select('area','Area', $areas)!!}						
 						{!!Html::select('customer','Customer Name', $customers)!!}	
 						{!!Html::select('segment','Segment', $segments)!!}													 			
