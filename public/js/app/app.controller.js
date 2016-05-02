@@ -1786,6 +1786,7 @@
 				       mobile: $('#mobile').val(),
 				       role: $('#role').val(),
 				       area: $('#area').val(),
+				       salesman_code: $('#salesman_code').val(),
 				       assignment_type: $('#assignment_type').val(),
 				       assignment_date_from: $('#assignment_date_from').val(),
 				       assignment_date_to: $('#assignment_date_to').val()

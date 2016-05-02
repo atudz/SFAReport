@@ -202,7 +202,7 @@ class ReportsPresenter extends PresenterCore
     public function unpaidInvoice()
     {
     	$this->view->salesman = $this->getSalesman();
-    	$this->view->customers = $this->getCustomer();
+    	$this->view->customers = $this->getCustomer($this->isSalesman());
     	$this->view->companyCode = $this->getCompanyCode();
     	$this->view->tableHeaders = $this->getUnpaidColumns();
     	
@@ -4173,6 +4173,7 @@ class ReportsPresenter extends PresenterCore
     			';
     	 
     	$prepare = \DB::table('app_salesman')
+    			->distinct()
 		    	->selectRaw($select)		    	
 		    	->leftJoin('app_salesman_customer','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
 		    	->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
@@ -4811,12 +4812,23 @@ class ReportsPresenter extends PresenterCore
      * Get Customers
      * @return multitype:
      */
-    public function getCustomer()
+    public function getCustomer($myCustomerOnly=false)
     {
-    	return \DB::table('app_customer')
+    	$prepare = \DB::table('app_customer')
 			    	->where('status','=','A')
-			    	->orderBy('customer_name')
-			    	->lists('customer_name','customer_code');
+			    	->orderBy('customer_name');
+    	
+    	if($myCustomerOnly)
+    	{
+    		$customers = \DB::table('app_salesman_customer')
+	    					->distinct()
+	    					->select(['salesman_customer_id','customer_code'])
+	    					->where('salesman_code',auth()->user()->salesman_code)
+	    					->lists('customer_code');
+    		$prepare->whereIn('customer_code',$customers);
+    	}
+    	    	
+    	return $prepare->lists('customer_name','customer_code');
     }
     
     /**

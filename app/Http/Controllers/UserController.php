@@ -72,6 +72,7 @@ class UserController extends ControllerCore
      	$user->gender = $request->get('gender');
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
+        $user->salesman_code = $request->get('salesman_code');
         
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');

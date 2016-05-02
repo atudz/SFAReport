@@ -245,6 +245,19 @@ class PresenterCore extends Controller
 	 * Determine if user is restricted
 	 * @return boolean
 	 */
+	public function isSalesman()
+	{
+		if(!auth()->user())
+			return false;
+	
+		$group = auth()->user()->group->name;
+		return ('Van Salesman' == $group);
+	}
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
 	public function isGuest1()
 	{
 		if(!auth()->user())

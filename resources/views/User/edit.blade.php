@@ -121,6 +121,13 @@
 			 				<label for="mobile" class="col-sm-3 control-label">Mobile No.</label>
 			 				<div class="col-sm-6"><input placeholder="" class="form-control" id="mobile" name="mobile" type="text" ng-model="records.mobile">	</div>
 			 			</div>
+					</div>
+					
+					<div class="row form-input-field">
+						<div class="form-group form-group-sm">
+			 				<label for="salesman_code" class="col-sm-3 control-label">Salesman Code</label>
+			 				<div class="col-sm-6"><input placeholder="" class="form-control" id="salesman_code" name="salesman_code" type="text" ng-model="records.salesman_code">	</div>
+			 			</div>
 					</div>									
 				</div>
 					
