@@ -2072,7 +2072,7 @@ class ReportsPresenter extends PresenterCore
     		else
     			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		//$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
-    		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
+    		//$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
     		
     		if($stockOnHand[$code])
@@ -2189,7 +2189,7 @@ class ReportsPresenter extends PresenterCore
     	
     	if($replenishment)
     	{
-    		$dateStart = (new Carbon($replenishment->replenishment_date))->addDays(1)->format('Y-m-d');    		
+    		$dateStart = (new Carbon($replenishment->replenishment_date))->format('Y-m-d');    		
     	}
     	else 
     	{
