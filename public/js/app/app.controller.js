@@ -1989,6 +1989,8 @@
 	    var params = {};
 	    
 	    API.get(params,function(data){
+	    	//angular acts weird with integer option values
+	    	data.user_group_id = String(data.user_group_id);
 	    	$scope.records = data;
 	    	//$log.info(data);
 	    	$scope.id = data.id;
