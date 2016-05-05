@@ -7,7 +7,7 @@
                 <div class="logo-login">
                     <img src="img/sfi_logo.jpg" />
                 </div>
-                <div class="panel-heading">SFA Reports - Forgot Password</div>
+                <div class="panel-heading">SFA SFI Reports - Forgot Password</div>
                 <div class="panel-body">
 
                 <div class="alert-danger no-padding">
