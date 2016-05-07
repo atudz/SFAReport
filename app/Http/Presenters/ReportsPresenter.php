@@ -2859,7 +2859,18 @@ class ReportsPresenter extends PresenterCore
     			bir.negate,
     			bir.document_date,
 				SUBSTRING_INDEX(app_customer.customer_name,\'_\',-1) name,
-				CONCAT(app_customer.address_1,\', \', CONCAT(app_customer.address_2,\', \', app_customer.address_3)) customer_address,
+    			IF(app_customer.address_1=\'\',
+    				IF(app_customer.address_2=\'\',app_customer.address_3,
+    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+    					),
+    				IF(app_customer.address_2=\'\',
+    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+    					  IF(app_customer.address_3=\'\',
+    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+    						)
+    					)
+    			) customer_address,
 				app_area.area_name depot,
 				bir.reference,
 				bir.tax_amount,
