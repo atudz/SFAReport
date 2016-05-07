@@ -84,7 +84,7 @@ class UserPresenter extends PresenterCore
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
-		$admin = $this->hasAdminRole();
+		$admin = $this->isAdmin();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
 		$this->view->readOnly = $admin ? '' : 'readonly';
 		return $this->view('myProfile');
