@@ -204,34 +204,8 @@
 					@foreach($rows as $key=>$row)
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
-								@if(is_object($currentSummary) && isset($currentSummary->$row))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$currentSummary->$row!!}
-										@else
-											({!!number_format($currentSummary->$row,2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$currentSummary->$row!!}
-										@else
-											{!!number_format($currentSummary->$row,2,'.',',')!!}
-										@endif
-									@endif									
-								@elseif(is_array($currentSummary) && isset($currentSummary[$row]))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$currentSummary[$row]!!}
-										@else
-											({!!number_format($currentSummary[$row],2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$currentSummary[$row]!!}
-										@else
-											{!!number_format($currentSummary[$row],2,'.',',')!!}
-										@endif
-									@endif
+								@if(isset($currentSummary[$row]))
+									{!!$currentSummary[$row]!!}									
 								@endif													
 							</th>
 						@endif						

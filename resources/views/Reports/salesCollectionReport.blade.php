@@ -185,48 +185,48 @@
 					<td></td>
 					<td></td>
 					<td class="bold">
-						<span ng-bind="formatNumber(summary.so_total_served)"></span>
+						[[summary.so_total_served]]						
 					</td>
 					<td>
-						<span ng-bind="formatNumber(summary.so_total_item_discount)"></span>
+						[[summary.so_total_item_discount]]						
 					</td>
 					<td class="bold">
-						<span ng-bind="formatNumber(summary.so_total_collective_discount)"></span>
+						[[summary.so_total_collective_discount]]						
 					</td>
 					<td class="bold">
-						<span ng-bind="formatNumber(summary.total_invoice_amount)"></span>
-					</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.RTN_total_gross)"></span>
-					</td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.RTN_total_collective_discount)"></span>
-					</td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.RTN_net_amount)"></span>
-					</td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.total_invoice_net_amount)"></span>
-					</td>
-					<td></td>
-					<td></td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.cash_amount)"></span>
-					</td>
-					<td class="bold">
-						<span ng-bind="formatNumber(summary.check_amount)"></span>
+						[[summary.total_invoice_amount]]						
 					</td>
 					<td></td>
 					<td></td>
 					<td></td>
+					<td class="bold">
+						[[summary.RTN_total_gross]]						
+					</td>
+					<td class="bold">
+						[[summary.RTN_total_collective_discount]]						
+					</td>
+					<td class="bold">
+						[[summary.RTN_net_amount]]						
+					</td>
+					<td class="bold">
+						[[summary.total_invoice_net_amount]]						
+					</td>
+					<td></td>
+					<td></td>
+					<td class="bold">
+						[[summary.cash_amount]]						
+					</td>
+					<td class="bold">
+						[[summary.check_amount]]						
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>
 					<td class="bold">
-						<span ng-bind="formatNumber(summary.total_collected_amount)"></span>
+						[[summary.total_collected_amount]]						
 					</td>									
 				</tr>
 				</tbody>

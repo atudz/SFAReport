@@ -302,6 +302,7 @@ class ReportsPresenter extends PresenterCore
     		foreach($cols as $key)
     		{    			
     			$summary[$key] += $val->$key;
+    			$summary[$key] = number_format($summary[$key],2);
     		}
     	}
     	
@@ -5043,12 +5044,11 @@ class ReportsPresenter extends PresenterCore
     				$hasDateFilter = true;
     			}
     			    			
-    			if($from->eq($to))
+    			if($hasDateFilter && $from->eq($to))
     			{
     				$scr = $this->request->get('salesman').'-'.$from->format('mdY');
     			}
-    			elseif($from->lt($to) && $to->lte($endOfWeek) && 
-    				($hasDateFilter && $to->diffInDays($from) < 8))
+    			elseif($hasDateFilter &&  $from->lt($to) && $to->lte($endOfWeek) && $to->diffInDays($from) < 8)
     			{
     				$golive = new Carbon(config('system.go_live_date'));
     				$numOfWeeks = $to->diffInWeeks($golive) + 1;    				    		
