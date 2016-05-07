@@ -1372,9 +1372,9 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     
-			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
+			WHERE ((tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\') ' .$except. '
+    					   OR (tas.activity_code not like \'%C%\')) ' .$except. '
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
