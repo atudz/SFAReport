@@ -256,7 +256,7 @@
 				<th align="right">Total Current Check:</th>
 				<th align="left">___________________</th>
 				<th align="right">Generated on:</th>
-				<th align="left" style="text-decoration: underline">{{date("F j, Y g:i A")}}</th>		
+				<th align="left" style="text-decoration: underline">{{date("m/d/Y g:i A")}}</th>		
 			</tr>
 			
 			<tr>
