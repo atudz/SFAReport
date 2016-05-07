@@ -5020,15 +5020,35 @@ class ReportsPresenter extends PresenterCore
     			}    			
     			$current = array_splice($current, $offset, $limit);    			  		
     			
-    			$from = new Carbon($this->request->get('invoice_date_from'));
-    			$endOfWeek = (new Carbon($this->request->get('invoice_date_from')))->endOfWeek();
-    			$to = new Carbon($this->request->get('invoice_date_to'));
+    			$hasDateFilter = false;
+    			if($this->request->has('invoice_date_from'))
+    			{
+	    			$from = new Carbon($this->request->get('invoice_date_from'));
+	    			$endOfWeek = (new Carbon($this->request->get('invoice_date_from')))->endOfWeek();
+	    			$to = new Carbon($this->request->get('invoice_date_to'));
+	    			$hasDateFilter = true;
+    			}
+    			elseif($this->request->has('collection_date_from')) 
+    			{
+    				$from = new Carbon($this->request->get('collection_date_from'));
+    				$endOfWeek = (new Carbon($this->request->get('collection_date_from')))->endOfWeek();
+    				$to = new Carbon($this->request->get('collection_date_to'));
+    				$hasDateFilter = true;
+    			}
+    			elseif($this->request->has('posting_date_from'))
+    			{
+    				$from = new Carbon($this->request->get('posting_date_from'));
+    				$endOfWeek = (new Carbon($this->request->get('posting_date_from')))->endOfWeek();
+    				$to = new Carbon($this->request->get('posting_date_to'));
+    				$hasDateFilter = true;
+    			}
+    			    			
     			if($from->eq($to))
     			{
     				$scr = $this->request->get('salesman').'-'.$from->format('mdY');
     			}
     			elseif($from->lt($to) && $to->lte($endOfWeek) && 
-    				($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to') && $to->diffInDays($from) < 8))
+    				($hasDateFilter && $to->diffInDays($from) < 8))
     			{
     				$golive = new Carbon(config('system.go_live_date'));
     				$numOfWeeks = $to->diffInWeeks($golive) + 1;    				    		
