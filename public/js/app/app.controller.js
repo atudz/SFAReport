@@ -396,16 +396,18 @@
 	
 	function Calendar($scope, $http, $log)
 	{	
-		$scope.dateFrom = null;
-		
-		if($('input[name="default_from"]').val())		
-			$scope.dateFrom = new Date($('input[name="default_from"]').val());
-		
+		$scope.dateFrom = null;		
 	    $scope.dateTo = null;
 	    
-	    if($('input[name="default_to"]').val())	    
-	    	$scope.dateTo = new Date($('input[name="default_to"]').val());
+	    $scope.setFrom = function(from){
+	    	if(from)
+	    		$scope.dateFrom = new Date(from);
+	    }
 	    
+	    $scope.setTo = function(to){
+	    	if(to)
+	    		$scope.dateTo = new Date(to);
+	    }
 	    
 	    $scope.maxDate = new Date(2020, 5, 22);
 
