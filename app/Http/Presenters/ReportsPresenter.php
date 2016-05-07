@@ -4069,7 +4069,7 @@ class ReportsPresenter extends PresenterCore
     	$select = '
     			app_customer.customer_code,
 				app_customer.customer_name,
-				app_customer.address_1 address,
+				CONCAT(app_customer.address_1, \', \',app_customer.address_2,\', \',app_customer.address_3) address,
 				app_customer.area_code,
 				app_area.area_name,
 				app_customer.storetype_code,
