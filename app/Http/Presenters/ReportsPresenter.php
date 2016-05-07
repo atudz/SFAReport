@@ -3370,7 +3370,7 @@ class ReportsPresenter extends PresenterCore
     			TRUNCATE(coalesce(all_so.collective_discount_amount,0.00),2) collective_discount_amount,				    
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,			    	
-    			TRUNCATE(coalesce(all_so.total_sales,0.00),2) total_invoice,
+    			TRUNCATE(ROUND(coalesce(all_so.total_sales,0.00),2),2) total_invoice,
 				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,
 			
 				\'txn_sales_order_header\' invoice_table,
@@ -3502,7 +3502,7 @@ class ReportsPresenter extends PresenterCore
 			    CONCAT(\'(\',TRUNCATE(( SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00))*(coalesce(trhd.deduction_rate,0.00)/100)) ),2),\')\') collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    CONCAT(\'(\',TRUNCATE(( SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) ),2),\')\') total_invoice,
+			    SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
@@ -5832,7 +5832,7 @@ class ReportsPresenter extends PresenterCore
     		case 'salesreportpermaterial':
     			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    			$customer = $this->request->get('customer');
+    			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
     			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
@@ -5855,7 +5855,7 @@ class ReportsPresenter extends PresenterCore
     		case 'salesreportperpeso':
     			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    			$customer = $this->request->get('customer');
+    			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     			$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
@@ -5874,7 +5874,7 @@ class ReportsPresenter extends PresenterCore
     		case 'returnpermaterial':
     			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    			$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     			$material = $this->request->get('material') ? $this->getItems()[$this->request->get('material')] : 'All';
     			$segment = $this->request->get('segment') ? $this->getItemSegmentCode()[$this->request->get('segment')] : 'All';
@@ -5897,7 +5897,7 @@ class ReportsPresenter extends PresenterCore
     		case 'returnperpeso':
     				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
     				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    				$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
+    				$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     				$returnDate = ($this->request->get('return_date_from') && $this->request->get('return_date_to')) ? $this->request->get('return_date_from').' - '.$this->request->get('return_date_to') : 'All';
     				$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
