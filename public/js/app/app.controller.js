@@ -711,8 +711,15 @@
 		    	params = {invoice_date_from:formatted,invoice_date_to:formatted};	  
 		    	//log.info(params);
 		    }
+			else if(report == 'salescollectionsummary')
+		    {
+		    	params = {salesman:$('#salesman').val(),page_limit:50};
+		    	//log.info(params);
+		    	scope.page = 1;
+			    scope.perpage = 50;
+		    }
 			
-			//scope.toggleFilter = true;
+			scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		//log.info(data);
