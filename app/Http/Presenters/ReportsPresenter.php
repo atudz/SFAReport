@@ -2671,6 +2671,13 @@ class ReportsPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();    	
     	$data['total'] = $result->total();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedBir(false,true);
+    		$data['summary'] = $prepare->first();
+    	}
     
     	return response()->json($data);
     }
@@ -2679,7 +2686,7 @@ class ReportsPresenter extends PresenterCore
      * Return Prepared Bir
      * @return unknown
      */
-    public function getPreparedBir($report=false)
+    public function getPreparedBir($report=false,$summary=false)
     {
     	
     	$special = $this->getSpecialCustomerCode();
@@ -2884,6 +2891,20 @@ class ReportsPresenter extends PresenterCore
 				app_salesman.salesman_name assignment,
     			bir.area_code
     			';
+    	
+    	if($summary)
+    	{
+    		$select = '
+			      SUM(bir.tax_amount) tax_amount,
+			      SUM(bir.total_sales) total_sales,
+    			  SUM(bir.total_sales) sales,
+    			  SUM(bir.total_sales) local_sales,
+    			  SUM(bir.total_invoice_amount) total_invoice_amount,
+    			  SUM(bir.total_invoice_amount) term_cash,		
+    			  bir.negate	
+    			';
+    	}
+    	
     	$from = '( '.$querySales.' UNION ' .$queryRtn . ' ) bir';
     	
     	$prepare = \DB::table(\DB::raw($from))
@@ -5135,6 +5156,7 @@ class ReportsPresenter extends PresenterCore
     		case 'bir';
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedBir(true);
+    			$summary = $this->getPreparedBir(true,true)->first();
     			$rows = $this->getBirSelectColumns();
     			$header = 'BIR Report';
     			$filters = $this->getBirFilterData();

@@ -57,6 +57,40 @@
 							<td>[[record.assignment]]</td>
 						</tr>
 						
+						<!-- Summary total -->
+						<tr id="total_summary">
+							<th>Total</th>						
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.sales,summary.negate)"></span>
+							</td>
+							<td></td>							
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.total_sales,summary.negate)"></span>
+							</td>
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.tax_amount,summary.negate)"></span>
+							</td>
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.total_invoice_amount,summary.negate)"></span>
+							</td>
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.local_sales,summary.negate)"></span>
+							</td>
+							<td></td>
+							<td class="bold">
+								<span ng-bind="formatNumber(summary.term_cash,summary.negate)"></span>
+							</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						
 					</tbody>
 					{!!Html::tfooter(true,18)!!}
 				{!!Html::tclose()!!}				
