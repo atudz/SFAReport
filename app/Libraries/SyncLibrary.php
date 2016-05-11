@@ -141,6 +141,7 @@ class SyncLibrary extends LibraryCore
 		$filename = date('Y-m-d') . '.log';
 		if(file_exists(config('sync.dir').$filename))
 		{
+			chown(config('sync.dir').$filename, 'www-data');
 			chmod(config('sync.dir').$filename, 0775);
 		}
 		
