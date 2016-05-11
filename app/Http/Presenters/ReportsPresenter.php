@@ -4658,7 +4658,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Taxable Amount'],
     			['name'=>'Vat Amount'],
     			['name'=>'Discount Rate Per Item','sort'=>'discount_rate'],
-    			['name'=>'Discount Amount Per Item','sort'=>'discount_rate_amount'],
+    			['name'=>'Discount Amount Per Item','sort'=>'discount_amount'],
     			['name'=>'Collective Discount Rate'],
     			['name'=>'Collective Discount Amount','sort'=>'collective_discount_amount'],
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
