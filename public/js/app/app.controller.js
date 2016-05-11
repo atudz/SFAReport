@@ -414,18 +414,13 @@
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
 		    $event.stopPropagation();
-		    $scope[elementId] = true;
 
-		    if(elementId.endsWith('_to'))
-		    {
-		    	var baseId = elementId.replace('_to','');
-		    	$scope[baseId+'_from'] = false;
-		    }
-		    else if(elementId.endsWith('_from'))
-		    {
-		    	var baseId = elementId.replace('_from','');
-		    	$scope[baseId+'_to'] = false;
-		    }
+			$("input[id*='date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
 		};
 
 		$scope.dateOptions = {
