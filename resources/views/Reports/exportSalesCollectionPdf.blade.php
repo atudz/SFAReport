@@ -149,7 +149,7 @@
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							<strong>Date Remitted:</strong><span class="underline">{{date('m/d/Y')}}</span>
+							<strong>Date Remitted:</strong><span class="underline">__________</span>
 						</div>		
 						
 					</div>
