@@ -299,13 +299,16 @@ class ReportsPresenter extends PresenterCore
     	$cols = array_keys($summary);
     	foreach($data as $val)
     	{
-    		foreach($cols as $key)
-    		{    			
+    		foreach($cols as $key)    		
     			$summary[$key] += $val->$key;
-    			$summary[$key] = number_format($summary[$key],2);
-    		}
     	}
     	
+    	//format
+    	foreach($cols as $key)
+    	{    			    			
+    		$summary[$key] = number_format($summary[$key],2);
+    	}
+    	    	
     	return $summary;	
     }
     

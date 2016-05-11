@@ -187,7 +187,7 @@
 					<td class="bold">
 						[[summary.so_total_served]]						
 					</td>
-					<td>
+					<td class="bold">
 						[[summary.so_total_item_discount]]						
 					</td>
 					<td class="bold">
