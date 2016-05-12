@@ -1006,6 +1006,16 @@
 			var url = '/reports/getcount/'+report+'/'+type;
 			var delimeter = '?';
 			var query = '';
+
+			if('vaninventorycanned' == report || 'vaninventoryfrozen' == report)
+			{
+				if(!$('#transaction_date_from').val() || !$('#transaction_date_to').val())
+				{
+					alert('Transaction Date field is required.');
+					return false;
+				}
+			}
+
 			$.each(filter, function(index,val){
 				if(index > 0)
 					delimeter = '&';
