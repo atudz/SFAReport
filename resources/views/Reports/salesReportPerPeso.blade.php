@@ -53,19 +53,19 @@
 						<td>
 							@if($isAdmin || $isAuditor || $isAccounting)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
-	    							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	    							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
 	  						@else
-	  							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	  							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  						@endif
 						</td>
 						<td>
 							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
-	    							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+	    							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
 	  						@else
-	  							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+	  							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 	  						@endif
 						</td>
 						<td>
@@ -106,23 +106,23 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+							<span ng-bind="summary.gross_served_amount_formatted = formatNumber(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount,false)"></span>
-						</th>
-						<td></td>
-						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount,false)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount,true)"></span>
+						</th>
+						<td></td>
+						<th>
+							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount,true)"></span>
 						</th>
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="summary.total_invoice_formatted = formatNumber(summary.total_invoice)"></span>
 						</th>
 					</tr>
 					

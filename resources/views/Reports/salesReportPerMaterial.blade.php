@@ -56,19 +56,19 @@
 						<td>
 							@if($isAdmin)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
-	    							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	    							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
 	  						@else
-	  							<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+	  							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  						@endif
 						</td>
 						<td>
 							@if($isAdmin)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
-	    							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+	    							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
 	  						@else
-	  							<span ng-bind="formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy'"></span>
+	  							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 	  						@endif
 						</td>
 						<td>[[record.segment_code]]</td>
@@ -94,23 +94,23 @@
 						</td>
 						<td>[[record.uom_code]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_served_amount)"></span>
+							<span ng-bind="record.gross_served_amount_formatted = formatNumber(record.gross_served_amount)"></span>
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.vat_amount)"></span>
+							<span ng-bind="record.vat_amount_formatted = formatNumber(record.vat_amount)"></span>
 						</td>
 						<td>[[record.discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.discount_amount)"></span>
+							<span ng-bind="record.discount_amount_formatted = formatNumber(record.discount_amount)"></span>
 						</td>						
 						<td>[[record.collective_discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
+							<span ng-bind="record.collective_discount_amount_formatted = formatNumber(record.collective_discount_amount)"></span>
 						</td>
 						<td>[[record.discount_reference_num]]</td>
 						<td>[[record.discount_remarks]]</td>						
 						<td>
-							<span ng-bind="formatNumber(record.total_invoice)"></span>
+							<span ng-bind="record.total_invoice_formatted = formatNumber(record.total_invoice)"></span>
 						</td>
 					</tr>
 					
@@ -139,23 +139,23 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_served_amount)"></span>
+							<span ng-bind="summary.gross_served_amount_formatted = formatNumber(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount,true)"></span>
 						</th>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount)"></span>
+							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount)"></span>
 						</th>
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="summary.total_invoice_formatted = formatNumber(summary.total_invoice)"></span>
 						</th>
 					</tr>
 					

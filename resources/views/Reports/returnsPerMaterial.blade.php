@@ -45,10 +45,10 @@
 						<td>[[record.area]]</td>
 						<td>[[record.return_slip_num | uppercase]]</td>
 						<td>
-							<span ng-bind="formatDate(record.return_date) | date:'MM/dd/yyyy'"></span>
+							<span ng-bind="record.return_date_formatted = (formatDate(record.return_date) | date:'MM/dd/yyyy')"></span>
 						</td>
 						<td>
-							<span ng-bind="formatDate(record.return_posting_date) | date:'MM/dd/yyyy'"></span>
+							<span ng-bind="record.return_posting_date_formatted = (formatDate(record.return_posting_date) | date:'MM/dd/yyyy')"></span>
 						</td>
 						<td>[[record.segment_code]]</td>
 						<td>[[record.item_code]]</td>
@@ -57,23 +57,23 @@
 						<td>[[record.quantity]]</td>										
 						<td>[[record.uom_code]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.gross_amount)"></span>
+							<span ng-bind="record.gross_amount_formatted = formatNumber(record.gross_amount)"></span>
 						</td>
 						<td>
-							<span ng-bind="formatNumber(record.vat_amount)"></span>
+							<span ng-bind="record.vat_amount_formatted = formatNumber(record.vat_amount)"></span>
 						</td>
 						<td>[[record.discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.discount_amount)"></span>
+							<span ng-bind="record.discount_amount_formatted = formatNumber(record.discount_amount)"></span>
 						</td>
 						<td>[[record.collective_discount_rate]]</td>
 						<td>
-							<span ng-bind="formatNumber(record.collective_discount_amount)"></span>
+							<span ng-bind="record.collective_discount_amount_formatted = formatNumber(record.collective_discount_amount)"></span>
 						</td>
 						<td>[[record.discount_reference_num]]</td>
 						<td>[[record.discount_remarks]]</td>						
 						<td>
-							<span ng-bind="formatNumber(record.total_invoice)"></span>
+							<span ng-bind="record.total_invoice_formatted = formatNumber(record.total_invoice)"></span>
 						</td>
 					</tr>
 					
@@ -100,23 +100,23 @@
 						<td></td>												
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.gross_amount)"></span>
+							<span ng-bind="summary.gross_amount_formatted = formatNumber(summary.gross_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="formatNumber(summary.vat_amount)"></span>
+							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount,true)"></span>
 						</th>
 						<td>[[record.collective_discount_rate]]</td>
 						<th>
-							<span ng-bind="formatNumber(summary.collective_discount_amount,true)"></span>
+							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount,true)"></span>
 						</th>
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="summary.total_invoice_formatted = formatNumber(summary.total_invoice)"></span>
 						</th>
 					</tr>
 					
