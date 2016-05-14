@@ -58,5 +58,5 @@ return [
 	],
 		
 	// synchronization log storage directory
-	'dir' => storage_path('logs/sync/'),
+	'dir' => storage_path('logs/sync/sync.log'),
 ];
