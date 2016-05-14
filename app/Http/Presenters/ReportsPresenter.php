@@ -2818,8 +2818,8 @@ class ReportsPresenter extends PresenterCore
 				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')    			
     			';
     	
-    	$negate1 = $report ? 'CONCAT(\'(\',TRUNCATE(' : '';
-    	$negate2 = $report ? ',2),\')\')' : '';
+    	$negate1 = $report ? 'CONCAT(\'(\',TRUNCATE(ROUND(' : '';
+    	$negate2 = $report ? ',2),2),\')\')' : '';
     	$queryRtn = '
     			select 
     				1 negate,
