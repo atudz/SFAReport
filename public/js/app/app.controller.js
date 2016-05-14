@@ -414,18 +414,13 @@
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
 		    $event.stopPropagation();
-		    $scope[elementId] = true;
 
-		    if(elementId.endsWith('_to'))
-		    {
-		    	var baseId = elementId.replace('_to','');
-		    	$scope[baseId+'_from'] = false;
-		    }
-		    else if(elementId.endsWith('_from'))
-		    {
-		    	var baseId = elementId.replace('_from','');
-		    	$scope[baseId+'_to'] = false;
-		    }
+			$("input[id*='date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
 		};
 
 		$scope.dateOptions = {
@@ -1011,6 +1006,16 @@
 			var url = '/reports/getcount/'+report+'/'+type;
 			var delimeter = '?';
 			var query = '';
+
+			if('vaninventorycanned' == report || 'vaninventoryfrozen' == report)
+			{
+				if(!$('#transaction_date_from').val() || !$('#transaction_date_to').val())
+				{
+					alert('Transaction Date field is required.');
+					return false;
+				}
+			}
+
 			$.each(filter, function(index,val){
 				if(index > 0)
 					delimeter = '&';

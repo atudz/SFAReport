@@ -34,7 +34,7 @@
 							<td class="bold"></td>
 							<td class="bold"></td>
 							<td class="bold">
-								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="item.replenishment.replenishment_date_formatted = (formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy')"></span>
 							</td>
 							<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 							@foreach($itemCodes as $item)
@@ -51,10 +51,10 @@
 							<td class="bold">
 								@if($isAdmin)
 									<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',stock.stock_transfer_in_header_id,stock.transaction_date,$index,'Transaction Date','transaction_date',false,$parent.$index)">
-	    								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
+	    								<span ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
 	  								</a>
 	  							@else
-	  								<span ng-bind="formatDate(stock.transaction_date) | date:'MM/dd/yyyy'"></span>
+	  								<span ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
 	  							@endif								
 							</td>
 							<td>
@@ -79,7 +79,7 @@
 						<tr ng-repeat="record in item.records|filter:query" ng-show="item.total" class="[[record.updated]]">
 							<td>[[record.customer_name]]</td>
 							<td>
-								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>							
+								<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>							
 							</td>
 							<td>[[record.invoice_number | uppercase]]</td>
 							<td>[[record.return_slip_num | uppercase]]</td>
@@ -116,7 +116,7 @@
 							<td class="bold"></td>
 							<td class="bold"></td>
 							<td class="bold">
-								<span ng-bind="formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="item.replenishment.replenishment_date_formatted = (formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy')"></span>
 							</td>
 							<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 							@foreach($itemCodes as $item)

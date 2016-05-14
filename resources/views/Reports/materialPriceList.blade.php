@@ -34,14 +34,14 @@
 						<td>[[record.unit_price]]</td>
 						<td>[[record.customer_price_group]]</td>
 						<td>
-							<span ng-bind="formatDate(record.effective_date_from) | date:'MM/dd/yyyy'"></span>
+							<span ng-bind="record.effective_date_from_formatted = (formatDate(record.effective_date_from) | date:'MM/dd/yyyy')"></span>
 						</td>
 						<td>
-							<span ng-bind="formatDate(record.effective_date_to) | date:'MM/dd/yyyy'"></span>
+							<span ng-bind="record.effective_date_to_formatted = (formatDate(record.effective_date_to) | date:'MM/dd/yyyy')"></span>
 						</td>
 						<td>[[record.area_name]]</td>
 						<td>
-							<span ng-bind="formatDate(record.sfa_modified_date) | date:'MM/dd/yyyy'"></span>
+							<span ng-bind="record.sfa_modified_date_formatted = (formatDate(record.sfa_modified_date) | date:'MM/dd/yyyy')"></span>
 						</td>
 						<td>[[record.status]]</td>
 					</tr>

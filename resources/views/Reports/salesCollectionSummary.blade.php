@@ -41,16 +41,16 @@
 							<td>[[record.invoice_number_from | uppercase]]</td>
 							<td>[[record.invoice_number_to | uppercase]]</td>
 							<td>
-								<span ng-bind="formatDate(record.invoice_date) | date:'MM/dd/yyyy'"></span>
+								<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.total_collected_amount)"></span>
+								<span ng-bind="record.total_collected_amount_formatted = formatNumber(record.total_collected_amount)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.sales_tax)"></span>
+								<span ng-bind="record.sales_tax_formatted = formatNumber(record.sales_tax)"></span>
 							</td>
 							<td>
-								<span ng-bind="formatNumber(record.amt_to_commission)"></span>
+								<span ng-bind="record.amt_to_commission_formatted = formatNumber(record.amt_to_commission)"></span>
 							</td>
 															
 						</tr>	
@@ -62,13 +62,13 @@
 							<td></td>
 							<td></td>
 							<td class="bold">
-								<span ng-bind="formatNumber(summary.total_collected_amount)"></span>
+								<span ng-bind="record.total_collected_amount_formatted = formatNumber(summary.total_collected_amount)"></span>
 							</td>
 							<td class="bold">
-								<span ng-bind="formatNumber(summary.sales_tax)"></span>
+								<span ng-bind="record.sales_tax_formatted = formatNumber(summary.sales_tax)"></span>
 							</td>
 							<td class="bold">
-								<span ng-bind="formatNumber(summary.amt_to_commission)"></span>
+								<span ng-bind="record.amt_to_commission_formatted = formatNumber(summary.amt_to_commission)"></span>
 							</td>										
 						</tr>
 					</tbody>
