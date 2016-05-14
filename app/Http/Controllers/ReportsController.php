@@ -27,6 +27,7 @@ class ReportsController extends ControllerCore
 		$id = $request->get('id');
 		
 		$stockTransNum = '';
+		$prevInvoiceNum = '';
 		$syncTables = config('sync.sync_tables');
 		if($pk = array_shift($syncTables[$table]))
 		{
@@ -36,6 +37,8 @@ class ReportsController extends ControllerCore
 			}
 			
 			$before = \DB::table($table)->where($pk,$id)->first()->$column;
+			if($column == 'invoice_number')
+				$prevInvoiceNum = $before;
 						
 			\DB::table($table)->where($pk,$id)->update([
 					$column => $value,
@@ -57,24 +60,79 @@ class ReportsController extends ControllerCore
 		
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
 		{
-			\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
-					$column => $value,
-					'updated_at' => new \DateTime(),
-					'updated_by' => auth()->user()->id,
-			]);
+			$transfer = \DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->first();			
 			
-			$before = \DB::table($table)->where($pk,$id)->first()->$column;
+			if($transfer)
+			{
+				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
+						$column => $value,
+						'updated_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				]);
+					
+				\DB::table('table_logs')->insert([
+						'table' => 'txn_stock_transfer_in_detail',
+						'column' => $column,
+						'pk_id' => $transfer->stock_transfer_in_detail_id,
+						'before' => $transfer->stock_transfer_number,
+						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				]);
+			}
 			
-			\DB::table('table_logs')->insert([
-					'table' => $table,
-					'column' => $column,
-					'pk_id' => $id,
-					'before' => $before,
-					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
-					'updated_at' => new \DateTime(),
-					'created_at' => new \DateTime(),
-					'updated_by' => auth()->user()->id,
-			]);
+		}
+		
+		
+		if($column == 'invoice_number' && $prevInvoiceNum)
+		{
+			$insertData = [];
+			$data1 = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->first();
+			if($data1)
+			{
+				\DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->update([
+						$column => $value,
+						'updated_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				]);
+					
+				$insertData[] = [
+						'table' => 'txn_collection_invoice',
+						'column' => $column,
+						'pk_id' => $data1->collection_invoice_id,
+						'before' => $data1->invoice_number,
+						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				];
+			}			
+			
+			
+			$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
+			if($data2)
+			{
+				\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->update([
+						$column => $value,
+						'updated_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				]);
+					
+				$insertData[] = [
+						'table' => 'txn_invoice',
+						'column' => $column,
+						'pk_id' => $data2->invoice_id,
+						'before' => $data2->invoice_number,
+						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+						'updated_by' => auth()->user()->id,
+				];
+			}
+			
+			if($insertData)
+				\DB::table('table_logs')->insert($insertData);
 		}
 		
 		$data['success'] = true;
