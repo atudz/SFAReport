@@ -1863,7 +1863,9 @@
 	    
 	    $scope.sync = function(){
 	    	
-	    	$scope.showLoading = true;
+	    	$scope.showError = false;
+	    	$scope.showSuccess = false;
+			$scope.showLoading = true;
 	    	var API = $resource('controller/reports/sync');				
 			API.get({}, function(data){
 				if(data.logs)
