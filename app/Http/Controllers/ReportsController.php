@@ -92,7 +92,7 @@ class ReportsController extends ControllerCore
 		$result = LibraryFactory::getInstance('Sync')->sync();
 		if($result)
 		{
-			$message = file_get_contents(storage_path('logs/sync/'.date('Y-m-d').'.log'));
+			//$message = file_get_contents(config('sync.dir'));
 		}
 		$data['logs'] = $message;		
 		return response()->json($data);
