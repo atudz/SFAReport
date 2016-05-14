@@ -88,7 +88,7 @@ class ReportsController extends ControllerCore
 	 */
 	public function sync()
 	{
-		$message = '';
+		$message = true;
 		$result = LibraryFactory::getInstance('Sync')->sync();
 		if($result)
 		{
