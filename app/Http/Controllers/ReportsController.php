@@ -88,13 +88,8 @@ class ReportsController extends ControllerCore
 	 */
 	public function sync()
 	{
-		$message = true;
-		$result = LibraryFactory::getInstance('Sync')->sync();
-		if($result)
-		{
-			//$message = file_get_contents(config('sync.dir'));
-		}
-		$data['logs'] = $message;		
+		$result = LibraryFactory::getInstance('Sync')->sync();		
+		$data['logs'] = $result ? true : '';		
 		return response()->json($data);
 	}
 }
