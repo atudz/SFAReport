@@ -34,6 +34,9 @@ class ReportsController extends ControllerCore
 			{
 				$stockTransNum = \DB::table($table)->where($pk,$id)->value($column);
 			}
+			
+			$before = \DB::table($table)->where($pk,$id)->first()->$column;
+						
 			\DB::table($table)->where($pk,$id)->update([
 					$column => $value,
 					'updated_at' => new \DateTime(),
@@ -44,6 +47,7 @@ class ReportsController extends ControllerCore
 					'table' => $table,
 					'column' => $column,
 					'pk_id' => $id,
+					'before' => $before,
 					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value, 
 					'updated_at' => new \DateTime(),
 					'created_at' => new \DateTime(),
@@ -59,10 +63,13 @@ class ReportsController extends ControllerCore
 					'updated_by' => auth()->user()->id,
 			]);
 			
+			$before = \DB::table($table)->where($pk,$id)->first()->$column;
+			
 			\DB::table('table_logs')->insert([
 					'table' => $table,
 					'column' => $column,
 					'pk_id' => $id,
+					'before' => $before,
 					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
 					'updated_at' => new \DateTime(),
 					'created_at' => new \DateTime(),

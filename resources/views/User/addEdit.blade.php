@@ -60,7 +60,7 @@
 						{!!Html::input('text','mobile','Mobile No.')!!}
 					</div>					
 					<div class="row form-input-field">
-						{!!Html::input('text','salesman_code','Salesman Code')!!}
+						{!!Html::input('text','salesman_code','Salesman Code*')!!}
 					</div>									
 				</div>
 					

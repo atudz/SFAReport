@@ -1650,6 +1650,11 @@
 		scope.locationInfoError = false;
 		scope.success = false;		
 		
+		scope.roleId = 1;
+		scope.change = function(){
+			log.info(scope.roleId);
+		}
+		
 		scope.save = function(edit,profile){
 			
 			var personalInfoErrors = [];
@@ -1690,7 +1695,10 @@
 			{
 				personalInfoErrors.push('Email is a required field.');
 			}
-			
+			if(!$.trim($('#salesman_code').val()) && $('#role').val() == 4)
+			{
+				personalInfoErrors.push('Salesman code is a required field.');
+			}
 			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			if($('#email').val() && !rgxEmail.test($('#email').val()))
 			{

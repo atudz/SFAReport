@@ -4870,8 +4870,9 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('salesman_code',auth()->user()->salesman_code);
     	
     	$salesman = $prepare->lists('name','salesman_code');
+    	$user = auth()->user();    	
     	if(!$salesman)
-    		$salesman[0] = auth()->user()->fullname;
+    		$salesman[0] = $user->salesman_code ? $user->salesman_code.'-'.$user->fullname : $user->fullname;
     	return $salesman;
     }
     
