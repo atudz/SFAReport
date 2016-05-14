@@ -79,6 +79,13 @@
 					    </div>
 					</div>
 					
+					<div class="form-group row">
+						<label class="col-sm-2" for="mobile">Salesman Code</label>
+						<div class="col-sm-5">
+					      <input ng-model="records.salesman_code" type="text" name="mobile" id="mobile" class="form-control" placeholder="" {{$readOnly}}>
+					    </div>
+					</div>
+					
 					<hr />
 
 					<h4>Credentials</h4>

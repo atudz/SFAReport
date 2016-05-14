@@ -1827,7 +1827,7 @@ class ReportsPresenter extends PresenterCore
     public function getVanInventory($reports=false,$offset=0)
     {    	
     	// This is a required field so return empty if there's none
-    	if(!$this->request->get('transaction_date'))
+    	if(!$this->request->get('transaction_date') || $this->isSalesman() && !auth()->user()->salesman_code)
     	{
     		$data = [
     			'records' => [],
