@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use App\Factories\LibraryFactory;
+use Illuminate\Support\Collection;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -1062,9 +1063,24 @@ class ReportsPresenter extends PresenterCore
 
     	$prepare = $this->getPreparedSalesCollectionPosting2($except);
     	$collection2 = $prepare->get();
-    	//dd($collection2);
-    	//$result = $this->paginate($prepare);
-    	$records = array_merge($collection1,$collection2);
+    	
+    	$collection = array_merge((array)$collection1,(array)$collection2);
+    	$invoices = [];
+    	foreach($collection as $col)
+    		$invoices[] = $col->invoice_number;
+    	
+    	sort($invoices,SORT_NATURAL);
+    	
+    	$records = [];
+    	foreach($invoices as $invoice)
+    	{
+    		foreach($collection as $col)
+    		{
+    			if(isset($col->invoice_number) && $invoice == $col->invoice_number)
+    				$records[] = $col;
+    		}
+    	}
+    	    	
     	$data['records'] = $records;
     	$data['total'] = count($records);
     	
@@ -5119,7 +5135,23 @@ class ReportsPresenter extends PresenterCore
 
     			$prepare = $this->getPreparedSalesCollectionPosting2($except);
     			$collection2 = $prepare->get();    	
-    			$records = array_merge($collection1,$collection2);
+    			
+    			$collection = array_merge((array)$collection1,(array)$collection2);
+    			$invoices = [];
+    			foreach($collection as $col)
+    				$invoices[] = $col->invoice_number;
+    			 
+    			sort($invoices,SORT_NATURAL);
+    			 
+    			$records = [];
+    			foreach($invoices as $invoice)
+    			{
+    				foreach($collection as $col)
+    				{
+    					if(isset($col->invoice_number) && $invoice == $col->invoice_number)
+    						$records[] = $col;
+    				}
+    			}
     			
     			$records = array_splice($records, $offset, $limit);
     			
