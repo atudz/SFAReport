@@ -5774,7 +5774,7 @@ class ReportsPresenter extends PresenterCore
      * @param string $report
      * @return JSON the data count
      */
-    public function getDataCount($report, $type='xls')
+    public function getDataCount($report, $type='xls', $dashboard=false)
     {
     	$data = [];
     	$prepare = '';
@@ -5818,12 +5818,19 @@ class ReportsPresenter extends PresenterCore
     			$prepare = $this->getPreparedUnpaidInvoice();
     			break;
     		case 'vaninventorycanned':
-    		case 'vaninventoryfrozen':
-    			$data['total'] = 1;
-    			$data['limit'] = 0;
-    			$data['max_limit'] = false;
-    			$data['staggered'] = [];   
-    			return response()->json($data);
+    		case 'vaninventoryfrozen':    			
+    			if($dashboard)
+    			{
+    				$this->getPreparedVanInventory();
+    			}
+    			else
+    			{
+	    			$data['total'] = 1;
+	    			$data['limit'] = 0;
+	    			$data['max_limit'] = false;
+	    			$data['staggered'] = [];   
+	    			return response()->json($data);
+    			}
     		case 'salesreportpermaterial':
     			$prepare = $this->getPreparedSalesReportMaterial();
     			break;
@@ -6174,7 +6181,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$salesCollection = $this->getDataCount('salescollectionreport');
     	$unpaid = $this->getPreparedUnpaidInvoice(false,true)->getCountForPagination();
-    	$van = $this->getDataCount('vaninventorycanned');
+    	$van = $this->getDataCount('vaninventorycanned','xls',true);
     	$bir = $this->getDataCount('bir');
     	$sales = $this->getDataCount('salesreportpermaterial');
     	
