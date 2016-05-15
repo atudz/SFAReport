@@ -1103,28 +1103,15 @@
 	    
 	    if(report == 'salescollectionreport')
 	    {
-	    	var currentDate = new Date();
-	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {salesman:$('#salesman').val(),invoice_date_from:formatted,invoice_date_to:formatted};
+	    	params = {salesman:$('#salesman').val()};
 	    	//log.info(params);
 	    }
 	    else if(report == 'salescollectionposting')
 	    {
-	    	var currentDate = new Date();
-	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {salesman:$('#salesman').val(),invoice_date_from:formatted,invoice_date_to:formatted};
+	    	params = {salesman:$('#salesman').val()};
 	    	scope.page = 1;
 		    scope.perpage = 50;
-	    }
-	    else if(report == 'salescollectionsummary')
-	    {
-	    	var currentDate = new Date();
-	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	params = {salesman:$('#salesman').val(),page_limit:50};
-	    	//log.info(params);
-	    	scope.page = 1;
-		    scope.perpage = 50;
-	    }
+	    }	    
 	    
 	    toggleLoading(true);
 	    API.get(params,function(data){

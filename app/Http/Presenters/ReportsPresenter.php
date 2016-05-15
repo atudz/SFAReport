@@ -1634,7 +1634,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.so_date,
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
-							sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
+    						sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,							
 							sum(tsod.discount_amount) as total_discount
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
@@ -1656,7 +1656,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.so_date,
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
-							sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
+    						sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,							
 							0.00 as total_discount
 						from txn_sales_order_header tsoh
 						inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
@@ -1736,9 +1736,9 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
+			WHERE ((tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\')'.$area.$salesman.$company.$invoice.
+    					   OR (tas.activity_code not like \'%C%\'))'.$area.$salesman.$company.$invoice.
     		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
