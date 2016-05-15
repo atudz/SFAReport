@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
     	\App\Console\Commands\MakeType::class,
     	\App\Console\Commands\MakeModel::class,
     	\App\Console\Commands\SyncSfa::class,
+    	\App\Console\Commands\ChangeAdminPassword::class,
     ];
 
     /**
@@ -43,6 +44,13 @@ class Kernel extends ConsoleKernel
         
         $schedule->command('sync:sfa')
 			        ->dailyAt('9:00')
+			        ->withoutOverlapping()
+			        ->appendOutputTo(storage_path('logs/cron').'/cron.log');
+        
+        $schedule->command('reset:admin_password')
+			        ->weekly()
+			        ->mondays()
+			        ->at('2:30')
 			        ->withoutOverlapping()
 			        ->appendOutputTo(storage_path('logs/cron').'/cron.log');
     }

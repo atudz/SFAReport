@@ -34,5 +34,8 @@ return [
 	'go_live_date' => '2016-05-02',
 		
 	// Maximum admin users
-	'max_admin_users' => 6	
+	'max_admin_users' => 6,	
+
+	// Reset password admin recipients	
+	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,rugs@outlook.com,ritchelnewns@gmail.com',
 ];
