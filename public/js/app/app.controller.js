@@ -614,7 +614,17 @@
 		};
 		
 		scope.reset = function(){
-	    				
+			$.each(filter, function(key,val){
+				if(val.endsWith('_from'))
+				{
+
+					angular.element($('#'+val)).scope().setFrom(new Date());
+				}
+				else if(val.endsWith('_to'))
+				{
+					angular.element($('#'+val)).scope().setTo(new Date());
+				}
+			});
 			$('p[id$="_error"]').addClass('hide');
 			scope.toggleFilter = true;
 			toggleLoading();
