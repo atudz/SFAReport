@@ -56,9 +56,23 @@ class UserController extends ControllerCore
         		return response()->json($response);
         	}
         }
-        
-    	$id = (int)$request->get('id');
-        $user = ModelFactory::getInstance('User')->findOrNew($id);
+
+        $userModel = ModelFactory::getInstance('User');
+
+        if(!$request->get('edit_mode'))
+        {
+            $user = $userModel->whereEmail($request->get('email'))->orWhere('username', '=', $request->get('username'))->first();
+
+            if($user)
+            {
+                $response['exists'] = true;
+                $response['error'] = 'User already exists.';
+                return response()->json($response);
+            }
+        }
+
+        $id = (int)$request->get('id');
+        $user = $userModel->findOrNew($id);
         $user->firstname = $request->get('fname');
         $user->lastname = $request->get('lname');
         $user->middlename = $request->get('mname');

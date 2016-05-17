@@ -1790,7 +1790,9 @@
 			
 			if(!scope.locationInfoError && !scope.personalInfoError)
 			{
+				var editMode = (edit) ? true:false;
 				var params = {
+					   edit_mode: editMode,
 					   id: scope.id,
 				       fname: $('#fname').val(),
 				       lname: $('#lname').val(),
@@ -1818,8 +1820,21 @@
 					if(data.error)
 					{
 						locationErrorList = '<ul>'+data.error+'</ul>';
-						$('#error_list_location').html(locationErrorList);
-						scope.locationInfoError = true;
+						scope.personalInfoError = false;
+						scope.locationInfoError = false;
+						if(data.exists)
+						{
+							var errorId = '#error_list_personal'
+							scope.personalInfoError = true;
+						}
+						else
+						{
+							var errorId = '#error_list_location';
+							scope.locationInfoError = true;
+						}
+
+						$(errorId).html(locationErrorList);
+						
 						scope.success = false;
 					}
 					else
