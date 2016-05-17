@@ -72,6 +72,18 @@ class UserController extends ControllerCore
         }
 
         $id = (int)$request->get('id');
+
+        $salesman = ModelFactory::getInstance('AppSalesman')->whereSalesmanCode($request->get('salesman_code'))->first(['salesman_id']);
+
+        $user = $userModel->whereSalesmanCode($request->get('salesman_code'))->orderBy('id', 'asc')->first(['id']);
+
+        if($salesman || ($user && $user->id != $id))
+        {
+            $response['exists'] = true;
+            $response['error'] = 'Salesman code already exists.';
+            return response()->json($response);
+        }
+
         $user = $userModel->findOrNew($id);
         $user->firstname = $request->get('fname');
         $user->lastname = $request->get('lname');
