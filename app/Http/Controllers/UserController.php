@@ -44,7 +44,9 @@ class UserController extends ControllerCore
     {
         $sanitizeFields = ['firstname', 'lastname', 'middlename', 'username', 'address1', 'telephone', 'mobile'];
 
-        $roleAdmin = ModelFactory::getInstance('UserGroup')->admin()->first()->id; 
+        $userGroupModel = ModelFactory::getInstance('UserGroup');
+
+        $roleAdmin = $userGroupModel->admin()->first()->id; 
         if($request->get('role') == $roleAdmin)
         {
         	$max = config('system.max_admin_users');
@@ -56,6 +58,17 @@ class UserController extends ControllerCore
         		return response()->json($response);
         	}
         }
+
+        $roleGuest1 = $userGroupModel->whereName('Guest1')->first()->id;
+        if($request->get('age') && $request->get('role') == $roleGuest1 && 18 > $request->get('age'))
+        {
+            $response['exists'] = true;
+            $response['error'] = 'User cannot be below 18.';
+            return response()->json($response);
+        }
+        
+
+
 
         $userModel = ModelFactory::getInstance('User');
 
