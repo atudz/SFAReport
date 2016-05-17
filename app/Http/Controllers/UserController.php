@@ -77,7 +77,7 @@ class UserController extends ControllerCore
 
         $user = $userModel->whereSalesmanCode($request->get('salesman_code'))->orderBy('id', 'asc')->first(['id']);
 
-        if($salesman || ($user && $user->id != $id))
+        if($request->get('salesman_code') && ($salesman || ($user && $user->id != $id)))
         {
             $response['exists'] = true;
             $response['error'] = 'Salesman code already exists.';
