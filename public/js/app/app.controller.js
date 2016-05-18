@@ -610,7 +610,17 @@
 		};
 		
 		scope.reset = function(){
-	    				
+			$.each(filter, function(key,val){
+				if(val.endsWith('_from'))
+				{
+
+					angular.element($('#'+val)).scope().setFrom(new Date());
+				}
+				else if(val.endsWith('_to'))
+				{
+					angular.element($('#'+val)).scope().setTo(new Date());
+				}
+			});
 			$('p[id$="_error"]').addClass('hide');
 			scope.toggleFilter = true;
 			toggleLoading();
@@ -1786,7 +1796,9 @@
 			
 			if(!scope.locationInfoError && !scope.personalInfoError)
 			{
+				var editMode = (edit) ? true:false;
 				var params = {
+					   edit_mode: editMode,
 					   id: scope.id,
 				       fname: $('#fname').val(),
 				       lname: $('#lname').val(),
@@ -1814,8 +1826,21 @@
 					if(data.error)
 					{
 						locationErrorList = '<ul>'+data.error+'</ul>';
-						$('#error_list_location').html(locationErrorList);
-						scope.locationInfoError = true;
+						scope.personalInfoError = false;
+						scope.locationInfoError = false;
+						if(data.exists)
+						{
+							var errorId = '#error_list_personal'
+							scope.personalInfoError = true;
+						}
+						else
+						{
+							var errorId = '#error_list_location';
+							scope.locationInfoError = true;
+						}
+
+						$(errorId).html(locationErrorList);
+						
 						scope.success = false;
 					}
 					else

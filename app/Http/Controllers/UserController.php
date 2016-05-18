@@ -44,7 +44,9 @@ class UserController extends ControllerCore
     {
         $sanitizeFields = ['firstname', 'lastname', 'middlename', 'username', 'address1', 'telephone', 'mobile'];
 
-        $roleAdmin = ModelFactory::getInstance('UserGroup')->admin()->first()->id; 
+        $userGroupModel = ModelFactory::getInstance('UserGroup');
+
+        $roleAdmin = $userGroupModel->admin()->first()->id; 
         if($request->get('role') == $roleAdmin)
         {
         	$max = config('system.max_admin_users');
@@ -56,9 +58,46 @@ class UserController extends ControllerCore
         		return response()->json($response);
         	}
         }
+
+        $roleGuest1 = $userGroupModel->whereName('Guest1')->first()->id;
+        if($request->get('age') && $request->get('role') == $roleGuest1 && 18 > $request->get('age'))
+        {
+            $response['exists'] = true;
+            $response['error'] = 'User cannot be below 18.';
+            return response()->json($response);
+        }
         
-    	$id = (int)$request->get('id');
-        $user = ModelFactory::getInstance('User')->findOrNew($id);
+
+
+
+        $userModel = ModelFactory::getInstance('User');
+
+        if(!$request->get('edit_mode'))
+        {
+            $user = $userModel->whereEmail($request->get('email'))->orWhere('username', '=', $request->get('username'))->first();
+
+            if($user)
+            {
+                $response['exists'] = true;
+                $response['error'] = 'User already exists.';
+                return response()->json($response);
+            }
+        }
+
+        $id = (int)$request->get('id');
+
+        $salesman = ModelFactory::getInstance('AppSalesman')->whereSalesmanCode($request->get('salesman_code'))->first(['salesman_id']);
+
+        $user = $userModel->whereSalesmanCode($request->get('salesman_code'))->orderBy('id', 'asc')->first(['id']);
+
+        if($request->get('salesman_code') && ($salesman || ($user && $user->id != $id)))
+        {
+            $response['exists'] = true;
+            $response['error'] = 'Salesman code already exists.';
+            return response()->json($response);
+        }
+
+        $user = $userModel->findOrNew($id);
         $user->firstname = $request->get('fname');
         $user->lastname = $request->get('lname');
         $user->middlename = $request->get('mname');
