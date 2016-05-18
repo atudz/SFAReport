@@ -146,10 +146,6 @@
 		          'return_slip_num',
 		          'reference_number'
 		];
-	    
-	    toggleLoading(true);
-	    fetchMore(scope,API,params,log, InventoryFixTable);
-	    toggleLoading();
 	    	    
 	    // Filter table records	    		
 		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);

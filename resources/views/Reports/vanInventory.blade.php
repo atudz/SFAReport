@@ -20,7 +20,7 @@
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 								
-				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>true])!!}
+				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>true,'no_loading'=>true])!!}
 					{!!Html::theader($tableHeaders)!!}
 					<tbody>
 					<tbody ng-repeat="item in items">

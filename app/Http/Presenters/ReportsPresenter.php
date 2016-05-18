@@ -10,6 +10,7 @@ use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use App\Factories\LibraryFactory;
 use Illuminate\Support\Collection;
+use App\Factories\ModelFactory;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -2209,7 +2210,7 @@ class ReportsPresenter extends PresenterCore
     	
     	if($replenishment)
     	{
-    		$dateStart = (new Carbon($replenishment->replenishment_date))->format('Y-m-d');    		
+    		$dateStart = (new Carbon($replenishment->replenishment_date))->addDay()->format('Y-m-d');    		
     	}
     	else 
     	{
@@ -2310,7 +2311,7 @@ class ReportsPresenter extends PresenterCore
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];    		
     	}
     	 
-    	//dd($tempInvoices, $tempStockTransfer,$stockOnHand);
+    	//dd($tempActualCount, $tempStockTransfer, $tempInvoices, $stockOnHand);
     	return $stockOnHand;
     }
     
@@ -6197,5 +6198,204 @@ class ReportsPresenter extends PresenterCore
     	\DB::table('report_summary')->delete();
     	
     	\DB::table('report_summary')->insert($data);
+    }
+    
+    
+    /**
+     * Update stock on hand 
+     */
+    public function updateStockOnHand()
+    {
+    	$replenishmentNum = ModelFactory::getInstance('StockOnHand')->lists('replenishment_number');
+    	
+    	$prepare = ModelFactory::getInstance('TxnReplenishmentHeader')->with('salesman','details');
+    	if(!$replenishmentNum->isEmpty())
+    		$prepare->whereNotIn('reference_number',$replenishmentNum->toArray());
+    	
+    	$prepare->orderBy('replenishment_date');
+    	$replenishments = $prepare->get();
+    	    	
+    	foreach($replenishments as $replenish)
+    	{
+    		if($replenish->salesman)
+    		{
+    			$prevReplenish = ModelFactory::getInstance('StockOnHand')
+					    			->where('salesman_code',$replenish->salesman->salesman_code)
+					    			->where('stock_date','<',$replenish->replenishment_date)
+					    			->orderBy('stock_date','desc')
+					    			->first();
+    			$prevRefNum = $prevReplenish ? $prevReplenish->replenishment_number : null;
+    			$this->computeStockOnHand($replenish->reference_number, $prevRefNum);    			
+    		}
+    		 
+    	}
+    	
+    }
+    
+    /**
+     * Compute stock on hand
+     * @param unknown $currentRnum
+     * @param unknown $previousRnum
+     * @return multitype:|multitype:number Ambigous <string, number>
+     */
+    public function computeStockOnHand($currentRnum, $previousRnum=null)
+    {
+    	
+    	$currentReplenish = ModelFactory::getInstance('TxnReplenishmentHeader')
+    								->with('salesman','details')
+    								->where('reference_number',$currentRnum)
+    								->first();
+    	$previousReplenish = '';
+    	if($previousRnum)
+    		$previousReplenish = ModelFactory::getInstance('StockOnHand')
+    								->with('items')
+    								->where('replenishment_number',$previousRnum)
+    								->first();
+    	
+    	if(!$currentReplenish)
+    		return false;    	
+    	
+    	$stockOnHand = [];
+    	
+    	$to = (new Carbon($currentReplenish->replenishment_date));
+    	$goLive = new Carbon(config('system.go_live_date'));
+    	
+    	//Replenishment
+    	if($previousReplenish)
+    	{
+	    	foreach($previousReplenish->items as $item)
+	    	{
+	    		if(!isset($stockOnHand[$item->item_code]))
+	    			$stockOnHand[$item->item_code] = 0;
+	    		$stockOnHand[$item->item_code] += $item->quantity;	    	
+	    	}
+	    	$from = (new Carbon($previousReplenish->stock_date))->addDay();
+    	}
+    	else
+    	{
+    		foreach($currentReplenish->details as $item)
+    		{
+    			if(!isset($stockOnHand[$item->item_code]))
+    				$stockOnHand[$item->item_code] = 0;
+    			$stockOnHand[$item->item_code] += $item->quantity;    			
+    		}
+    		$from = new Carbon($to);
+    	}
+
+    	$salesmanCode = $currentReplenish->salesman->salesman_code;
+    	$dates = [];    	
+    	while($from->lte($to))
+    	{
+    		$date = $from->format('Y-m-d');
+    		
+	    	$stockTransfers = ModelFactory::getInstance('TxnStockTransferInHeader')
+							    	->with('details')
+							    	->where(\DB::raw('DATE(transfer_date)'),$date)
+							    	->where('salesman_code',$salesmanCode)
+							    	->orderBy('transfer_date')
+							    	->get();
+	    	
+	    	// Stock Transfer
+	    	$stockTransferItemCount = [];
+	    	if($stockTransfers)
+	    	{
+	    		foreach($stockTransfers as $stock)
+	    		{
+	    			foreach($stock->details as $item)
+	    			{
+	    				if(!isset($stockOnHand[$item->item_code]))
+	    					$stockOnHand[$item->item_code] = 0;
+	    				$stockOnHand[$item->item_code] += $item->quantity;
+	    			}	
+	    		}    		
+	    	}
+	    	
+	    	$sales = ModelFactory::getInstance('TxnSalesOrderHeader')
+	    							->with('details','customer')
+	    							->where(\DB::raw('DATE(so_date)'),$date)
+	    							->where('salesman_code',$salesmanCode)
+	    							->orderBy('so_date')
+	    							->get();
+	    	
+	    	// Sales Invoice
+	    	$salesItemCount = [];
+	    	if($sales)
+	    	{
+	    		foreach($sales as $sale)
+	    		{
+	    			foreach($sale->details as $item)
+	    			{
+	    				if(!isset($stockOnHand[$item->item_code]))
+	    					$stockOnHand[$item->item_code] = 0;
+	    				if(false !== strpos($sale->customer->customer_name, '_Van to Warehouse'))
+	    					$stockOnHand[$item->item_code] -= $item->order_qty;
+	    				elseif(false !== strpos($sale->customer->customer_name, '_Adjustment'))
+	    					$stockOnHand[$item->item_code] -= $item->order_qty;
+	    				else 
+	    					$stockOnHand[$item->item_code] -= $item->quantity;
+	    			}
+	    		}
+	    	}	    	
+	    	
+	    	$returns = ModelFactory::getInstance('TxnReturnHeader')
+						    	->with('details','customer')
+						    	->where(\DB::raw('DATE(return_date)'),$date)
+						    	->where('salesman_code',$salesmanCode)
+						    	->orderBy('return_date')
+						    	->get();
+	    	
+	    	
+	    	// Returns Invoice
+	    	$returnsItemCount = [];
+	    	if($returns)
+	    	{
+	    		foreach($returns as $return)
+	    		{
+	    			foreach($return->details as $item)
+	    			{
+	    				if(!isset($stockOnHand[$item->item_code]))
+	    					$stockOnHand[$item->item_code] = 0;
+	    				$stockOnHand[$item->item_code] += $item->quantity;
+	    			}
+	    		}
+	    	}	    	
+	    	
+	    	if($from->eq($to))
+	    	{	    		
+	    		foreach($currentReplenish->details as $item)
+	    		{
+	    			if(!isset($stockOnHand[$item->item_code]))
+	    				$stockOnHand[$item->item_code] = 0;
+	    			$stockOnHand[$item->item_code] -= $item->quantity;
+	    		}
+	    	}	    	
+
+	    	$stock = ModelFactory::getInstance('StockOnHand');
+	    	if($from->eq($to))
+	    		$stock->replenishment_number = $currentReplenish->reference_number;
+	    	else
+	    		$stock->replenishment_number = $previousReplenish ? $previousReplenish->replenishment_number : $currentReplenish->reference_number;
+	    	$stock->salesman_code = $salesmanCode;
+	    	$stock->stock_date = new \DateTime($date);
+	    	
+	    	$dates[] = $date;
+	    	 
+	    	if($from->eq($goLive))
+	    		$stock->beginning = 1;
+	    	 
+	    	if($stock->save())
+	    	{
+		    	foreach($stockOnHand as $code=>$qty)
+		    	{
+		    		$stockItem = ModelFactory::getInstance('StockOnHandItems');
+		    		$stockItem->stock_on_hand_id = $stock->id;
+		    		$stockItem->item_code = $code;
+		    		$stockItem->quantity = $qty;
+		    		$stockItem->save();	    		
+		    	}
+	    	}
+	    	
+	    	$from->addDay();	    	
+    	}      	
     }
 }

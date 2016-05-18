@@ -4,6 +4,7 @@ Html::macro('topen', function($options=[]) {
 
 	$no_download = isset($options['no_download']) && $options['no_download'];
 	
+	$loading = isset($options['no_loading']) && $options['no_loading'] ? 'hide' : 'show';
 	$no_search = isset($options['no_search']);
 	$html = '<div class="col-sm-12 form-group row">';
 	
@@ -38,7 +39,7 @@ Html::macro('topen', function($options=[]) {
 		      	';
 	}
 	
-	$html .= '<div class="col-sm-7 col-sm-offset-5 show" id="loading_div">
+	$html .= '<div class="col-sm-7 col-sm-offset-5 '.$loading.'" id="loading_div">
 					<span><i class="fa fa-spinner fa-lg fa-pulse"></i> Loading..</span>
 				</div>				
 				<div class="text-center alert alert-success hide" id="table_success"></div>
