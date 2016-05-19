@@ -715,14 +715,11 @@
 			
 			if(report == 'salescollectionreport')
 		    {
-		    	params = {salesman:$('#salesman').val()};
-		    	//log.info(params);
+				params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 		    }
 		    else if(report == 'salescollectionposting')
 		    {
-		    	params = {salesman:$('#salesman').val()};
-		    	scope.page = 1;
-			    scope.perpage = 50;
+		    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 		    }
 		    else if(report == 'salescollectionsummary')
 		    {
@@ -1110,14 +1107,12 @@
 	    
 	    if(report == 'salescollectionreport')
 	    {
-	    	params = {salesman:$('#salesman').val()};
-	    	//log.info(params);
+	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
+	    	$('#total_summary').hide();
 	    }
 	    else if(report == 'salescollectionposting')
 	    {
-	    	params = {salesman:$('#salesman').val()};
-	    	scope.page = 1;
-		    scope.perpage = 50;
+	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 	    }
 	    else if(report == 'salescollectionsummary')
 	    {
