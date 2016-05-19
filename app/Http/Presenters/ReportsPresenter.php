@@ -512,7 +512,11 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
 				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00) - coalesce(sotbl.so_total_collective_discount,0.00)) total_invoice_amount,
-    			   tsohd2.ref_no,		
+    			   tsohd2.ref_no,
+                   
+                   coalesce(sotbl.served_deduction_amount_id,0) served_deduction_amount_id,
+                   coalesce(sotbl.deduction_code,\'\') deduction_code,
+                   
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   coalesce(rtntbl.RTN_total_gross,0.00) RTN_total_gross,
@@ -559,7 +563,9 @@ class ReportsPresenter extends PresenterCore
 						
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
 							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,						
-    			
+    			            tsohd.reference_num as served_deduction_amount_id,
+                            tsohd.deduction_code as deduction_code,
+
     						all_so.updated
 						from (
 								select
@@ -623,6 +629,7 @@ class ReportsPresenter extends PresenterCore
 						(
 							select
 								reference_num,
+                                deduction_code,
 								sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount,
 								sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 							from txn_sales_order_header_discount
@@ -727,6 +734,8 @@ class ReportsPresenter extends PresenterCore
 				collection.so_total_collective_discount,
 				collection.total_invoice_amount,
     			collection.ref_no,
+                collection.served_deduction_amount_id,
+                collection.deduction_code,
 				collection.other_deduction_amount,
 				collection.return_slip_num,
 				collection.RTN_total_gross,
