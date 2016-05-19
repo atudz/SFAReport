@@ -13,4 +13,13 @@ class TxnReplenishmentDetail extends ModelCore
 	protected $table = 'txn_replenishment_detail';
 	
 	protected $timestamp = false;
+	
+	/**
+	 * This models' relation to replenishment
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function replenishment()
+	{
+		return $this->belongsTo('App\Http\TxnReplenishmentHeader','reference_number','reference_number');
+	}
 }

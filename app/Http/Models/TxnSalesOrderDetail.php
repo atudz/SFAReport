@@ -13,4 +13,13 @@ class TxnSalesOrderDetail extends ModelCore
 	protected $table = 'txn_sales_order_detail';
 	
 	protected $timestamp = false;
+	
+	/**
+	 * This models' relation to sales order header
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function sales()
+	{
+		return $this->belongsTo('App\Http\TxnSalesOrderHeader','so_number','so_number');
+	}
 }

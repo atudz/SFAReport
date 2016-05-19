@@ -13,4 +13,13 @@ class AppSalesmanVan extends ModelCore
 	protected $table = 'app_salesman_van';
 	
 	protected $timestamp = false;
+	
+	/**
+	 * This model's relation to replenishment
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function replenishment()
+	{
+		return $this->hasMany('App\Http\Models\TxnReplenishmentHeader','van_code','van_code');
+	}
 }
