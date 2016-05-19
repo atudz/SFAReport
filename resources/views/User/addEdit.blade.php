@@ -60,7 +60,7 @@
 						{!!Html::input('text','mobile','Mobile No.')!!}
 					</div>					
 					<div class="row form-input-field">
-						{!!Html::input('text','salesman_code','Salesman Code*')!!}
+						{!!Html::input('text','salesman_code','Salesman Code <span class="required [[req_salesman]]" id="salesman_required">*</span>')!!}
 					</div>									
 				</div>
 					
@@ -69,7 +69,7 @@
 					<h4 style="margin-bottom: 20px;">Access & Location</h4>
 					{!!Html::error('locationInfoError','error_list_location')!!}
 					<div class="row form-input-field">
-						{!!Html::select('role','Role <span class="required">*</span>', $roles, '')!!}
+						{!!Html::select('role','Role <span class="required">*</span>', $roles,'')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::select('area','Branch <span class="required">*</span>', $areas, '')!!}

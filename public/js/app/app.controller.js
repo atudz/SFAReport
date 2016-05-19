@@ -715,17 +715,18 @@
 			
 			if(report == 'salescollectionreport')
 		    {
-		    	var currentDate = new Date();
-		    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-		    	params = {invoice_date_from:formatted,invoice_date_to:formatted};	  
+		    	params = {salesman:$('#salesman').val()};
 		    	//log.info(params);
 		    }
-			else if(report == 'salescollectionsummary')
+		    else if(report == 'salescollectionposting')
 		    {
-		    	params = {salesman:$('#salesman').val(),page_limit:50};
-		    	//log.info(params);
+		    	params = {salesman:$('#salesman').val()};
 		    	scope.page = 1;
 			    scope.perpage = 50;
+		    }
+		    else if(report == 'salescollectionsummary')
+		    {
+		    	params = {salesman:$('#salesman').val()};
 		    }
 			
 			scope.toggleFilter = true;
@@ -1117,7 +1118,11 @@
 	    	params = {salesman:$('#salesman').val()};
 	    	scope.page = 1;
 		    scope.perpage = 50;
-	    }	    
+	    }
+	    else if(report == 'salescollectionsummary')
+	    {
+	    	params = {salesman:$('#salesman').val()};
+	    }
 	    
 	    toggleLoading(true);
 	    API.get(params,function(data){
@@ -1588,8 +1593,18 @@
 	function UserAdd($scope, $resource, $location, $log) {
 
 		$scope.id = 0;
+		$scope.role_id = 1;
+		$scope.records = {user_group_id:1};
 	    // Save user profile
 	    saveUser($scope,$resource,$location,$log);
+	    
+	    $scope.req_salesman = 'hidden';
+		$scope.checkRole = function(){			
+			if($scope.role_id == 4)
+				$scope.req_salesman = '';
+			else
+				$scope.req_salesman = 'hidden';
+		}
 	};
 	
 	
@@ -1632,6 +1647,14 @@
 	    
 	    // Save user profile
 	    saveUser($scope,$resource,$location,$log);
+	    
+	    $scope.req_salesman = 'hidden';
+		$scope.checkRole = function(){			
+			if($scope.records.user_group_id == 4)
+				$scope.req_salesman = '';
+			else
+				$scope.req_salesman = 'hidden';
+		};
 	};
 	
 	/**
@@ -1647,6 +1670,15 @@
 		scope.change = function(){
 			log.info(scope.roleId);
 		}
+		
+		scope.req_salesman = 'hidden';
+		scope.role = 1;
+		scope.checkRole = function(){			
+			if(scope.records.user_group_id == 4)
+				scope.req_salesman = '';
+			else
+				scope.req_salesman = 'hidden';
+		};
 		
 		scope.save = function(edit,profile){
 			

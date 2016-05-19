@@ -125,7 +125,7 @@
 					
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-			 				<label for="salesman_code" class="col-sm-3 control-label">Salesman Code*</label>
+			 				<label for="salesman_code" class="col-sm-3 control-label">Salesman Code<span class="required [[req_salesman]]" id="salesman_required">*</span></label>
 			 				<div class="col-sm-6"><input placeholder="" class="form-control" id="salesman_code" name="salesman_code" type="text" ng-model="records.salesman_code">	</div>
 			 			</div>
 					</div>									
@@ -139,27 +139,11 @@
 						<div class="form-group form-group-sm">
 			 				<label for="role" class="col-sm-3 control-label">Role <span class="required">*</span></label>
 			 				<div class="col-sm-6">
-			 					<select class="form-control" id="role" name="role" ng-model="records.user_group_id">
+			 					<select class="form-control" id="role" name="role" ng-model="records.user_group_id" ng-change="checkRole()">
 			 						@foreach($roles as $id=>$role)
 			 							<option value="{{$id}}">{{$role}}</option>
 			 						@endforeach			 						
-			 					</select>	
-			 					<p class="help-block hidden" id="admin_info">
-			 						<i>Can add unlimited auditor users.</i><br>
-			 						<i>Can add unlimited AIC users.</i><br>
-			 						<i>Can add unlimited van salesman users.</i><br>
-			 					</p>
-			 					<p class="help-block hidden" id="auditor_info">
-			 						<i>Can view reports all branches.</i><br>			 						
-			 					</p>
-			 					<p class="help-block hidden" id="aic_info">
-			 						<i>Can only view their reports only (per branch).</i><br>
-			 						<i>Can only filter their area only.</i><br>			 						
-			 					</p>
-			 					<p class="help-block hidden" id="salesman_info">
-			 						<i>Can only view their reports only (per branch).</i><br>
-			 						<i>Can only filter their area only.</i><br>
-			 					</p>
+			 					</select>				 					
 			 				</div>
 			 			</div>
 					</div>
