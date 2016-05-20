@@ -140,6 +140,15 @@
 					</td>
 					<td>
 						@if($isAdmin)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.check_amount,$index,'Check Amount','check_amount','','')">
+								<span ng-bind="record.check_amount_formatted = formatNumber(record.check_amount)"></span>
+	  						</a>	  							  					
+  						@else
+  							<span ng-bind="record.cash_amount_formatted = formatNumber(record.check_amount)"></span>
+  						@endif
+					</td>					
+					<td>
+						@if($isAdmin)
 							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
 	    						[[record.bank | uppercase]]
 	  						</a>

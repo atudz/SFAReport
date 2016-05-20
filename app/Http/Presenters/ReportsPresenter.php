@@ -526,8 +526,8 @@ class ReportsPresenter extends PresenterCore
     			
 				   coltbl.or_date,
 	               UPPER(coltbl.or_number) or_number,
-				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) cash_amount,
-				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) check_amount,
+				   IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, \'\') cash_amount,
+				   IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, \'\') check_amount,
 				   coltbl.bank,
 				   coltbl.check_number,
 				   IF(coltbl.payment_method_code=\'CASH\',\'\', coltbl.check_date) check_date,
