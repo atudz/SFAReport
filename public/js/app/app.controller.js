@@ -867,7 +867,7 @@
 	    	else if((scope.page + increment > 0 && scope.page!=(scope.total/scope.perpage))
 	    			|| (increment < 0 && scope.page > 1))
 	    	{
-	    		var maxPage = scope.total/scope.perpage;
+	    		var maxPage = Math.round(scope.total/scope.perpage);
 	    		var nextPage = scope.page + increment;
 
 	    		if(maxPage >= nextPage)
@@ -876,6 +876,7 @@
 		    		request = true;
 	    		}
 	    	}
+	    	
 	    	if(request)
 	    	{
 	    		params['page'] = scope.page;
