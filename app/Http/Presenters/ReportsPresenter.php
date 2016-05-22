@@ -2216,16 +2216,20 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount['code_'.$item->item_code] += $item->quantity;
     		}    	
     	}    	
-    	
+    	    	
     	if($replenishment)
     	{
-    		$dateStart = (new Carbon($replenishment->replenishment_date))->addDay()->format('Y-m-d');    		
+    		$count = $prepare->count();
+    		$dateStart = (new Carbon($replenishment->replenishment_date));
+    		if($count > 1)
+    		 $dateStart->addDay();
+    		$dateStart = $dateStart->format('Y-m-d');    		
     	}
     	else 
     	{
     		$dateStart = $goLiveDate;
     	}	
-    	 
+
     	$prepare = $this->getPreparedVanInventoryStocks(true);
     	$prepare = $prepare->whereBetween(\DB::raw('DATE(transfer_date)'),[$dateStart,$dateFrom]);
     	$prepare = $prepare->orderBy('transfer_date');
