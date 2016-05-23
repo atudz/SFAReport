@@ -16,9 +16,9 @@
 						{!!Html::select('status','Status', $statuses)!!}
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::datepicker('sfa_modified_date','SFA Modified date',true)!!}
-						{!!Html::datepicker('effective_date1','Effective date from',true)!!}
-						{!!Html::datepicker('effective_date2','Effective date to',true)!!}																			 		
+						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}
+						{!!Html::datepicker('effective_date1','Effective Date From',true)!!}
+						{!!Html::datepicker('effective_date2','Effective Date To',true)!!}																			 		
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
