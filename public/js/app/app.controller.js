@@ -861,13 +861,20 @@
 	    	}
 	    	else if(last)
 	    	{
-	    		scope.page = scope.total/scope.perpage;
+	    		if(0 == scope.total%scope.perpage)
+	    			scope.page = scope.total/scope.perpage;
+	    		else
+	    			scope.page = Math.ceil(scope.total/scope.perpage);
 	    		request = true;
 	    	}
 	    	else if((scope.page + increment > 0 && scope.page!=(scope.total/scope.perpage))
 	    			|| (increment < 0 && scope.page > 1))
 	    	{
-	    		var maxPage = Math.round(scope.total/scope.perpage);
+	    		var maxPage = 0;
+	    		if(0 == scope.total%scope.perpage)
+	    			maxPage = Math.round(scope.total/scope.perpage);
+	    		else
+	    			maxPage = Math.ceil(scope.total/scope.perpage);
 	    		var nextPage = scope.page + increment;
 
 	    		if(maxPage >= nextPage)
@@ -875,7 +882,7 @@
 		    		scope.page = nextPage;
 		    		request = true;
 	    		}
-	    	}
+	    	}	    	
 	    	
 	    	if(request)
 	    	{
