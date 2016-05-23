@@ -512,11 +512,7 @@ class ReportsPresenter extends PresenterCore
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
     			   sotbl.sfa_modified_date invoice_posting_date,
 				   (coalesce(sotbl.so_total_served,0.00) - coalesce(sotbl.so_total_item_discount,0.00) - coalesce(sotbl.so_total_collective_discount,0.00)) total_invoice_amount,
-    			   tsohd2.ref_no,
-                   
-                   coalesce(sotbl.served_deduction_amount_id,0) served_deduction_amount_id,
-                   coalesce(sotbl.deduction_code,\'\') deduction_code,
-                   
+    			   tsohd2.ref_no,		
 			  	   coalesce(sotbl.so_total_ewt_deduction, 0.00) other_deduction_amount,	
 				   rtntbl.return_slip_num,
 				   coalesce(rtntbl.RTN_total_gross,0.00) RTN_total_gross,
@@ -563,9 +559,7 @@ class ReportsPresenter extends PresenterCore
 						
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
 							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,						
-    			            tsohd.reference_num as served_deduction_amount_id,
-                            tsohd.deduction_code as deduction_code,
-
+    			
     						all_so.updated
 						from (
 								select
@@ -629,7 +623,6 @@ class ReportsPresenter extends PresenterCore
 						(
 							select
 								reference_num,
-                                deduction_code,
 								sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount,
 								sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
 							from txn_sales_order_header_discount
@@ -734,8 +727,6 @@ class ReportsPresenter extends PresenterCore
 				collection.so_total_collective_discount,
 				collection.total_invoice_amount,
     			collection.ref_no,
-                collection.served_deduction_amount_id,
-                collection.deduction_code,
 				collection.other_deduction_amount,
 				collection.return_slip_num,
 				collection.RTN_total_gross,
@@ -3045,6 +3036,7 @@ class ReportsPresenter extends PresenterCore
 				all_so.customer_code,
 				ac.customer_name,
     			remarks.remarks,
+                remarks.evaluated_objective_id,
 			    all_so.van_code,
 				all_so.device_code,
 				all_so.salesman_code,
@@ -3171,7 +3163,7 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)
 				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)
     			LEFT JOIN (
-    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
     			) remarks ON(remarks.reference_num = tas.reference_num)								
     			';
     	 
@@ -3183,6 +3175,7 @@ class ReportsPresenter extends PresenterCore
 				trh.customer_code,
 				ac.customer_name,
     			remarks.remarks,
+                remarks.evaluated_objective_id,
 				trh.van_code,
 				trh.device_code,
 				trh.salesman_code,
@@ -3234,7 +3227,7 @@ class ReportsPresenter extends PresenterCore
     			select 
     				reference_num,
 			    	ref_no,
-			    	remarks, 
+			    	remarks,
     				deduction_rate,
     				sum(coalesce(deduction_amount,0)) served_deduction_amount
 					from  txn_return_header_discount
@@ -3243,7 +3236,7 @@ class ReportsPresenter extends PresenterCore
     		) trhd ON(trhd.reference_num=trh.reference_num)
 
     		LEFT JOIN (
-    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
     		) remarks ON(remarks.reference_num = trh.reference_num)
     			';
     	 
@@ -3254,6 +3247,7 @@ class ReportsPresenter extends PresenterCore
 				sales.customer_code,
 				sales.customer_name,
     			sales.remarks,
+                sales.evaluated_objective_id,
 			    sales.van_code,
 				sales.device_code,
 				sales.salesman_code,
