@@ -77,19 +77,8 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						@if($isAdmin)
-							<a ng-if="(record.served_deduction_amount_id != 0 && record.deduction_code == 'EWT')" href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header_discount','served_deduction_amount',record.served_deduction_amount_id,record.other_deduction_amount,$index,'Other deduction amount','other_deduction_amount','','','0.01')">
-								<span ng-bind="record.other_deduction_amount_formatted = formatNumber(record.other_deduction_amount)"></span>
-	  						</a>
-	  						<span ng-if="record.served_deduction_amount_id == 0" ng-bind="record.other_deduction_amount_formatted = formatNumber(record.other_deduction_amount)"></span>
-  						@else
-  							<span ng-bind="record.other_deduction_amount_formatted = formatNumber(record.other_deduction_amount)"></span>
-  						@endif
+						<span ng-bind="record.other_deduction_amount_formatted = formatNumber(record.other_deduction_amount)"></span>
 					</td>
-
-
-
-
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin)
 							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
@@ -130,13 +119,16 @@
 	  					@endif
 					</td>
 					<td>
-						@if($isAdmin)
-						<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.cash_amount,$index,'Cash','cash_amount','','','0.01')">
-							<span ng-bind="record.cash_amount_formatted = formatNumber(record.cash_amount)"></span>
-  						</a>
-  						@else
-  						<span ng-bind="record.cash_amount_formatted = formatNumber(record.cash_amount)"></span>
-  						@endif
+						<span ng-bind="record.cash_amount_formatted = formatNumber(record.cash_amount)"></span>
+						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.cash_amount,$index,'Cash','cash_amount','','','0.01')">
+							<span ng-bind="formatNumber(record.cash_amount)"></span>
+  						</a> -->						
+					</td>
+					<td>
+						<span ng-bind="record.check_amount_formatted = formatNumber(record.check_amount)"></span>
+						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.check_amount,$index,'Cash','check_amount','','','0.01')">
+							<span ng-bind="formatNumber(record.check_amount)"></span>
+						</a> -->
 					</td>
 					<td>
 						@if($isAdmin)
