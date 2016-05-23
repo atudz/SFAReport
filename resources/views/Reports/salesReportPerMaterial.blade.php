@@ -32,20 +32,28 @@
 				{!!Html::topen(['no_download'=>$isGuest2])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
+					<tr ng-repeat="record in records|filter:query" id="[[$index]] class=[[record.updated]]">
 						<td>[[record.so_number]]</td>						
 						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
-						<td>[[record.remarks]]</td>
+						<td>
+							@if($isAdmin || $isAuditor)
+								<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
+		    						[[ record.remarks ]]
+		  						</a>
+		  					@else
+		  						[[ record.remarks ]]
+		  					@endif
+						</td>
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>
 						<td>[[record.salesman_code]]</td>
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>
-							@if($isAdmin)
+							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number')">
 	    							[[ record.invoice_number | uppercase]]
 	  							</a>
@@ -54,7 +62,7 @@
 	  						@endif
 						</td>
 						<td>
-							@if($isAdmin)
+							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date')">
 	    							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
@@ -63,7 +71,7 @@
 	  						@endif
 						</td>
 						<td>
-							@if($isAdmin)
+							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date')">
 	    							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 	  							</a>
@@ -75,7 +83,7 @@
 						<td>[[record.item_code]]</td>
 						<td>[[record.description]]</td>
 						<td>
-							@if($isAdmin)
+							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('number',record.quantity_table,record.quantity_column,record.quantity_pk_id,record.quantity,$index,'Quantity','quantity',true)">
 	    							[[record.quantity]]
 	  							</a>

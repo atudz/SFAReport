@@ -3036,6 +3036,7 @@ class ReportsPresenter extends PresenterCore
 				all_so.customer_code,
 				ac.customer_name,
     			remarks.remarks,
+                remarks.evaluated_objective_id,
 			    all_so.van_code,
 				all_so.device_code,
 				all_so.salesman_code,
@@ -3162,7 +3163,7 @@ class ReportsPresenter extends PresenterCore
 				LEFT JOIN txn_activity_salesman tas ON(tas.reference_num=all_so.reference_num AND tas.salesman_code=all_so.salesman_code)
 				LEFT JOIN app_item_master aim ON(all_so.item_code=aim.item_code)
     			LEFT JOIN (
-    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
     			) remarks ON(remarks.reference_num = tas.reference_num)								
     			';
     	 
@@ -3174,6 +3175,7 @@ class ReportsPresenter extends PresenterCore
 				trh.customer_code,
 				ac.customer_name,
     			remarks.remarks,
+                remarks.evaluated_objective_id,
 				trh.van_code,
 				trh.device_code,
 				trh.salesman_code,
@@ -3225,7 +3227,7 @@ class ReportsPresenter extends PresenterCore
     			select 
     				reference_num,
 			    	ref_no,
-			    	remarks, 
+			    	remarks,
     				deduction_rate,
     				sum(coalesce(deduction_amount,0)) served_deduction_amount
 					from  txn_return_header_discount
@@ -3234,7 +3236,7 @@ class ReportsPresenter extends PresenterCore
     		) trhd ON(trhd.reference_num=trh.reference_num)
 
     		LEFT JOIN (
-    				select reference_num,remarks from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
     		) remarks ON(remarks.reference_num = trh.reference_num)
     			';
     	 
@@ -3245,6 +3247,7 @@ class ReportsPresenter extends PresenterCore
 				sales.customer_code,
 				sales.customer_name,
     			sales.remarks,
+                sales.evaluated_objective_id,
 			    sales.van_code,
 				sales.device_code,
 				sales.salesman_code,
