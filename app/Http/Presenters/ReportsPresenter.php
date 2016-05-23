@@ -4637,7 +4637,7 @@ class ReportsPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Document Date','sort'=>'document_date'],
     			['name'=>'Name','sort'=>'name'],
-    			['name'=>'Customer Address','sort'=>'customer_address'],
+    			['name'=>'Customer Address'],
     			['name'=>'Depot','sort'=>'depot'],
     			['name'=>'Reference','sort'=>'reference'],
     			['name'=>'VAT Registration No.'],
