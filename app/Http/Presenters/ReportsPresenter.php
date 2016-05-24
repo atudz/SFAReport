@@ -3289,7 +3289,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$select = '
 				   SUM(sales.quantity) quantity,
-				   TRUNCATE(ROUND(SUM(sales.gross_served_amount),2,2) gross_served_amount,
+				   TRUNCATE(ROUND(SUM(sales.gross_served_amount),2),2) gross_served_amount,
     			   TRUNCATE(ROUND(SUM(sales.discount_amount),2),2) discount_amount,
 				   TRUNCATE(ROUND(SUM(sales.vat_amount),2),2) vat_amount,
     			   TRUNCATE(ROUND(SUM(sales.collective_discount_amount),2),2) collective_discount_amount,
