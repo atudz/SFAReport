@@ -69,23 +69,23 @@
 	  						@endif
 						</td>
 						<td>
-							[[record.gross_served_amount]]
+							<span ng-bind="record.gross_served_amount = negate(record.gross_served_amount)"></span>
 						</td>
 						<td>
-							[[record.vat_amount]]
+							<span ng-bind="record.vat_amount = negate(record.vat_amount)"></span>
 						</td>
 						<td>[[record.discount_rate]]</td>
 						<td>
-							[[record.discount_amount]]
+							<span ng-bind="record.discount_amount = negate(record.discount_amount)"></span>
 						</td>
 						<td>[[record.collective_discount_rate]]</td>
 						<td>
-							[[record.collective_discount_amount]]
+							<span ng-bind="record.collective_discount_amount = negate(record.collective_discount_amount)"></span>
 						</td>
 						<td>[[record.discount_reference_num]]</td>
 						<td>[[record.discount_remarks]]</td>						
 						<td>
-							[[record.total_invoice]]
+							<span ng-bind="record.total_invoice = negate(record.total_invoice)"></span>
 						</td>
 					</tr>
 					
@@ -109,15 +109,15 @@
 							<span ng-bind="summary.gross_served_amount_formatted = formatNumber(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount,false)"></span>
+							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount,true)"></span>
+							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount,true)"></span>
+							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount)"></span>
 						</th>
 						<td></td>
 						<td></td>						

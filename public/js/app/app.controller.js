@@ -1538,6 +1538,12 @@
 	 */
 	function formatNumber(scope, log) {
 
+		scope.negate = function(number){
+			if(number < 0)
+				number = '(' + Math.abs(number) + ')';
+			return number;
+		};
+		
 	    scope.formatNumber = function(number, negate, round){
 	    	
 	    	  if(number == '')
@@ -1549,7 +1555,7 @@
 	    		  if(round)
 	    		  {
 	    			  number = Math.round(number);
-	    			  if(negate) number = '('+number+')';
+	    			  if(negate || number < 0) number = '('+Math.abs(number)+')';
 	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	    		  }
 	    		  number = number.toFixed(2);
@@ -1560,7 +1566,7 @@
 	    		  if(round)
 	    		  {
 	    			  number = Math.round(number);
-	    			  if(negate) number = '('+number+')';
+	    			  if(negate || number < 0) number = '('+Math.abs(number)+')';
 	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	    		  }
 	    		  number = number.toString();
@@ -1581,8 +1587,8 @@
 	    	  {
 	    		  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	    	  }
-	    	  if(negate === '1' || negate === true || negate === 1)
-	    		  realNumber = '(' + realNumber + ')';
+	    	  if(negate === '1' || negate === true || negate === 1 || realNumber < 0)
+	    		  realNumber = '(' + Math.abs(realNumber) + ')';
 	    	  return realNumber;
 	    };
 	}

@@ -3054,15 +3054,15 @@ class ReportsPresenter extends PresenterCore
 			    0 return_detail_id,
 				\'\' condition_code,
 				all_so.uom_code,
-				all_so.gross_served_amount,
-				all_so.vat_amount,
+				TRUNCATE(ROUND(all_so.gross_served_amount,2),2) gross_served_amount,
+				TRUNCATE(ROUND(all_so.vat_amount,2),2) vat_amount,
 				all_so.discount_rate,
-				all_so.discount_amount,
+				TRUNCATE(ROUND(all_so.discount_amount,2),2) discount_amount,
 			    all_so.collective_discount_rate,
-    			all_so.collective_discount_amount,
+    			TRUNCATE(ROUND(all_so.collective_discount_amount,2),2) collective_discount_amount,
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,
-			    all_so.total_sales total_invoice,
+			    TRUNCATE(ROUND(all_so.total_sales,2),2) total_invoice,
 				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,		
 				\'txn_sales_order_header\' invoice_table,
 				\'invoice_number\' invoice_number_column,
@@ -3192,15 +3192,15 @@ class ReportsPresenter extends PresenterCore
 				trd.return_detail_id,
 				trd.condition_code,
 				trd.uom_code,
-				trd.gross_amount gross_served_amount,
-				trd.vat_amount,
+				(-1 * TRUNCATE(ROUND(trd.gross_amount,2),2)) gross_served_amount,
+				(-1 * TRUNCATE(ROUND(trd.vat_amount,2),2)) vat_amount,
 				0 discount_rate,
-				trd.discount_amount,
+				(-1 * TRUNCATE(ROUND(trd.discount_amount,2),2)) discount_amount,
 				trhd.deduction_rate collective_discount_rate,
-    			(coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100)) collective_discount_amount,
+    			(-1 * TRUNCATE(ROUND((coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100)),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,							
-			    ((trd.gross_amount + trd.vat_amount) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))) total_invoice,
+			    (-1 * TRUNCATE(ROUND(((trd.gross_amount + trd.vat_amount) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))),2),2)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 		
 			    \'txn_return_header\' invoice_table,
@@ -3289,11 +3289,11 @@ class ReportsPresenter extends PresenterCore
     	{
     		$select = '
 				   SUM(sales.quantity) quantity,
-				   SUM(sales.gross_served_amount) gross_served_amount,
-    			   SUM(sales.discount_amount) discount_amount,
-				   SUM(sales.vat_amount) vat_amount,
-    			   SUM(sales.collective_discount_amount) collective_discount_amount,
-				   SUM(sales.total_invoice) total_invoice
+				   TRUNCATE(ROUND(SUM(sales.gross_served_amount),2,2) gross_served_amount,
+    			   TRUNCATE(ROUND(SUM(sales.discount_amount),2),2) discount_amount,
+				   TRUNCATE(ROUND(SUM(sales.vat_amount),2),2) vat_amount,
+    			   TRUNCATE(ROUND(SUM(sales.collective_discount_amount),2),2) collective_discount_amount,
+				   TRUNCATE(ROUND(SUM(sales.total_invoice),2),2) total_invoice
     			';
     	}
     	 
@@ -3553,15 +3553,15 @@ class ReportsPresenter extends PresenterCore
 				trh.return_slip_num invoice_number,
 				trh.return_date invoice_date,
 				trh.sfa_modified_date invoice_posting_date,				
-    			CONCAT(\'(\',TRUNCATE(ROUND(SUM(coalesce(trd.gross_amount,0.00)),2),2),\')\') gross_served_amount,
-    			CONCAT(\'(\',TRUNCATE(ROUND(SUM(coalesce(trd.vat_amount,0.00)),2),2),\')\') vat_amount,
+    			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.gross_amount,0.00)),2),2)) gross_served_amount,
+    			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.vat_amount,0.00)),2),2)) vat_amount,
 				CONCAT(0,\'%\') discount_rate,
-    			CONCAT(\'(\',TRUNCATE(ROUND(SUM(coalesce(trd.discount_amount,0.00)),2),2),\')\') discount_amount,
+    			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.discount_amount,0.00)),2),2)) discount_amount,
 				CONCAT(TRUNCATE(coalesce(trhd.deduction_rate,0.00),0),\'%\') collective_discount_rate,    			    			
-			    CONCAT(\'(\',TRUNCATE(ROUND(( SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00))*(coalesce(trhd.deduction_rate,0.00)/100)) ),2),2),\')\') collective_discount_amount,
+			    (-1 * TRUNCATE(ROUND(( SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00))*(coalesce(trhd.deduction_rate,0.00)/100)) ),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) total_invoice,
+			    (-1 * SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00))))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
@@ -3638,11 +3638,11 @@ class ReportsPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-    			   SUM(sales.gross_served_amount) gross_served_amount,
-    			   SUM(sales.discount_amount) discount_amount,
-				   SUM(sales.vat_amount) vat_amount,
-    			   SUM(sales.collective_discount_amount) collective_discount_amount,
-				   SUM(sales.total_invoice) total_invoice
+    			   TRUNCATE(ROUND(SUM(sales.gross_served_amount),2),2) gross_served_amount,
+    			   TRUNCATE(ROUND(SUM(sales.discount_amount),2),2) discount_amount,
+				   TRUNCATE(ROUND(SUM(sales.vat_amount),2),2) vat_amount,
+    			   TRUNCATE(ROUND(SUM(sales.collective_discount_amount),2),2) collective_discount_amount,
+				   TRUNCATE(ROUND(SUM(sales.total_invoice),2),2) total_invoice
     			';
     	}
     	
