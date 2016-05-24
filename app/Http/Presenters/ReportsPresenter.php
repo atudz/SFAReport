@@ -2832,9 +2832,9 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference, '.
-					$negate1 . '(coalesce(RTNtbl.RTN_total_vat, 0.00))' .$negate2 . ' tax_amount,'.
-					$negate1 . '(coalesce(RTNtbl.RTN_total_amount, 0.00))'.$negate2 .' total_sales,'.
-					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)) '.$negate2.' total_invoice_amount,
+					$negate1 . '(((coalesce(RTNtbl.RTN_total_vat, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12)' .$negate2 . ' tax_amount,'.
+					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*0.12)'.$negate2 .' total_sales,'.
+					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) '.$negate2.' total_invoice_amount,
     			    RTNtbl.updated,
 					app_customer.area_code					
 
@@ -2850,10 +2850,9 @@ class ReportsPresenter extends PresenterCore
 						trh.sfa_modified_date,
 						trh.return_slip_num,
 						sum(trhd.collective_discount_amount) as RTN_total_collective_discount,    			
-						(sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12)*0.12 as RTN_total_vat,												
-						(sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)) as RTN_net_amount,
-						
-						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount)/1.12 as RTN_total_amount,
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_vat,												
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_net_amount,						
+						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_amount,
     					IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated
 					from txn_return_header trh
 					inner join txn_return_detail trd on trh.reference_num = trd.reference_num  and trh.salesman_code = trd.modified_by
@@ -3459,7 +3458,7 @@ class ReportsPresenter extends PresenterCore
     							SUM(tsod.gross_served_amount) gross_served_amount,
 								SUM(tsod.vat_amount) vat_amount,
 								SUM(tsod.discount_rate) discount_rate,
-								SUM(tsod.discount_amount)discount_amount,
+								SUM(tsod.discount_amount) discount_amount,
     							tsohd.served_deduction_rate collective_discount_rate,
     							SUM(coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) collective_discount_amount,
 			    				tsohd.ref_no discount_reference_num,
