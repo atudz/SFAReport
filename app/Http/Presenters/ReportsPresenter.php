@@ -1607,8 +1607,8 @@ class ReportsPresenter extends PresenterCore
     		ac.area_code,
 			sotbl.so_date invoice_date,	
     		SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))) total_collected_amount,
-    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00))))/1.12)*0.12 sales_tax,
-    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00))))/1.12) amt_to_commission
+    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12)*0.12 sales_tax,
+    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12) amt_to_commission
 				   			    	
 			from txn_activity_salesman tas
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
