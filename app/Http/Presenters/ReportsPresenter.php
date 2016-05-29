@@ -8,7 +8,6 @@ use App\Filters\SelectFilter;
 use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
 use Carbon\Carbon;
-use App\Factories\LibraryFactory;
 use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
 
@@ -3196,10 +3195,10 @@ class ReportsPresenter extends PresenterCore
 				0 discount_rate,
 				(-1 * TRUNCATE(ROUND(trd.discount_amount,2),2)) discount_amount,
 				trhd.deduction_rate collective_discount_rate,
-    			(-1 * TRUNCATE(ROUND((coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100)),2),2)) collective_discount_amount,
+    			(-1 * TRUNCATE(ROUND(coalesce(trhd.served_deduction_amount,0.00),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,							
-			    (-1 * TRUNCATE(ROUND(((trd.gross_amount + trd.vat_amount) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(trhd.deduction_rate/100))),2),2)) total_invoice,
+			    (-1 * TRUNCATE(ROUND(((trd.gross_amount + trd.vat_amount) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00))),2),2)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 		
 			    \'txn_return_header\' invoice_table,
@@ -3557,10 +3556,10 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(0,\'%\') discount_rate,
     			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.discount_amount,0.00)),2),2)) discount_amount,
 				CONCAT(TRUNCATE(coalesce(trhd.deduction_rate,0.00),0),\'%\') collective_discount_rate,    			    			
-			    (-1 * TRUNCATE(ROUND(( SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00))*(coalesce(trhd.deduction_rate,0.00)/100)) ),2),2)) collective_discount_amount,
+			    (-1 * TRUNCATE(ROUND(SUM(coalesce(trhd.served_deduction_amount,0.00)),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    (-1 * SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00))))) total_invoice,
+			    (-1 * SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00)) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
