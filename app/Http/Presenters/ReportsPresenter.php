@@ -1069,16 +1069,20 @@ class ReportsPresenter extends PresenterCore
     	$invoices = [];
     	foreach($collection as $col)
     		$invoices[] = $col->invoice_number;
-    	
+    	    		
     	sort($invoices,SORT_NATURAL);
     	
     	$records = [];
+    	$reference = [];
     	foreach($invoices as $invoice)
     	{
     		foreach($collection as $col)
     		{
-    			if(isset($col->invoice_number) && $invoice == $col->invoice_number)
+    			if(isset($col->invoice_number) && $invoice == $col->invoice_number && !in_array($col->reference_num,$reference))
+    			{
     				$records[] = $col;
+    				$reference[] = $col->reference_num;
+    			}
     		}
     	}
     	    	
@@ -1251,9 +1255,7 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     			    	
-			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
-    					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\')
+			WHERE (tas.activity_code like \'%SO%\')
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
@@ -1393,9 +1395,7 @@ class ReportsPresenter extends PresenterCore
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 			) remarks ON(remarks.reference_num=tas.reference_num)
     
-			WHERE ((tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
-    					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\')) ' .$except. '
+			WHERE (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\') ' .$except. '
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
 					 tas.customer_code ASC
