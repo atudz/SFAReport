@@ -18,7 +18,7 @@
 						{!!Html::select('company_code','Company Code', $companyCode)!!}
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::datepicker('sfa_modified_date','SFA Modified date',true)!!}
+						{!!Html::datepicker('sfa_modified_date','SFA Modified Date',true)!!}
 						{!!Html::select('status','Status', $statuses)!!}													 			
 					</div>			
 				{!!Html::fclose()!!}
