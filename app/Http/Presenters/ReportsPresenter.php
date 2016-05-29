@@ -2833,7 +2833,7 @@ class ReportsPresenter extends PresenterCore
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference, '.
 					$negate1 . '(((coalesce(RTNtbl.RTN_total_vat, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12)' .$negate2 . ' tax_amount,'.
-					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*0.12)'.$negate2 .' total_sales,'.
+					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*1.12)'.$negate2 .' total_sales,'.
 					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) '.$negate2.' total_invoice_amount,
     			    RTNtbl.updated,
 					app_customer.area_code					
