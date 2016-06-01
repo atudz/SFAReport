@@ -1887,7 +1887,9 @@ class ReportsPresenter extends PresenterCore
     	$replenishment = $prepare->first();
     	
     	$firstUpload = false;
-    	if($replenishment && (new Carbon($replenishment->replenishment_date))->format('Y-m-d') == $goLiveDate)
+    	$count = $prepare->count();
+    	if($replenishment && 
+    	  ((new Carbon($replenishment->replenishment_date))->format('Y-m-d') == $goLiveDate) || $count == 1)
     	{    		
     		$firstUpload = true; 
     	}
