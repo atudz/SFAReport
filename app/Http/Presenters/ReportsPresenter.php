@@ -4252,7 +4252,8 @@ class ReportsPresenter extends PresenterCore
 				app_area.area_name,
     			app_salesman_van.van_code,
     			app_salesman.sfa_modified_date,
-				IF(app_salesman.status=\'A\',\'Active\',IF(app_salesman.status=\'I\',\'Inactive\',\'Deleted\')) status
+				IF(app_salesman.status=\'A\' && app_salesman_van.status=\'A\',
+    				\'Active\',IF(app_salesman.status=\'I\' || app_salesman_van.status=\'I\',\'Inactive\',\'Deleted\')) status
     			';
     	 
     	$prepare = \DB::table('app_salesman')
@@ -4271,10 +4272,7 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->where('app_area.area_code','=',$self->getValue());
     			});
-    	 
-    	$statusFilter = FilterFactory::getInstance('Select');
-    	$prepare = $statusFilter->addFilter($prepare,'status');
-    	 
+    	     	 
     	$companyCodeFilter = FilterFactory::getInstance('Select');
 		$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
 							function($self, $model){
@@ -4290,7 +4288,25 @@ class ReportsPresenter extends PresenterCore
     	$prepare->where('app_salesman_customer.status','=','A');
     	$prepare->where('app_customer.status','=','A');
     	$prepare->where('app_area.status','=','A');
-    	$prepare->where('app_salesman_van.status','=','A');
+    	
+    	if($status = $this->request->get('status'))
+    	{
+    		if($status == 'A')
+    			$prepare->where(function($query){
+    				$query->where('app_salesman.status','A');
+    				$query->where('app_salesman_van.status','A');
+    			});
+    		elseif($status == 'I')
+    			$prepare->where(function($query){
+    				$query->where('app_salesman.status','I');
+    				$query->OrWhere('app_salesman_van.status','I');
+    			});
+			else
+    			$prepare->where(function($query){
+    				$query->where('app_salesman.status','D');
+    				$query->where('app_salesman_van.status','D');
+    			});
+    	}    	
     	
     	$prepare->groupBy('app_salesman.salesman_code');
     	$prepare->groupBy('app_salesman.salesman_name');
