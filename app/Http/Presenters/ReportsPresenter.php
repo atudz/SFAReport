@@ -502,6 +502,7 @@ class ReportsPresenter extends PresenterCore
     			   tas.reference_num,
     			   tas.salesman_code,
 				   tas.customer_code,
+    			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				   remarks.remarks,    			   
 				   sotbl.invoice_number,
@@ -831,6 +832,11 @@ class ReportsPresenter extends PresenterCore
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
     	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	
     	return $prepare;
     }
     
@@ -845,6 +851,7 @@ class ReportsPresenter extends PresenterCore
     			   tas.reference_num,
     			   tas.salesman_code,
 				   tas.customer_code,
+    			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				   remarks.remarks,
 				   coltbl.invoice_number,
@@ -1036,10 +1043,16 @@ class ReportsPresenter extends PresenterCore
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
     	 
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	 
+    	
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
-    	 
+    	     	
     	return $prepare;
     }
     
@@ -1104,6 +1117,7 @@ class ReportsPresenter extends PresenterCore
     			aps.salesman_code,
 				aps.salesman_name,
 				tas.customer_code,
+    			ac.area_code,
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
 				sotbl.invoice_number invoice_number,
@@ -1338,7 +1352,12 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	 
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	  
     	
     	return $prepare;
     }
@@ -1357,6 +1376,7 @@ class ReportsPresenter extends PresenterCore
     			aps.salesman_code,
 				aps.salesman_name,
 				tas.customer_code,
+    			ac.area_code,
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
 				coltbl.invoice_number invoice_number,
@@ -1478,7 +1498,12 @@ class ReportsPresenter extends PresenterCore
     	 
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
+    	}
+    	 
     	 
     	return $prepare;
     }
@@ -4901,19 +4926,26 @@ class ReportsPresenter extends PresenterCore
      */
     public function getSalesman($withCode=true, $strictSalesman=true)
     {
-    	$select = 'salesman_code, salesman_name name';
+    	$select = 'app_salesman.salesman_code, app_salesman.salesman_name name';
     	if($withCode)
     	{
-    		$select = 'salesman_code, CONCAT(salesman_code,\' - \',salesman_name) name';
+    		$select = 'app_salesman.salesman_code, CONCAT(app_salesman.salesman_code,\' - \',app_salesman.salesman_name) name';
     	}
     	
     	$prepare = \DB::table('app_salesman')
+    					->distinct()
 	    				->selectRaw($select)
-	    				->where('status','=','A')
+	    				->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
+	    				->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+	    				->where('app_salesman.status','=','A')
 	    				->orderBy('name');
     	
     	if($strictSalesman && $this->isSalesman())
     		$prepare->where('salesman_code',auth()->user()->salesman_code);
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    		$prepare->where('app_customer.area_code','=',auth()->user()->location_assignment_code);
+    		 
     	
     	$salesman = $prepare->lists('name','salesman_code');
     	$user = auth()->user();    	
