@@ -1887,7 +1887,13 @@ class ReportsPresenter extends PresenterCore
     	$replenishment = $prepare->first();
     	
     	$firstUpload = false;
+    	
+    	$prepare = \DB::table('txn_replenishment_header')
+				    	->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+		$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'<=',$to->format('Y-m-d'));
+		$prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));		
     	$count = $prepare->count();
+    	
     	if($replenishment && 
     	  ((new Carbon($replenishment->replenishment_date))->format('Y-m-d') == $goLiveDate) || $count == 1)
     	{    		
