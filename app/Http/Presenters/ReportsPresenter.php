@@ -684,7 +684,7 @@ class ReportsPresenter extends PresenterCore
 							coalesce(tch.or_amount,0.00) or_amount,
 							tch.or_date,
 							tcd.payment_method_code,
-							SUM(coalesce(tcd.payment_amount,0.00)) payment_amount,
+							coalesce(tcd.payment_amount,0.00) payment_amount,
 							tcd.check_number,
 							tcd.check_date,
 							tcd.bank,
@@ -697,7 +697,7 @@ class ReportsPresenter extends PresenterCore
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-    					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code
+    					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
@@ -900,7 +900,7 @@ class ReportsPresenter extends PresenterCore
 							IF(tch.or_amount,tch.or_amount,0.00) or_amount,
 							tch.or_date,
 							tcd.payment_method_code,
-							SUM(coalesce(tcd.payment_amount,0.00)) payment_amount,,
+							coalesce(tcd.payment_amount,0.00) payment_amount,,
 							tcd.check_number,
 							tcd.check_date,
 							tcd.bank,
@@ -914,7 +914,7 @@ class ReportsPresenter extends PresenterCore
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
-    					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code
+    					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.reference_num = tas.reference_num
 		
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
