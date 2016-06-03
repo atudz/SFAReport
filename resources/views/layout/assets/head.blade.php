@@ -3,4 +3,4 @@
 
 <link rel="shortcut icon" type="image/x-icon" href="img/sfi_favicon.ico"/>
 
-<title>SFA SFI Reports - {{getenv('SETUP')}}</title>
+<title>RDS SFA REPORTS - {{getenv('SETUP')}}</title>
