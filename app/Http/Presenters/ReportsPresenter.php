@@ -832,11 +832,6 @@ class ReportsPresenter extends PresenterCore
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
     	
-    	if(!$this->hasAdminRole() && auth()->user())
-    	{
-    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
-    	}
-    	
     	return $prepare;
     }
     
@@ -1041,13 +1036,7 @@ class ReportsPresenter extends PresenterCore
     			});
     
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	 
-    	if(!$this->hasAdminRole() && auth()->user())
-    	{
-    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
-    	}
-    	 
+    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %'); 
     	
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
@@ -1352,12 +1341,6 @@ class ReportsPresenter extends PresenterCore
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	
-    	if(!$this->hasAdminRole() && auth()->user())
-    	{
-    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
-    	}
-    	  
     	
     	return $prepare;
     }
@@ -2712,6 +2695,11 @@ class ReportsPresenter extends PresenterCore
     	if($this->isSalesman())
     	{
     		$prepare->where('vw_inv.salesman_code',auth()->user()->salesman_code);
+    	}
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
     	}
     	
     	return $prepare;
