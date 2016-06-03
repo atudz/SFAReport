@@ -56,16 +56,16 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.so_total_served_formatted = formatNumber(record.so_total_served)"></span>
+						<span ng-bind="record.so_total_served_formatted = negate(record.so_total_served)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.so_total_item_discount_formatted = formatNumber(record.so_total_item_discount)"></span>
+						<span ng-bind="record.so_total_item_discount_formatted = negate(record.so_total_item_discount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.so_total_collective_discount_formatted = formatNumber([record.so_total_collective_discount])"></span>
+						<span ng-bind="record.so_total_collective_discount_formatted = negater([record.so_total_collective_discount])"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.total_invoice_amount_formatted = formatNumber(record.total_invoice_amount)"></span>
+						<span ng-bind="record.total_invoice_amount_formatted = negate(record.total_invoice_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
@@ -77,7 +77,7 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.other_deduction_amount_formatted = formatNumber(record.other_deduction_amount)"></span>
+						<span ng-bind="record.other_deduction_amount_formatted = negate(record.other_deduction_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
@@ -89,16 +89,16 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.RTN_total_gross_formatted = formatNumber(record.RTN_total_gross)"></span>
+						<span ng-bind="record.RTN_total_gross_formatted = negate(record.RTN_total_gross)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.RTN_total_collective_discount_formatted = formatNumber(record.RTN_total_collective_discount)"></span>
+						<span ng-bind="record.RTN_total_collective_discount_formatted = negate(record.RTN_total_collective_discount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.RTN_net_amount_formatted = formatNumber(record.RTN_net_amount)"></span>
+						<span ng-bind="record.RTN_net_amount_formatted = negate(record.RTN_net_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.total_invoice_net_amount_formatted = formatNumber(record.total_invoice_net_amount)"></span>
+						<span ng-bind="record.total_invoice_net_amount_formatted = negate(record.total_invoice_net_amount)"></span>
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
@@ -119,13 +119,13 @@
 	  					@endif
 					</td>
 					<td>
-						<span ng-bind="record.cash_amount_formatted = formatNumber(record.cash_amount)"></span>
+						<span ng-bind="record.cash_amount_formatted = negate(record.cash_amount)"></span>
 						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.cash_amount,$index,'Cash','cash_amount','','','0.01')">
 							<span ng-bind="formatNumber(record.cash_amount)"></span>
   						</a> -->						
 					</td>
 					<td>
-						<span ng-bind="record.check_amount_formatted = formatNumber(record.check_amount)"></span>
+						<span ng-bind="record.check_amount_formatted = negate(record.check_amount)"></span>
 						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.check_amount,$index,'Cash','check_amount','','','0.01')">
 							<span ng-bind="formatNumber(record.check_amount)"></span>
 						</a> -->
@@ -170,7 +170,7 @@
 						<span ng-bind="record.cm_date_formatted = (formatDate(record.cm_date) | date:'MM/dd/yyyy')"></span>
 					</td>
 					<td>
-						<span ng-bind="record.credit_amount_formatted = formatNumber(record.credit_amount)"></span>
+						<span ng-bind="record.credit_amount_formatted = negate(record.credit_amount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="record.total_collected_amount_formatted = formatNumber(record.total_collected_amount)"></span>

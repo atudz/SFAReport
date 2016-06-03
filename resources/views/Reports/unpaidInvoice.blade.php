@@ -37,10 +37,10 @@
 								<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 							</td>
 							<td>							
-								<span ng-bind="record.original_amount_formatted = formatNumber(record.original_amount)"></span>
+								<span ng-bind="record.original_amount_formatted = negate(record.original_amount)"></span>
 							</td>
 							<td>
-								<span ng-bind="record.balance_amount_formatted = formatNumber(record.balance_amount)"></span>
+								<span ng-bind="record.balance_amount_formatted = negate(record.balance_amount)"></span>
 							</td>
 						</tr>
 						
@@ -54,10 +54,10 @@
 							<td></td>
 							<td></td>
 							<th>
-								<span ng-bind="summary.original_amount_formatted = formatNumber(summary.original_amount)"></span>
+								<span ng-bind="summary.original_amount_formatted = negate(summary.original_amount)"></span>
 							</th>
 							<th>
-								<span ng-bind="summary.balance_amount_formatted = formatNumber(summary.balance_amount)"></span>
+								<span ng-bind="summary.balance_amount_formatted = negate(summary.balance_amount)"></span>
 							</th>
 						</tr>					
 					</tbody>

@@ -1613,9 +1613,9 @@ class ReportsPresenter extends PresenterCore
     		sotbl.invoice_number,
     		ac.area_code,
 			sotbl.so_date invoice_date,	
-    		SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))) total_collected_amount,
-    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12)*0.12 sales_tax,
-    			((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12) amt_to_commission
+    		TRUNCATE(ROUND(SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))),2),2) total_collected_amount,
+    		TRUNCATE(ROUND((((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12)*0.12),2),2) sales_tax,
+    		TRUNCATE(ROUND(((SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))))/1.12),2),2) amt_to_commission
 				   			    	
 			from txn_activity_salesman tas
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
@@ -3577,10 +3577,10 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(0,\'%\') discount_rate,
     			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.discount_amount,0.00)),2),2)) discount_amount,
 				CONCAT(TRUNCATE(coalesce(trhd.deduction_rate,0.00),0),\'%\') collective_discount_rate,    			    			
-			    (-1 * TRUNCATE(ROUND(SUM(coalesce(trhd.served_deduction_amount,0.00)),2),2)) collective_discount_amount,
+			    (-1 * TRUNCATE(ROUND(coalesce(trhd.served_deduction_amount,0.00),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
-			    (-1 * SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00)) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00)))) total_invoice,
+			    (-1 * (SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00)) - coalesce(trd.discount_amount,0.00)) - coalesce(trhd.served_deduction_amount,0.00))) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
@@ -3786,8 +3786,8 @@ class ReportsPresenter extends PresenterCore
         									*(trhd.collective_discount_rate/100)
         								)
         							),0.00)
-        						) total_invoice';
-    	$selectCollectiveDiscountAmount = 'coalesce((coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)),0.00)';
+        						)';
+    	$selectCollectiveDiscountAmount = 'TRUNCATE(ROUND(coalesce((coalesce((txn_return_detail.gross_amount + txn_return_detail.vat_amount),0.00)*(trhd.collective_discount_rate/100)),0.00),2),2)';
 
         $select = '
     			txn_return_header.return_txn_number,
@@ -3818,7 +3818,7 @@ class ReportsPresenter extends PresenterCore
     			'.$selectCollectiveDiscountAmount.' collective_discount_amount,
       			trhd.discount_reference_num,
     			trhd.discount_remarks,
-    			'.$selectTotalInvoice.',
+    			TRUNCATE(ROUND('.$selectTotalInvoice.',2),2) total_invoice,
     			IF(txn_return_header.updated_by,\'modified\',
 	    					IF(txn_return_detail.updated_by,\'modified\',
     							IF(remarks.updated_by,\'modified\',\'\')
@@ -3834,7 +3834,7 @@ class ReportsPresenter extends PresenterCore
 				SUM(txn_return_detail.gross_amount) gross_amount,
 				SUM(txn_return_detail.vat_amount) vat_amount,
 				SUM('.$selectCollectiveDiscountAmount.') collective_discount_amount,
-    			SUM'.$selectTotalInvoice;
+    			SUM(TRUNCATE(ROUND('.$selectTotalInvoice.',2),2)) total_invoice';
     	}
     	elseif($summaryCollectiveAmount)
     	{

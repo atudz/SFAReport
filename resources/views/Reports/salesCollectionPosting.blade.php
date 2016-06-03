@@ -33,7 +33,7 @@
 							<td>[[record.remarks]]</td>
 							<td>[[record.invoice_number | uppercase]]</td>
 							<td>
-								<span ng-bind="record.total_invoice_net_amount_formatted = formatNumber(record.total_invoice_net_amount)"></span>
+								<span ng-bind="record.total_invoice_net_amount_formatted = negate(record.total_invoice_net_amount)"></span>
 							</td>
 							<td>
 								<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
@@ -43,7 +43,7 @@
 							</td>
 							<td>[[record.or_number | uppercase]]</td>
 							<td>
-								<span ng-bind="record.or_amount_formatted = formatNumber(record.or_amount)"></span>
+								<span ng-bind="record.or_amount_formatted = negate(record.or_amount)"></span>
 							</td>
 							<td>
 								<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>

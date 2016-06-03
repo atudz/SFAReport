@@ -1539,9 +1539,11 @@
 	function formatNumber(scope, log) {
 
 		scope.negate = function(number){
+			if(!number) return number;
+			
 			if(number < 0)
 				number = '(' + Math.abs(number) + ')';
-			return number;
+			return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		};
 		
 	    scope.formatNumber = function(number, negate, round){

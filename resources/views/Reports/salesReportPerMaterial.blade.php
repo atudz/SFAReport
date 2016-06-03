@@ -147,23 +147,23 @@
 						<td></td>
 						<td></td>
 						<th>
-							<span ng-bind="summary.gross_served_amount_formatted = formatNumber(summary.gross_served_amount)"></span>
+							<span ng-bind="summary.gross_served_amount_formatted = negate(summary.gross_served_amount)"></span>
 						</th>
 						<th>
-							<span ng-bind="summary.vat_amount_formatted = formatNumber(summary.vat_amount)"></span>
+							<span ng-bind="summary.vat_amount_formatted = negate(summary.vat_amount)"></span>
 						</th>
 						<td></td>
 						<th>
-							<span ng-bind="summary.discount_amount_formatted = formatNumber(summary.discount_amount)"></span>
+							<span ng-bind="summary.discount_amount_formatted = negate(summary.discount_amount)"></span>
 						</th>
 						<td></td>						
 						<th>
-							<span ng-bind="summary.collective_discount_amount_formatted = formatNumber(summary.collective_discount_amount)"></span>
+							<span ng-bind="summary.collective_discount_amount_formatted = negate(summary.collective_discount_amount)"></span>
 						</th>
 						<td></td>
 						<td></td>						
 						<th>
-							<span ng-bind="summary.total_invoice_formatted = formatNumber(summary.total_invoice)"></span>
+							<span ng-bind="summary.total_invoice_formatted = negate(summary.total_invoice)"></span>
 						</th>
 					</tr>
 					
