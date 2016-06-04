@@ -290,10 +290,12 @@ class ReportsPresenter extends PresenterCore
     	    'total_invoice_amount'=>0,
     	    'RTN_total_gross'=>0,
     		'RTN_total_collective_discount'=>0,
+    		'other_deduction_amount' => 0,
     		'RTN_net_amount'=>0,
             'total_invoice_net_amount'=>0,
     		'cash_amount'=>0,
     		'check_amount'=>0,
+    		'credit_amount'=>0,
             'total_collected_amount'=>0
     	];
     	
@@ -763,10 +765,12 @@ class ReportsPresenter extends PresenterCore
     				SUM(collection.total_invoice_amount) total_invoice_amount,
     				SUM(collection.RTN_total_gross) RTN_total_gross,
     				SUM(collection.RTN_total_collective_discount) RTN_total_collective_discount,
+    				SUM(collection.other_deduction_amount) other_deduction_amount,
     				SUM(collection.RTN_net_amount) RTN_net_amount,
     				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
     				SUM(collection.cash_amount) cash_amount,
     				SUM(collection.check_amount) check_amount,
+    				SUM(collection.credit_amount) credit_amount,
     				(SUM(collection.cash_amount) + SUM(collection.check_amount) + SUM(collection.credit_amount)) total_collected_amount	
     				';
     	}
