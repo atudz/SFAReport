@@ -2738,16 +2738,19 @@ class ReportsPresenter extends PresenterCore
     {
     	
     	$special = $this->getSpecialCustomerCode();
+    	$truncate1 = 'TRUNCATE(ROUND(';
+    	$truncate2 = ',2),2)';
+    	
     	$querySales = '    			
 				select 
     				0 negate,
 					ACT.salesman_code sales_group, 
 					ACT.customer_code,
 					SOtbl.so_date document_date,
-					coalesce(SOtbl.invoice_number, \'\') reference,
-					((coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))/1.12)*0.12 tax_amount,					
-					(coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12 total_sales,
-					coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00) total_invoice_amount,
+					coalesce(SOtbl.invoice_number, \'\') reference,'.
+					$truncate1. '(((coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))/1.12)*0.12)'.$truncate2.' tax_amount,'.					
+					$truncate1. '((coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12)'.$truncate2.' total_sales,'.
+					$truncate1. '(coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))'.$truncate2.' total_invoice_amount,
     				SOtbl.updated,
     				app_customer.area_code					
 
@@ -2846,9 +2849,7 @@ class ReportsPresenter extends PresenterCore
     									
 				WHERE (ACT.activity_code like \'%SO%\' OR ACT.activity_code like \'%C%\')    			
     			';
-    	
-    	$negate1 = $report ? 'CONCAT(\'(\',TRUNCATE(ROUND(' : '';
-    	$negate2 = $report ? ',2),2),\')\')' : '';
+    	    	
     	$queryRtn = '
     			select 
     				1 negate,
@@ -2856,9 +2857,9 @@ class ReportsPresenter extends PresenterCore
 					ACT.customer_code,					
 					RTNtbl.return_date document_date,
 					coalesce(RTNtbl.return_slip_num, \'\') reference, '.
-					$negate1 . '(((coalesce(RTNtbl.RTN_total_vat, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12)' .$negate2 . ' tax_amount,'.
-					$negate1 . '((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))*1.12)'.$negate2 .' total_sales,'.
-					$negate1 . '(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00)) '.$negate2.' total_invoice_amount,
+					$truncate1 . '(-1*(((coalesce(RTNtbl.RTN_total_vat, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12)*0.12))' .$truncate2 . ' tax_amount,'.
+					$truncate1 . '(-1*((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12))'.$truncate2 .' total_sales,'.
+					$truncate1 . '(-1*(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))) '.$truncate2.' total_invoice_amount,
     			    RTNtbl.updated,
 					app_customer.area_code					
 
@@ -2873,7 +2874,7 @@ class ReportsPresenter extends PresenterCore
 						trh.return_date, 
 						trh.sfa_modified_date,
 						trh.return_slip_num,
-						sum(trhd.collective_discount_amount) as RTN_total_collective_discount,    			
+						trhd.collective_discount_amount as RTN_total_collective_discount,    			
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_vat,												
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_net_amount,						
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_amount,

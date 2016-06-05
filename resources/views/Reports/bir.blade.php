@@ -33,24 +33,24 @@
 							<td></td>
 							<td></td>
 							<td>
-								<span ng-bind="record.sales_formatted = formatNumber(record.sales,record.negate)"></span>
+								<span ng-bind="record.sales_formatted = negate(record.sales)"></span>
 							</td>
 							<td></td>							
 							<td>
-								<span ng-bind="record.total_sales_formatted = formatNumber(record.total_sales,record.negate)"></span>
+								<span ng-bind="record.total_sales_formatted = negate(record.total_sales)"></span>
 							</td>
 							<td>
-								<span ng-bind="record.tax_amount_formatted = formatNumber(record.tax_amount,record.negate)"></span>
+								<span ng-bind="record.tax_amount_formatted = negate(record.tax_amount)"></span>
 							</td>
 							<td>
-								<span ng-bind="record.total_invoice_amount_formatted = formatNumber(record.total_invoice_amount,record.negate)"></span>
+								<span ng-bind="record.total_invoice_amount_formatted = negate(record.total_invoice_amount)"></span>
 							</td>
 							<td>
-								<span ng-bind="record.local_sales_formatted = formatNumber(record.local_sales,record.negate)"></span>
+								<span ng-bind="record.local_sales_formatted = negate(record.local_sales)"></span>
 							</td>
 							<td></td>
 							<td>
-								<span ng-bind="record.term_cash_formatted = formatNumber(record.term_cash,record.negate)"></span>
+								<span ng-bind="record.term_cash_formatted = negate(record.term_cash)"></span>
 							</td>
 							<td></td>
 							<td>[[record.sales_group]]</td>
@@ -67,24 +67,24 @@
 							<td></td>
 							<td></td>
 							<td class="bold">
-								<span ng-bind="summary.sales_formatted = formatNumber(summary.sales,summary.negate)"></span>
+								<span ng-bind="summary.sales_formatted = negate(summary.sales)"></span>
 							</td>
 							<td></td>							
 							<td class="bold">
-								<span ng-bind="summary.total_sales_formatted = formatNumber(summary.total_sales,summary.negate)"></span>
+								<span ng-bind="summary.total_sales_formatted = negate(summary.total_sales)"></span>
 							</td>
 							<td class="bold">
-								<span ng-bind="summary.tax_amount_formatted = formatNumber(summary.tax_amount,summary.negate)"></span>
+								<span ng-bind="summary.tax_amount_formatted = negate(summary.tax_amount)"></span>
 							</td>
 							<td class="bold">
-								<span ng-bind="summary.total_invoice_amount_formatted = formatNumber(summary.total_invoice_amount,summary.negate)"></span>
+								<span ng-bind="summary.total_invoice_amount_formatted = negate(summary.total_invoice_amount)"></span>
 							</td>
 							<td class="bold">
-								<span ng-bind="summary.local_sales_formatted = formatNumber(summary.local_sales,summary.negate)"></span>
+								<span ng-bind="summary.local_sales_formatted = negate(summary.local_sales)"></span>
 							</td>
 							<td></td>
 							<td class="bold">
-								<span ng-bind="summary.term_cash_formatted = formatNumber(summary.term_cash,summary.negate)"></span>
+								<span ng-bind="summary.term_cash_formatted = negate(summary.term_cash)"></span>
 							</td>
 							<td></td>
 							<td></td>
