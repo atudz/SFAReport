@@ -1900,17 +1900,19 @@ class ReportsPresenter extends PresenterCore
     	
     	$firstUpload = false;
     	
-    	$prepare = \DB::table('txn_replenishment_header')
-				    	->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
-		$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'<=',$to->format('Y-m-d'));
-		$prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));		
-    	$count = $prepare->count();
-    	
-    	if($replenishment && 
-    	  ((new Carbon($replenishment->replenishment_date))->format('Y-m-d') == $goLiveDate) || $count == 1)
-    	{    		
-    		$firstUpload = true; 
-    	}
+    	if($replenishment)
+    	{
+    		$prepare = \DB::table('txn_replenishment_header')
+    							->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+    		$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'<=',$to->format('Y-m-d'));
+    		$prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));    		 
+    		$count = $prepare->count();
+    		
+    		$replenishDate = (new Carbon($replenishment->replenishment_date))->startOfDay();
+    		$transactionDate = (new Carbon($this->request->get('transaction_date')))->startOfDay();
+    		if($replenishDate->format('Y-m-d') == $goLiveDate || ($count == 1 && $replenishDate->eq($transactionDate)))
+    			$firstUpload = true;
+    	}        	
     	$data['first_upload'] = $firstUpload;
     	
     	if($this->request->get('reference_number') && !$replenishment)
@@ -2162,7 +2164,7 @@ class ReportsPresenter extends PresenterCore
     		}
     	}
     	
-    	
+
     	unset($replenishment->replenishment_date);
     	unset($replenishment->reference_number);	    	    
     	
