@@ -32,7 +32,7 @@
 				{!!Html::topen(['no_download'=>$isGuest2])!!}
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
-					<tr ng-repeat="record in records|filter:query" id="[[$index]] class=[[record.updated]]">
+					<tr ng-repeat="record in records|filter:query" id="[[$index]]" class=[[record.updated]]>
 						<td>[[record.so_number]]</td>						
 						<td>[[record.reference_num]]</td>
 						<td>[[record.activity_code]]</td>
