@@ -49,7 +49,7 @@
 							<td class="bold"></td>
 							<td class="bold"></td>
 							<td class="bold">
-								@if($isAdmin)
+								@if($isAdmin || $isAuditor)
 									<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',stock.stock_transfer_in_header_id,stock.transaction_date,$index,'Transaction Date','transaction_date',false,$parent.$index)">
 	    								<span ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
 	  								</a>
@@ -58,7 +58,7 @@
 	  							@endif								
 							</td>
 							<td>
-								@if($isAdmin)
+								@if($isAdmin || $isAuditor)
 									<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',stock.stock_transfer_in_header_id,stock.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index)">
 	    								[[stock.stock_transfer_number | uppercase]]
 	  								</a>
