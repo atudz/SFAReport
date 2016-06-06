@@ -4157,8 +4157,19 @@ class ReportsPresenter extends PresenterCore
     {
     	$select = '
     			app_customer.customer_code,
-				app_customer.customer_name,
-				CONCAT(app_customer.address_1, \', \',app_customer.address_2,\', \',app_customer.address_3) address,
+				app_customer.customer_name,    			
+    			IF(app_customer.address_1=\'\',
+    				IF(app_customer.address_2=\'\',app_customer.address_3,
+    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+    					),
+    				IF(app_customer.address_2=\'\',
+    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+    					  IF(app_customer.address_3=\'\',
+    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+    						)
+    					)
+    			) address,
 				app_customer.area_code,
 				app_area.area_name,
 				app_customer.storetype_code,
