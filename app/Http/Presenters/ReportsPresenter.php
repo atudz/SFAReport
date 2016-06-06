@@ -3394,6 +3394,7 @@ class ReportsPresenter extends PresenterCore
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('sales.invoice_date','desc');
+    		$prepare->orderBy('sales.invoice_number');
     	}
     	
     	return $prepare;	
@@ -3744,6 +3745,7 @@ class ReportsPresenter extends PresenterCore
 		if(!$this->request->has('sort'))
 		{
 			$prepare->orderBy('sales.invoice_date','desc');
+			$prepare->orderBy('sales.invoice_number');
 		}
 		
 		return $prepare;	
