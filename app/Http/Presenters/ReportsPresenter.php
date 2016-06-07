@@ -4950,7 +4950,7 @@ class ReportsPresenter extends PresenterCore
 	    				->orderBy('name');
     	
     	if($strictSalesman && $this->isSalesman())
-    		$prepare->where('salesman_code',auth()->user()->salesman_code);
+    		$prepare->where('app_salesman.salesman_code',auth()->user()->salesman_code);
     	
     	if(!$this->hasAdminRole() && auth()->user())
     		$prepare->where('app_customer.area_code','=',auth()->user()->location_assignment_code);
