@@ -1824,9 +1824,10 @@ class ReportsPresenter extends PresenterCore
     		$transferIds = array($transferIds);
     	
     	$stockItems = \DB::table('txn_stock_transfer_in_detail')
-					    	->select(['item_code','quantity'])
-					    	->whereIn('item_code',$itemCodes)
-					    	->whereIn('stock_transfer_number',$transferIds)
+					    	->selectRaw('item_code, SUM(quantity) quantity')
+					    	->whereIn('txn_stock_transfer_in_detail.item_code',$itemCodes)
+					    	->whereIn('txn_stock_transfer_in_detail.stock_transfer_number',$transferIds)
+					    	->groupBy('txn_stock_transfer_in_detail.item_code')
 					    	->orderBy('txn_stock_transfer_in_detail.modified_date')
 					    	->get();
     	return $stockItems;
