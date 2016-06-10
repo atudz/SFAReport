@@ -1603,8 +1603,8 @@ class ReportsPresenter extends PresenterCore
     	$invoice = '';
     	if($from = $this->request->get('invoice_date_from'))
     	{
-    		$dateFrom = (new Carbon($from))->format('Y-m-d');
-    		$dateTo = (new Carbon($from))->endOfMonth()->format('Y-m-d');
+    		$dateFrom = (new Carbon($from))->startOfDay();
+    		$dateTo = (new Carbon($from))->endOfMonth()->endOfDay();
     		$invoice = ' AND (sotbl.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
     	}
     	
@@ -1827,10 +1827,13 @@ class ReportsPresenter extends PresenterCore
 					    	->select(['item_code','quantity'])
 					    	->whereIn('item_code',$itemCodes)
 					    	->whereIn('stock_transfer_number',$transferIds)
+					    	->orderBy('txn_stock_transfer_in_detail.modified_date')
 					    	->get();
     	return $stockItems;
     }
 
+    
+    
     /**
      * Get Van & Inventory records
      * @param string $reports
