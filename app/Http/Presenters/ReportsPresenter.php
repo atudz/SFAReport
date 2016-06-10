@@ -1882,7 +1882,7 @@ class ReportsPresenter extends PresenterCore
     	// Beginning Balance / Actual Count
     	// Get Replenishment data 
     	$prepare = \DB::table('txn_replenishment_header')    					
-    					->select(['replenishment_date','reference_number'])
+    					->selectRaw('replenishment_date, UPPER(reference_number) reference_number')
     					->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
     	
     	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
@@ -2367,7 +2367,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table('txn_stock_transfer_in_header')
     					->selectRaw('txn_stock_transfer_in_header.stock_transfer_in_header_id,
     								txn_stock_transfer_in_header.transfer_date transaction_date,
-    								txn_stock_transfer_in_header.stock_transfer_number,
+    								UPPER(txn_stock_transfer_in_header.stock_transfer_number) as stock_transfer_number,
     								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
     					->join(\DB::raw(
     						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
