@@ -3054,6 +3054,93 @@ class ReportsPresenter extends PresenterCore
     }
     
     /**
+     * Get Prepared Sales Report Return Query
+     * @param string $summary
+     */
+    public function getPreparedSalesReportReturnQuery($summary=false)
+    {
+    	$sum1 = $summary ? 'SUM(' : '';
+    	$sum2 = $summary ? ')' : '';
+    	$group = $summary ? ' GROUP BY trh.return_txn_number' : '';
+    	
+    	$queryReturns = '
+    			SELECT
+				trh.return_txn_number so_number,
+    			trh.reference_num,
+				tas.activity_code,
+				trh.customer_code,
+				ac.customer_name,
+    			remarks.remarks,
+                remarks.evaluated_objective_id,
+				trh.van_code,
+				trh.device_code,
+				trh.salesman_code,
+				aps.salesman_name,
+    			aa.area_code,
+				aa.area_name area,
+				trh.return_slip_num invoice_number,
+				trh.return_date invoice_date,
+				trh.sfa_modified_date invoice_posting_date,
+				aim.segment_code,
+				aim.item_code,
+				aim.description,
+				trd.quantity,
+				trd.return_detail_id,
+				trd.condition_code,
+				trd.uom_code,
+				(-1 * TRUNCATE(ROUND('.$sum1.'trd.gross_amount'.$sum2.',2),2)) gross_served_amount,
+				(-1 * TRUNCATE(ROUND('.$sum1.'trd.vat_amount'.$sum2.',2),2)) vat_amount,
+				0 discount_rate,
+				(-1 * TRUNCATE(ROUND('.$sum1.'trd.discount_amount'.$sum2.',2),2)) discount_amount,
+				trhd.deduction_rate collective_discount_rate,
+    			(-1 * TRUNCATE(ROUND(coalesce(trhd.served_deduction_amount,0.00),2),2)) collective_discount_amount,
+			    trhd.ref_no discount_reference_num,
+			    trhd.remarks discount_remarks,
+			    (-1 * TRUNCATE(ROUND('.$sum1.'((trd.gross_amount + trd.vat_amount) - coalesce(trd.discount_amount,0.00))'.$sum2.' - coalesce(trhd.served_deduction_amount,0.00),2),2)) total_invoice,
+			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
+    	
+				\'txn_return_header\' invoice_table,
+    			\'return_slip_num\' invoice_number_column,
+    			\'return_date\' invoice_date_column,
+    			\'sfa_modified_date\' invoice_posting_date_column,
+				trh.return_header_id invoice_pk_id,
+    			\'txn_return_detail\' quantity_table,
+    			\'quantity\' quantity_column,
+				trd.return_detail_id quantity_pk_id,
+    			\'txn_return_detail\' condition_code_table,
+    			\'condition_code\' condition_code_column,
+				trd.return_detail_id condition_code_pk_id
+    	
+			FROM txn_return_header trh
+			LEFT JOIN app_customer ac ON(ac.customer_code=trh.customer_code)
+			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
+			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
+			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
+			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
+			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)
+    		LEFT JOIN
+    		(
+    			select
+    				reference_num,
+			    	ref_no,
+			    	remarks,
+    				deduction_rate,
+    				sum(coalesce(deduction_amount,0)) served_deduction_amount
+					from  txn_return_header_discount
+    				where deduction_code <> \'EWT\'
+					group by reference_num
+    		) trhd ON(trhd.reference_num=trh.reference_num)
+    	
+    		LEFT JOIN (
+    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
+    		) remarks ON(remarks.reference_num = trh.reference_num)
+			    		
+			'. $group;
+    	
+    	return $queryReturns;
+    }
+    
+    /**
      * Returns the prepared statement for Sales Report Per Material
      * @return Builder 
      */
@@ -3198,78 +3285,7 @@ class ReportsPresenter extends PresenterCore
     			) remarks ON(remarks.reference_num = tas.reference_num)								
     			';
     	 
-    	$queryReturns = '
-    			SELECT
-				trh.return_txn_number so_number,
-    			trh.reference_num,
-				tas.activity_code,
-				trh.customer_code,
-				ac.customer_name,
-    			remarks.remarks,
-                remarks.evaluated_objective_id,
-				trh.van_code,
-				trh.device_code,
-				trh.salesman_code,
-				aps.salesman_name,
-    			aa.area_code,
-				aa.area_name area,
-				trh.return_slip_num invoice_number,
-				trh.return_date invoice_date,
-				trh.sfa_modified_date invoice_posting_date,
-				aim.segment_code,
-				aim.item_code,
-				aim.description,
-				trd.quantity,
-				trd.return_detail_id,
-				trd.condition_code,
-				trd.uom_code,
-				(-1 * TRUNCATE(ROUND(trd.gross_amount,2),2)) gross_served_amount,
-				(-1 * TRUNCATE(ROUND(trd.vat_amount,2),2)) vat_amount,
-				0 discount_rate,
-				(-1 * TRUNCATE(ROUND(trd.discount_amount,2),2)) discount_amount,
-				trhd.deduction_rate collective_discount_rate,
-    			(-1 * TRUNCATE(ROUND(coalesce(trhd.served_deduction_amount,0.00),2),2)) collective_discount_amount,
-			    trhd.ref_no discount_reference_num,
-			    trhd.remarks discount_remarks,							
-			    (-1 * TRUNCATE(ROUND(((trd.gross_amount + trd.vat_amount) - (coalesce(trd.discount_amount,0.00) + coalesce(trhd.served_deduction_amount,0.00))),2),2)) total_invoice,
-			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
-		
-			    \'txn_return_header\' invoice_table,
-				\'return_slip_num\' invoice_number_column,
-				\'return_date\' invoice_date_column,
-				\'sfa_modified_date\' invoice_posting_date_column,
-				trh.return_header_id invoice_pk_id,
-				\'txn_return_detail\' quantity_table,
-				\'quantity\' quantity_column,
-				trd.return_detail_id quantity_pk_id,
-				\'txn_return_detail\' condition_code_table,
-				\'condition_code\' condition_code_column,
-				trd.return_detail_id condition_code_pk_id
-		
-			FROM txn_return_header trh
-			LEFT JOIN app_customer ac ON(ac.customer_code=trh.customer_code)
-			LEFT JOIN app_area aa ON(aa.area_code=ac.area_code)
-			LEFT JOIN app_salesman aps ON(aps.salesman_code=trh.salesman_code)
-			LEFT JOIN txn_activity_salesman tas ON(tas.salesman_code=trh.salesman_code AND tas.reference_num=trh.reference_num)
-			LEFT JOIN txn_return_detail trd ON(trh.reference_num=trd.reference_num)
-			LEFT JOIN app_item_master aim ON(aim.item_code=trd.item_code)			
-    		LEFT JOIN 
-    		(
-    			select 
-    				reference_num,
-			    	ref_no,
-			    	remarks,
-    				deduction_rate,
-    				sum(coalesce(deduction_amount,0)) served_deduction_amount
-					from  txn_return_header_discount
-    				where deduction_code <> \'EWT\'
-					group by reference_num
-    		) trhd ON(trhd.reference_num=trh.reference_num)
-
-    		LEFT JOIN (
-    				select reference_num,remarks,evaluated_objective_id from txn_evaluated_objective  group by reference_num order by sfa_modified_date desc
-    		) remarks ON(remarks.reference_num = trh.reference_num)
-    			';
+    	$queryReturns = $this->getPreparedSalesReportReturnQuery($summary);
     	 
     	$select = '
     			sales.so_number,
