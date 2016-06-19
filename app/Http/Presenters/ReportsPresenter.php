@@ -5189,7 +5189,8 @@ class ReportsPresenter extends PresenterCore
     		return;
     	}
     	
-    	gc_collect_cycles();
+    	ini_set('memory_limit', '-1');
+        set_time_limit (0);
     	
     	$records = [];
     	$columns = [];
@@ -5206,8 +5207,8 @@ class ReportsPresenter extends PresenterCore
     	$scr = '';
     	$area = '';
     	$prepare = '';
-    	$fontSize = '11px';
-    	$textSize = '10px';
+    	$fontSize = '12px';
+    	$textSize = '12px';
     	$vaninventory = false;
     	$salesSummary = false;
     	
@@ -5437,7 +5438,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Return Per Material';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Material';
-    			$fontSize = '9px';
+    			$fontSize = '8px';
     			break;
     		case 'returnperpeso':
     			$columns = $this->getTableColumns($report);
@@ -5447,6 +5448,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Return Per Peso';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Peso';
+    			$fontSize = '10px';
     			break;
     		case 'customerlist':
     			$columns = $this->getTableColumns($report);

@@ -6,13 +6,13 @@
 		@page { margin: 0in; }
 		
 		body {
-			font-size: 10px;	
+			font-size: 12px;	
 			margin: 0.5in 0.10in;
 		}
 		
 		table.no-border {
     		border-collapse: collapse;
-    		font-size: 11px;
+    		font-size: 12px;
 		}		
 		table.no-border,
 		.no-border th,
