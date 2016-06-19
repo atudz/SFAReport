@@ -3147,7 +3147,7 @@ class ReportsPresenter extends PresenterCore
 				0 discount_rate,
 				(-1 * TRUNCATE(ROUND('.$sum1.'trd.discount_amount'.$sum2.',2),2)) discount_amount,
 				trhd.deduction_rate collective_discount_rate,
-    			(-1 * TRUNCATE(ROUND(coalesce(trhd.served_deduction_amount,0.00),2),2)) collective_discount_amount,
+    			(-1 * TRUNCATE(ROUND((coalesce((trd.gross_amount + trd.vat_amount),0.00)*(coalesce(trhd.deduction_rate,0.00)/100)),2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,
 			    (-1 * TRUNCATE(ROUND('.$sum1.'((trd.gross_amount + trd.vat_amount) - coalesce(trd.discount_amount,0.00))'.$sum2.' - coalesce(trhd.served_deduction_amount,0.00),2),2)) total_invoice,
