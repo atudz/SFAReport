@@ -66,23 +66,8 @@ class UserController extends ControllerCore
             $response['error'] = 'User cannot be below 18.';
             return response()->json($response);
         }
-        
-
-
 
         $userModel = ModelFactory::getInstance('User');
-
-        if(!$request->get('edit_mode'))
-        {
-            $user = $userModel->whereEmail($request->get('email'))->orWhere('username', '=', $request->get('username'))->first();
-
-            if($user)
-            {
-                $response['exists'] = true;
-                $response['error'] = 'User already exists.';
-                return response()->json($response);
-            }
-        }
 
         $id = (int)$request->get('id');
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
@@ -92,6 +77,21 @@ class UserController extends ControllerCore
             $response['exists'] = true;
             $response['error'] = 'Salesman code already exists.';
             return response()->json($response);
+        }
+        
+        $user = $userModel
+        			->where(function($query) use($request) {
+        					$query->where('email',$request->get('email'));
+        					$query->orWhere('username',$request->get('username'));
+        				}	
+        			)
+        			->where('id','<>',$id)
+        			->exists();        			
+        if($user)
+        {
+        	$response['exists'] = true;
+        	$response['error'] = 'User already exists.';
+        	return response()->json($response);        	
         }
 
         $user = $userModel->findOrNew($id);
@@ -177,6 +177,20 @@ class UserController extends ControllerCore
     	if($user)
     	{
     		$user->status = 'D';
+    		$deletedEmail = $user->email.'.deleted';
+    		$count = ModelFactory::getInstance('User')
+    						->onlyTrashed()
+    						->where('email','like',$deletedEmail.'%')
+    						->count();
+    		$user->email = !$count ? $deletedEmail : $deletedEmail.($count+1);
+    		
+    		$deletedUsername = $user->username.'.deleted';
+    		$count = ModelFactory::getInstance('User')
+			    		->onlyTrashed()
+			    		->where('username','like',$deletedUsername.'%')
+			    		->count();
+    		if($user->name)
+    			$user->username = !$count ? $deletedUsername : $deletedUsername.($count+1);
     		$user->save();
     		$user->delete();    		
     	}
