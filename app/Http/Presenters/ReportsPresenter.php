@@ -1489,7 +1489,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('collection.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('collection.area_code',$codes);
     	}
     	 
     	 
@@ -2750,10 +2751,22 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_area.area_code',$codes);
     	}
     	
     	return $prepare;
+    }
+    
+    /**
+     * Get alike area code
+     * @param unknown $code
+     * @return string
+     */
+    public function getAlikeAreaCode($code)
+    {
+    	$alikeCode = 2000 + $code;
+    	return [$code,$alikeCode];
     }
     
     /**
@@ -3043,7 +3056,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('bir.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('bir.area_code',$codes);   		
     	}
     	return $prepare;
     }
@@ -3444,7 +3458,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('sales.area_code',$codes);    		
     	}
     	
     	if($this->isSalesman())
@@ -3795,7 +3810,8 @@ class ReportsPresenter extends PresenterCore
 
 		if(!$this->hasAdminRole() && auth()->user())
 		{
-			$prepare->where('sales.area_code','=',auth()->user()->location_assignment_code);
+			$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+			$prepare->whereIn('sales.area_code',$codes);
 		}
 		
 		if($this->isSalesman())
@@ -4001,7 +4017,8 @@ class ReportsPresenter extends PresenterCore
 		
 		if(!$this->hasAdminRole() && auth()->user())
 		{
-			$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+			$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+			$prepare->whereIn('app_area.area_code',$codes);
 		}
 
 		if($this->isSalesman())
@@ -4177,7 +4194,8 @@ class ReportsPresenter extends PresenterCore
     	$prepare->where('txn_activity_salesman.activity_code','LIKE','%R%');
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_area.area_code',$codes);
     	}
     	
     	if($this->isSalesman())
@@ -4316,7 +4334,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_area.area_code',$codes);
     	}
     	
     	return $prepare;
@@ -4415,7 +4434,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_customer.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_customer.area_code',$codes);
     	}
     	
     	if($salesman)
@@ -4531,7 +4551,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_area.area_code',$codes);
     	}
     	return $prepare;
     }
@@ -5013,7 +5034,10 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('app_salesman.salesman_code',auth()->user()->salesman_code);
     	
     	if(!$this->hasAdminRole() && auth()->user())
-    		$prepare->where('app_customer.area_code','=',auth()->user()->location_assignment_code);
+    	{
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_customer.area_code',$codes);    		
+    	}
     		 
     	
     	$salesman = $prepare->lists('name','salesman_code');
@@ -5097,7 +5121,8 @@ class ReportsPresenter extends PresenterCore
     	
     	if($forcePermission && !$this->hasAdminRole() && auth()->user())
     	{
-    		$prepare->where('app_area.area_code','=',auth()->user()->location_assignment_code);
+    		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('app_area.area_code',$codes);    		
     	}
     	return $prepare->orderBy('area_name')->lists('area_name','area_code');
     }
