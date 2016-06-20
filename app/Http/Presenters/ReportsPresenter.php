@@ -5213,7 +5213,7 @@ class ReportsPresenter extends PresenterCore
     	$salesSummary = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
-    	$offset = ($offset == 1) ? 0 : $offset;
+    	$offset = ($offset == 1) ? 0 : $offset-1;
     	
     	switch($report)
     	{
@@ -5228,6 +5228,7 @@ class ReportsPresenter extends PresenterCore
     			{
     				$currentSummary = $this->getSalesCollectionTotal($current);
     			}    			
+    			
     			$current = array_splice($current, $offset, $limit);    			  		
     			
     			$hasDateFilter = false;
@@ -5301,12 +5302,16 @@ class ReportsPresenter extends PresenterCore
     			sort($invoices,SORT_NATURAL);
     			 
     			$records = [];
+    			$reference = [];
     			foreach($invoices as $invoice)
     			{
     				foreach($collection as $col)
     				{
-    					if(isset($col->invoice_number) && $invoice == $col->invoice_number)
+    					if(isset($col->invoice_number) && $invoice == $col->invoice_number && !in_array($col->reference_num,$reference))
+    					{
     						$records[] = $col;
+    						$reference[] = $col->reference_num;
+    					}
     				}
     			}
     			
