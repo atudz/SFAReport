@@ -3568,7 +3568,7 @@ class ReportsPresenter extends PresenterCore
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,
                                 SUM( coalesce( (tsod.gross_served_amount + tsod.vat_amount),0.00 ) - (discount_amount + coalesce((tsod.gross_served_amount + tsod.vat_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) ) total_sales,
-    							IF(tsoh.updated_by,\'modified\', IF(tsod.updated_by,\'modified\', \'\')) updated
+    							IF(SUM(tsoh.updated_by),\'modified\', IF(SUM(tsod.updated_by),\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod
@@ -3611,7 +3611,7 @@ class ReportsPresenter extends PresenterCore
 			    				tsohd.ref_no discount_reference_num,
 			    				tsohd.remarks discount_remarks,  			
 								SUM(coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)-coalesce((tsodeal.gross_served_amount + tsodeal.vat_served_amount),0.00)*(coalesce(tsohd.served_deduction_rate,0.00)/100)) total_sales,
-    							IF(tsoh.updated_by,\'modified\', IF(tsodeal.updated_by,\'modified\', \'\')) updated
+    							IF(SUM(tsoh.updated_by),\'modified\', IF(SUM(tsodeal.updated_by),\'modified\', \'\')) updated
     			
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal
@@ -3665,7 +3665,7 @@ class ReportsPresenter extends PresenterCore
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,				
 			    (-1 * TRUNCATE(ROUND((SUM((coalesce(trd.gross_amount,0.00) + coalesce(trd.vat_amount,0.00)) - coalesce(trd.discount_amount,0.00)) - coalesce(trhd.served_deduction_amount,0.00)),2),2)) total_invoice,
-			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
+			    IF(SUM(trh.updated_by),\'modified\',IF(SUM(trd.updated_by),\'modified\',\'\')) updated,
 			
 			    \'txn_return_header\' invoice_table,
 				\'return_slip_num\' invoice_number_column,
