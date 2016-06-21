@@ -3234,7 +3234,7 @@ class ReportsPresenter extends PresenterCore
     			TRUNCATE(ROUND(all_so.collective_discount_amount,2),2) collective_discount_amount,
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,
-			    TRUNCATE(ROUND(all_so.total_sales,2),2) total_invoice,
+			    TRUNCATE(all_so.total_sales,2) total_invoice,
 				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,		
 				\'txn_sales_order_header\' invoice_table,
 				\'invoice_number\' invoice_number_column,
@@ -3532,7 +3532,7 @@ class ReportsPresenter extends PresenterCore
     			TRUNCATE(ROUND(coalesce(all_so.collective_discount_amount,0.00),2),2) collective_discount_amount,				    
 			    all_so.discount_reference_num,
 			    all_so.discount_remarks,			    	
-    			TRUNCATE(ROUND(coalesce(all_so.total_sales,0.00),2),2) total_invoice,
+    			TRUNCATE(coalesce(all_so.total_sales,0.00),2) total_invoice,
 				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,
 			
 				\'txn_sales_order_header\' invoice_table,
@@ -5213,7 +5213,7 @@ class ReportsPresenter extends PresenterCore
     	$salesSummary = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
-    	$offset = ($offset == 1) ? 0 : $offset-1;
+    	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
     	
     	switch($report)
     	{
