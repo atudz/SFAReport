@@ -62,7 +62,7 @@
 						<span ng-bind="record.so_total_item_discount_formatted = negate(record.so_total_item_discount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						<span ng-bind="record.so_total_collective_discount_formatted = negate([record.so_total_collective_discount])"></span>
+						<span ng-bind="record.so_total_collective_discount_formatted = negate(record.so_total_collective_discount)"></span>
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="record.total_invoice_amount_formatted = negate(record.total_invoice_amount)"></span>
