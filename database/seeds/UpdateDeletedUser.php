@@ -17,7 +17,7 @@ class UpdateDeletedUser extends Seeder
         foreach($deletedUsers as $user)
         {
         	$user->email = $user->email.'.deleted';
-        	if($user->name)
+        	if($user->username)
         		$user->username = $user->username.'.deleted';
         	$user->save();
         }
