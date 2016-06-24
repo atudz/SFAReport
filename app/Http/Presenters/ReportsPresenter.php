@@ -3150,7 +3150,7 @@ class ReportsPresenter extends PresenterCore
     			(-1 * TRUNCATE(ROUND('.$sum1.'(coalesce((trd.gross_amount + trd.vat_amount),0.00)*(coalesce(trhd.deduction_rate,0.00)/100))'.$sum2.',2),2)) collective_discount_amount,
 			    trhd.ref_no discount_reference_num,
 			    trhd.remarks discount_remarks,
-			    (-1 * TRUNCATE(ROUND('.$sum1.'((trd.gross_amount + trd.vat_amount) - coalesce(trd.discount_amount,0.00))'.$sum2.' - coalesce(trhd.served_deduction_amount,0.00),2),2)) total_invoice,
+			    (-1 * TRUNCATE(ROUND('.$sum1.'((trd.gross_amount + trd.vat_amount) - coalesce(trd.discount_amount,0.00)) - (coalesce((trd.gross_amount + trd.vat_amount),0.00)*(coalesce(trhd.deduction_rate,0.00)/100))'.$sum2.',2),2)) total_invoice,
 			    IF(trh.updated_by,\'modified\',IF(trd.updated_by,\'modified\',\'\')) updated,
     	
 				\'txn_return_header\' invoice_table,
