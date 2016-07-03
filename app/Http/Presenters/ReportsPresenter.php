@@ -4560,14 +4560,15 @@ class ReportsPresenter extends PresenterCore
     /**
      * Get Table Column Headers
      * @param unknown $type
+     * @param unknown $export
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTableColumns($type='')
+    public function getTableColumns($type='',$export='')
     {
     	switch($type)
     	{
     		case 'salescollectionreport':
-    			return $this->getSalesCollectionReportColumns();
+    			return $this->getSalesCollectionReportColumns($export);
     		case 'salescollectionposting':
     			return $this->getSalesCollectionPostingColumns();
     		case 'salescollectionsummary':
@@ -4601,7 +4602,7 @@ class ReportsPresenter extends PresenterCore
      * Get Sales Collection Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSalesCollectionReportColumns()
+    public function getSalesCollectionReportColumns($export='')
     {    
     	$headers = [
     			['name'=>'Customer Code'],
@@ -4632,6 +4633,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'CM Amount'],
     			['name'=>'Total Collected Amount'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[5],$headers[6],$headers[7],$headers[12],$headers[13]);
     	
     	return $headers;
     }
@@ -5218,7 +5222,7 @@ class ReportsPresenter extends PresenterCore
     	switch($report)
     	{
     		case 'salescollectionreport':
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
 
     			$prepare = $this->getPreparedSalesCollection();
     			$prepare->orderBy('collection.invoice_date','desc');
@@ -5232,26 +5236,12 @@ class ReportsPresenter extends PresenterCore
     			$current = array_splice($current, $offset, $limit);    			  		
     			
     			$hasDateFilter = false;
-    			if($this->request->has('invoice_date_from'))
+    			if($this->request->has('collection_date_from'))
     			{
-	    			$from = new Carbon($this->request->get('invoice_date_from'));
-	    			$endOfWeek = (new Carbon($this->request->get('invoice_date_from')))->endOfWeek();
-	    			$to = new Carbon($this->request->get('invoice_date_to'));
+	    			$from = new Carbon($this->request->get('collection_date_from'));
+	    			$endOfWeek = (new Carbon($this->request->get('collection_date_from')))->endOfWeek();
+	    			$to = new Carbon($this->request->get('collection_date_to'));
 	    			$hasDateFilter = true;
-    			}
-    			elseif($this->request->has('collection_date_from')) 
-    			{
-    				$from = new Carbon($this->request->get('collection_date_from'));
-    				$endOfWeek = (new Carbon($this->request->get('collection_date_from')))->endOfWeek();
-    				$to = new Carbon($this->request->get('collection_date_to'));
-    				$hasDateFilter = true;
-    			}
-    			elseif($this->request->has('posting_date_from'))
-    			{
-    				$from = new Carbon($this->request->get('posting_date_from'));
-    				$endOfWeek = (new Carbon($this->request->get('posting_date_from')))->endOfWeek();
-    				$to = new Carbon($this->request->get('posting_date_to'));
-    				$hasDateFilter = true;
     			}
     			    			
     			if($hasDateFilter && $from->eq($to))
@@ -5270,9 +5260,10 @@ class ReportsPresenter extends PresenterCore
     			$resultArea = $prepareArea->first();
     			$area = $resultArea ? $resultArea->area_name : '';
     			    			
-    			$rows = $this->getSalesCollectionSelectColumns();    			
+    			$pdf = !in_array($type,['xls','xlsx']); 
+    			$rows = $this->getSalesCollectionSelectColumns($pdf);    			
     			$header = 'Sales & Collection Report';
-    			$filters = $this->getSalesCollectionFilterData();
+    			$filters = $this->getSalesCollectionFilterData(true);
     			$filename = 'Sales & Collection Report';
     			$vaninventory = true;
     			$fontSize = '7px';
@@ -5854,12 +5845,13 @@ class ReportsPresenter extends PresenterCore
     }
     
     /**
+     * @param boolean $pdf 
      * Return sales collection select columns
      * @return multitype:string
      */
-    public function getSalesCollectionSelectColumns()
+    public function getSalesCollectionSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'customer_code',
     			'customer_name',
     			'remarks',
@@ -5888,6 +5880,11 @@ class ReportsPresenter extends PresenterCore
     			'credit_amount',
     			'total_collected_amount',
     	];
+    	
+    	if($pdf)
+    		unset($columns[5],$columns[6],$columns[7],$columns[12],$columns[13]);
+    	
+    	return $columns;	
     }
     
     
@@ -6285,9 +6282,10 @@ class ReportsPresenter extends PresenterCore
     
     
     /**
+     * @param boolean $collection
      * Get Sales Collection Filter Data
      */
-    public function getSalesCollectionFilterData()
+    public function getSalesCollectionFilterData($collection=false)
     {
     	$filters = [];
     
@@ -6310,6 +6308,13 @@ class ReportsPresenter extends PresenterCore
     			'Salesman' => $salesman,
     			'Posting Date' => $postingDate,
     	];
+    	
+    	if($collection)
+    	{
+    		unset($filters['Posting Date']);
+    		$filters['Previous Invoice Date'] = $postingDate;
+    	}
+    	
     
     	return $filters;
     }
