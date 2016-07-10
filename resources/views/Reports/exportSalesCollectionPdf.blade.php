@@ -105,9 +105,9 @@
 				<td width="30%"></td>
 				<td width="30%" valign="top">
 					<div class="title">
-						<strong>SUNPRIDE FOODS, INC.</strong>
-						<br />
-						<strong>Sales & Collections Report</strong>		
+<!-- 						<strong>SUNPRIDE FOODS, INC.</strong> -->
+<!-- 						<br /> -->
+<!-- 						<strong>Sales & Collections Report</strong>		 -->
 					</div>
 				</td>
 				<td width="30%" valign="top">
@@ -123,10 +123,10 @@
 						</div>
 					</div>
 					
-					<div class="clear">
+					<div class="clear">						
 						<div class="row pull-right indent-right label-value">
-							<strong>Collection Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="@if(request()->get('collection_date_from')) underline @endif">@if(request()->get('collection_date_from')) {{request()->get('collection_date_from')}} @else __________ @endif</span>
-						</div>
+							&nbsp;&nbsp;&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
+						</div>	
 						<div class="row pull-right indent-right label-value">
 							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
 						</div>		
@@ -134,8 +134,8 @@
 										
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							&nbsp;TO: <span class="underline">@if(request()->get('collection_date_from')) {{request()->get('collection_date_to')}} @else __________ @endif</span>
-						</div>
+							&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
+						</div>						
 						<div class="row pull-right indent-right label-value">
 							<strong>Salesman Code</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
 						</div>		
@@ -144,13 +144,13 @@
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							<strong>Invoice Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
+							&nbsp;&nbsp;&nbsp;FROM: <span class="@if(request()->get('collection_date_from')) underline @endif">@if(request()->get('collection_date_from')) {{request()->get('collection_date_from')}} @else __________ @endif</span>
 						</div>								
 					</div>
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
+							&nbsp;TO: <span class="underline">@if(request()->get('collection_date_from')) {{request()->get('collection_date_to')}} @else __________ @endif</span>
 						</div>														
 					</div>
 					
@@ -159,7 +159,7 @@
 							&nbsp;
 						</div>
 						<div class="row pull-right indent-right label-value">
-							<strong>Area:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
+							<span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
 						</div>		
 						
 					</div>
@@ -275,6 +275,10 @@
 				<th align="left">___________________</th>
 				<th></th>
 				<th></th>		
+			</tr>
+			
+			<tr>
+				<th colspan="4"></th>		
 			</tr>
 			
 			<tr>
