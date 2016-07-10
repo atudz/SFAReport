@@ -6,13 +6,15 @@
 	<table>
 		<tbody>
 			<tr>
-				<th colspan="23"></th>
+				<th colspan="21"></th>
 				<th>SUNPRIDE FOODS, INC.</th>
-				<th colspan="2"></th>											
+				<th colspan="5"></th>											
 			</tr>
 			<tr>
-				<th colspan="23"></th>
+				<th colspan="21"></th>
 				<th>Sales & Collection Report</th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th align="right">SCR No.:</th>
 				@if($scr) 
