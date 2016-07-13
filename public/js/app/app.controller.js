@@ -666,21 +666,6 @@
 						$('#'+val.replace('_from','_error')).html('Invalid date range.');
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
-					
-					if(report == 'salescollectionreport' && val.indexOf('posting_date') != -1)
-				    {		
-						var invoiceFrom = new Date($('#invoice_date_from').val());
-						var invoiceTo = new Date($('#invoice_date_to').val());
-						var prevFrom = new Date(from);
-						var prevTo = new Date(to);
-						
-						if(prevFrom >= invoiceFrom || prevFrom >= invoiceTo || prevTo >= invoiceFrom || prevTo >= invoiceTo )
-						{
-							hasError = true;
-							$('#'+val.replace('_from','_error')).html('Date range must be less than Invoice Date.');
-							$('#'+val.replace('_from','_error')).removeClass('hide');
-						}						
-				    }
 				}
 					
 			});
