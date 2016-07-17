@@ -2004,7 +2004,18 @@ class ReportsPresenter extends PresenterCore
     		$beginningBalance = (array)$replenishment;    		
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);    		
     	}
-    			
+    		
+    	
+    	if($firstUpload)
+    	{
+    		$prepare = $this->getPreparedVanInventoryStocksCount();
+    		$stockCount = $prepare->count();
+    		if($stockCount)
+    		{
+    			$firstUpload=false;
+    			$data['first_upload'] = false;
+    		}
+    	}
     	
     	// Get Van Inventory stock transfer data
     	$prepare = $this->getPreparedVanInventoryStocks();
@@ -2436,6 +2447,44 @@ class ReportsPresenter extends PresenterCore
     	
     	return $prepare;
     			 
+    }
+    
+    
+    /**
+     * Return prepared statement for van inventory stocks count
+     * @return unknown
+     */
+    public function getPreparedVanInventoryStocksCount($noTransaction=false)
+    {
+    	$type = $this->request->get('inventory_type') == 'canned'? '1000' : '2000';
+    	 
+    	$prepare = \DB::table('txn_stock_transfer_in_header')
+    					->selectRaw('txn_stock_transfer_in_header.stock_transfer_in_header_id,
+    								txn_stock_transfer_in_header.transfer_date transaction_date,
+    								UPPER(txn_stock_transfer_in_header.stock_transfer_number) as stock_transfer_number,
+    								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
+						->join(\DB::raw(
+        							'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
+        							), function ($join){
+        								$join->on('txn_stock_transfer_in_header.stock_transfer_number','=','tsin.stock_transfer_number');
+						});
+    
+		if(!$noTransaction)
+        {
+        	$transactionFilter = FilterFactory::getInstance('Date');
+        	$prepare = $transactionFilter->addFilter($prepare,'transaction_date',
+        				function($self, $model){
+        					return $model->where(\DB::raw('DATE(txn_stock_transfer_in_header.transfer_date)'),'<',$self->getValue());
+        				});
+        }
+        $salesmanFilter = FilterFactory::getInstance('Select');
+        $prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
+        								 
+        $stockTransferNumFilter = FilterFactory::getInstance('Text');
+        $prepare = $stockTransferNumFilter->addFilter($prepare,'stock_transfer_number');
+        								 
+        return $prepare;
+    
     }
     
     /**
