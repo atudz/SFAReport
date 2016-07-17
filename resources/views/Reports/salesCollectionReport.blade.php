@@ -17,7 +17,8 @@
 				<div class="col-md-6">	
 					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
 					{!!Html::datepicker('collection_date','Collection Date','true')!!}																									 			
-					{!!Html::datepicker('posting_date','Posting Date','true')!!}
+					{!!Html::datepicker('posting_date','Previous Invoice Date','true')!!}
+
 				</div>			
 			{!!Html::fclose()!!}
 			<!-- End Filter -->

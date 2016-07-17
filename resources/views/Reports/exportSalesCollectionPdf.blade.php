@@ -30,7 +30,9 @@
 		.table-data th,
 		.table-data td {
 			border: 1px solid black;
-			word-wrap: break-word;			
+			word-wrap: break-word;	
+			font-size: 12px;		
+						
 		}
 		
 		.records {
@@ -117,7 +119,7 @@
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							<strong>Invoice Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
+							<strong>Invoice Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span @if(request()->get('invoice_date_from'))class="underline"@endif>@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
 						</div>						
 						<div class="row pull-right indent-right label-value">
 							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
@@ -128,7 +130,7 @@
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
-							&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
+							&nbsp;TO: <span @if(request()->get('invoice_date_to'))class="underline"@endif>@if(request()->get('invoice_date_to')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
 						</div>						
 						<div class="row pull-right indent-right label-value">
 							<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
