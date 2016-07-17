@@ -807,27 +807,30 @@ class ReportsPresenter extends PresenterCore
     			function($self, $model){
     				return $model->where('collection.customer_name','LIKE','%'.$self->getValue().'%');
     			});
+    	    	
     	
-    	if(!$noInvoice)
-    	{
-	    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-	    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
-	    			function($self, $model){
-	    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
-	    			});
-    	}
-    	
-    	$collectionDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $collectionDateFilter->addFilter($prepare,'collection_date',
-    			function($self, $model){
-    				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
-    			});
-    	
-    	$postingDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $postingDateFilter->addFilter($prepare,'posting_date',
-    			function($self, $model){    				
-    				return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()));
-    			});
+    	$prepare->where(function($query) use ($noInvoice){
+    		if(!$noInvoice)
+    		{
+    			$invoiceDateFilter = FilterFactory::getInstance('DateRange');
+    			$query = $invoiceDateFilter->addFilter($query,'invoice_date',
+    					function($self, $model){
+    						return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
+    					});
+    		}
+    		
+    		$collectionDateFilter = FilterFactory::getInstance('DateRange');
+    		$query = $collectionDateFilter->addFilter($query,'collection_date',
+    				function($self, $model){
+    					return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
+    				});
+    		 
+    		$postingDateFilter = FilterFactory::getInstance('DateRange');
+    		$query = $postingDateFilter->addFilter($query,'posting_date',
+    				function($self, $model){
+    					return $model->whereBetween('collection.invoice_posting_date',$self->formatValues($self->getValue()),'or');
+    				});
+    	});    	
 
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
