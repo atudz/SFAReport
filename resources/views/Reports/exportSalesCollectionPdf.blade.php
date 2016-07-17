@@ -30,8 +30,7 @@
 		.table-data th,
 		.table-data td {
 			border: 1px solid black;
-			word-wrap: break-word;	
-			font-size: 12px;		
+			word-wrap: break-word;			
 		}
 		
 		.records {
@@ -117,12 +116,6 @@
 					</div>
 					
 					<div class="clear">
-						<div class="row pull-right indent-left" style="width: 167px;font-size:12px;">
-							<small>Period Covered</small>
-						</div>
-					</div>
-					
-					<div class="clear">
 						<div class="row pull-right indent-right label-value">
 							<strong>Invoice Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
 						</div>						
@@ -130,18 +123,21 @@
 							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
 						</div>		
 					</div>
-										
+					
+					
+					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
 							&nbsp;TO: <span class="underline">@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
 						</div>						
 						<div class="row pull-right indent-right label-value">
-							<strong>Salesman Code</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
+							<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
 						</div>		
 						
 					</div>
 					
 					<div class="clear">
+
 						<div class="row pull-right indent-right label-value">
 							<strong>Previous Inv. Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="@if(request()->get('posting_date_from')) underline @endif">@if(request()->get('posting_date_from')) {{request()->get('posting_date_from')}} @else __________ @endif</span>
 						</div>
@@ -174,6 +170,7 @@
 			</tr>
 		</table>
 	</div>
+	<br class="clear">	
 	<br class="clear">
 	<table class="table-data">		
 		<tbody>			
