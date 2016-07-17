@@ -1550,7 +1550,7 @@ class ReportsPresenter extends PresenterCore
     		$items[$k]->invoice_number_from = $minInvoice ? $minInvoice->invoice_number : '';
     		$maxInvoice = array_shift($maxInvoice);
     		$items[$k]->invoice_number_to = $maxInvoice ? $maxInvoice->invoice_number : '';
-    		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->invoice_date))->format('mdY');
+    		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->or_date))->format('mdY');
     	}
     	//dd($items);
     	return $items;
@@ -1616,10 +1616,11 @@ class ReportsPresenter extends PresenterCore
     	$query = '
     		select
     		tas.salesman_code,
-            CONCAT(tas.salesman_code, "-", DATE_FORMAT(sotbl.so_date,"%Y%m%d")) scr_number,
+            CONCAT(tas.salesman_code, "-", DATE_FORMAT(coltbl.or_date,"%Y%m%d")) scr_number,
     		ac.customer_name,
 			tas.customer_code,
     		sotbl.invoice_number,
+    		coltbl.or_date,
     		ac.area_code,
 			sotbl.so_date invoice_date,	
     		TRUNCATE(ROUND(SUM((IF(coltbl.payment_method_code=\'CASH\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CHECK\',coltbl.payment_amount, 0.00) + IF(coltbl.payment_method_code=\'CM\',coltbl.payment_amount, 0.00) + coalesce(sotbl.so_total_ewt_deduction,0.00))),2),2) total_collected_amount,
@@ -1806,6 +1807,7 @@ class ReportsPresenter extends PresenterCore
 				collection.invoice_number,
     			collection.customer_name,
 				collection.invoice_date,
+    			collection.or_date,
     			collection.salesman_code,
     			collection.total_collected_amount,
     			collection.sales_tax,
