@@ -175,17 +175,17 @@
 	<br class="clear">	
 	<br class="clear">
 	<table class="table-data">
+		<thead>
 		@if($theadRaw)
 			{!!$theadRaw!!}
 		@else
-		<thead>
 			<tr>
 				@foreach($columns as $column)
 					<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
 				@endforeach
 			</tr>
-		</thead>
 		@endif
+		</thead>
 		<tbody>
 			@foreach($current as $record)
 			<tr>
