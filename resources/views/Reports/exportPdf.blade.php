@@ -68,83 +68,85 @@
 		</table>
 	<br>
 	<div >
-	<table class="table-data">		
+	<table class="table-data">
+		<thead>
+		@if($theadRaw)
+			{!!$theadRaw!!}
+		@else
+			<tr>
+				@foreach($columns as $column)
+					<th align="left" >{!!$column['name']!!}</th>
+				@endforeach
+			</tr>
+		@endif
+		</thead>
 		<tbody>
-			@if($theadRaw)
-				{!!$theadRaw!!}
-			@else
-				<tr>
-					@foreach($columns as $column)
-						<th align="left" >{!!$column['name']!!}</th>
-					@endforeach
-				</tr>
-			@endif			
-			@foreach($records as $record)
-				<tr>
-					@foreach($rows as $row)
-						<td align="left" >
-							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date') && $record->$row)
-									{{ date('m/d/Y', strtotime($record->$row)) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}
-								@else
-									{!!$record->$row!!}
-								@endif
-							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date') && $record[$row])
-									{{ date('m/d/Y', strtotime($record[$row])) }}
-								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!number_format($record[$row],2,'.',',')!!}								
-								@else
-									{!!$record[$row]!!}
-								@endif									
+		@foreach($records as $record)
+			<tr>
+				@foreach($rows as $row)
+					<td align="left" >
+						@if(is_object($record) && isset($record->$row))
+							@if(false !== strpos($row,'date') && $record->$row)
+								{{ date('m/d/Y', strtotime($record->$row)) }}
+							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
+								{!!number_format($record->$row,2,'.',',')!!}
+							@else
+								{!!$record->$row!!}
 							@endif
-						</td>
-					@endforeach
-				</tr>
-			@endforeach	
-			
-			@if(isset($summary) && $summary)
-				<tr>
-					<th>Total</th>
-					@foreach($rows as $key=>$row)
-						@if($key > 0)
-							<th align="left" >
-								@if(is_object($summary) && isset($summary->$row))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$summary->$row!!}
-										@else
-											({!!number_format($summary->$row,2,'.',',')!!})
-										@endif
+						@elseif(is_array($record) && isset($record[$row]))
+							@if(false !== strpos($row,'date') && $record[$row])
+								{{ date('m/d/Y', strtotime($record[$row])) }}
+							@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))
+								{!!number_format($record[$row],2,'.',',')!!}
+							@else
+								{!!$record[$row]!!}
+							@endif
+						@endif
+					</td>
+				@endforeach
+			</tr>
+		@endforeach
+
+		@if(isset($summary) && $summary)
+			<tr>
+				<th>Total</th>
+				@foreach($rows as $key=>$row)
+					@if($key > 0)
+						<th align="left" >
+							@if(is_object($summary) && isset($summary->$row))
+								@if(in_array($row,['discount_amount','collective_discount_amount']))
+									@if($row == 'quantity')
+										{!!$summary->$row!!}
 									@else
-										@if($row == 'quantity')
-											{!!$summary->$row!!}
-										@else
-											{!!number_format($summary->$row,2,'.',',')!!}
-										@endif
-									@endif									
-								@elseif(is_array($summary) && isset($summary[$row]))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$summary[$row]!!}
-										@else
-											({!!number_format($summary[$row],2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$summary[$row]!!}
-										@else
-											{!!number_format($summary[$row],2,'.',',')!!}
-										@endif
+										({!!number_format($summary->$row,2,'.',',')!!})
 									@endif
-								@endif													
-							</th>
-						@endif						
-					@endforeach
-				</tr>			
-			@endif			
+								@else
+									@if($row == 'quantity')
+										{!!$summary->$row!!}
+									@else
+										{!!number_format($summary->$row,2,'.',',')!!}
+									@endif
+								@endif
+							@elseif(is_array($summary) && isset($summary[$row]))
+								@if(in_array($row,['discount_amount','collective_discount_amount']))
+									@if($row == 'quantity')
+										{!!$summary[$row]!!}
+									@else
+										({!!number_format($summary[$row],2,'.',',')!!})
+									@endif
+								@else
+									@if($row == 'quantity')
+										{!!$summary[$row]!!}
+									@else
+										{!!number_format($summary[$row],2,'.',',')!!}
+									@endif
+								@endif
+							@endif
+						</th>
+					@endif
+				@endforeach
+			</tr>
+		@endif
 		</tbody>
 	</table>
 	</div>
