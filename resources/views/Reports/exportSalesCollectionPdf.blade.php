@@ -174,45 +174,47 @@
 	</div>
 	<br class="clear">	
 	<br class="clear">
-	<table class="table-data">		
-		<tbody>			
-			@if($theadRaw)
-				{!!$theadRaw!!}
-			@else
-				<tr>
-					@foreach($columns as $column)
-						<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
-					@endforeach
-				</tr>
-			@endif			
+	<table class="table-data">
+		@if($theadRaw)
+			{!!$theadRaw!!}
+		@else
+		<thead>
+			<tr>
+				@foreach($columns as $column)
+					<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
+				@endforeach
+			</tr>
+		</thead>
+		@endif
+		<tbody>
 			@foreach($current as $record)
-				<tr>
-					@foreach($rows as $k=>$row)
-						@if($record->show || (!$record->show && $k > 15 && $k < 26 ))						
-						<td align="left" style="wrap-text:true" rowspan="@if($k < 16 || $k == 26) {{$record->rowspan}} @else 1 @endif">							
-							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date') && $record->$row)
-									{{ date('m/d/Y', strtotime($record->$row)) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record->$row!!}
-								@endif
-							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date') && $record[$row])
-									{{ date('m/d/Y', strtotime($record[$row])) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record[$row]!!}
-								@endif									
+			<tr>
+				@foreach($rows as $k=>$row)
+					@if($record->show || (!$record->show && $k > 15 && $k < 26 ))
+					<td align="left" style="wrap-text:true" rowspan="@if($k < 16 || $k == 26) {{$record->rowspan}} @else 1 @endif">
+						@if(is_object($record) && isset($record->$row))
+							@if(false !== strpos($row,'date') && $record->$row)
+								{{ date('m/d/Y', strtotime($record->$row)) }}
+							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
+								{!!number_format($record->$row,2,'.',',')!!}
+							@else
+								{!!$record->$row!!}
 							@endif
-						</td>
-						@endif						
-					@endforeach	
-				</tr>
-			@endforeach	
-			
+						@elseif(is_array($record) && isset($record[$row]))
+							@if(false !== strpos($row,'date') && $record[$row])
+								{{ date('m/d/Y', strtotime($record[$row])) }}
+							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
+								{!!number_format($record->$row,2,'.',',')!!}
+							@else
+								{!!$record[$row]!!}
+							@endif
+						@endif
+					</td>
+					@endif
+				@endforeach
+			</tr>
+			@endforeach
+
 			@if(isset($currentSummary) && $currentSummary)
 				<tr>
 					<th>Total</th>
@@ -220,13 +222,13 @@
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
 								@if(isset($currentSummary[$row]))
-									{!!$currentSummary[$row]!!}									
-								@endif													
+									{!!$currentSummary[$row]!!}
+								@endif
 							</th>
-						@endif						
+						@endif
 					@endforeach
-				</tr>			
-			@endif			
+				</tr>
+			@endif
 		</tbody>
 	</table>	
 	
