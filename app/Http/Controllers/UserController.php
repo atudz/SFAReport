@@ -71,8 +71,8 @@ class UserController extends ControllerCore
 
         $id = (int)$request->get('id');
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-
-        if($request->get('salesman_code') && $exist)
+		$roleJr = $userGroupModel->whereName('Jr. Salesman')->first()->id;
+        if($request->get('salesman_code') && $exist && $request->get('role') != $roleJr)
         {
             $response['exists'] = true;
             $response['error'] = 'Salesman code already exists.';
@@ -108,7 +108,11 @@ class UserController extends ControllerCore
      	$user->gender = $request->get('gender');
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
-        $user->salesman_code = $request->get('salesman_code');
+		if ($request->get('role') == $roleJr) {
+			$user->salesman_code = $this->generateJrSalesCode($userModel, $request->get('salesman_code'));
+		} else {
+			$user->salesman_code = $request->get('salesman_code');
+		}
         
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');
@@ -203,4 +207,19 @@ class UserController extends ControllerCore
     {
         return trim($value);
     }
+
+	public function generateJrSalesCode($userModel, $code)
+	{
+		$listCode = $userModel->where('salesman_code', 'like', $code . '-%')->get();
+		$arr = [];
+		if ($listCode->isEmpty()) {
+			return $code . "-001";
+		}
+		$listCode->each(function ($listCode) use (&$arr) {
+			array_push($arr, explode("-", $listCode->salesman_code)[1]);
+		});
+		$max = array_keys($arr, max($arr))[0];
+
+		return $code . "-" . str_pad(((int)$arr[$max] + 1), 3, "00", STR_PAD_LEFT);
+	}
 }
