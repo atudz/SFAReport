@@ -109,7 +109,8 @@ class UserController extends ControllerCore
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
 		if ($request->get('role') == $roleJr) {
-			$user->salesman_code = $this->generateJrSalesCode($userModel, $request->get('salesman_code'));
+			$code = $userModel->where('salesman_code', 'like', $request->get('salesman_code') . '-%')->orderBy('salesman_code', 'desc')->first();
+			$user->salesman_code = $this->generateJrSalesCode($code, $request->get('salesman_code'));
 		} else {
 			$user->salesman_code = $request->get('salesman_code');
 		}
@@ -208,18 +209,11 @@ class UserController extends ControllerCore
         return trim($value);
     }
 
-	public function generateJrSalesCode($userModel, $code)
+	public function generateJrSalesCode($code, $salesman_code)
 	{
-		$listCode = $userModel->where('salesman_code', 'like', $code . '-%')->get();
-		$arr = [];
-		if ($listCode->isEmpty()) {
-			return $code . "-001";
+		if (!$code) {
+			return $salesman_code . "-001";
 		}
-		$listCode->each(function ($listCode) use (&$arr) {
-			array_push($arr, explode("-", $listCode->salesman_code)[1]);
-		});
-		$max = array_keys($arr, max($arr))[0];
-
-		return $code . "-" . str_pad(((int)$arr[$max] + 1), 3, "00", STR_PAD_LEFT);
+		return $salesman_code . "-" . str_pad(((int) (explode("-", $code->salesman_code)[1]) + 1), 3, "00", STR_PAD_LEFT);
 	}
 }
