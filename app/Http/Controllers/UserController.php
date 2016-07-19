@@ -218,10 +218,8 @@ class UserController extends ControllerCore
 		$listCode->each(function ($listCode) use (&$arr) {
 			array_push($arr, explode("-", $listCode->salesman_code)[1]);
 		});
-		$max = 0;
-		if(count($arr) > 1){
-			$max = array_keys($arr, max($arr))[0];
-		}
+		$max = array_keys($arr, max($arr))[0];
+
 		return $code . "-" . str_pad(((int)$arr[$max] + 1), 3, "00", STR_PAD_LEFT);
 	}
 }
