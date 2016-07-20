@@ -5605,9 +5605,11 @@ class ReportsPresenter extends PresenterCore
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		if($report == 'salescollectionsummary')
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
-    		else
-    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
+    		elseif($report == 'salescollectionreport')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
+			else
+				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
