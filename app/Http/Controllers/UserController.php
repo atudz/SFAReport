@@ -70,14 +70,26 @@ class UserController extends ControllerCore
         $userModel = ModelFactory::getInstance('User');
 
         $id = (int)$request->get('id');
+		if ($request->has('jr_salesman_code')) {
+			$exist = $userModel->where('salesman_code', $request->get('jr_salesman_code'))->where('id', '<>', $id)->exists();
+			if ($exist) {
+				$response['exists'] = true;
+				$code = $userModel->where('salesman_code', 'like',
+					$request->get('salesman_code') . '-%')->orderBy('salesman_code', 'desc')->first();
+				$response['error'] = 'Jr. Salesman code already exists available code is ' .
+					$this->generateJrSalesCode($code, $request->get('salesman_code')) .'.';
+
+				return response()->json($response);
+			}
+		}
+
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		$roleJr = $userGroupModel->whereName('Jr. Salesman')->first()->id;
-        if($request->get('salesman_code') && $exist && $request->get('role') != $roleJr)
-        {
-            $response['exists'] = true;
-            $response['error'] = 'Salesman code already exists.';
-            return response()->json($response);
-        }
+		if ($request->get('salesman_code') && $exist) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code already exists.';
+
+			return response()->json($response);
+		}
         
         $user = $userModel
         			->where(function($query) use($request) {
@@ -108,13 +120,7 @@ class UserController extends ControllerCore
      	$user->gender = $request->get('gender');
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
-		if ($request->get('role') == $roleJr) {
-			$code = $userModel->where('salesman_code', 'like', $request->get('salesman_code') . '-%')->orderBy('salesman_code', 'desc')->first();
-			$user->salesman_code = $this->generateJrSalesCode($code, $request->get('salesman_code'));
-		} else {
-			$user->salesman_code = $request->get('salesman_code');
-		}
-        
+		$user->salesman_code = $request->has('jr_salesman_code') ? $request->get('jr_salesman_code') : $request->get('salesman_code');
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');
         if($request->get('assignment_date_from'))
