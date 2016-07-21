@@ -1614,13 +1614,31 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserAdd',['$scope','$resource','$location','$log', UserAdd]);
+	app.controller('UserAdd',['$window','$uibModal','$scope','$resource','$location','$log', UserAdd]);
 	
-	function UserAdd($scope, $resource, $location, $log) {
+	function UserAdd($scope, $resource, $location, $log,$uibModal,$window) {
 
 		$scope.id = 0;
 		$scope.role_id = 1;
 		$scope.records = {user_group_id:1};
+
+		//$scope.open = function () {
+		//	var params = {action:'validate',message:'this is a test?'};
+		//	var modalInstance = $uibModal.open({
+		//		scope: $scope,
+		//		animation: true,
+		//		templateUrl: 'Confirm',
+		//		controller: 'UserAction',
+		//		windowClass: 'center-modal',
+		//		size: 'sm',
+		//		resolve: {
+		//			params: function () {
+		//				return params;
+		//			}
+		//		}
+		//	});
+		//};
+
 	    // Save user profile
 	    saveUser($scope,$resource,$location,$log);
 	    
@@ -1706,7 +1724,6 @@
 				scope.req_salesman = 'hidden';
 		};
 		$('#salesman_code, #role ').bind('keyup change', function () {
-			console.log($('#role').val());
 			if ($('#role').val() == 4 && $('#salesman_code').val() != '') {
 				$('#jr_salesman_code').prop('disabled', false);
 			} else {
@@ -1888,6 +1905,7 @@
 				};
 				if($.trim($('#salesman_code').val()) && $('#role').val() == 4){
 					if(!$('#jr_salesman_code').val()){
+						//$scope.open();
 						if(confirm('Are you a Jr. Salesman?')){
 							$('#jr_salesman_code').focus();
 							return false;
@@ -2000,6 +2018,9 @@
 				    	//$log.info(data);
 				    });
 					break;
+				//case 'validate':
+				//	alert('wew');
+				//	break;
 			}
 
 			$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
