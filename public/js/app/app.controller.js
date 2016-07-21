@@ -1705,7 +1705,16 @@
 			else
 				scope.req_salesman = 'hidden';
 		};
-		
+		$('#salesman_code, #role ').bind('keyup change', function () {
+			console.log($('#role').val());
+			if ($('#role').val() == 4 && $('#salesman_code').val() != '') {
+				$('#jr_salesman_code').prop('disabled', false);
+			} else {
+				$('#jr_salesman_code').prop('disabled', true);
+				$('#jr_salesman_code').val('');
+			}
+		});
+
 		scope.save = function(edit,profile){
 			
 			var personalInfoErrors = [];
@@ -1872,12 +1881,21 @@
 				       role: $('#role').val(),
 				       area: $('#area').val(),
 				       salesman_code: $('#salesman_code').val(),
+						jr_salesman_code: $('#jr_salesman_code').val(),
 				       assignment_type: $('#assignment_type').val(),
 				       assignment_date_from: $('#assignment_date_from').val(),
 				       assignment_date_to: $('#assignment_date_to').val()
 				};
-				
-				API = resource('controller/user/save');				
+				if($.trim($('#salesman_code').val()) && $('#role').val() == 4){
+					if(!$('#jr_salesman_code').val()){
+						if(confirm('Are you a Jr. Salesman?')){
+							$('#jr_salesman_code').focus();
+							return false;
+						}
+					}
+				}
+
+				API = resource('controller/user/save');
 				//log.info(params);
 				API.save(params, function(data){
 					//log.info(data);
