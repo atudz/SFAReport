@@ -2010,7 +2010,7 @@ class ReportsPresenter extends PresenterCore
     		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);    		
     	}
     		
-    	$specialCase2 = false;
+    	
     	if($firstUpload)
     	{
     		$prepare = $this->getPreparedVanInventoryStocksCount();
@@ -2019,7 +2019,6 @@ class ReportsPresenter extends PresenterCore
     		{
     			$firstUpload=false;
     			$data['first_upload'] = false;
-    			$specialCase2 = true;
     		}
     	}
     	
@@ -2172,7 +2171,7 @@ class ReportsPresenter extends PresenterCore
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
     		
-    		if($firstUpload || $specialCase2)
+    		if($firstUpload)
     			$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		else
     			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
