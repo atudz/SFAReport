@@ -37,5 +37,5 @@ return [
 	'max_admin_users' => 6,	
 
 	// Reset password admin recipients	
-	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com',
+	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com,markgeraldcabatingan@gmail.com',
 ];
