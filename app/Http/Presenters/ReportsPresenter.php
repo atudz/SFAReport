@@ -5107,19 +5107,19 @@ class ReportsPresenter extends PresenterCore
     	return $salesman;
     }
 
+	/**
+	 * @return array of auditor's name.
+	 */
 	public function getAuditor()
 	{
-		$response = ModelFactory::getInstance('user')->where('user_group_id', 2)->get();
-
-		if($response->isEmpty()){
-
-			return ['No data found.'];
-		}
+		$response = ModelFactory::getInstance('user')->auditor()->get();
 
 		$auditor = [];
-		$response->each(function ($response) use (&$auditor) {
-			array_push($auditor, $response->lastname . ', ' . $response->firstname);
-		});
+		if (!$response->isEmpty()) {
+			$response->each(function ($response) use (&$auditor) {
+				array_push($auditor, $response->fullname);
+			});
+		}
 
 		return $auditor;
 	}
