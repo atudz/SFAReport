@@ -5114,14 +5114,7 @@ class ReportsPresenter extends PresenterCore
 	{
 		$response = ModelFactory::getInstance('user')->auditor()->get();
 
-		$auditor = [];
-		if (!$response->isEmpty()) {
-			$response->each(function ($response) use (&$auditor) {
-				array_push($auditor, $response->fullname);
-			});
-		}
-
-		return $auditor;
+		return $response->lists('full_name', 'id');
 	}
     
     
