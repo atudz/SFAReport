@@ -2242,6 +2242,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreviousStockOnHand($dateFrom)
     {
+    	$codes = [];
     	$itemCodes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');    	 
     	foreach($itemCodes as $item)
     	{
@@ -2277,7 +2278,7 @@ class ReportsPresenter extends PresenterCore
     	$replenishment = $prepare->first();
 
     	$tempActualCount = [];
-    	if($replenishment)
+    	if($replenishment && $codes)
     	{
     		$replenishmentItems = \DB::table('txn_replenishment_detail')
 							    		->select(['item_code','quantity'])
