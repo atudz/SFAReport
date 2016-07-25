@@ -9,7 +9,7 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
 						{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
-						{!!Html::select('audited_by','Audited By:', $auditor,'')!!}
+						{!!Html::select('audited_by','Audited By:', $auditor, $auditor ? '' : 'No data found', $auditor ?:['disabled' => true])!!}
 						{!!Html::input('text','invoice_number','Invoice #')!!}
 						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}
 					</div>					
