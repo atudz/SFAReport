@@ -172,6 +172,7 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->title = 'Canned & Mixes';
     			$this->view->salesman = $this->getSalesman(true);
+				$this->view->auditor = $this->getAuditor();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
@@ -5105,6 +5106,23 @@ class ReportsPresenter extends PresenterCore
     		$salesman[0] = $user->salesman_code ? $user->salesman_code.'-'.$user->fullname : $user->fullname;
     	return $salesman;
     }
+
+	public function getAuditor()
+	{
+		$response = ModelFactory::getInstance('user')->where('user_group_id', 2)->get();
+
+		if($response->isEmpty()){
+
+			return ['No data found.'];
+		}
+
+		$auditor = [];
+		$response->each(function ($response) use (&$auditor) {
+			array_push($auditor, $response->lastname . ', ' . $response->firstname);
+		});
+
+		return $auditor;
+	}
     
     
     /**
@@ -5116,7 +5134,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table('app_customer')
 			    	->where('status','=','A')
 			    	->orderBy('customer_name');
-    	
+
     	if($strictSalesman && $this->isSalesman())
     	{
     		$customers = \DB::table('app_salesman_customer')
