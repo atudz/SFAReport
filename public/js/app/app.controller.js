@@ -1889,7 +1889,7 @@
 					if(!$('#jr_salesman_code').val()){
 
                         var params = {
-                            items: items,message: 'Are you a Jr. Salesman?'
+                            message: 'Are you a Jr. Salesman?'
                         };
 						var modalInstance = modal.open({
 							animation: true,
@@ -1903,54 +1903,44 @@
 								}
 							}
 						});
-					}else{
-						saveAPIUser(resource, items, scope, profile, location);
+						return false;
 					}
 				}
-					//if not add new user.
-				else{
-					saveAPIUser(resource, items, scope, profile, location);
-				}
+
+				API = resource('controller/user/save');
+				//log.info(params);
+				API.save(items, function(data){
+					//log.info(data);
+					if(data.error)
+					{
+						locationErrorList = '<ul>'+data.error+'</ul>';
+						scope.personalInfoError = false;
+						scope.locationInfoError = false;
+						if(data.exists)
+						{
+							var errorId = '#error_list_personal'
+							scope.personalInfoError = true;
+						}
+						else
+						{
+							var errorId = '#error_list_location';
+							scope.locationInfoError = true;
+						}
+
+						$(errorId).html(locationErrorList);
+
+						scope.success = false;
+					}
+					else
+					{
+						scope.success = true;
+						if(!profile)
+							location.path('user.list');
+					}
+				});
 			}
 		}
 	}
-
-function saveAPIUser(resource, items, scope, profile, location) {
-	var locationErrorList = '';
-
-	var API = resource('controller/user/save');
-	//log.info(params);
-	API.save(items, function(data){
-		console.log(data);
-		//log.info(data);
-		if(data.error)
-		{
-			locationErrorList = '<ul>'+data.error+'</ul>';
-			scope.personalInfoError = false;
-			scope.locationInfoError = false;
-			if(data.exists)
-			{
-				var errorId = '#error_list_personal'
-				scope.personalInfoError = true;
-			}
-			else
-			{
-				var errorId = '#error_list_location';
-				scope.locationInfoError = true;
-			}
-
-			$(errorId).html(locationErrorList);
-
-			scope.success = false;
-		}
-		else
-		{
-			scope.success = true;
-			if(!profile)
-				location.path('user.list');
-		}
-	});
-}
 
 	/**
 	 * Sync controller
@@ -2177,7 +2167,6 @@ function saveAPIUser(resource, items, scope, profile, location) {
 		};
 
 		$scope.cancel = function () {
-			saveAPIUser($resource, params.items, $scope, params.profile, $location);
 			$uibModalInstance.dismiss('cancel');
 		};
 
