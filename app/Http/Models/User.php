@@ -79,6 +79,15 @@ class User extends ModelCore implements AuthenticatableContract, CanResetPasswor
 		$id = \DB::table('user_group')->where(['name'=>'auditor'])->value('id');
 		return $query->where('user_group_id', '=', $id);
 	}
+
+	/**
+	 * Add  new Attribute column FullName.
+	 * @return string
+     */
+	public function getFullNameAttribute()
+	{
+		return $this->firstname . " " . $this->lastname;
+	}
 	
 	/**
 	 * Overrides parent magic get to create a custom attribute
