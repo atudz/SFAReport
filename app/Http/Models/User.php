@@ -69,6 +69,16 @@ class User extends ModelCore implements AuthenticatableContract, CanResetPasswor
 		 $id = \DB::table('user_group')->where(['name'=>'admin'])->value('id');
 		 return $query->where('user_group_pk_id', '=', $id);
 	}
+
+	/**
+	 * Query scope for filtering auditor users
+	 * @param unknown $query
+	 */
+	public function scopeAuditor($query)
+	{
+		$id = \DB::table('user_group')->where(['name'=>'auditor'])->value('id');
+		return $query->where('user_group_id', '=', $id);
+	}
 	
 	/**
 	 * Overrides parent magic get to create a custom attribute
