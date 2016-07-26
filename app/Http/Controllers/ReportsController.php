@@ -28,6 +28,7 @@ class ReportsController extends ControllerCore
 		
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
+		$reference='';
 		$syncTables = config('sync.sync_tables');
 		if($pk = array_shift($syncTables[$table]))
 		{
@@ -36,9 +37,13 @@ class ReportsController extends ControllerCore
 				$stockTransNum = \DB::table($table)->where($pk,$id)->value($column);
 			}
 			
-			$before = \DB::table($table)->where($pk,$id)->first()->$column;
+			$prevData = \DB::table($table)->where($pk,$id)->first();
+			$before = $prevData->$column;
 			if($column == 'invoice_number')
+			{
 				$prevInvoiceNum = $before;
+				$reference = $prevData->reference_num;
+			}
 						
 			\DB::table($table)->where($pk,$id)->update([
 					$column => $value,
@@ -91,11 +96,14 @@ class ReportsController extends ControllerCore
 			$data1 = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->first();
 			if($data1)
 			{
-				\DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->update([
-						$column => $value,
-						'updated_at' => new \DateTime(),
-						'updated_by' => auth()->user()->id,
-				]);
+				\DB::table('txn_collection_invoice')
+						->where($column,$prevInvoiceNum)
+						->where('reference_num',$reference)
+						->update([
+							$column => $value,
+							'updated_at' => new \DateTime(),
+							'updated_by' => auth()->user()->id,
+						]);
 					
 				$insertData[] = [
 						'table' => 'txn_collection_invoice',
