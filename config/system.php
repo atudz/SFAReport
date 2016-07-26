@@ -30,8 +30,23 @@ return [
 	// Report limit data export xls
 	'report_limit_pdf' => '100',
 		
-	// Go live date for van inventory
+	// Go live date for van inventory default
 	'go_live_date' => '2016-05-02',
+		
+	// Individual branches live date
+	'branch_live_date' => [
+		2500 => '2016-07-04',
+		500 => '2016-07-04',
+		1100 => '2016-07-04',
+		3100 => '2016-07-04',
+			
+		100 => '2016-05-02',
+		200 => '2016-05-02',
+		2100 => '2016-05-02',
+		2200 => '2016-05-02',
+		
+			
+	],
 		
 	// Maximum admin users
 	'max_admin_users' => 6,	
