@@ -5326,6 +5326,7 @@ class ReportsPresenter extends PresenterCore
     			$prepare->orderBy('collection.invoice_date','desc');
     			$current = $this->formatSalesCollection($prepare->get());    			 
     			$currentSummary = [];
+				$current = $this->validateInvoiceNumber($current);
     			if($current)
     			{
     				$currentSummary = $this->getSalesCollectionTotal($current);
@@ -6664,4 +6665,22 @@ class ReportsPresenter extends PresenterCore
 	    	$from->addDay();	    	
     	}      	
     }
+
+	/**
+	 * This function will check if the invoice number don't have
+	 * CCB code and append a CCB code for invoice number.
+	 * TODO:: this function will be modefied depends on the scope of ticket ID 294 this only a temporary and might change if the scope has finalize.
+	 * @param $currents
+	 * @return mixed
+	 */
+	public function validateInvoiceNumber($currents)
+	{
+		foreach ($currents as $current) {
+			if (is_numeric($current->invoice_number)) {
+				$current->invoice_number = 'CCB' . $current->invoice_number;
+			}
+		}
+
+		return $currents;
+	}
 }
