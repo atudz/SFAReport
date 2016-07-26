@@ -2151,19 +2151,14 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('Confirm',['$scope','$uibModalInstance','$window','$resource','params','$location','$log', Confirm]);
+	app.controller('Confirm',['$scope','$uibModalInstance','$window','params','$log', Confirm]);
 
-	function Confirm($scope, $uibModalInstance, $window, $resource, params,$location, $log) {
-		$scope.personalInfoError = false;
-		$scope.locationInfoError = false;
-		$scope.success = false;
-
+	function Confirm($scope, $uibModalInstance, $window, params, $log) {
 		$scope.params = params;
 		$scope.ok = function () {
 
 			$('#jr_salesman_code').focus();
 			$uibModalInstance.dismiss('cancel');
-			return false;
 		};
 
 		$scope.cancel = function () {
