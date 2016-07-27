@@ -1888,9 +1888,9 @@
 				if($.trim($('#salesman_code').val()) && $('#role').val() == 4){
 					if(!$('#jr_salesman_code').val()){
 
-                        var params = {
-                            message: 'Are you a Jr. Salesman?'
-                        };
+						var params = {
+							profile: profile, items: items, message: 'Are you a Jr. Salesman?'
+						};
 						var modalInstance = modal.open({
 							animation: true,
 							templateUrl: 'Confirm',
@@ -2151,9 +2151,9 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('Confirm',['$scope','$uibModalInstance','$window','params','$log', Confirm]);
+	app.controller('Confirm',['$scope','$uibModalInstance','$window', '$resource','params','$log', Confirm]);
 
-	function Confirm($scope, $uibModalInstance, $window, params, $log) {
+	function Confirm($scope, $uibModalInstance, $window, $resource, params, $log) {
 		$scope.params = params;
 		$scope.ok = function () {
 
@@ -2162,6 +2162,14 @@
 		};
 
 		$scope.cancel = function () {
+			var API = $resource('controller/user/save');
+			//log.info(params);
+			API.save(params.items, function (data) {
+				// $scope.success = true;
+				// if(!params.profile){
+				// 	location.href = '/user.list';
+				// }
+			});
 			$uibModalInstance.dismiss('cancel');
 		};
 
