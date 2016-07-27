@@ -5326,7 +5326,6 @@ class ReportsPresenter extends PresenterCore
     			$prepare->orderBy('collection.invoice_date','desc');
     			$current = $this->formatSalesCollection($prepare->get());    			 
     			$currentSummary = [];
-				$current = $this->validateInvoiceNumber($current);
     			if($current)
     			{
     				$currentSummary = $this->getSalesCollectionTotal($current);
@@ -5605,8 +5604,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
-    	  
-    	if(in_array($type,['xls','xlsx']))
+		if (empty($current)) {
+			$records = $this->validateInvoiceNumber($records);
+		} else {
+			$current = $this->validateInvoiceNumber($current);
+		}
+
+		if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
@@ -6676,8 +6680,20 @@ class ReportsPresenter extends PresenterCore
 	public function validateInvoiceNumber($currents)
 	{
 		foreach ($currents as $current) {
-			if (is_numeric($current->invoice_number)) {
-				$current->invoice_number = 'CCB' . $current->invoice_number;
+			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
+			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
+				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
+					$current->invoice_number_from = 'CCB' . $current->invoice_number_from;
+
+				}
+				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
+					$current->invoice_number_to = 'CCB' . $current->invoice_number_to;
+				}
+			} elseif (isset($current->invoice_number)) {
+				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
+					$current->invoice_number = 'CCB' . $current->invoice_number;
+
+				}
 			}
 		}
 
