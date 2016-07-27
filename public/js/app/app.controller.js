@@ -1889,7 +1889,7 @@
 					if(!$('#jr_salesman_code').val()){
 
 						var params = {
-							profile: profile, items: items, message: 'Are you a Jr. Salesman?'
+							items: items, message: 'Are you a Jr. Salesman?'
 						};
 						var modalInstance = modal.open({
 							animation: true,
@@ -2151,9 +2151,9 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('Confirm',['$scope','$uibModalInstance','$window', '$resource','params','$log', Confirm]);
+	app.controller('Confirm',['$scope','$uibModalInstance','$window', '$resource','params', '$location','$log', Confirm]);
 
-	function Confirm($scope, $uibModalInstance, $window, $resource, params, $log) {
+	function Confirm($scope, $uibModalInstance, $window, $resource, params, $location, $log) {
 		$scope.params = params;
 		$scope.ok = function () {
 
@@ -2163,12 +2163,27 @@
 
 		$scope.cancel = function () {
 			var API = $resource('controller/user/save');
-			//log.info(params);
 			API.save(params.items, function (data) {
-				// $scope.success = true;
-				// if(!params.profile){
-				// 	location.href = '/user.list';
-				// }
+				if (data.error) {
+					var locationErrorList = '<ul>' + data.error + '</ul>';
+					$scope.personalInfoError = false;
+					$scope.locationInfoError = false;
+					if (data.exists) {
+						var errorId = '#error_list_personal'
+						$scope.personalInfoError = true;
+					}
+					else {
+						var errorId = '#error_list_location';
+						$scope.locationInfoError = true;
+					}
+
+					$(errorId).html(locationErrorList);
+
+					$scope.success = false;
+				} else {
+					$scope.success = true;
+					$location.path('user.list');
+				}
 			});
 			$uibModalInstance.dismiss('cancel');
 		};
