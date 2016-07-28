@@ -24,6 +24,24 @@ class UserPresenter extends PresenterCore
 	}
 
 	/**
+	 * Display Contact us form.
+	 * @return string The rendered html view
+	 */
+	public function contactUs()
+	{
+		return $this->view('contactUs');
+	}
+
+	/**
+	 * Return Summary of incidents reports.
+	 * @return string The rendered html view
+	 */
+	public function incidentReport()
+	{
+		return $this->view('incidentReport');
+	}
+
+	/**
 	 * Return User Group Rights view
 	 * @param string $type
 	 * @return string The rendered html view
