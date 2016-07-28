@@ -116,7 +116,16 @@
 					controller: 'UserEdit'
 					/*controllerAs: 'sync'*/
 				})
-
+				.when('/contact.us', {
+					templateUrl: '/user/contactUs',
+					controller: 'ContactUS'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/incident.report', {
+					templateUrl: '/user/incidentReport',
+					controller: 'IncidentReport'
+					/*controllerAs: 'sync'*/
+				})
 				.when('/profile.changepassword',{
 					templateUrl: '/changepass',
 					controller: 'ChangePassword',

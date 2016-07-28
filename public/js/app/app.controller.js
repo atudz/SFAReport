@@ -1702,6 +1702,24 @@
 	};
 
 	/**
+	 * User Contact us controller
+	 */
+	app.controller('ContactUS', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUS]);
+
+	function ContactUS($scope, $resource, $routeParams, $location, $log) {
+
+	}
+
+	/**
+	 * User Incident report controller
+	 */
+	app.controller('IncidentReport', ['$scope', '$resource', '$routeParams', '$location', '$log', IncidentReport]);
+
+	function IncidentReport($scope, $resource, $routeParams, $location, $log) {
+
+	}
+	
+	/**
 	 * Save user profile
 	 */
 	function saveUser(scope, resource, location, modal, window, log)
