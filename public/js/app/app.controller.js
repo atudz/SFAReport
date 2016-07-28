@@ -1699,7 +1699,59 @@
 	app.controller('ContactUS', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUS]);
 
 	function ContactUS($scope, $resource, $routeParams, $location, $log) {
+		$scope.error = false;
+		$scope.contact = {
+			name: '',
+			phone: '',
+			email: '',
+			branch: '',
+			callFrom: '',
+			callTo: '',
+			subject: '',
+			comment: ''
+		};
+		$scope.save = function () {
+			$scope.validate($scope.contact);
+		};
 
+		$scope.validate = function (contact) {
+			var contactErrors = [];
+			var contactErrorList = '';
+			if (contact.name == '') {
+				contactErrors.push('Name is a required field.');
+			}
+			if (contact.phone == '') {
+				contactErrors.push('Phone is a required field.');
+			}
+			if (contact.name == '') {
+				contactErrors.push('Name is a required field.');
+			}
+			if (contact.branch == '') {
+				contactErrors.push('Branch is a required field.');
+			}
+			if (contact.callFrom == '') {
+				contactErrors.push('Call From is a required field.');
+			}
+			if (contact.callTo == '') {
+				contactErrors.push('Call To is a required field.');
+			}
+			if (contact.subject == '') {
+				contactErrors.push('Subject is a required field.');
+			}
+			if (contact.comment == '') {
+				contactErrors.push('Comment is a required field.');
+			}
+
+			if (contactErrors.length > 0) {
+				contactErrorList = '<ul>';
+				for (var i = 0; i < contactErrors.length; i++) {
+					contactErrorList += '<li>' + contactErrors[i] + '</li>';
+				}
+				contactErrorList += '</ul>';
+				$('#error_list_contact').html(contactErrorList);
+				$scope.error = true;
+			}
+		};
 	}
 
 	/**
