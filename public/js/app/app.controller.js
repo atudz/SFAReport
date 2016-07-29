@@ -1720,6 +1720,11 @@
 		};
 		$scope.save = function () {
 			$scope.validate($scope.contact);
+			if(!$scope.error){
+				var API = $resource('controller/user/contact');
+				API.save($scope.contact, function(data){
+				});
+			}
 		};
 
 		$scope.validate = function (contact) {
