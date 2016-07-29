@@ -224,13 +224,14 @@ class UserController extends ControllerCore
 		return $salesman_code . "-" . str_pad(((int) (explode("-", $code->salesman_code)[1]) + 1), 3, "00", STR_PAD_LEFT);
 	}
 
-	public function userContactUs(Request $request)
+	public function userContactUs()
 	{
-		$data = 'wew';
-		Mail::queue('emails.contact_us',$data,function ($message) {
+		$data = [];
+		Mail::queue('emails.contact_us', $data, function ($message) {
 			$message->from('testmailgun101@gmail.com', 'sample email');
 			$message->to('markgerald.nst@gmail.com');
 			$message->subject('Account Activation');
 		});
+
 	}
 }
