@@ -117,13 +117,13 @@
 					/*controllerAs: 'sync'*/
 				})
 				.when('/contact.us', {
-					templateUrl: '/user/contactUs',
-					controller: 'ContactUS'
+					templateUrl: '/user/contactus',
+					controller: 'ContactUs'
 					/*controllerAs: 'sync'*/
 				})
-				.when('/incident.report', {
-					templateUrl: '/user/incidentReport',
-					controller: 'IncidentReport'
+				.when('/summaryofincident.report', {
+					templateUrl: '/user/summaryofincidentreport',
+					controller: 'SummaryOfIncidentReport'
 					/*controllerAs: 'sync'*/
 				})
 				.when('/profile.changepassword',{
