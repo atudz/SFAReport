@@ -7,9 +7,8 @@
                 <!-- Filter -->
                 {!!Html::fopen('Toggle Filter')!!}
                 <div class="col-md-6">
-                    {!!Html::select('name','name', $name,'')!!}
-                    {{--{!!Html::select('branch','Branch:', $branch, '')!!}--}}
-                    {!!Html::input('text','branch','Branch:')!!}
+                    {!!Html::select('name','Full Name', $name,'')!!}
+                    {!!Html::select('branch','Branch:', $branch, '')!!}
                     {!!Html::input('text','incident_no','Incident #:')!!}
                 </div>
                 <div class="col-md-6">
