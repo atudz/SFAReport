@@ -23,7 +23,7 @@ class UpdateNavigationAndUserGroupNavSeeder extends Seeder
             ],
             [
                 'name'       => 'Summary of Incident Report',
-                'url'        => 'incident.report',
+                'url'        => 'summaryofincident.report',
                 'class'      => 'glyphicon glyphicon-share-alt',
                 'parent_id'  => '8',
                 'order'      => 3,
