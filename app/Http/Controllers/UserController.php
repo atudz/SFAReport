@@ -224,14 +224,36 @@ class UserController extends ControllerCore
 		return $salesman_code . "-" . str_pad(((int) (explode("-", $code->salesman_code)[1]) + 1), 3, "00", STR_PAD_LEFT);
 	}
 
-	public function userContactUs()
+	public function userContactUs(Request $request)
 	{
-		$data = [];
-		Mail::queue('emails.contact_us', $data, function ($message) {
-			$message->from('testmailgun101@gmail.com', 'sample email');
-			$message->to('markgerald.nst@gmail.com');
-			$message->subject('Account Activation');
+		$data = [
+			'name'                     => $request->get('name'),
+			'phone'                    => $request->get('phone'),
+			'email'                    => $request->get('email'),
+			'location_assignment_code' => $request->get('branch'),
+			'time_from'                => $request->get('callFrom'),
+			'time_to'                  => $request->get('callTo'),
+			'subject'                  => $request->get('subject'),
+			'comment'                  => $request->get('comment'),
+			'status'                   => 'New'
+		];
+		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		//send email to admin.
+		$data['reference_no'] = $contactUs->id;
+		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
+			$message->from($data['email'], 'sample email');
+			$message->to('markgeraldcabatingan@gmail.com');
+			$message->subject($data['subject']);
+		});
+		//reply email to sender.
+		$data['time_recieved'] = $contactUs->created_at;
+		$data['status'] = $contactUs->status;
+		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
+			$message->from('markgeraldcabatingan@gmail.com', 'sample email');
+			$message->replyTo($data['email']);
+			$message->subject($data['subject']);
 		});
 
+		return $contactUs;
 	}
 }
