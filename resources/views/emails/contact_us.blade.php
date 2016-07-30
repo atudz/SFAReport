@@ -23,9 +23,9 @@
                     <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
                         <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                Incident #: CR-00001 Subject here</p>
+                                Incident #: {!! $reference_no !!} {!! $subject !!}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                From: Mark Gerald Cabatingan</p>
+                                From: {!! $name !!}}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                 To: Admin</p>
                             <img src="http://s3.amazonaws.com/save22.com-retailer-banner-picture/319831_331827250256910_1832915880_n.jpg"
@@ -36,7 +36,7 @@
                                 <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
                                     <td style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; line-height: 1.6em; border-radius: 25px; text-align: left; vertical-align: top;  margin: 0; padding: 0;"
                                         align="center" valign="top">
-                                        <h3>CR-00001 Subject here</h3>
+                                        <h3>{!! $reference_no !!} {!! $subject !!}</h3>
                                     </td>
                                 </tr>
                                 <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
@@ -45,32 +45,10 @@
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Dear Admin,</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Greetings</p>
+                                            Greetings!</p>
                                         <article>
                                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                Lorem ipsum dolor sit amet, affert debitis ius at, in pro cotidieque
-                                                persequeris, vim autem tation te. Paulo accusamus has ut, cu altera
-                                                neglegentur sed, diam erant fierent ius ex. Novum epicurei nominati duo
-                                                ut, minim dolor ius ea. Eos dolor fierent honestatis ne, legimus
-                                                inciderint vix te. Posse dissentiet in eam, illud exerci mollis sea ei,
-                                                facilis sensibus vel at.</p>
-                                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                Dicunt fabulas iracundia ne est. Etiam suscipit sea te. An pri wisi
-                                                malorum appetere. Mel illum homero partiendo et, ea ceteros sensibus
-                                                mea, sit feugiat meliore phaedrum et. At ferri nobis pri, in modo
-                                                vituperatoribus pri, nec omnes quodsi in.</p>
-                                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                Quo ex stet paulo, mundi errem congue id mel. Cu eos sumo case illum,
-                                                has no atqui laoreet assueverit. Eu nam novum singulis suavitate,
-                                                nominavi pericula ne vix. Eos ei unum aperiri nonumes. Sed quaeque
-                                                delenit suavitate at.</p>
-                                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                Ex prompta consequat adversarium sit, at his partiendo vituperata. Eu
-                                                elit moderatius constituam has, ex ornatus facilis urbanitas est. Et
-                                                soluta dolorem hendrerit vix, ne mea recteque iudicabit. Eu omnium
-                                                repudiandae reprehendunt usu, eu tamquam euismod eum. Eu has meis
-                                                iuvaret posidonium, ei eum nobis quodsi scripserit. Ad putent persius
-                                                nam, an nam enim adhuc dissentiet.</p>
+                                                {!! $comment !!}</p>
                                         </article>
                                     </td>
                                 </tr>
@@ -79,21 +57,20 @@
                                         align="center" valign="top">
                                         <h3>Sender Information</h3>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Name: Mark Gerald Cabatingan</p>
+                                            Name: {!! $name !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Phone: 09123456789</p>
+                                            Phone: {!! $phone !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Telephone: (032) 366-2333</p>
+                                            Telephone: {!! $telephone !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Email: <a href="mailto:testmailgun101@gmail.com"
-                                                      style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; color: #1919ff; margin: 0; padding: 0;">testmailgun101@gmail
-                                                .com</a></p>
+                                            Email: <a href="mailto:{{ $email }}"
+                                                      style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; color: #1919ff; margin: 0; padding: 0;">{!! $email !!}</a></p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Branch: Tisa</p>
+                                            Branch: {!! $branch !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             <strong>Best Time To Call</strong></p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            &nbsp; &nbsp; &nbsp; From: 3pm &nbsp; &nbsp; &nbsp; &nbsp; To: 3am</p>
+                                            &nbsp; &nbsp; &nbsp; From: {!! $time_from !!} &nbsp; &nbsp; &nbsp; &nbsp; To: {!! $time_to !!}</p>
                                     </td>
                                 </tr>
                             </table>
