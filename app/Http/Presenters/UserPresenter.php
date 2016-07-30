@@ -38,6 +38,10 @@ class UserPresenter extends PresenterCore
 	 */
 	public function incidentReport()
 	{
+		$this->view->roles = $this->getRoles();
+		$this->view->name = $this->contactUsName();
+		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
+
 		return $this->view('incidentReport');
 	}
 
@@ -122,6 +126,35 @@ class UserPresenter extends PresenterCore
 	public function getRoles()
 	{
 		return \DB::table('user_group')->lists('name','id');	
+	}
+
+	/**
+	 * Get User name of report.
+     */
+	public function contactUsName()
+	{
+		return ModelFactory::getInstance('ContactUs')->lists('name', 'id');
+	}
+
+	/**
+	 * Get the prepared list of summary of incident reports.
+     */
+	public function getPreparedSummaryOfIncidentReports()
+	{
+		return ModelFactory::getInstance('ContactUs')->select('id', 'comment', 'status', 'name')->get();
+	}
+
+	/**
+	 * Get the list of summary of incident reports.
+	 * @return mixed
+     */
+	public function getSummaryOfIncidentReports()
+	{
+
+		$data['records'] = $this->getPreparedSummaryOfIncidentReports();
+		$data['total'] = count($data['records']);
+
+		return response()->json($data);
 	}
 	
 	/**
@@ -281,6 +314,22 @@ class UserPresenter extends PresenterCore
 				['name'=>'Actions'],				
 		];
 		 
+		return $headers;
+	}
+
+	/**
+	 * Get Summary incident of report table columns.
+	 * @return multitype:multitype:string
+	 */
+	public function getIncidentReportTableColumns()
+	{
+		$headers = [
+			['name'=>'Incident #', 'sort'=>'id'],
+			['name'=>'Summary', 'sort'=>'comment'],
+			['name'=>'Status', 'sort'=>'status'],
+			['name'=>'Submitted By', 'sort'=>'name']
+		];
+
 		return $headers;
 	}
 
