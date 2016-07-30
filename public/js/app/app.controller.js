@@ -1696,9 +1696,9 @@
 	/**
 	 * User Contact us controller
 	 */
-	app.controller('ContactUS', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUS]);
+	app.controller('ContactUs', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUs]);
 
-	function ContactUS($scope, $resource, $routeParams, $location, $log) {
+	function ContactUs($scope, $resource, $routeParams, $location, $log) {
 		$scope.error = false;
 		$scope.contact = {
 			name: '',
@@ -1762,9 +1762,9 @@
 	/**
 	 * User Incident report controller
 	 */
-	app.controller('IncidentReport', ['$scope', '$resource', '$routeParams','$uibModal', '$location', '$log', IncidentReport]);
+	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams', '$window', '$uibModal', '$location', '$log', SummaryOfIncidentReport]);
 
-	function IncidentReport($scope, $resource, $routeParams, $location,$uibModal, $log) {
+	function SummaryOfIncidentReport($scope, $resource, $routeParams, $window, $location, $uibModal, $log) {
 		// Filter flag
 		$scope.toggleFilter = true;
 
@@ -1772,27 +1772,29 @@
 		$scope.records = [];
 
 		var API = $resource('/reports/getdata/summaryofincidentreport');
-		var params = {};
 
 		toggleLoading(true);
-		API.get({},function(data){
+		API.get({}, function (data) {
 			$scope.records = data.records;
 			$scope.total = data.total;
-			// //$log.info(data);
 			toggleLoading();
 			togglePagination(data.total);
 		});
-		var params = [
-			'name',
-			'branch',
-			'incident_no',
-			'role',
-			'date_range',
-			'date_range_from',
-			'date_range_to'
-		];
+		var params = {
+			name: $('#name').val(),
+			branch: $('#branch').val(),
+			incident_no: $('#incident_no').val(),
+			role: $('#role').val(),
+			date_range_from: $('#date_range_from').val(),
+			date_range_to: $('#date_range_from_to').val()
+		};
+		$scope.filter = function () {
+			API.save(params, function (data) {
+				alert(JSON.stringify(data));
+			})
+		};
 		// Download report
-		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
+		// downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
 
 	}
 	

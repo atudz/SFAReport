@@ -36,13 +36,13 @@ class UserPresenter extends PresenterCore
 	 * Return Summary of incidents reports.
 	 * @return string The rendered html view
 	 */
-	public function incidentReport()
+	public function summaryOfIncidentReport()
 	{
 		$this->view->roles = $this->getRoles();
 		$this->view->name = $this->contactUsName();
 		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
-
-		return $this->view('incidentReport');
+		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
+		return $this->view('summaryOfIncidentReport');
 	}
 
 	/**
@@ -139,8 +139,9 @@ class UserPresenter extends PresenterCore
 	/**
 	 * Get the prepared list of summary of incident reports.
      */
-	public function getPreparedSummaryOfIncidentReports()
+	public function getPreparedSummaryOfIncidentReportList()
 	{
+//		dd($this->request->all());
 		return ModelFactory::getInstance('ContactUs')->select('id', 'comment', 'status', 'name')->get();
 	}
 
@@ -151,7 +152,7 @@ class UserPresenter extends PresenterCore
 	public function getSummaryOfIncidentReports()
 	{
 
-		$data['records'] = $this->getPreparedSummaryOfIncidentReports();
+		$data['records'] = $this->getPreparedSummaryOfIncidentReportList();
 		$data['total'] = count($data['records']);
 
 		return response()->json($data);
