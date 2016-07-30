@@ -4718,12 +4718,6 @@ class ReportsPresenter extends PresenterCore
     	return response()->json($data);
     	 
     }
-	
-	
-	public function getPreparedSummaryOfIncidentsReportList()
-	{
-		
-	}
 
     /**
      * Return prepared statement for material price list
@@ -5767,7 +5761,7 @@ class ReportsPresenter extends PresenterCore
     			break;
 			case 'summaryofincidentsreport':
 				$columns = $this->getTableColumns($report);
-				$prepare = PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList();
 				$rows = $this->getSummaryOfIncidentReportSelectColumns();
 				$header = 'Summary Of Incident Report';
 				$filters = $this->getSummaryOfIncidentReportFilterData();
