@@ -1770,9 +1770,37 @@
 	/**
 	 * User Incident report controller
 	 */
-	app.controller('IncidentReport', ['$scope', '$resource', '$routeParams', '$location', '$log', IncidentReport]);
+	app.controller('IncidentReport', ['$scope', '$resource', '$routeParams','$uibModal', '$location', '$log', IncidentReport]);
 
-	function IncidentReport($scope, $resource, $routeParams, $location, $log) {
+	function IncidentReport($scope, $resource, $routeParams, $location,$uibModal, $log) {
+		// Filter flag
+		$scope.toggleFilter = true;
+
+		// Fetch table data from server
+		$scope.records = [];
+
+		var API = $resource('/reports/getdata/summaryofincidentreport');
+		var params = {};
+
+		toggleLoading(true);
+		API.get({},function(data){
+			$scope.records = data.records;
+			$scope.total = data.total;
+			// //$log.info(data);
+			toggleLoading();
+			togglePagination(data.total);
+		});
+		var params = [
+			'name',
+			'branch',
+			'incident_no',
+			'role',
+			'date_range',
+			'date_range_from',
+			'date_range_to'
+		];
+		// Download report
+		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
 
 	}
 	
