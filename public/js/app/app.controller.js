@@ -1751,7 +1751,7 @@
 				personalInfoErrors.push('Salesman code is a required field.');
 			}
 			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-			if($('#email').val() && !rgxEmail.test($('#email').val()))
+			if($('#email').val() && !rgxEmail.test($('#email').val().trim()))
 			{
 				personalInfoErrors.push('Invalid email address.');
 			}
