@@ -7,32 +7,32 @@
                 <!-- Filter -->
                 {!!Html::fopen('Toggle Filter')!!}
                 <div class="col-md-6">
-                    {!!Html::select('name','Full Name', $name,'')!!}
-                    {!!Html::select('branch','Branch:', $branch, '')!!}
-                    {!!Html::input('text','incident_no','Incident #:')!!}
+                    {!!Html::select('name','Full Name', $name,'', ['ng-model' => 'params.name'])!!}
+                    {!!Html::select('branch','Branch:', $branch, '', ['ng-model' => 'params.branch'])!!}
+                    {!!Html::input('text','incident_no','Incident #:','', ['ng-model' => 'params.incident_no'])!!}
                 </div>
                 <div class="col-md-6">
-                    {!!Html::select('role','Role:', $roles, '')!!}
-                    {!!Html::datepicker('date_range','Date Range <span class="required">*</span>','true')!!}
+                    {!!Html::select('role','Role:', $roles, '', ['ng-model' => 'params.role'])!!}
+                    {!!Html::datepicker('date_range','Date Range','true')!!}
                 </div>
                 {!!Html::fclose()!!}
-                        <!-- End Filter -->
-                <div class="pull-left">
-                    <div class="inner-addon left-addon">
-                        <i class="glyphicon glyphicon-search"></i>
-                        <input type="text" class="form-control input-sm" placeholder="Search" ng-model="query.$"/>
-                    </div>
-                </div>
-                {!!Html::topen(['no_download'=>$isGuest2,'no_search'=>true,'no_loading'=>true])!!}
+                {!!Html::topen(['no_download'=>$isGuest2,'no_loading'=>true])!!}
                 {!!Html::theader($tableHeaders)!!}
                 <tbody>
-                    <tr ng-repeat="record in records |filter:query">
-                        <td class="bold">[[ record.id ]]</td>
-                        <td class="bold">[[ record.comment ]]</td>
-                        <td class="bold">[[ record.status ]]</td>
-                        <td class="bold">[[ record.name ]]</td>
-                    </tr>
+                <tr ng-repeat="record in records |filter:query" ng-if="records.length != 0">
+                    <td class="bold">[[ record.id ]]</td>
+                    <td class="bold">[[ record.comment ]]</td>
+                    <td class="bold">[[ record.status ]]</td>
+                    <td class="bold">[[ record.name ]]</td>
+                </tr>
+                <tr ng-if="records.length == 0">
+                    <td class="bold">No records found.</td>
+                    <td class="bold"></td>
+                    <td class="bold"></td>
+                    <td class="bold"></td>
+                </tr>
                 </tbody>
+                {!!Html::tfooter(true,7)!!}
                 {!!Html::tclose(false)!!}
             </div>
         </div>

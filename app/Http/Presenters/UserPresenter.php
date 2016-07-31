@@ -6,6 +6,7 @@ use App\Core\PresenterCore;
 use App\Factories\FilterFactory;
 use App\Factories\PresenterFactory;
 use App\Factories\ModelFactory;
+use Illuminate\Http\Request;
 
 class UserPresenter extends PresenterCore
 {
@@ -133,16 +134,37 @@ class UserPresenter extends PresenterCore
      */
 	public function contactUsName()
 	{
-		return ModelFactory::getInstance('ContactUs')->lists('name', 'id');
+		return ModelFactory::getInstance('ContactUs')->lists('name', 'name');
 	}
 
 	/**
 	 * Get the prepared list of summary of incident reports.
-     */
+	 */
 	public function getPreparedSummaryOfIncidentReportList()
 	{
-//		dd($this->request->all());
-		return ModelFactory::getInstance('ContactUs')->select('id', 'comment', 'status', 'name')->get();
+		$summary = ModelFactory::getInstance('ContactUs')->select('id', 'comment', 'status', 'name');
+
+		$filterName = FilterFactory::getInstance('Text');
+		$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
+			return $model->where('name', $self->getValue());
+		});
+
+		$filterBranch = FilterFactory::getInstance('Select');
+		$summary = $filterBranch->addFilter($summary, 'branch', function ($self, $model) {
+			return $model->where('location_assignment_code', $self->getValue());
+		});
+
+		$filterIncidentNo = FilterFactory::getInstance('Text');
+		$summary = $filterIncidentNo->addFilter($summary, 'incident_no', function ($self, $model) {
+			return $model->where('id', $self->getValue());
+		});
+
+		$filterDateRange = FilterFactory::getInstance('DateRange');
+		$summary = $filterDateRange->addFilter($summary, 'date_range', function ($self, $model) {
+			return $model->whereBetween('created_at', $self->formatValues($self->getValue()));
+		});
+
+		return $summary->get();
 	}
 
 	/**

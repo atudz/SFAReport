@@ -1779,26 +1779,27 @@
 		// Fetch table data from server
 		$scope.records = [];
 
-		var API = $resource('/reports/getdata/summaryofincidentreport');
+		$scope.API = $resource('/reports/getdata/summaryofincidentreport');
 
 		toggleLoading(true);
-		API.get({}, function (data) {
+		$scope.API.get({}, function (data) {
 			$scope.records = data.records;
 			$scope.total = data.total;
 			toggleLoading();
 			togglePagination(data.total);
 		});
-		var params = {
-			name: $('#name').val(),
-			branch: $('#branch').val(),
-			incident_no: $('#incident_no').val(),
-			role: $('#role').val(),
-			date_range_from: $('#date_range_from').val(),
-			date_range_to: $('#date_range_from_to').val()
+		$scope.params = {
+			name: '',
+			branch: '',
+			incident_no: '',
+			role: ''
 		};
 		$scope.filter = function () {
-			API.save(params, function (data) {
-				alert(JSON.stringify(data));
+			$scope.params.date_range_from = $('#date_range_from').val();
+			$scope.params.date_range_to = $('#date_range_to').val();
+			$scope.API.save($scope.params, function (data) {
+				$scope.records = data.records;
+				$scope.total = data.total;
 			})
 		};
 		// Download report
