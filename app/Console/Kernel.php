@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel
     	\App\Console\Commands\MakeModel::class,
     	\App\Console\Commands\SyncSfa::class,
     	\App\Console\Commands\ChangeAdminPassword::class,
+    	\App\Console\Commands\CleanSalesmanRecords::class,
     ];
 
     /**
