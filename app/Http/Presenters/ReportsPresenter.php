@@ -172,6 +172,7 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->title = 'Canned & Mixes';
     			$this->view->salesman = $this->getSalesman(true);
+				$this->view->auditor = $this->getAuditor();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
@@ -1952,17 +1953,22 @@ class ReportsPresenter extends PresenterCore
     	$firstUpload = false;
     	
     	if($replenishment)
-    	{
-    		$prepare = \DB::table('txn_replenishment_header')
-    							->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
-    		$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'<=',$to->format('Y-m-d'));
-    		$prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));    		 
-    		$count = $prepare->count();
-    		
+    	{    		
     		$replenishDate = (new Carbon($replenishment->replenishment_date))->startOfDay();
-    		$transactionDate = (new Carbon($this->request->get('transaction_date')))->startOfDay();
-    		if($replenishDate->format('Y-m-d') == $goLiveDate || ($count == 1 && $replenishDate->eq($transactionDate)))
-    			$firstUpload = true;
+    		$areaCodes = $this->getSalesmanArea($this->request->get('salesman_code'));
+    		$branchLiveDates = config('system.branch_live_date');
+    		foreach($areaCodes as $code)
+    		{
+    			if(isset($branchLiveDates[$code]))
+    			{
+    				$live = new Carbon($branchLiveDates[$code]);
+    				if($replenishDate->eq($live))
+    				{
+    					$firstUpload = true;
+    					break;
+    				}
+    			}
+    		}    		    		    		
     	}        	
     	$data['first_upload'] = $firstUpload;
     	
@@ -2002,24 +2008,13 @@ class ReportsPresenter extends PresenterCore
     		$replenishment['total'] = 0;
     	}
 		$hasReplenishment = !empty($tempActualCount);
+    	    		    	
     	
     	$data['replenishment'] = (array)$replenishment;
     	if($reports && $hasReplenishment && $firstUpload)
     	{
-    		$beginningBalance = (array)$replenishment;    		
-    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);    		
-    	}
-    		
-    	
-    	if($firstUpload)
-    	{
-    		$prepare = $this->getPreparedVanInventoryStocksCount();
-    		$stockCount = $prepare->count();
-    		if($stockCount)
-    		{
-    			$firstUpload=false;
-    			$data['first_upload'] = false;
-    		}
+    		$beginningBalance = (array)$replenishment;
+    		$reportRecords[] = array_merge(['customer_name'=>'<strong>Beginning Balance</strong>'],$beginningBalance);
     	}
     	
     	// Get Van Inventory stock transfer data
@@ -2064,8 +2059,9 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	// pull previous stock transfer
-    	$tempPrevStockTransfer = [];    	
-    	$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
+    	$tempPrevStockTransfer = [];    
+    	if(!$firstUpload)
+    		$tempPrevStockTransfer = $this->getPreviousStockOnHand($this->request->get('transaction_date'));
     	//dd($tempPrevStockTransfer);
 
     	$data['total_stocks'] = $stocks ? count($stocks) : 0;    	
@@ -2241,6 +2237,7 @@ class ReportsPresenter extends PresenterCore
      */
     public function getPreviousStockOnHand($dateFrom)
     {
+    	$codes = [];
     	$itemCodes = $this->getVanInventoryItems($this->request->get('inventory_type'),'item_code');    	 
     	foreach($itemCodes as $item)
     	{
@@ -2276,7 +2273,7 @@ class ReportsPresenter extends PresenterCore
     	$replenishment = $prepare->first();
 
     	$tempActualCount = [];
-    	if($replenishment)
+    	if($replenishment && $codes)
     	{
     		$replenishmentItems = \DB::table('txn_replenishment_detail')
 							    		->select(['item_code','quantity'])
@@ -2290,13 +2287,30 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount['code_'.$item->item_code] += $item->quantity;
     		}    	
     	}    	
-    	    	
+    	
     	if($replenishment)
     	{
-    		$count = $prepare->count();
     		$dateStart = (new Carbon($replenishment->replenishment_date));
-    		if($count > 1)
-    		 $dateStart->addDay();
+    		
+    		$firstLive = false;
+    		$replenishDate = (new Carbon($replenishment->replenishment_date))->startOfDay();
+    		$areaCodes = $this->getSalesmanArea($this->request->get('salesman_code'));
+    		$branchLiveDates = config('system.branch_live_date');
+    		foreach($areaCodes as $code)
+    		{
+    			if(isset($branchLiveDates[$code]))
+    			{
+    				$live = new Carbon($branchLiveDates[$code]);
+    				if($replenishDate->eq($live))
+    				{
+    					$firstLive = true;
+    					break;
+    				}
+    			}
+    		}
+    		
+    		if(!$firstLive)
+    			$dateStart->addDay();
     		$dateStart = $dateStart->format('Y-m-d');    		
     	}
     	else 
@@ -4413,6 +4427,26 @@ class ReportsPresenter extends PresenterCore
     }
     
     /**
+     * Get salesman area codes
+     * @param unknown $salesmanCode
+     */
+    public function getSalesmanArea($salesmanCode)
+    {
+    	$select = 'app_area.area_code';
+    	
+    	$prepare = \DB::table('app_salesman')
+				    	->distinct()
+				    	->selectRaw($select)
+				    	->leftJoin('app_salesman_customer','app_salesman_customer.salesman_code','=','app_salesman.salesman_code')
+				    	->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+				    	->leftJoin('app_area','app_area.area_code','=','app_customer.area_code');
+    	
+		$prepare->where('app_salesman.salesman_code',$salesmanCode);
+    	
+    	return $prepare->lists('area_code');	
+    }
+    
+    /**
      * Return Salesman List prepared statement
      * @return unknown
      */
@@ -5104,6 +5138,16 @@ class ReportsPresenter extends PresenterCore
     		$salesman[0] = $user->salesman_code ? $user->salesman_code.'-'.$user->fullname : $user->fullname;
     	return $salesman;
     }
+
+	/**
+	 * @return array of auditor's name.
+	 */
+	public function getAuditor()
+	{
+		$response = ModelFactory::getInstance('user')->auditor()->get();
+
+		return $response->lists('full_name', 'id');
+	}
     
     
     /**
@@ -5115,7 +5159,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table('app_customer')
 			    	->where('status','=','A')
 			    	->orderBy('customer_name');
-    	
+
     	if($strictSalesman && $this->isSalesman())
     	{
     		$customers = \DB::table('app_salesman_customer')
@@ -5605,9 +5649,11 @@ class ReportsPresenter extends PresenterCore
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		if($report == 'salescollectionsummary')
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
-    		else
-    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
+    		elseif($report == 'salescollectionreport')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
+			else
+				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
