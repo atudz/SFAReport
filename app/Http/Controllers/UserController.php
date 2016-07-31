@@ -256,4 +256,20 @@ class UserController extends ControllerCore
 
 		return $contactUs;
 	}
+
+	/**
+	 * This will update the status or action from email event action.
+	 * @param $id
+	 * @param $type
+	 * @param $actionOrStatus
+	 * @return mixed
+     */
+	public function userContactUsActionOrStatus($id, $type, $actionOrStatus)
+	{
+		$contactUs = ModelFactory::getInstance('ContactUs')->find($id);
+		$type == 'action' ? $contactUs->action = $actionOrStatus : $contactUs->status = $actionOrStatus;
+		$contactUs->save();
+
+		return $contactUs;
+	}
 }
