@@ -35,16 +35,51 @@ return [
 		
 	// Individual branches live date
 	'branch_live_date' => [
+		// Ormoc, Masbate, Bacolod
+		900 => '2016-10-24',
+		2900 => '2016-10-24',
+			
+		// Ormoc, Masbate, Bacolod
+		1400 => '2016-10-03',
+		3400 => '2016-10-03',
+		300 => '2016-10-03',
+		2300 => '2016-10-03',
+		//1400 => '2016-10-03',
+		//3400 => '2016-10-03',
+		
+		// Ormoc
+		1400 => '2016-10-03',
+		3400 => '2016-10-03',
+			
+		//Davao
+		600 => '2016-09-05',
+		2600 => '2016-09-05',
+			
+		//Dumaguete
+		700 => '2016-08-29',
+		2700 => '2016-08-29',
+			
+		// Butuan, General santos
+		400 => '2016-08-01',
+		2400 => '2016-08-01',
+		800 => '2016-08-01',
+		2800 => '2016-08-01',
+		
+		// Zamboanga
+		1300 => '2016-07-11',
+		3300 => '2016-07-11',
+			
+		// Cagayan, Ozamis
 		2500 => '2016-07-04',
 		500 => '2016-07-04',
 		1100 => '2016-07-04',
 		3100 => '2016-07-04',
 			
+		// Cebu
 		100 => '2016-05-02',
 		200 => '2016-05-02',
 		2100 => '2016-05-02',
-		2200 => '2016-05-02',
-		
+		2200 => '2016-05-02',		
 			
 	],
 		
@@ -52,5 +87,5 @@ return [
 	'max_admin_users' => 6,	
 
 	// Reset password admin recipients	
-	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com,markgeraldcabatingan@gmail.com,jgiango83@gmail.com',
+	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com,markgeraldcabatingan@gmail.com'
 ];
