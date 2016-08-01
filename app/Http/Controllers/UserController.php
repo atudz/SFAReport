@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends ControllerCore
@@ -234,7 +235,7 @@ class UserController extends ControllerCore
 	public function userContactUs(Request $request)
 	{
 		$data = [
-			'name'                     => $request->get('name'),
+			'user_id'                  => Auth::user()->id,
 			'phone'                    => $request->get('phone'),
 			'email'                    => $request->get('email'),
 			'location_assignment_code' => $request->get('branch'),
@@ -245,6 +246,7 @@ class UserController extends ControllerCore
 			'status'                   => 'New'
 		];
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		$data['name'] = $request->get('name');
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
 		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {

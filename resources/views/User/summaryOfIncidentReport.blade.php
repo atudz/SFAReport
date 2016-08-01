@@ -23,7 +23,7 @@
                     <td class="bold">[[ record.id ]]</td>
                     <td class="bold">[[ record.comment ]]</td>
                     <td class="bold">[[ record.status ]]</td>
-                    <td class="bold">[[ record.name ]]</td>
+                    <td class="bold">[[ record.users.firstname ]] [[ record.users.lastname ]]</td>
                 </tr>
                 <tr ng-if="records.length == 0">
                     <td class="bold">No records found.</td>

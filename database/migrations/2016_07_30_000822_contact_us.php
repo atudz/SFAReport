@@ -14,7 +14,8 @@ class ContactUs extends Migration
     {
         Schema::create('contact_us', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->unsignedInteger('user_id');
+            $table->timestamps();
             $table->string('email');
             $table->string('phone');
             $table->string('telephone');
@@ -25,7 +26,8 @@ class ContactUs extends Migration
             $table->text('comment');
             $table->string('action');
             $table->string('status');
-            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('user')
+                ->onCascade('Delete')->onCascade('Update');
         });
     }
 
