@@ -10,6 +10,7 @@ class ContactUs extends ModelCore
     protected $fillable = [
         'user_id',
         'phone',
+        'telephone',
         'email',
         'location_assignment_code',
         'time_from',

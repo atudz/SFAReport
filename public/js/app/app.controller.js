@@ -1711,6 +1711,7 @@
 		$scope.contact = {
 			name: '',
 			phone: '',
+			telephone: '',
 			email: '',
 			branch: '',
 			callFrom: '',
@@ -1735,6 +1736,9 @@
 			}
 			if (contact.phone == '') {
 				contactErrors.push('Phone is a required field.');
+			}
+			if (contact.telephone == '') {
+				contactErrors.push('Telephone is a required field.');
 			}
 			if (contact.name == '') {
 				contactErrors.push('Name is a required field.');

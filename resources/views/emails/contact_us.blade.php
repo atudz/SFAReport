@@ -25,7 +25,7 @@
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                 Incident #: {!! $reference_no !!} {!! $subject !!}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                From: {!! $name !!}}</p>
+                                From: {!! $name !!}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                 To: Admin</p>
                             <img src="http://s3.amazonaws.com/save22.com-retailer-banner-picture/319831_331827250256910_1832915880_n.jpg"
@@ -64,13 +64,15 @@
                                             Telephone: {!! $telephone !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Email: <a href="mailto:{{ $email }}"
-                                                      style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; color: #1919ff; margin: 0; padding: 0;">{!! $email !!}</a></p>
+                                                      style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; color: #1919ff; margin: 0; padding: 0;">{!! $email !!}</a>
+                                        </p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Branch: {!! $branch !!}</p>
+                                            Branch: {!! $location_assignment_code !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             <strong>Best Time To Call</strong></p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            &nbsp; &nbsp; &nbsp; From: {!! $time_from !!} &nbsp; &nbsp; &nbsp; &nbsp; To: {!! $time_to !!}</p>
+                                            &nbsp; &nbsp; &nbsp; From: {!! $time_from !!} &nbsp; &nbsp; &nbsp; &nbsp;
+                                            To: {!! $time_to !!}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -95,33 +97,66 @@
             <!-- content -->
             <div class="content"
                  style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; display: block; max-width: 600px; margin: 0 auto; padding: 0;">
-                <table style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
+                <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; text-align: center; line-height: 1.6em; color: #666666; font-weight: normal; margin: 0 0 10px; padding: 0;">
+                    Action</p>
+                <table style="table-layout: fixed; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
                     <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
-                        <td align="left"
-                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
-                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.6em; color: #666666; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                Action
-                            </p>
-                            <select style="width: 320px; margin: auto; display: block; height: 34px; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; color: #555; background-color: #fff; background-image: none; border: 1px solid #ccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075); box-shadow: inset 0 1px 1px rgba(0,0,0,.075); -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s; -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;">
-                                <option value="volvo">Acknowledge</option>
-                                <option value="saab">Confirmed</option>
-                                <option value="mercedes">Feedback</option>
-                                <option value="audi">Fixed</option>
-                                <option value="audi">Closed</option>
-                            </select>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=action&action=Acknowledge' !!}"
+                               style="display: block !important;"><span>Acknowledge</span></a>
                         </td>
-                        <td align="right"
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=action&action=Confirmed' !!}"
+                               style="display: block !important;"><span>Confirmed</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=action&action=Feedback' !!}"
+                               style="display: block !important;"><span>Feedback</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=action&action=Fixed' !!}"
+                               style="display: block !important;"><span>Fixed</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=action&action=Closed' !!}"
+                               style="display: block !important;"><span>Closed</span></a>
+                        </td>
+                    </tr>
+                </table>
+                <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; text-align: center; line-height: 1.6em; color: #666666; font-weight: normal; margin: 0 0 10px; padding: 0;">
+                    For Support and Maintenance Team
+                </p>
+                <table style="table-layout: fixed; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; width: 100%; margin: 0; padding: 0;">
+                    <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                        <td align="center"
                             style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
-                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.6em; color: #666666; font-weight: normal; margin: 0 0 10px; padding: 0; text-align: left">
-                                For Support and Maintenance Team
-                            </p>
-                            <select style="width: 320px; margin: auto; display: block; height: 34px; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; color: #555; background-color: #fff; background-image: none; border: 1px solid #ccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075); box-shadow: inset 0 1px 1px rgba(0,0,0,.075); -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s; -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;">
-                                <option value="volvo">Forward Issues</option>
-                                <option value="saab">Update Issue</option>
-                                <option value="mercedes">Feedback</option>
-                                <option value="audi">Resolved</option>
-                                <option value="audi">Closed</option>
-                            </select>
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=status&action=Forward Issue' !!}"
+                               style="display: block !important;"><span>Forward Issue</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=status&action=Update Issue' !!}"
+                               style="display: block !important;"><span>Update Issue</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=status&action=Feedback' !!}"
+                               style="display: block !important;"><span>Feedback</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=status&action=resolved' !!}"
+                               style="display: block !important;"><span>resolved</span></a>
+                        </td>
+                        <td align="center"
+                            style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; margin: 0; padding: 0;">
+                            <a href="{!! url('contact-us').'?id='.$reference_no.'&type=status&action=Closed' !!}"
+                               style="display: block !important"><span>Closed</span></a>
                         </td>
                     </tr>
                 </table>
