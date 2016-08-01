@@ -134,7 +134,9 @@ class UserPresenter extends PresenterCore
      */
 	public function contactUsName()
 	{
-		return ModelFactory::getInstance('ContactUs')->lists('name', 'name');
+		$user = ModelFactory::getInstance('User')->has('contacts');
+
+		return $user->get()->lists('full_name', 'full_name');
 	}
 
 	/**
@@ -142,9 +144,12 @@ class UserPresenter extends PresenterCore
 	 */
 	public function getPreparedSummaryOfIncidentReportList()
 	{
-		$summary = ModelFactory::getInstance('ContactUs')->select('id', 'comment', 'status', 'name');
-
+		$summary = ModelFactory::getInstance('ContactUs')->with('users', function($query){
+			$query->fullname();
+		});
+		dd($summary->get());
 		$filterName = FilterFactory::getInstance('Text');
+
 		$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
 			return $model->where('name', $self->getValue());
 		});
