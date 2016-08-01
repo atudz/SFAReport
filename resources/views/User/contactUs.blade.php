@@ -5,7 +5,7 @@
     <div class="col-lg-12 text-left">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="col-sm-6 well">
+                <div class="col-sm-10 well">
                     {!!Html::error('error','error_list_contact')!!}
                     <div class="row form-input-field text-left">
                         {!!Html::input('text','name','Name <span class="required">*</span>','', ['ng-model' => 'contact.name'])!!}
