@@ -250,16 +250,16 @@ class UserController extends ControllerCore
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
 		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
-			$message->from($data['email'], 'sample email');
+			$message->from('testmailgun101@gmail.com', $data['subject']);
 			$message->to('markgeraldcabatingan@gmail.com');
 			$message->subject($data['subject']);
 		});
 		//reply email to sender.
 		$data['time_recieved'] = $contactUs->created_at;
 		$data['status'] = $contactUs->status;
-		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
-			$message->from('markgeraldcabatingan@gmail.com', 'sample email');
-			$message->replyTo($data['email']);
+		Mail::queue('emails.auto_reply', $data, function ($message) use (&$data) {
+			$message->from('testmailgun101@gmail.com', $data['subject']);
+			$message->to($data['email']);
 			$message->subject($data['subject']);
 		});
 
@@ -268,17 +268,15 @@ class UserController extends ControllerCore
 
 	/**
 	 * This will update the status or action from email event action.
-	 * @param $id
-	 * @param $type
-	 * @param $actionOrStatus
-	 * @return mixed
+	 * @param Request $request
+	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-	public function userContactUsActionOrStatus($id, $type, $actionOrStatus)
+	public function userContactUsActionOrStatus(Request $request)
 	{
-		$contactUs = ModelFactory::getInstance('ContactUs')->find($id);
-		$type == 'action' ? $contactUs->action = $actionOrStatus : $contactUs->status = $actionOrStatus;
+		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
+		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
 		$contactUs->save();
 
-		return $contactUs;
+		return redirect('/#/summaryofincident.report');
 	}
 }
