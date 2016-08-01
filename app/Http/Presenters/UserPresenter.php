@@ -141,7 +141,7 @@ class UserPresenter extends PresenterCore
 	{
 		$user = ModelFactory::getInstance('User')->has('contacts');
 
-		return $user->get()->lists('full_name', 'full_name');
+		return $user->get()->lists('full_name', 'id');
 	}
 
 	/**
@@ -149,14 +149,11 @@ class UserPresenter extends PresenterCore
 	 */
 	public function getPreparedSummaryOfIncidentReportList()
 	{
-		$summary = ModelFactory::getInstance('ContactUs')->with('users', function($query){
-			$query->fullname();
-		});
-		dd($summary->get());
+		$summary = ModelFactory::getInstance('ContactUs')->with('users');
 		$filterName = FilterFactory::getInstance('Text');
 
 		$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
-			return $model->where('name', $self->getValue());
+			return $model->where('user_id', $self->getValue());
 		});
 
 		$filterBranch = FilterFactory::getInstance('Select');
