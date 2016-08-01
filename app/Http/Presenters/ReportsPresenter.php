@@ -323,7 +323,22 @@ class ReportsPresenter extends PresenterCore
     {
     	
     	$prepare = $this->getPreparedSalesCollection();
-    	$result = $this->formatSalesCollection($prepare->get());
+    	$collection1 = $prepare->get();
+    
+    	$referenceNum = [];
+    	foreach($collection1 as $col)
+    	{
+    		$referenceNum[] = $col->reference_num;
+    	}
+    	 
+    	array_unique($referenceNum);
+    	$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+    	
+    	$prepare = $this->getPreparedSalesCollection2(false,$except);
+    	$collection2 = $prepare->get();
+    	 
+    	$collection = array_merge((array)$collection1,(array)$collection2);
+    	$result = $this->formatSalesCollection($collection);
         
     	$summary1 = [];
     	if($result)
@@ -642,7 +657,7 @@ class ReportsPresenter extends PresenterCore
 					) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
     	
 					left join txn_sales_order_header_discount tsohd2 on sotbl.reference_num = tsohd2.reference_num and tsohd2.deduction_code=\'EWT\'
-					left join
+					join
 					-- RETURN SUBTABLE
 					(
 						select
@@ -903,7 +918,7 @@ class ReportsPresenter extends PresenterCore
 							IF(tch.or_amount,tch.or_amount,0.00) or_amount,
 							tch.or_date,
 							tcd.payment_method_code,
-							coalesce(tcd.payment_amount,0.00) payment_amount,,
+							coalesce(tcd.payment_amount,0.00) payment_amount,
 							tcd.check_number,
 							tcd.check_date,
 							tcd.bank,
@@ -1244,7 +1259,7 @@ class ReportsPresenter extends PresenterCore
 			) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
 			    	
 			-- COLLECTION SUBTABLE
-			left join
+			join
 			(
 				select
 					tch.reference_num,
@@ -5313,7 +5328,27 @@ class ReportsPresenter extends PresenterCore
 
     			$prepare = $this->getPreparedSalesCollection();
     			$prepare->orderBy('collection.invoice_date','desc');
-    			$current = $this->formatSalesCollection($prepare->get());    			 
+    			$collection1 = $prepare->get();
+    			
+    			$referenceNum = [];
+    			foreach($collection1 as $col)
+    			{
+    				$referenceNum[] = $col->reference_num;
+    			}
+    			
+    			array_unique($referenceNum);
+    			$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+    			 
+    			$prepare = $this->getPreparedSalesCollection2(false,$except);
+    			$collection2 = $prepare->get();
+    			
+    			$collection = array_merge((array)$collection1,(array)$collection2);
+    			$current = $this->formatSalesCollection($collection);    			
+    			
+//     			$prepare = $this->getPreparedSalesCollection();
+//     			$prepare->orderBy('collection.invoice_date','desc');
+//     			$current = $this->formatSalesCollection($prepare->get());    			 
+
     			$currentSummary = [];
     			if($current)
     			{
@@ -6029,8 +6064,24 @@ class ReportsPresenter extends PresenterCore
     	switch($report)
     	{
     		case 'salescollectionreport';
-	    		$prepare = $this->getPreparedSalesCollection();
-    			$records = $this->formatSalesCollection($prepare->get());
+	    		$prepare = $this->getPreparedSalesCollection();    			
+    			$collection1 = $prepare->get();
+    			 
+    			$referenceNum = [];
+    			foreach($collection1 as $col)
+    			{
+    				$referenceNum[] = $col->reference_num;
+    			}
+    			 
+    			array_unique($referenceNum);
+    			$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+    			
+    			$prepare = $this->getPreparedSalesCollection2(false,$except);
+    			$collection2 = $prepare->get();
+    			 
+    			$collection = array_merge((array)$collection1,(array)$collection2);
+    			$records = $this->formatSalesCollection($collection);
+    			
     			$total = count($records);
     			$special = true;
     			
