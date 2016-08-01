@@ -19,6 +19,7 @@ class ContactUs extends Migration
             $table->string('email');
             $table->string('phone');
             $table->string('telephone');
+            $table->string('telephone');
             $table->string('location_assignment_code', 255);
             $table->time('time_from');
             $table->time('time_to');

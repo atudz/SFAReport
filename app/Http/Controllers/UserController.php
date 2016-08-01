@@ -237,6 +237,7 @@ class UserController extends ControllerCore
 		$data = [
 			'user_id'                  => Auth::user()->id,
 			'phone'                    => $request->get('phone'),
+			'telephone'                => $request->get('telephone'),
 			'email'                    => $request->get('email'),
 			'location_assignment_code' => $request->get('branch'),
 			'time_from'                => $request->get('callFrom'),
@@ -255,7 +256,7 @@ class UserController extends ControllerCore
 			$message->subject($data['subject']);
 		});
 		//reply email to sender.
-		$data['time_recieved'] = $contactUs->created_at;
+		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
 		Mail::queue('emails.auto_reply', $data, function ($message) use (&$data) {
 			$message->from('testmailgun101@gmail.com', $data['subject']);
