@@ -12,7 +12,6 @@
                     {!!Html::input('text','incident_no','Incident #:','', ['ng-model' => 'params.incident_no'])!!}
                 </div>
                 <div class="col-md-6">
-                    {!!Html::select('role','Role:', $roles, '', ['ng-model' => 'params.role'])!!}
                     {!!Html::datepicker('date_range','Date Range','true')!!}
                 </div>
                 {!!Html::fclose()!!}

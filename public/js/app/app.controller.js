@@ -1796,8 +1796,7 @@
 		$scope.params = {
 			name: '',
 			branch: '',
-			incident_no: '',
-			role: ''
+			incident_no: ''
 		};
 		$scope.filter = function () {
 			$scope.params.date_range_from = $('#date_range_from').val();
