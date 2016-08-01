@@ -56,9 +56,7 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/myprofile', ['as'=>'user-profile', 'uses'=>'UserPresenter@myProfile']);
 });
 
-Route::group(['prefix' => 'contact-us'], function () {
-	Route::get('{id}/{type}/{status}', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);
-});
+	Route::get('contact-us', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
