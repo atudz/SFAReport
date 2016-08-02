@@ -326,17 +326,21 @@ class ReportsPresenter extends PresenterCore
     	$collection1 = $prepare->get();
     
     	$referenceNum = [];
+    	$invoiceNum = [];
     	foreach($collection1 as $col)
     	{
     		$referenceNum[] = $col->reference_num;
+    		$invoiceNum[] = $col->invoice_number;
     	}
-    	 
+    	
     	array_unique($referenceNum);
-    	$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+    	array_unique($invoiceNum);
+    	$except = $referenceNum ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\') ' : '';
+    	$except .= $invoiceNum ? ' AND coltbl.invoice_number NOT IN(\''.implode("','",$invoiceNum).'\') ' : '';
     	
     	$prepare = $this->getPreparedSalesCollection2(false,$except);
     	$collection2 = $prepare->get();
-    	 
+    	
     	$collection = array_merge((array)$collection1,(array)$collection2);
     	$result = $this->formatSalesCollection($collection);
         
@@ -5476,13 +5480,17 @@ class ReportsPresenter extends PresenterCore
     			$collection1 = $prepare->get();
     			
     			$referenceNum = [];
-    			foreach($collection1 as $col)
-    			{
-    				$referenceNum[] = $col->reference_num;
-    			}
-    			
-    			array_unique($referenceNum);
-    			$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+		    	$invoiceNum = [];
+		    	foreach($collection1 as $col)
+		    	{
+		    		$referenceNum[] = $col->reference_num;
+		    		$invoiceNum[] = $col->invoice_number;
+		    	}
+		    	
+		    	array_unique($referenceNum);
+		    	array_unique($invoiceNum);
+		    	$except = $referenceNum ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\') ' : '';
+		    	$except .= $invoiceNum ? ' AND coltbl.invoice_number NOT IN(\''.implode("','",$invoiceNum).'\') ' : '';
     			 
     			$prepare = $this->getPreparedSalesCollection2(false,$except);
     			$collection2 = $prepare->get();
@@ -6209,13 +6217,17 @@ class ReportsPresenter extends PresenterCore
     			$collection1 = $prepare->get();
     			 
     			$referenceNum = [];
-    			foreach($collection1 as $col)
-    			{
-    				$referenceNum[] = $col->reference_num;
-    			}
-    			 
-    			array_unique($referenceNum);
-    			$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
+		    	$invoiceNum = [];
+		    	foreach($collection1 as $col)
+		    	{
+		    		$referenceNum[] = $col->reference_num;
+		    		$invoiceNum[] = $col->invoice_number;
+		    	}
+		    	
+		    	array_unique($referenceNum);
+		    	array_unique($invoiceNum);
+		    	$except = $referenceNum ? ' AND tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\') ' : '';
+		    	$except .= $invoiceNum ? ' AND coltbl.invoice_number NOT IN(\''.implode("','",$invoiceNum).'\') ' : '';
     			
     			$prepare = $this->getPreparedSalesCollection2(false,$except);
     			$collection2 = $prepare->get();
