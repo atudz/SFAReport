@@ -338,7 +338,7 @@ class ReportsPresenter extends PresenterCore
     	$collection2 = $prepare->get();
     	 
     	$collection = array_merge((array)$collection1,(array)$collection2);
-    	$result = $this->formatSalesCollection($collection1);
+    	$result = $this->formatSalesCollection($collection);
         
     	$summary1 = [];
     	if($result)
@@ -558,7 +558,7 @@ class ReportsPresenter extends PresenterCore
     	
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
-				   left join
+				   join
 					-- SALES ORDER SUBTABLE
 					(
 						select
@@ -872,8 +872,8 @@ class ReportsPresenter extends PresenterCore
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				   remarks.remarks,    			   
-				   sotbl.invoice_number,
-				   sotbl.so_date invoice_date,
+				   coalesce(sotbl.invoice_number,coltbl.invoice_number) invoice_number,
+    			   coalesce(sotbl.so_date,coltbl.or_date) invoice_date,
 				   coalesce(sotbl.so_total_served,0.00) so_total_served,
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
@@ -1042,7 +1042,7 @@ class ReportsPresenter extends PresenterCore
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
     	
 					-- COLLECTION SUBTABLE
-					left join
+					join
 					(
 						select
 							tch.reference_num,
@@ -1277,7 +1277,7 @@ class ReportsPresenter extends PresenterCore
 			from txn_activity_salesman tas
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
 			left join app_customer ac on ac.customer_code = tas.customer_code
-			left join
+			join
 			-- SALES ORDER SUBTABLE
 			(
 				select
@@ -1518,11 +1518,11 @@ class ReportsPresenter extends PresenterCore
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
 				coltbl.invoice_number invoice_number,
-    			IF(tas.activity_code=\'O,C\',\'\',0.00) total_invoice_net_amount,
-				\'\' invoice_date,
+    			0.00 total_invoice_net_amount,				
+    			coltbl.or_date invoice_date,
 				\'\' invoice_posting_date,
 				IF(tas.activity_code=\'O,SO\',\'\',coltbl.or_number) or_number,
-				IF(tas.activity_code=\'O,SO\',\'\',coltbl.or_amount) or_amount,
+				IF(tas.activity_code=\'O,SO\',0.00,coltbl.or_amount) or_amount,
 				IF(tas.activity_code=\'O,SO\',\'\',coltbl.or_date) or_date,
 				IF(tas.activity_code=\'O,SO\',\'\',coltbl.sfa_modified_date) collection_posting_date,
     			IF(coltbl.updated=\'modified\',coltbl.updated,\'\') updated
@@ -1531,7 +1531,7 @@ class ReportsPresenter extends PresenterCore
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
 			left join app_customer ac on ac.customer_code = tas.customer_code
 			-- COLLECTION SUBTABLE
-			left join
+			join
 			(
 				select
 					tch.reference_num,
@@ -5477,10 +5477,6 @@ class ReportsPresenter extends PresenterCore
     			$collection = array_merge((array)$collection1,(array)$collection2);
     			$current = $this->formatSalesCollection($collection);    			
     			
-//     			$prepare = $this->getPreparedSalesCollection();
-//     			$prepare->orderBy('collection.invoice_date','desc');
-//     			$current = $this->formatSalesCollection($prepare->get());    			 
-
     			$currentSummary = [];
     			if($current)
     			{
