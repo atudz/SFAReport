@@ -21,9 +21,10 @@
                 <tbody>
                 <tr ng-repeat="record in records |filter:query" ng-if="records.length != 0">
                     <td class="bold">[[ record.id ]]</td>
-                    <td class="bold">[[ record.comment ]]</td>
+                    <td class="bold">[[ record.comment | limitTo: 20 ]] [[ record.comment.length > 20 ? '...' : '' ]]</td>
                     <td class="bold">[[ record.status ]]</td>
                     <td class="bold">[[ record.users.firstname ]] [[ record.users.lastname ]]</td>
+                    <td> <a href="#status.reply" uib-tooltip="send mail" class="text-info"><i class="fa fa-paper-plane"></i></a> </td>
                 </tr>
                 <tr ng-if="records.length == 0">
                     <td class="bold">No records found.</td>

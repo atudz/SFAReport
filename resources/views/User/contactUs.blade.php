@@ -1,8 +1,8 @@
 {!!Html::breadcrumb(['User Management','Contact Us'])!!}
 {!!Html::pageheader('Contact Us')!!}
 
-<div class="row text-center">
-    <div class="col-lg-12 text-center">
+<div class="row text-left">
+    <div class="col-lg-12 text-left">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="col-sm-6 well">
@@ -42,9 +42,9 @@
                     <div class="rs-toolbar-savebtn">
                         <a class="button-primary revgreen" ng-click="save()" id="button_save_slide-tb" original-title=""
                            style="display: block; cursor:pointer;">
-                            <i class="fa fa-floppy-o"
+                            <i class="fa fa-paper-plane"
                                style="display: inline-block;vertical-align: middle;width: 25px;height: 20px;background-repeat: no-repeat;"></i>
-                            Save
+                            Send
                         </a>
                     </div>
                 </div>
