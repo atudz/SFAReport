@@ -46,6 +46,11 @@ class UserPresenter extends PresenterCore
 		return $this->view('summaryOfIncidentReport');
 	}
 
+	public function StatusReply()
+	{
+		return $this->view('statusReply');
+	}
+
 	/**
 	 * Return User Group Rights view
 	 * @param string $type
@@ -355,7 +360,8 @@ class UserPresenter extends PresenterCore
 			['name'=>'Incident #', 'sort'=>'id'],
 			['name'=>'Summary', 'sort'=>'comment'],
 			['name'=>'Status', 'sort'=>'status'],
-			['name'=>'Submitted By', 'sort'=>'name']
+			['name'=>'Submitted By', 'sort'=>'name'],
+			['name'=>'Action', 'sort'=>'action']
 		];
 
 		return $headers;

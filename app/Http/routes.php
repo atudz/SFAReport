@@ -50,6 +50,7 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
 	Route::get('/contactus', ['as'=>'user-contact-us', 'uses'=>'UserPresenter@contactUs']);
 	Route::get('/summaryofincidentreport', ['as'=>'user-summary-of-incident-report', 'uses'=>'UserPresenter@summaryOfIncidentReport']);
+	Route::get('/statusreply', ['as'=>'user-status-reply-to-summary-of-incident-report', 'uses'=>'UserPresenter@StatusReply']);
 	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
 	Route::get('/edit', ['as'=>'user-edit', 'uses'=>'UserPresenter@edit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
