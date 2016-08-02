@@ -28,7 +28,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $e)
     {
     	$email = config('system.error_email');
-    	if($email)
+    	if($email && !env('APP_DEBUG'))
     	{
     		$email = explode(',',$email);
     		$data['email'] = $email;
