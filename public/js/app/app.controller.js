@@ -1732,6 +1732,15 @@
 			if (contact.telephone == '') {
 				contactErrors.push('Telephone is a required field.');
 			}
+			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			if(contact.email && !rgxEmail.test(contact.email))
+			{
+				contactErrors.push('Invalid email address.');
+			}
+			if(contact.email == '')
+			{
+				contactErrors.push('Email is a required field.');
+			}
 			if (contact.name == '') {
 				contactErrors.push('Name is a required field.');
 			}
@@ -1802,6 +1811,20 @@
 		// downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
 
 	}
+
+	/**
+	 * User StatusReply us controller
+	 */
+	app.controller('StatusReply', ['$scope', '$resource', '$routeParams', '$location', '$log', StatusReply]);
+
+	function StatusReply($scope, $resource, $routeParams, $location, $log) {
+		$scope.reply = {}
+		var API = $resource('/user/edit/'+$routeParams.id);
+
+		API.get(params,function(data){
+
+		});
+	};
 	
 	/**
 	 * Save user profile
