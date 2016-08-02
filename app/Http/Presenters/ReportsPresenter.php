@@ -339,7 +339,7 @@ class ReportsPresenter extends PresenterCore
     	$collection2 = $prepare->get();
     	 
     	$collection = array_merge((array)$collection1,(array)$collection2);
-    	$result = $this->formatSalesCollection($collection);
+    	$result = $this->formatSalesCollection($collection1);
         
     	$summary1 = [];
     	if($result)
@@ -693,7 +693,7 @@ class ReportsPresenter extends PresenterCore
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
     	
 					-- COLLECTION SUBTABLE
-					join
+					left join
 					(
 						select
 							tch.reference_num,
@@ -1043,7 +1043,7 @@ class ReportsPresenter extends PresenterCore
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
     	
 					-- COLLECTION SUBTABLE
-					join
+					left join
 					(
 						select
 							tch.reference_num,
@@ -1392,7 +1392,7 @@ class ReportsPresenter extends PresenterCore
 			) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
 			    	
 			-- COLLECTION SUBTABLE
-			join
+			left join
 			(
 				select
 					tch.reference_num,
@@ -1532,7 +1532,7 @@ class ReportsPresenter extends PresenterCore
 			left join app_salesman aps on aps.salesman_code = tas.salesman_code
 			left join app_customer ac on ac.customer_code = tas.customer_code
 			-- COLLECTION SUBTABLE
-			join
+			left join
 			(
 				select
 					tch.reference_num,
