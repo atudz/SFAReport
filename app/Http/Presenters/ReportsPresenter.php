@@ -5771,8 +5771,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
-    	  
-    	if(in_array($type,['xls','xlsx']))
+		if (empty($current)) {
+			$records = $this->validateInvoiceNumber($records);
+		} else {
+			$current = $this->validateInvoiceNumber($current);
+		}
+
+		if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
@@ -6847,4 +6852,101 @@ class ReportsPresenter extends PresenterCore
 	    	$from->addDay();	    	
     	}      	
     }
+
+	/**
+	 * This function will check if the invoice number has an
+	 * invoice code it append an invoice code for the invoice number
+	 * don't have invoice code.
+	 * @param $currents
+	 * @return mixed
+	 */
+	public function validateInvoiceNumber($currents)
+	{
+		foreach ($currents as $current) {
+			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
+			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
+				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
+					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
+
+				}
+				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
+					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
+				}
+			} elseif (isset($current->invoice_number)) {
+				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
+					$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
+
+				}
+			}
+		}
+
+		return $currents;
+	}
+
+	/**
+	 * This will return an Area code of a specific customer.
+	 * @param $customerCode
+	 * @return mixed
+	 */
+	public function getCustomerAreaCode($customerCode)
+	{
+		return ModelFactory::getInstance('AppCustomer')->where('customer_code',
+			$customerCode)->select('area_code')->first();
+	}
+
+	/**
+	 * Array list of Area codes.
+	 * @return array
+	 */
+	public function arrayOfAreaCodes()
+	{
+		$areaCodes = [
+			'100'  => 'CB',
+			'200'  => 'CB',
+			'300'  => 'BA',
+			'400'  => 'BU',
+			'500'  => 'CD',
+			'600'  => 'DV',
+			'700'  => 'DU',
+			'800'  => 'GE',
+			'900'  => 'IL',
+			'1100' => 'OZ',
+			'1300' => 'ZA',
+			'1400' => 'OR',
+			'2100' => 'CB',
+			'2200' => 'CB',
+			'2300' => 'BA',
+			'2400' => 'BU',
+			'2500' => 'CD',
+			'2600' => 'DV',
+			'2700' => 'DU',
+			'2800' => 'GE',
+			'2900' => 'IL',
+			'3100' => 'OZ',
+			'3300' => 'ZA',
+			'3400' => 'OR'
+		];
+
+		return $areaCodes;
+	}
+
+	/**
+	 * This will generate an invoice code for an invoice number.
+	 * @param $customerCode
+	 * @return string
+	 */
+	public function generateInvoiceNumber($customerCode)
+	{
+		$invoiceCode = '';
+		$areaCodes = $this->arrayOfAreaCodes();
+		$customer = $this->getCustomerAreaCode($customerCode);
+		$code = explode('_', $customerCode)[0];
+		if ($code == 1000) {
+			$invoiceCode = 'C' . $areaCodes[$customer->area_code];
+		} elseif ($code == 2000) {
+			$invoiceCode = 'D' . $areaCodes[$customer->area_code];
+		}
+
+		return $invoiceCode;
+	}
 }
