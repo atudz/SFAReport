@@ -553,6 +553,7 @@ class ReportsPresenter extends PresenterCore
     			   sotbl.sales_order_header_id,
     			   coltbl.collection_header_id,
     			   coltbl.collection_detail_id,
+    			   coltbl.collection_invoice_id,
     			   rtntbl.return_header_id,    			   
     			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
     	
@@ -708,6 +709,7 @@ class ReportsPresenter extends PresenterCore
 							tcd.cm_number,
     						tch.collection_header_id,
     						tcd.collection_detail_id,
+    						tci.collection_invoice_id,
     						tci.invoice_number,
     						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
 			
@@ -763,7 +765,11 @@ class ReportsPresenter extends PresenterCore
 				collection.total_collected_amount,
     			
     			collection.evaluated_objective_id,
+    			\'txn_sales_order_header\' sales_order_table ,
     			collection.sales_order_header_id,
+    			\'txn_sales_order_header\' invoice_date_table,
+    			collection.sales_order_header_id invoice_date_id,    			
+    			\'so_date\' invoice_date_col,
     			collection.collection_header_id,
 				collection.collection_detail_id,
     			collection.return_header_id,
@@ -903,6 +909,7 @@ class ReportsPresenter extends PresenterCore
     			   sotbl.sales_order_header_id,
     			   coltbl.collection_header_id,
     			   coltbl.collection_detail_id,
+    			   coltbl.collection_invoice_id,
     			   rtntbl.return_header_id,    			   
     			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
     	
@@ -1059,6 +1066,7 @@ class ReportsPresenter extends PresenterCore
     						tch.collection_header_id,
     						tcd.collection_detail_id,
     						tci.invoice_number,
+    						tci.collection_invoice_id,
     						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
 			
 						from txn_collection_header tch
@@ -1112,8 +1120,13 @@ class ReportsPresenter extends PresenterCore
 			   	collection.credit_amount,
 				collection.total_collected_amount,
     
+    			
     			collection.evaluated_objective_id,
-    			collection.sales_order_header_id,
+    			\'txn_collection_invoice\' sales_order_table ,    			
+    			collection.collection_invoice_id sales_order_header_id,
+    			\'txn_collection_header\' invoice_date_table,
+    			collection.collection_header_id invoice_date_id,    			
+    			\'or_date\' invoice_date_col,
     			collection.collection_header_id,
 				collection.collection_detail_id,
     			collection.return_header_id,
