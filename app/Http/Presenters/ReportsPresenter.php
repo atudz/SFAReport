@@ -657,7 +657,7 @@ class ReportsPresenter extends PresenterCore
 					) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
     	
 					left join txn_sales_order_header_discount tsohd2 on sotbl.reference_num = tsohd2.reference_num and tsohd2.deduction_code=\'EWT\'
-					join
+					left join
 					-- RETURN SUBTABLE
 					(
 						select
@@ -692,7 +692,7 @@ class ReportsPresenter extends PresenterCore
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
     	
 					-- COLLECTION SUBTABLE
-					left join
+					join
 					(
 						select
 							tch.reference_num,
