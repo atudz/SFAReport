@@ -38,7 +38,7 @@ class ReportsController extends ControllerCore
 			}
 			
 			$prevData = \DB::table($table)->where($pk,$id)->first();
-			$before = $prevData->$column;
+			$before = isset($prevData->$column) ? $prevData->$column : '';
 			if($column == 'invoice_number')
 			{
 				$prevInvoiceNum = $before;
