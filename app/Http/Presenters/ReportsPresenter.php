@@ -180,6 +180,7 @@ class ReportsPresenter extends PresenterCore
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
+    			$this->view->auditor = $this->getAuditor();
     			$this->view->salesman = $this->getSalesman(true);
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
