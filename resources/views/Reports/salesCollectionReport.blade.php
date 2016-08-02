@@ -40,7 +40,7 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header','invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
+							<a href="" class="editable-click" ng-click="editColumn('text',record.sales_order_table,'invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
 	    						[[ record.invoice_number | uppercase ]]
 	  						</a>
 	  					@else
@@ -49,7 +49,7 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_sales_order_header','so_date',record.sales_order_header_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_date_table,record.invoice_date_col,record.invoice_date_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
 	    						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
 	  					@else
