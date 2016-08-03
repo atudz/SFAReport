@@ -882,8 +882,8 @@ class ReportsPresenter extends PresenterCore
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				   remarks.remarks,    			   
-				   coalesce(sotbl.invoice_number,coltbl.invoice_number) invoice_number,
-    			   coalesce(sotbl.so_date,coltbl.or_date) invoice_date,
+				   ti.invoice_number,
+    			   ti.invoice_date,
 				   coalesce(sotbl.so_total_served,0.00) so_total_served,
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
 				   coalesce(sotbl.so_total_collective_discount,0.00) so_total_collective_discount,
@@ -914,6 +914,7 @@ class ReportsPresenter extends PresenterCore
     			   coltbl.collection_header_id,
     			   coltbl.collection_detail_id,
     			   coltbl.collection_invoice_id,
+    			   ti.invoice_id,
     			   rtntbl.return_header_id,    			   
     			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
     	
@@ -1079,7 +1080,7 @@ class ReportsPresenter extends PresenterCore
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.reference_num = tas.reference_num
 			
-					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
+					join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 	    			left join
 					(
 						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -1126,11 +1127,11 @@ class ReportsPresenter extends PresenterCore
     
     			
     			collection.evaluated_objective_id,
-    			\'txn_collection_invoice\' sales_order_table ,    			
-    			collection.collection_invoice_id sales_order_header_id,
-    			\'txn_collection_header\' invoice_date_table,
-    			collection.collection_header_id invoice_date_id,    			
-    			\'or_date\' invoice_date_col,
+    			\'txn_invoice\' sales_order_table ,    			
+    			collection.invoice_id sales_order_header_id,
+    			\'txn_invoice\' invoice_date_table,
+    			collection.invoice_id invoice_date_id,    			
+    			\'invoice_date\' invoice_date_col,
     			collection.collection_header_id,
 				collection.collection_detail_id,
     			collection.return_header_id,
@@ -1534,9 +1535,9 @@ class ReportsPresenter extends PresenterCore
     			ac.area_code,
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
-				coltbl.invoice_number invoice_number,
+				ti.invoice_number,
     			0.00 total_invoice_net_amount,				
-    			coltbl.or_date invoice_date,
+    			ti.invoice_date,
 				\'\' invoice_posting_date,
 				IF(tas.activity_code=\'O,SO\',\'\',coltbl.or_number) or_number,
 				IF(tas.activity_code=\'O,SO\',0.00,coltbl.or_amount) or_amount,
@@ -1564,6 +1565,7 @@ class ReportsPresenter extends PresenterCore
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     			group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code
 			) coltbl on coltbl.reference_num = tas.reference_num
+    		join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
