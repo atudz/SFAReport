@@ -42,7 +42,7 @@ class ReportsController extends ControllerCore
 			if($column == 'invoice_number')
 			{
 				$prevInvoiceNum = $before;
-				$reference = $prevData->reference_num;
+				$reference = isset($prevData->reference_num) ? $prevData->reference_num : '';
 			}
 						
 			\DB::table($table)->where($pk,$id)->update([
@@ -96,14 +96,15 @@ class ReportsController extends ControllerCore
 			$data1 = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->first();
 			if($data1)
 			{
-				\DB::table('txn_collection_invoice')
-						->where($column,$prevInvoiceNum)
-						->where('reference_num',$reference)
-						->update([
+				$prepare = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum);
+				if($reference)		
+					$prepare->where('reference_num',$reference);
+				
+				$prepare->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
-						]);
+				]);
 					
 				$insertData[] = [
 						'table' => 'txn_collection_invoice',
@@ -118,25 +119,28 @@ class ReportsController extends ControllerCore
 			}			
 			
 			
-			$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
-			if($data2)
+			if($table != 'txn_invoice')
 			{
-				\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->update([
-						$column => $value,
-						'updated_at' => new \DateTime(),
-						'updated_by' => auth()->user()->id,
-				]);
-					
-				$insertData[] = [
-						'table' => 'txn_invoice',
-						'column' => $column,
-						'pk_id' => $data2->invoice_id,
-						'before' => $data2->invoice_number,
-						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
-						'updated_at' => new \DateTime(),
-						'created_at' => new \DateTime(),
-						'updated_by' => auth()->user()->id,
-				];
+				$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
+				if($data2)
+				{
+					\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->update([
+							$column => $value,
+							'updated_at' => new \DateTime(),
+							'updated_by' => auth()->user()->id,
+					]);
+						
+					$insertData[] = [
+							'table' => 'txn_invoice',
+							'column' => $column,
+							'pk_id' => $data2->invoice_id,
+							'before' => $data2->invoice_number,
+							'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+							'updated_at' => new \DateTime(),
+							'created_at' => new \DateTime(),
+							'updated_by' => auth()->user()->id,
+					];
+				}
 			}
 			
 			if($insertData)
