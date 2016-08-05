@@ -28,15 +28,15 @@
 		          'salesman',
 		          'invoice_number',
 		          'or_number'
-		          
+
 		];
-	    
+
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log, TableFix);
-	    
+
 	    //editable rows
 	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
-	    		
+
 	}
 	
 	
@@ -61,19 +61,19 @@
 		          'invoice_number',
 		          'or_number'
 		];
-	    
-	    // main controller 
+
+	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log, TableFix);
 
 	}
-	
-	
+
+
 	/**
 	 * Sales & Collection Summary controller
 	 */
 
 	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionSummary]);
-	
+
 	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{
 	    var params = [
@@ -81,42 +81,42 @@
 		          'invoice_date_from',
 		          'salesman',
 		          'area'
-		          
+
 		];
-	    
-	    // main controller 
+
+	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
 	}
-	
+
 	/**
 	 * Van & Inventory (Canned) controller
 	 */
 
 	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryCanned]);
-	
+
 	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
-	{	
+	{
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable);
-		
+
 		//editable rows
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
-	
+
 	/**
 	 * Van & Inventory (Frozen) controller
 	 */
 
 	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryFrozen]);
-	
+
 	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
-	{	        
+	{
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable);
-		
+
 		//editable rows
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
-	
-	
+
+
 	/**
 	 * Van Inventory Controller
 	 */
@@ -124,16 +124,16 @@
 	{
 		// Filter flag
 		scope.toggleFilter = true;
-		
+
 		// items data
 		scope.items = [];
-		
+
 		var report = reportType;
-		
+
 		// Fetch table data from server
 	    scope.records = [];
-	    
-	    var API = resource('/reports/getdata/'+report);	    
+
+	    var API = resource('/reports/getdata/'+report);
 	    var params = [
 		          'salesman_code',
 		          'transaction_date',
@@ -146,13 +146,13 @@
 		          'return_slip_num',
 		          'reference_number'
 		];
-	    	    
-	    // Filter table records	    		
+
+	    // Filter table records
 		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
-		
+
 	    // Download report
-	    downloadReport(scope, modal, resource, window, report, params, log);	    
-	    
+	    downloadReport(scope, modal, resource, window, report, params, log);
+
 	    // Format date
 	    formatDate(scope);
 	}
@@ -160,7 +160,7 @@
 	 * Unpaid Report
 	 */
 	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log',Unpaid]);
-	
+
 	function Unpaid($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
@@ -171,16 +171,16 @@
 			          'salesman',
 			          'customer'
 			];
-		    
+
 		// main controller
 		reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log);
 	}
-	
+
 	/**
 	 * Sales Report Per Material
 	 */
 	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',SalesReportPerMaterial]);
-	
+
 	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
@@ -196,10 +196,10 @@
 		          'invoice_number',
 		          'segment'
 		];
-	    
+
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log);
-	    
+
 	    var API = '';
 	    $scope.conditionCodes = function(){
 	    	API = $resource('/reports/getdata/conditioncodes');
@@ -208,7 +208,7 @@
 		    	//$log.info(data);
 		    });
 	    }
-	    
+
 	    //Edit table records
 	    //var selectAPI = '/reports/getdata/conditioncodes';
 	    var options = {GOOD:'GOOD',BAD:'BAD'};
@@ -219,7 +219,7 @@
 	 * Sales Report Per Peso
 	 */
 	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log',SalesReportPerPeso]);
-	
+
 	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
@@ -233,19 +233,19 @@
 		          'invoice_number',
 		          'customer'
 		];
-	    
+
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
-	    
+
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
-	
-	
+
+
 	/**
 	 * Return Report Per Material
 	 */
 	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerMaterial]);
-	
+
 	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
@@ -261,17 +261,17 @@
 		          'customer',
 		          'segment'
 		];
-	    
+
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log);
 	}
-	
-	
+
+
 	/**
 	 * Return Report Per Peso
 	 */
 	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerPeso]);
-	
+
 	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
 	    var params = [
@@ -287,18 +287,18 @@
 		          'material',
 		          'segment'
 		];
-	    
+
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log);
 	}
-	
+
 	/**
 	 * Customer List
 	 */
 	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log',CustomerList]);
-	
+
 	function CustomerList($scope, $resource, $uibModal, $window, $log)
-	{	    	    
+	{
 	    var params = [
 		          'salesman_code',
 		          'area',
@@ -309,17 +309,17 @@
 		          'sfa_modified_date_from',
 		          'sfa_modified_date_to',
 		];
-	    
+
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log);
 	}
-	
-	
+
+
 	/**
 	 * Salesman List
 	 */
 	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log',SalesmanList]);
-	
+
 	function SalesmanList($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
@@ -330,19 +330,19 @@
 		          'sfa_modified_date_from',
 		          'sfa_modified_date_to'
 		];
-	    
+
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log);
-	    
+
 	}
-	
+
 	/**
 	 * Material Price List
 	 */
 	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log',MaterialPriceList]);
-	
+
 	function MaterialPriceList($scope, $resource, $uibModal, $window, $log)
-	{	
+	{
 	    var params = [
 		          'company_code',
 		          'area',
@@ -356,21 +356,21 @@
 		          'effective_date2_from',
 		          'effective_date2_to',
 		];
-	    
+
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log);
-	 
+
 	}
-	
+
 	/**
 	 * Bir controller
 	 */
 
 	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log',Bir]);
-	
+
 	function Bir($scope, $resource, $uibModal, $window, $log)
 	{
-			    
+
 	    var params = [
 		          'area',
 		          'salesman',
@@ -379,32 +379,32 @@
 		          'document_date_from',
 		          'document_date_to'
 		];
-	    
+
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'bir',params,$log);
 	}
 
-	
+
 	/**
 	 * Date Input Controller
 	 */
 	app.controller('Calendar',['$scope','$http','$log', Calendar]);
-	
+
 	function Calendar($scope, $http, $log)
-	{	
-		$scope.dateFrom = null;		
+	{
+		$scope.dateFrom = null;
 	    $scope.dateTo = null;
-	    
+
 	    $scope.setFrom = function(from){
 	    	if(from)
 	    		$scope.dateFrom = new Date(from);
 	    }
-	    
+
 	    $scope.setTo = function(to){
 	    	if(to)
 	    		$scope.dateTo = new Date(to);
 	    }
-	    
+
 	    $scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
@@ -426,22 +426,22 @@
 
 		//$scope.format = 'yyyy/MM/dd';
 		$scope.format = 'MM/dd/yyyy';
-			  
+
 	}
-	
+
 	/**
 	 * Date Input Controller for editable columns
 	 */
 	app.controller('EditableColumnsCalendar',['$scope','$http','$log', EditableColumnsCalendar]);
-	
+
 	function EditableColumnsCalendar($scope, $http, $log)
-	{	
+	{
 		if(defaultDate)
 			$scope.dateFrom = defaultDate;
 		else
 			$scope.dateFrom = null;
 	    $scope.dateTo = null;
-	    
+
 	    $scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
@@ -457,7 +457,7 @@
 
 		//$scope.format = 'yyyy/MM/dd';
 		$scope.format = 'MM/dd/yyyy';
-			  
+
 	}
 
 	/**
@@ -467,18 +467,18 @@
 	{
 		var params = {};
 		$.each(filter, function(key,val){
-			params[val] = $('#'+val).val();			
+			params[val] = $('#'+val).val();
 		});
 		params['transaction_date'] = scope.dateValue;
-					
+
 		$('p[id$="_error"]').addClass('hide');
 		scope.toggleFilter = true;
 		//toggleLoading(true);
 		//log.info(params);
 		//log.info(scope.dateValue);
-			
+
 	    API.save(params,function(data){
-	    		
+
 	    		if(data.total)
 	    		{
 	    			scope.items.push({
@@ -486,7 +486,7 @@
 				    	total: data.total,
 				    	stocks: data.stocks,
 				    	show_stocks: data.total_stocks,
-				    	replenishment: data.replenishment,		    	
+				    	replenishment: data.replenishment,
 				    	showBody: data.total,
 				    	showReplenishment: !data.first_upload && data.replenishment.total,
 				    	short_over_stocks: data.short_over_stocks,
@@ -501,7 +501,7 @@
 	    			if(!loadMore && !scope.items.length){
 	    				$('#no_records_div').show();
 	    			}
-	    			
+
 	    		}
 	    		//toggleLoading();
 	    		//log.info(scope.items);
@@ -523,9 +523,9 @@
 	    			$("table.table").floatThead('destroy');
 		    		console.log('Destroy table');
 	    		}
-		});				
+		});
 	}
-	
+
 	/**
 	 * Centralized filter function
 	 */
@@ -533,29 +533,29 @@
 	{
 		scope.filter = function(){
 
-			var hasError = false;			
+			var hasError = false;
 			$.each(filter, function(key,val){
 				if(val.indexOf('_from') != -1)
 				{
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
-						
+
 					if(!from && !to)
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).html('This field is required.');
 						$('#'+val.replace('_from','_error')).removeClass('hide');
-						
+
 					}
 					else if((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
 					{
-						hasError = true;						
+						hasError = true;
 						$('#'+val.replace('_from','_error')).html('Invalid date range.');
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
 				}
 			});
-			
+
 			if(!hasError)
 			{
 				if(typeof InventoryFixTable !== "undefined"){
@@ -564,7 +564,7 @@
 
 				var dateFrom = new Date($('#transaction_date_from').val());
 				var dateTo = new Date($('#transaction_date_to').val());
-				
+
 				scope.items = [];
 				scope.dateRanges = getDates(dateFrom,dateTo);
 				var maxIndex = scope.dateRanges.length - 1;
@@ -586,19 +586,19 @@
 				});
 			}
 	    }
-		
+
 		scope.more = function() {
-			
+
 			while(scope.dateRanges.length)
 			{
 				if(scope.dateRanges.length > 0)
 				{
 					scope.dateValue = scope.dateRanges.shift();
 					if(!scope.dateRanges.length)
-					$('#load_more').addClass('hide');	
+					$('#load_more').addClass('hide');
 					//log.info(scope.dateRanges);
 					//log.info(scope.dateValue);
-					
+
 					fetchMore(scope, API, filter, log, true, InventoryFixTable);
 				}
 				else
@@ -606,9 +606,9 @@
 					$('#load_more').addClass('hide');
 				}
 			}
-			
+
 		};
-		
+
 		scope.reset = function(){
 			$.each(filter, function(key,val){
 				if(val.endsWith('_from'))
@@ -634,32 +634,32 @@
 
 	    }
 	}
-	
+
 	/**
 	 * Centralized filter function
 	 */
 	function filterSubmit(scope, API, filter, log, report, TableFix)
 	{
 		var params = {};
-		
+
 		scope.filter = function(){
 
 	    	scope.page = 1;
-	    	
+
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
 			params['sort'] = scope.sortColumn;
 			params['order'] = scope.sortDirection;
-			
+
 			var hasError = false;
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
-					
+
 				if(val.indexOf('_from') != -1)
 				{
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
-						
+
 					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
 					{
 						hasError = true;
@@ -667,26 +667,26 @@
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
 				}
-				
+
 				if(report == 'salescollectionreport' && val.indexOf('posting_date') != -1)
-			    {		
+			    {
 					var invoiceFrom = new Date($('#invoice_date_from').val());
 					var invoiceTo = new Date($('#invoice_date_to').val());
 					var prevFrom = new Date(from);
 					var prevTo = new Date(to);
-					
+
 					if(prevFrom >= invoiceFrom || prevFrom >= invoiceTo || prevTo >= invoiceFrom || prevTo >= invoiceTo )
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).html('Date range must be less than Invoice Date.');
 						$('#'+val.replace('_from','_error')).removeClass('hide');
-					}						
+					}
 			    }
 
 			});
 			//log.info(params);
-						
-			
+
+
 			if(!hasError)
 			{
 				$('p[id$="_error"]').addClass('hide');
@@ -701,19 +701,19 @@
 			    	if(typeof value !== "undefined"){
 			    		TableFix.tableload();
 			    	}
-			    	togglePagination(data.total);			 	
+			    	togglePagination(data.total);
 			    });
 			}
-			
+
 	    }
-		
+
 		scope.reset = function(){
-	    	
+
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
 			params['sort'] = scope.sortColumn;
 			params['order'] = scope.sortDirection;
-			
+
 			$.each(filter, function(key,val){
 				if(val.endsWith('_from'))
 				{
@@ -727,7 +727,7 @@
 			});
 			//log.info(filter);
 			$('p[id$="_error"]').addClass('hide');
-			
+
 			if(report == 'salescollectionreport')
 		    {
 				params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
@@ -740,7 +740,7 @@
 		    {
 		    	params = {salesman:$('#salesman').val()};
 		    }
-			
+
 			scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
@@ -748,13 +748,13 @@
 			    scope.total = data.total;
 		    	scope.records = data.records;
 			    scope.summary = data.summary;
-	    		togglePagination(data.total);		    			    	
-		    	toggleLoading();		    	
+	    		togglePagination(data.total);
+		    	toggleLoading();
 		    });
-	    	
+
 	    }
 	}
-	
+
 	/**
 	 * Centralized method for sorting
 	 */
@@ -765,30 +765,30 @@
 		scope.sort = function(col) {
 			scope.sortColumn = col;
 			var el = $('th[id="'+col+'"]');
-			
+
 			el.parent().find('th').removeClass('sorted');
 			el.parent().find('th>i').removeClass('fa-sort-asc');
 			el.parent().find('th>i').removeClass('fa-sort-desc');
 			el.parent().find('th>i').addClass('fa-sort');
-			
+
 			if(scope.sortDirection == 'desc')
-			{					
+			{
 				el.addClass('sorted');
-				el.find('i').addClass('fa-sort-asc');				
+				el.find('i').addClass('fa-sort-asc');
 				scope.sortDirection = 'asc';
 			}
 			else
-			{				
+			{
 				el.addClass('sorted');
 				el.find('i').addClass('fa-sort-desc');
 				scope.sortDirection = 'desc';
-			}			
-			
+			}
+
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
 			params['sort'] = scope.sortColumn;
 			params['order'] = scope.sortDirection;
-			
+
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
 			});
@@ -798,12 +798,12 @@
 			toggleLoading(true);
 			API.save(params, function(data){
 				//log.info(data);
-				scope.records = data.records;		    	
+				scope.records = data.records;
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
 
 		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
-			    
+
 		    	$("table.table").floatThead({
 				    position: "absolute",
 				    autoReflow: true,
@@ -812,49 +812,49 @@
 				        return $table.closest(".wrapper");
 				    }
 				});
-			    
+
 		    	console.log('Refresh table. Scroll value: '+scrollpos);
 		    	$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
 	}
-	
+
 	/**
 	 * Centralized pagination function
 	 */
 	function pagination(scope, API, filter, log, vaninventory, TableFix)
 	{
 		var params  = {};
-		
+
 		scope.page = 1;
 		if(scope.perpage == 25 || !scope.perpage)
 			scope.perpage = 25;
 	    scope.total = 0;
-	    
-		// Paginate table records	    
+
+		// Paginate table records
 	    scope.paginate = function(page) {
 			scope.perpage = page;
 			scope.page = 1;
 			$('#limit'+page).parent().parent().find('.active').removeClass('active');
 			$('#limit'+page).parent().addClass('active');
-			
+
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
 			params['sort'] = scope.sortColumn;
 			params['order'] = scope.sortDirection;
-			
+
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
 			});
 			//log.info(params);
-			
+
 			toggleLoading(true);
 			API.save(params, function(data){
 				//log.info(data);
-				scope.records = data.records;		    	
+				scope.records = data.records;
 		    	scope.toggleFilter = true;
 		    	toggleLoading();
-		    	
+
 		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
 
     			if(typeof TableFix !== "undefined"){
@@ -865,7 +865,7 @@
                 $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
-	    
+
 	    // Pager table records
 	    scope.pager = function(increment,first,last) {
 	    	var request = false;
@@ -897,24 +897,24 @@
 		    		scope.page = nextPage;
 		    		request = true;
 	    		}
-	    	}	    	
-	    	
+	    	}
+
 	    	if(request)
 	    	{
 	    		params['page'] = scope.page;
 				params['page_limit'] = scope.perpage;
 				params['sort'] = scope.sortColumn;
 				params['order'] = scope.sortDirection;
-				
+
 	    		$.each(filter, function(key,val){
 					params[val] = $('#'+val).val();
 				});
 				//log.info(params);
-				
+
 	    		toggleLoading(true);
 	    		API.save(params, function(data){
 					//log.info(data);
-					scope.records = data.records;					
+					scope.records = data.records;
 			    	scope.toggleFilter = true;
 			    	toggleLoading();
 			    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
@@ -929,16 +929,16 @@
 	    	}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Edit table records
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		
+
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
-			
+
 			var selectOptions = options;
 			/*if(selectAPI)
 			{
@@ -949,18 +949,18 @@
 					selectOptions = data.options;
 				});
 			}*/
-			
-			var stepInterval = 1;			
+
+			var stepInterval = 1;
 			if(step)
 				stepInterval = step;
 			var total = column;
 			if(alias)
 				total = alias;
-			
+
 			scope.oldVal = '';
 			if(getTotal)
 				scope.oldVal = value;
-						
+
 			var template = '';
 			var inputType = '';
 			switch(type)
@@ -973,18 +973,18 @@
 				case 'select':
 					template = 'EditColumnSelect';
 					break;
-				case 'number':	
+				case 'number':
 					template = 'EditColumnText';
 					inputType = 'number';
 					value = Number(value);
 					break;
-				default:	
+				default:
 					template = 'EditColumnText';
 					inputType = 'text';
-					break;	
+					break;
 			}
 			//log.info(value);
-			
+
 			//log.info(selectOptions);
 			var params = {
 					table: table,
@@ -1002,8 +1002,8 @@
 					type: inputType,
 					step: stepInterval
 			};
-			
-			
+
+
 			var modalInstance = modal.open({
 			 	animation: true,
 			 	scope: scope,
@@ -1019,17 +1019,17 @@
 			});
 
 
-		}		
-		
+		}
+
 	}
-	
+
 	/**
 	 * Export report
 	 */
 	function downloadReport(scope, modal, resource, window, report, filter, log)
 	{
 		scope.download = function(type){
-			
+
 			var url = '/reports/getcount/'+report+'/'+type;
 			var delimeter = '?';
 			var query = '';
@@ -1046,18 +1046,18 @@
 			$.each(filter, function(index,val){
 				if(index > 0)
 					delimeter = '&';
-				query += delimeter + val + '=' + $('#'+val).val();				
+				query += delimeter + val + '=' + $('#'+val).val();
 			});
 			url += query;
 			//log.info(url);
-			
+
 			var API = resource(url);
 			API.get({}, function(data){
-			
+
 				//log.info(data);
 				if(!data.total)
 				{
-					var params = {message:'No data to export.'};		    
+					var params = {message:'No data to export.'};
 			    	var modalInstance = modal.open({
 			    		animation: true,
 					 	templateUrl: 'Info',
@@ -1083,7 +1083,7 @@
 							sort: scope.sortColumn,
 							order: scope.sortDirection,
 					};
-		
+
 					var modalInstance = modal.open({
 						 	animation: true,
 							templateUrl: 'exportModal',
@@ -1101,13 +1101,13 @@
 					 if(scope.sortColumn)
 						 exportUrl += '&'+'sort='+scope.sortColumn;
 					 if(scope.sortDirection)
-						 exportUrl += '&'+'order='+scope.sortDirection;					 
+						 exportUrl += '&'+'order='+scope.sortDirection;
 					 window.location.href = exportUrl;
 				}
 			});
-		}	
+		}
 	}
-	
+
 	/**
 	 * Centralized controller codes
 	 */
@@ -1115,19 +1115,19 @@
 	{
 		// Filter flag
 		scope.toggleFilter = true;
-		
+
 		// Fetch table headers from server
 	    /*scope.tableHeaders = {};
 	    resource('/reports/getheaders/'+report).query({}, function(data){
 	    	scope.tableHeaders = data;
 	    });*/
-	    
+
 	    // Fetch table data from server
-	    scope.records = [];	    
-	    
+	    scope.records = [];
+
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
-	    
+
 	    if(report == 'salescollectionreport')
 	    {
 	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
@@ -1141,45 +1141,45 @@
 	    {
 	    	params = {salesman:$('#salesman').val()};
 	    }
-	    
+
 	    toggleLoading(true);
 	    API.get(params,function(data){
 	    	scope.records = data.records;
 	    	scope.summary = data.summary;
 	    	scope.total = data.total;
-	    	//log.info(data);	    	
+	    	//log.info(data);
 	    	toggleLoading();
-	    	
+
 	    	if(typeof TableFix !== "undefined"){
 	    		TableFix.tableload();
 	    	}
 
 	    	togglePagination(data.total);
-	    });	    	    
-	    
+	    });
+
 	    params = filter;
-	    
+
 	    //Sort table records
 	    scope.sortColumn = '';
 		scope.sortDirection = 'asc';
 		sortColumn(scope,API,params,log, TableFix);
-	    
-	    // Filter table records	    
+
+	    // Filter table records
 	    filterSubmit(scope,API,params,log, report, TableFix);
-		
-	    // Paginate table records	    
+
+	    // Paginate table records
 	    pagination(scope,API,params,log, TableFix);
-	    
+
 	    // Download report
-	    downloadReport(scope, modal, resource, window, report, filter, log);	    
-	    
+	    downloadReport(scope, modal, resource, window, report, filter, log);
+
 	    // Format date
 	    formatDate(scope);
-	    
+
 	    //Format number
 	    formatNumber(scope,log);
 	}
-	
+
 	/**
 	 * Toggle pagination div
 	 */
@@ -1192,7 +1192,7 @@
 		    $('#no_records_div').hide();
 		    $('#total_summary').show();
 
-		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;	
+		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
 		    $("table.table").floatThead({
 			    position: "absolute",
 			    autoReflow: true,
@@ -1215,9 +1215,9 @@
 		    $("table.table").floatThead('destroy');
 		    //console.log('Destroy table');
 		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Toggle loading div
 	 */
@@ -1234,33 +1234,33 @@
 		    $('#loading_div').addClass('hidden');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Export report controller
 	 */
 	app.controller('ExportReport',['$scope','$uibModalInstance','$window','params','$log', ExportReport]);
-	
+
 	function ExportReport($scope, $uibModalInstance, $window, params, $log) {
 
 		$scope.params = params;
 		$scope.offset = 0;
-	  
+
 		$scope.selectItem = function(range){
 			$scope.offset = range;
 		}
-	  
+
 		$scope.download = function () {
 			$uibModalInstance.close(true);
-			
+
 			var url = '/reports/export/'+$scope.params.exportType+'/'+$scope.params.report+'/'+$scope.offset;
 			var delimeter = '?';
 			$.each(params.filter, function(index,val){
 				if(index > 0)
 					delimeter = '&';
-				url += delimeter + val + '=' + $('#'+val).val();				
+				url += delimeter + val + '=' + $('#'+val).val();
 			});
-			
+
 			url += '&sort='+params.sort+'&order='+params.order;
 			//$log.info(url);
 			$window.location.href = url;
@@ -1270,18 +1270,18 @@
 			$uibModalInstance.dismiss('cancel');
 		};
 	};
-	
-	
+
+
 	/**
 	 * Edit Table record controller
 	 */
 	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
-	
+
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
-		$scope.params = params;		
+		$scope.params = params;
 		//$log.info(params);
-		
+
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
 			var error = false;
@@ -1295,7 +1295,7 @@
 				{
 					var val = $scope.params.value;
 					//$log.info('date_value ' + val);
-					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];					
+					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 				}
 
 			}
@@ -1309,19 +1309,19 @@
 				API.save($scope.params, function(data){
 					//$log.info(data);
 					//$log.info($scope.params.value);
-					
+
 					// Van Inventory customization
 					if($scope.params.table == 'txn_stock_transfer_in_header')
 					{
 						var stocks = 'stocks';
 						if($scope.params.alias)
 						{
-							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;						
-						}					
+							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;
+						}
 						else
 						{
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
-						}					
+						}
 						$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
 					}
 					else
@@ -1331,36 +1331,36 @@
 							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
 							if($scope.params.getTotal)
 								$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
-						}					
+						}
 						else
 						{
 							$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
 							if($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
-						}					
+						}
 						$('#'+$scope.params.index).addClass('modified');
 
 						if(typeof EditableFixTable !== 'undefined'){
 							EditableFixTable.eft();
 						}
-					}								
+					}
 				});
-				
+
 				$uibModalInstance.dismiss('cancel');
 			}
 		};
-		
+
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-		
+
 		/*$scope.getDate = function(date){
 	          var dateOut = new Date(date);
 	          return dateOut;
 	    };*/
 	};
-	
-	
+
+
 	/**
 	 * Get date ranges base from parameters
 	 */
@@ -1370,11 +1370,11 @@
 	    while (currentDate <= stopDate) {
 	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
 	    	dateArray.push( formatted )
-	    	currentDate = currentDate.addDays(1);	        	        	       
+	    	currentDate = currentDate.addDays(1);
 	    }
 	    return dateArray;
 	}
-	
+
 	/**
 	 * Add days
 	 */
@@ -1383,34 +1383,34 @@
 	    dat.setDate(dat.getDate() + days);
 	    return dat;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * User List controller
 	 */
 	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log', UserList]);
-	
+
 	function UserList($scope, $resource, $window, $uibModal, $log) {
 
 		// Filter flag
 		$scope.toggleFilter = true;
-		
+
 	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
+	    $scope.records = [];
+
 	    var API = $resource('/reports/getdata/userlist');
 	    var params = {};
-	    
+
 	    toggleLoading(true);
 	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
-	    	//$log.info(data);	    	
+	    	//$log.info(data);
 	    	toggleLoading();
 	    	togglePagination(data.total);
-	    });	    	    
-	    
+	    });
+
 	    params = {
 	    	fullname: 'fullname',
 	    	user_group_id: 'user_group_id',
@@ -1419,21 +1419,21 @@
 	    	created_at_from: 'created_at_from',
 	    	created_at_to: 'created_at_to'
 	    };
-	    
+
 	    //Sort table records
 	    $scope.sortColumn = '';
 		$scope.sortDirection = 'asc';
 		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
+
+	    // Filter table records
 	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);	  
-	    
+
+	    // Paginate table records
+	    pagination($scope,API,params,$log);
+
 	    var params;
-	    $scope.activate = function(id,row){	    	
-	    	params = {id:id,action:'activate',message:'Are you sure you want to activate this user?',row:row};		    
+	    $scope.activate = function(id,row){
+	    	params = {id:id,action:'activate',message:'Are you sure you want to activate this user?',row:row};
 	    	var modalInstance = $uibModal.open({
 	    		scope: $scope,
 			 	animation: true,
@@ -1448,9 +1448,9 @@
 				}
 			});
 	    }
-	    
+
 	    $scope.deactivate = function(id,row){
-	    	params = {id:id,action:'deactivate',message:'Are you sure you want to deactivate this user?',row:row};		    
+	    	params = {id:id,action:'deactivate',message:'Are you sure you want to deactivate this user?',row:row};
 	    	var modalInstance = $uibModal.open({
 	    		scope: $scope,
 			 	animation: true,
@@ -1465,9 +1465,9 @@
 				}
 			});
 	    }
-	    
+
 	    $scope.remove = function(id){
-	    	params = {id:id,action:'delete',message:'Are you sure you want to delete this user?'};		    
+	    	params = {id:id,action:'delete',message:'Are you sure you want to delete this user?'};
 	    	var modalInstance = $uibModal.open({
 			 	animation: true,
 			 	scope: $scope,
@@ -1485,7 +1485,7 @@
 
 	    //this should be a filter
 	    $scope.parseDate = function(date) {
-	    	 date = date.replace(/-/g, '/');	    	 
+	    	 date = date.replace(/-/g, '/');
 			return new Date(date);
 		}
 	};
@@ -1494,50 +1494,50 @@
 	 * User List controller
 	 */
 	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log', UserGroupList]);
-	
+
 	function UserGroupList($scope, $resource, $window, $uibModal, $log) {
 
 		// Filter flag
 		$scope.toggleFilter = true;
-		
+
 	    // Fetch table data from server
-	    $scope.records = [];	    
-	    
+	    $scope.records = [];
+
 	    var API = $resource('/reports/getdata/usergrouplist');
 	    var params = {};
-	    
+
 	    toggleLoading(true);
 	    API.get(params,function(data){
 	    	$scope.records = data.records;
 	    	$scope.total = data.total;
-	    	//$log.info(data);	    	
+	    	//$log.info(data);
 	    	toggleLoading();
 	    	togglePagination(data.total);
-	    });	    	    
-	    
+	    });
+
 	    params = {
 	    	id: 'id',
 	    	name: 'name',
 	    };
-	    
+
 	    //Sort table records
 	    $scope.sortColumn = '';
 		$scope.sortDirection = 'asc';
 		sortColumn($scope,API,params,$log);
-	    
-	    // Filter table records	    
+
+	    // Filter table records
 	    filterSubmit($scope,API,params,$log);
-		
-	    // Paginate table records	    
-	    pagination($scope,API,params,$log);	  
+
+	    // Paginate table records
+	    pagination($scope,API,params,$log);
 
 	};
-	
+
 	/**
 	 * Format date
 	 */
 	function formatDate(scope) {
-		
+
 		// @Function
 	    // Description  : Triggered while displaying expiry date in Customer Details screen.
 	    scope.formatDate = function(date){
@@ -1547,7 +1547,7 @@
 	          return dateOut;
 	    };
 	}
-	
+
 	/**
 	 * Format money
 	 */
@@ -1555,17 +1555,17 @@
 
 		scope.negate = function(number){
 			if(!number) return number;
-			
+
 			if(number < 0)
 				number = '(' + Math.abs(number) + ')';
 			return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		};
-		
+
 	    scope.formatNumber = function(number, negate, round){
-	    	
+
 	    	  if(number == '')
 	    		  return '';
-	    	  
+
 	    	  if('string' == typeof number)
 	    	  {
 	    		  number = Number(number);
@@ -1577,7 +1577,7 @@
 	    		  }
 	    		  number = number.toFixed(2);
 	    	  }
-	    		
+
 	    	  if('number' == typeof number)
 	    	  {
 	    		  if(round)
@@ -1588,13 +1588,13 @@
 	    		  }
 	    		  number = number.toString();
 	    	  }
-	    		  
-	    	  
+
+
 	    	  if(!number || number == undefined || number == '0') return '';
-	    	  
+
 	    	  var chunks = [];
-	    	  var realNumber;	    	  
-	    	  
+	    	  var realNumber;
+
 	    	  if(number.indexOf('.') != -1)
 	    	  {
 	    		  chunks = number.split('.');
@@ -1609,57 +1609,75 @@
 	    	  return realNumber;
 	    };
 	}
-	
-	
+
+
 	/**
 	 * User List controller
 	 */
-	app.controller('UserAdd',['$scope','$resource','$location','$log', UserAdd]);
-	
-	function UserAdd($scope, $resource, $location, $log) {
+	app.controller('UserAdd',['$scope','$resource','$location','$window','$uibModal','$log', UserAdd]);
+
+	function UserAdd($scope, $resource, $location, $window, $uibModal, $log) {
 
 		$scope.id = 0;
 		$scope.role_id = 1;
 		$scope.records = {user_group_id:1};
+
+		//$scope.open = function () {
+		//	var params = {action:'validate',message:'this is a test?'};
+		//	var modalInstance = $uibModal.open({
+		//		scope: $scope,
+		//		animation: true,
+		//		templateUrl: 'Confirm',
+		//		controller: 'UserAction',
+		//		windowClass: 'center-modal',
+		//		size: 'sm',
+		//		resolve: {
+		//			params: function () {
+		//				return params;
+		//			}
+		//		}
+		//	});
+		//};
+
 	    // Save user profile
-	    saveUser($scope,$resource,$location,$log);
-	    
+	    saveUser($scope,$resource,$location, $uibModal, $window, $log);
+
 	    $scope.req_salesman = 'hidden';
-		$scope.checkRole = function(){			
+		$scope.checkRole = function(){
 			if($scope.role_id == 4)
 				$scope.req_salesman = '';
 			else
 				$scope.req_salesman = 'hidden';
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * User List controller
 	 */
-	app.controller('UserEdit',['$scope','$resource','$routeParams','$location','$log', UserEdit]);
-	
-	function UserEdit($scope, $resource, $routeParams, $location, $log) {
+	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log', UserEdit]);
+
+	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
 
 		$scope.age = '';
 		$scope.from = null;
 		$scope.to = null;
 		$scope.id = 0;
-		
+
 		var API = $resource('/user/edit/'+$routeParams.id);
 	    var params = {};
-	    
+
 	    API.get(params,function(data){
 
 	    	//angular acts weird with integer option values
 	    	data.user_group_id = String(data.user_group_id);
-	    	
+
 	    	$scope.records = data;
 	    	//$log.info(data);
 	    	$scope.id = data.id;
-	    	$scope.age = Number(data.age);	
-	    	
+	    	$scope.age = Number(data.age);
+
 
 	    	if(data.location_assignment_from){
 	    		$scope.from = new Date(data.location_assignment_from);
@@ -1668,51 +1686,179 @@
 	    		$scope.to = new Date(data.location_assignment_to);
 	    	}
 
-	    	
+
 	    });
-	    
+
 	    // Save user profile
-	    saveUser($scope,$resource,$location,$log);
-	    
+	    saveUser($scope,$resource,$location,$uibModal,$window, $log);
+
 	    $scope.req_salesman = 'hidden';
-		$scope.checkRole = function(){			
+		$scope.checkRole = function(){
 			if($scope.records.user_group_id == 4)
 				$scope.req_salesman = '';
 			else
 				$scope.req_salesman = 'hidden';
 		};
 	};
-	
+
+	/**
+	 * User Contact us controller
+	 */
+	app.controller('ContactUs', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUs]);
+
+	function ContactUs($scope, $resource, $routeParams, $location, $log) {
+		$scope.error = false;
+		$scope.contact = {
+			name: '',
+			mobile: '',
+			telephone: '',
+			email: '',
+			branch: '',
+			callFrom: '',
+			callTo: '',
+			subject: '',
+			message: ''
+		};
+		$scope.save = function () {
+			$scope.validate($scope.contact);
+			if(!$scope.error){
+				var API = $resource('controller/user/contact');
+				API.save($scope.contact, function(data){
+				});
+			}
+		};
+
+		$scope.validate = function (contact) {
+			var contactErrors = [];
+			var contactErrorList = '';
+			if (contact.name == '') {
+				contactErrors.push('Name is a required field.');
+			}
+			if (contact.mobile == '') {
+				contactErrors.push('Mobile phone no. is a required field.');
+			}
+			if (contact.telephone == '') {
+				contactErrors.push('Telephone no. is a required field.');
+			}
+			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			if(contact.email && !rgxEmail.test(contact.email))
+			{
+				contactErrors.push('Invalid email address.');
+			}
+			if(contact.email == '')
+			{
+				contactErrors.push('Email is a required field.');
+			}
+			if (contact.branch == '') {
+				contactErrors.push('Branch is a required field.');
+			}
+			if (contact.callFrom == '') {
+				contactErrors.push('Call From is a required field.');
+			}
+			if (contact.callTo == '') {
+				contactErrors.push('Call To is a required field.');
+			}
+			if (contact.subject == '') {
+				contactErrors.push('Subject is a required field.');
+			}
+			if (contact.message == '') {
+				contactErrors.push('Message is a required field.');
+			}
+
+			if (contactErrors.length > 0) {
+				contactErrorList = '<ul>';
+				for (var i = 0; i < contactErrors.length; i++) {
+					contactErrorList += '<li>' + contactErrors[i] + '</li>';
+				}
+				contactErrorList += '</ul>';
+				$('#error_list_contact').html(contactErrorList);
+				$scope.error = true;
+			}
+		};
+	}
+
+	/**
+	 * User Incident report controller
+	 */
+	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams', '$window', '$uibModal', '$location', '$log', SummaryOfIncidentReport]);
+
+	function SummaryOfIncidentReport($scope, $resource, $routeParams, $window, $location, $uibModal, $log) {
+		// Filter flag
+		$scope.toggleFilter = true;
+
+		// Fetch table data from server
+		$scope.records = [];
+
+		$scope.API = $resource('/reports/getdata/summaryofincidentreport');
+
+		toggleLoading(true);
+		$scope.API.get({}, function (data) {
+			$scope.records = data.records;
+			$scope.total = data.total;
+			toggleLoading();
+			togglePagination(data.total);
+		});
+
+		$scope.filter = function () {
+			var params = {
+				name: $('#name').val(),
+				branch: $('#branch').val(),
+				incident_no: $('#incident_no').val(),
+				date_range_from: $('#date_range_from').val(),
+				date_range_to: $('#date_range_to').val()
+			};
+			$scope.API.save(params, function (data) {
+				$scope.records = data.records;
+				$scope.total = data.total;
+			})
+		};
+		var params = [
+			'name',
+			'branch',
+			'incident_no',
+			'date_range_from',
+			'date_range_to'
+		];
+		// Download report
+		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
+	}
 	/**
 	 * Save user profile
 	 */
-	function saveUser(scope, resource, location, log)
+	function saveUser(scope, resource, location, modal, window, log)
 	{
 		scope.personalInfoError = false;
 		scope.locationInfoError = false;
-		scope.success = false;		
-		
+		scope.success = false;
+
 		scope.roleId = 1;
 		scope.change = function(){
 			log.info(scope.roleId);
 		}
-		
+
 		scope.req_salesman = 'hidden';
 		scope.role = 1;
-		scope.checkRole = function(){			
+		scope.checkRole = function(){
 			if(scope.records.user_group_id == 4)
 				scope.req_salesman = '';
 			else
 				scope.req_salesman = 'hidden';
 		};
-		
+		$('#salesman_code, #role ').bind('keyup change', function () {
+			if ($('#role').val() == 4 && $('#salesman_code').val() != '') {
+				$('#jr_salesman_code').prop('disabled', false);
+			} else {
+				$('#jr_salesman_code').prop('disabled', true);
+				$('#jr_salesman_code').val('');
+			}
+		});
+
 		scope.save = function(edit,profile){
-			
 			var personalInfoErrors = [];
 			var personalInfoErrorList = '';
 			scope.emailList = [];
 			scope.usernameList = [];
-			
+
 			var API;
 			/*var API = $resource('user/getemails');
 			API.get({}, function(data){
@@ -1725,7 +1871,7 @@
 				$scope.emailList = emails;
 			});
 			//$log.info($scope.emailList);
-			
+
 			API = $resource('user/getusernames');
 			API.get({}, function(data){
 				////$log.info(data);
@@ -1736,7 +1882,7 @@
 				$scope.usernameList = usernames;
 			});
 			//$log.info($scope.usernameList);*/
-			
+
 			// validate personal info
 			if(!$('#fname').val())
 			{
@@ -1775,7 +1921,7 @@
 			{
 				personalInfoErrors.push('Mobile must be numeric.');
 			}*/
-			
+
 			if(!edit)
 			{
 				if(!$('#password').val())
@@ -1786,18 +1932,18 @@
 				{
 					personalInfoErrors.push('Confirm password is a required field.');
 				}
-				
+
 				if($('#password').val() && $('#confirm_pass').val() && $('#password').val() != $('#confirm_pass').val())
 				{
 					personalInfoErrors.push('Password don\'t match.')
 				}
-			}	
+			}
 
 			if(!$('#age').val())
 			{
 				personalInfoErrors.push('Age is a required field.');
-			}		
-			
+			}
+
 			if(personalInfoErrors.length > 0)
 			{
 				var i = 0;
@@ -1815,11 +1961,11 @@
 			{
 				scope.personalInfoError = false;
 			}
-			
-			
+
+
 			var locationErrors = [];
 			var locationErrorList = '';
-			
+
 			// validate personal info
 			if(!$('#role').val())
 			{
@@ -1833,7 +1979,7 @@
 			{
 				locationErrors.push('Assignment is a required field.')
 			}
-			
+
 			if(locationErrors.length > 0)
 			{
 				var i = 0;
@@ -1851,11 +1997,11 @@
 			{
 				scope.locationInfoError = false;
 			}
-			
+
 			if(!scope.locationInfoError && !scope.personalInfoError)
 			{
 				var editMode = (edit) ? true:false;
-				var params = {
+				var items = {
 					   edit_mode: editMode,
 					   id: scope.id,
 				       fname: $('#fname').val(),
@@ -1872,14 +2018,39 @@
 				       role: $('#role').val(),
 				       area: $('#area').val(),
 				       salesman_code: $('#salesman_code').val(),
+						jr_salesman_code: $('#jr_salesman_code').val(),
 				       assignment_type: $('#assignment_type').val(),
 				       assignment_date_from: $('#assignment_date_from').val(),
 				       assignment_date_to: $('#assignment_date_to').val()
 				};
 				
-				API = resource('controller/user/save');				
+				//check if the new user is van salesman.
+				if($.trim($('#salesman_code').val()) && $('#role').val() == 4){
+					if(!$('#jr_salesman_code').val()){
+
+						var params = {
+							items: items, message: 'Are you a Jr. Salesman?'
+						};
+						var modalInstance = modal.open({
+							animation: true,
+							templateUrl: 'Confirm',
+							controller: 'Confirm',
+							windowClass: 'center-modal',
+							size: 'sm',
+							resolve: {
+								params: function () {
+									return params;
+								}
+							}
+						});
+						return false;
+
+					}
+				}
+
+				API = resource('controller/user/save');
 				//log.info(params);
-				API.save(params, function(data){
+				API.save(items, function(data){
 					//log.info(data);
 					if(data.error)
 					{
@@ -1898,7 +2069,7 @@
 						}
 
 						$(errorId).html(locationErrorList);
-						
+
 						scope.success = false;
 					}
 					else
@@ -1906,38 +2077,36 @@
 						scope.success = true;
 						if(!profile)
 							location.path('user.list');
-					}					
+					}
 				});
 			}
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Sync controller
 	 */
 
 	app.controller('Sync',['$scope','$resource','$log',Sync]);
-	
+
 	function Sync($scope, $resource, $log)
-	{			    
+	{
 		$scope.showError = false;
 		$scope.showSuccess = false;
 	    $scope.showLoading = false;
 	    $scope.syncLogs = '';
-	    
+
 	    $scope.sync = function(){
-	    	
+
 	    	$scope.showError = false;
 	    	$scope.showSuccess = false;
 			$scope.showLoading = true;
-	    	var API = $resource('controller/reports/sync');				
+	    	var API = $resource('controller/reports/sync');
 			API.get({}, function(data){
 				if(data.logs)
 				{
 					$scope.syncLogs = data.logs;
-					$scope.showSuccess = true;	
+					$scope.showSuccess = true;
 					$scope.showLoading = false;
 					$scope.showError = false;
 				}
@@ -1950,33 +2119,33 @@
 			});
 	    }
 	}
-	
-	
+
+
 	/**
 	 * User Action Controller
 	 */
 	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log', UserAction]);
-	
+
 	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log) {
 
-		$scope.params = params;		
+		$scope.params = params;
 		//$log.info(params);
 		//$log.info($scope);
-		$scope.ok = function () {				
+		$scope.ok = function () {
 			switch($scope.params.action)
 			{
 				case 'activate':
-					var API = $resource('/controller/user/activate/'+$scope.params.id);		    
+					var API = $resource('/controller/user/activate/'+$scope.params.id);
 				    API.get();
 				    $scope.$parent.records[$scope.params.row].active = true;
 					break;
 				case 'deactivate':
-			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);		    
+			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);
 				    API.get();
 				    $scope.$parent.records[$scope.params.row].active = false;
 					break;
 				case 'delete':
-					var API = $resource('/controller/user/delete/'+$scope.params.id);		    
+					var API = $resource('/controller/user/delete/'+$scope.params.id);
 				    API.get({},function(data){
 				    	$('#'+$scope.params.id).remove();
 				    	//$log.info(data);
@@ -1988,26 +2157,26 @@
 
 			$uibModalInstance.dismiss('cancel');
 		};
-		
+
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-		
+
 	};
 
-	
+
 	/**
 	 * Change password Controller
 	 */
 
 	app.controller('ChangePassword',['$scope','$resource','$log',ChangePassword]);
-	
+
 	function ChangePassword($scope, $resource, $log)
-	{			    
+	{
 		$scope.error = false;
 		$scope.success = false;
 		$scope.submit = function(){
-			
+
 			var errorList = [];
 			if(!$.trim($('#old_password').val()))
 			{
@@ -2021,12 +2190,12 @@
 			{
 				errorList.push('Confirm password is a required field.');
 			}
-			
+
 			if($.trim($('#confirm_password').val()) && $.trim($('#new_password').val()) && $.trim($('#new_password').val()) != $.trim($('#confirm_password').val()))
 			{
 				errorList.push('Password don\'t match.');
 			}
-			
+
 			//$log.info(errorList);
 			if(errorList.length > 0)
 			{
@@ -2046,19 +2215,19 @@
 			else
 			{
 				$('#error_list').html('');
-				$scope.error = false;				
+				$scope.error = false;
 			}
-			
-			
+
+
 	    	var params = {old_pass:$('#old_password').val(),new_pass:$('#new_password').val()};
 	    	//$log.info(params);
-	    	var API = $resource('controller/user/changepass');				
+	    	var API = $resource('controller/user/changepass');
 			API.save(params, function(data){
 				//$log.info(data);
 				if(data.success)
 				{
 					$scope.success = true;
-				}	
+				}
 				if(data.failure)
 				{
 					$('#error_list').html('Incorrect password.');
@@ -2068,24 +2237,24 @@
 			});
 	    }
 	}
-	
-	
+
+
 	/**
 	 * Profile Controller
 	 */
 
-	app.controller('Profile',['$scope','$resource','$location','$log',Profile]);
-	
-	function Profile($scope, $resource, $location, $log)
-	{			    
+	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log',Profile]);
+
+	function Profile($scope, $resource, $location,$uibModal,$window, $log)
+	{
 		$scope.age = '';
 		$scope.from = null;
 		$scope.to = null;
 		$scope.id = 0;
-		
+
 		var API = $resource('/user/myprofile');
 	    var params = {};
-	    
+
 	    API.get(params,function(data){
 	    	//angular acts weird with integer option values
 	    	data.user_group_id = String(data.user_group_id);
@@ -2096,30 +2265,72 @@
 	    	if(data.location_assignment_from != '0000-00-00 00:00:00' && data.location_assignment_from != null)
 	    		$scope.from = new Date(data.location_assignment_from)
 	    	if(data.location_assignment_to != '0000-00-00 00:00:00' && data.location_assignment_to != null)
-	    		$scope.to = new Date(data.location_assignment_to)	    
-	    	
+	    		$scope.to = new Date(data.location_assignment_to)
+
 	    });
-	    
+
 	    // Save user profile
-	    saveUser($scope,$resource,$location,$log);
+	    saveUser($scope,$resource,$location ,$uibModal,$window,$log);
 	}
 
 	/**
 	 * User Action Controller
 	 */
 	app.controller('Info',['$scope','$uibModalInstance','params','$log', Info]);
-	
+
 	function Info($scope, $uibModalInstance, params, $log) {
 
-		$scope.params = params;		
+		$scope.params = params;
 		//$log.info(params);
-		
+
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-		
+
 	};
-	
+
+	/**
+	 * User Action Controller
+	 */
+	app.controller('Confirm',['$scope','$uibModalInstance','$window', '$resource','params', '$location','$log', Confirm]);
+
+	function Confirm($scope, $uibModalInstance, $window, $resource, params, $location, $log) {
+		$scope.params = params;
+		$scope.ok = function () {
+
+			$('#jr_salesman_code').focus();
+			$uibModalInstance.dismiss('cancel');
+		};
+
+		$scope.cancel = function () {
+			var API = $resource('controller/user/save');
+			API.save(params.items, function (data) {
+				if (data.error) {
+					var locationErrorList = '<ul>' + data.error + '</ul>';
+					$scope.personalInfoError = false;
+					$scope.locationInfoError = false;
+					if (data.exists) {
+						var errorId = '#error_list_personal'
+						$scope.personalInfoError = true;
+					}
+					else {
+						var errorId = '#error_list_location';
+						$scope.locationInfoError = true;
+					}
+
+					$(errorId).html(locationErrorList);
+
+					$scope.success = false;
+				} else {
+					$scope.success = true;
+					$location.path('user.list');
+				}
+			});
+			$uibModalInstance.dismiss('cancel');
+		};
+
+	};
+
 	app.controller('MainCtrl', function($scope) {
 		  $scope.var1 = '07-2013';
 		});

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ControllerCore
 {
@@ -70,14 +72,26 @@ class UserController extends ControllerCore
         $userModel = ModelFactory::getInstance('User');
 
         $id = (int)$request->get('id');
-        $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
+		if ($request->has('jr_salesman_code')) {
+			$exist = $userModel->where('salesman_code', $request->get('jr_salesman_code'))->where('id', '<>', $id)->exists();
+			if ($exist) {
+				$response['exists'] = true;
+				$code = $userModel->where('salesman_code', 'like',
+					$request->get('salesman_code') . '-%')->orderBy('salesman_code', 'desc')->first();
+				$response['error'] = 'Jr. Salesman code already exists available code is ' .
+					$this->generateJrSalesCode($code, $request->get('salesman_code')) .'.';
 
-        if($request->get('salesman_code') && $exist)
-        {
-            $response['exists'] = true;
-            $response['error'] = 'Salesman code already exists.';
-            return response()->json($response);
-        }
+				return response()->json($response);
+			}
+		}
+
+        $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
+		if ($request->get('salesman_code') && $exist) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code already exists.';
+
+			return response()->json($response);
+		}
         
         $user = $userModel
         			->where(function($query) use($request) {
@@ -108,8 +122,7 @@ class UserController extends ControllerCore
      	$user->gender = $request->get('gender');
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
-        $user->salesman_code = $request->get('salesman_code');
-        
+		$user->salesman_code = $request->has('jr_salesman_code') ? $request->get('jr_salesman_code') : $request->get('salesman_code');
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');
         if($request->get('assignment_date_from'))
@@ -203,4 +216,60 @@ class UserController extends ControllerCore
     {
         return trim($value);
     }
+
+	public function generateJrSalesCode($code, $salesman_code)
+	{
+		if (!$code) {
+			return $salesman_code . "-001";
+		}
+		return $salesman_code . "-" . str_pad(((int) (explode("-", $code->salesman_code)[1]) + 1), 3, "00", STR_PAD_LEFT);
+	}
+
+	public function userContactUs(Request $request)
+	{
+		$data = [
+			'full_name'                => $request->get('name'),
+			'mobile'                   => $request->get('mobile'),
+			'telephone'                => $request->get('telephone'),
+			'email'                    => $request->get('email'),
+			'location_assignment_code' => $request->get('branch'),
+			'time_from'                => $request->get('callFrom'),
+			'time_to'                  => $request->get('callTo'),
+			'subject'                  => $request->get('subject'),
+			'message'                  => $request->get('message'),
+			'status'                   => 'New'
+		];
+		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		//send email to admin.
+		$data['reference_no'] = $contactUs->id;
+		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to('testmailgun101@gmail.com');
+			$message->subject($data['subject']);
+		});
+		//reply email to sender.
+		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
+		$data['status'] = $contactUs->status;
+		Mail::queue('emails.auto_reply', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to($data['email']);
+			$message->subject($data['subject']);
+		});
+
+		return $contactUs;
+	}
+
+	/**
+	 * This will update the status or action from email event action.
+	 * @param Request $request
+	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+	public function userContactUsActionOrStatus(Request $request)
+	{
+		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
+		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
+		$contactUs->save();
+
+		return redirect('/#/summaryofincident.report');
+	}
 }

@@ -6,6 +6,7 @@ use App\Core\PresenterCore;
 use App\Factories\FilterFactory;
 use App\Factories\PresenterFactory;
 use App\Factories\ModelFactory;
+use Illuminate\Http\Request;
 
 class UserPresenter extends PresenterCore
 {
@@ -21,6 +22,29 @@ class UserPresenter extends PresenterCore
 		$this->view->tableHeaders = $this->getUserTableColumns();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('users');
+	}
+
+	/**
+	 * Display Contact us form.
+	 * @return string The rendered html view
+	 */
+	public function contactUs()
+	{
+		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
+		return $this->view('contactUs');
+	}
+
+	/**
+	 * Return Summary of incidents reports.
+	 * @return string The rendered html view
+	 */
+	public function summaryOfIncidentReport()
+	{
+		$this->view->roles = $this->getRoles();
+		$this->view->name = $this->contactUsName();
+		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
+		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
+		return $this->view('summaryOfIncidentReport');
 	}
 
 	/**
@@ -104,6 +128,68 @@ class UserPresenter extends PresenterCore
 	public function getRoles()
 	{
 		return \DB::table('user_group')->lists('name','id');	
+	}
+
+	/**
+	 * Get User name of report.
+     */
+	public function contactUsName()
+	{
+		return ModelFactory::getInstance('ContactUs')->distinct()->get()->lists('full_name', 'full_name');
+	}
+
+	/**
+	 * Get the prepared list of summary of incident reports.
+	 */
+	public function getPreparedSummaryOfIncidentReportList($withCode = true)
+	{
+		$summary = ModelFactory::getInstance('ContactUs')->with('users');
+
+		if ($this->request->has('name') && $this->request->get('name') != 0) {
+			$filterName = FilterFactory::getInstance('Text');
+			$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
+				return $model->where('full_name', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('branch') && $this->request->get('branch') != 0) {
+			$filterBranch = FilterFactory::getInstance('Select');
+			$summary = $filterBranch->addFilter($summary, 'branch', function ($self, $model) {
+				return $model->where('location_assignment_code', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('incident_no') && $this->request->get('incident_no') != '') {
+			$filterIncidentNo = FilterFactory::getInstance('Text');
+			$summary = $filterIncidentNo->addFilter($summary, 'incident_no', function ($self, $model) {
+				return $model->where('id', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('date_range_from') && $this->request->get('date_range_from') != '' && $this->request->has('date_range_to') && $this->request->has('date_range_to') != '') {
+			$filterDateRange = FilterFactory::getInstance('DateRange');
+			$summary = $filterDateRange->addFilter($summary, 'date_range', function ($self, $model) {
+				return $model->whereBetween('created_at', $self->formatValues($self->getValue()));
+			});
+		}
+		if ($withCode) {
+			return $summary->get();
+		} else {
+			return $summary;
+		}
+	}
+
+	/**
+	 * Get the list of summary of incident reports.
+	 * @return mixed
+     */
+	public function getSummaryOfIncidentReports()
+	{
+
+		$data['records'] = $this->getPreparedSummaryOfIncidentReportList();
+		$data['total'] = count($data['records']);
+
+		return response()->json($data);
 	}
 	
 	/**
@@ -263,6 +349,22 @@ class UserPresenter extends PresenterCore
 				['name'=>'Actions'],				
 		];
 		 
+		return $headers;
+	}
+
+	/**
+	 * Get Summary incident of report table columns.
+	 * @return multitype:multitype:string
+	 */
+	public function getIncidentReportTableColumns()
+	{
+		$headers = [
+			['name'=>'Incident #', 'sort'=>'id'],
+			['name'=>'Summary', 'sort'=>'message'],
+			['name'=>'Status', 'sort'=>'status'],
+			['name'=>'Submitted By', 'sort'=>'name']
+		];
+
 		return $headers;
 	}
 
