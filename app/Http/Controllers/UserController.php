@@ -228,31 +228,30 @@ class UserController extends ControllerCore
 	public function userContactUs(Request $request)
 	{
 		$data = [
-			'user_id'                  => Auth::user()->id,
-			'phone'                    => $request->get('phone'),
+			'full_name'                => $request->get('name'),
+			'mobile'                   => $request->get('mobile'),
 			'telephone'                => $request->get('telephone'),
 			'email'                    => $request->get('email'),
 			'location_assignment_code' => $request->get('branch'),
 			'time_from'                => $request->get('callFrom'),
 			'time_to'                  => $request->get('callTo'),
 			'subject'                  => $request->get('subject'),
-			'comment'                  => $request->get('comment'),
+			'message'                  => $request->get('message'),
 			'status'                   => 'New'
 		];
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
-		$data['name'] = $request->get('name');
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
 		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
-			$message->from('testmailgun101@gmail.com', $data['subject']);
-			$message->to('markgeraldcabatingan@gmail.com');
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to('testmailgun101@gmail.com');
 			$message->subject($data['subject']);
 		});
 		//reply email to sender.
 		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
 		Mail::queue('emails.auto_reply', $data, function ($message) use (&$data) {
-			$message->from('testmailgun101@gmail.com', $data['subject']);
+			$message->from(config('system.from_email'), $data['subject']);
 			$message->to($data['email']);
 			$message->subject($data['subject']);
 		});

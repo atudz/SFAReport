@@ -30,6 +30,7 @@ class UserPresenter extends PresenterCore
 	 */
 	public function contactUs()
 	{
+		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('contactUs');
 	}
 
@@ -44,11 +45,6 @@ class UserPresenter extends PresenterCore
 		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
 		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('summaryOfIncidentReport');
-	}
-
-	public function StatusReply()
-	{
-		return $this->view('statusReply');
 	}
 
 	/**
@@ -139,39 +135,48 @@ class UserPresenter extends PresenterCore
      */
 	public function contactUsName()
 	{
-		$user = ModelFactory::getInstance('User')->has('contacts');
-
-		return $user->get()->lists('full_name', 'id');
+		return ModelFactory::getInstance('ContactUs')->distinct()->get()->lists('full_name', 'full_name');
 	}
 
 	/**
 	 * Get the prepared list of summary of incident reports.
 	 */
-	public function getPreparedSummaryOfIncidentReportList()
+	public function getPreparedSummaryOfIncidentReportList($withCode = true)
 	{
 		$summary = ModelFactory::getInstance('ContactUs')->with('users');
-		$filterName = FilterFactory::getInstance('Text');
 
-		$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
-			return $model->where('user_id', $self->getValue());
-		});
+		if ($this->request->has('name') && $this->request->get('name') != 0) {
+			$filterName = FilterFactory::getInstance('Text');
+			$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
+				return $model->where('full_name', $self->getValue());
+			});
+		}
 
-		$filterBranch = FilterFactory::getInstance('Select');
-		$summary = $filterBranch->addFilter($summary, 'branch', function ($self, $model) {
-			return $model->where('location_assignment_code', $self->getValue());
-		});
+		if ($this->request->has('branch') && $this->request->get('branch') != 0) {
+			$filterBranch = FilterFactory::getInstance('Select');
+			$summary = $filterBranch->addFilter($summary, 'branch', function ($self, $model) {
+				return $model->where('location_assignment_code', $self->getValue());
+			});
+		}
 
-		$filterIncidentNo = FilterFactory::getInstance('Text');
-		$summary = $filterIncidentNo->addFilter($summary, 'incident_no', function ($self, $model) {
-			return $model->where('id', $self->getValue());
-		});
+		if ($this->request->has('incident_no') && $this->request->get('incident_no') != '') {
+			$filterIncidentNo = FilterFactory::getInstance('Text');
+			$summary = $filterIncidentNo->addFilter($summary, 'incident_no', function ($self, $model) {
+				return $model->where('id', $self->getValue());
+			});
+		}
 
-		$filterDateRange = FilterFactory::getInstance('DateRange');
-		$summary = $filterDateRange->addFilter($summary, 'date_range', function ($self, $model) {
-			return $model->whereBetween('created_at', $self->formatValues($self->getValue()));
-		});
-
-		return $summary->get();
+		if ($this->request->has('date_range_from') && $this->request->get('date_range_from') != '' && $this->request->has('date_range_to') && $this->request->has('date_range_to') != '') {
+			$filterDateRange = FilterFactory::getInstance('DateRange');
+			$summary = $filterDateRange->addFilter($summary, 'date_range', function ($self, $model) {
+				return $model->whereBetween('created_at', $self->formatValues($self->getValue()));
+			});
+		}
+		if ($withCode) {
+			return $summary->get();
+		} else {
+			return $summary;
+		}
 	}
 
 	/**
@@ -355,10 +360,9 @@ class UserPresenter extends PresenterCore
 	{
 		$headers = [
 			['name'=>'Incident #', 'sort'=>'id'],
-			['name'=>'Summary', 'sort'=>'comment'],
+			['name'=>'Summary', 'sort'=>'message'],
 			['name'=>'Status', 'sort'=>'status'],
-			['name'=>'Submitted By', 'sort'=>'name'],
-			['name'=>'Action', 'sort'=>'action']
+			['name'=>'Submitted By', 'sort'=>'name']
 		];
 
 		return $headers;

@@ -11,17 +11,16 @@
                         {!!Html::input('text','name','Name <span class="required">*</span>','', ['ng-model' => 'contact.name'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {!!Html::input('text','phone','Phone <span class="required">*</span>','', ['ng-model' => 'contact.phone'])!!}
+                        {!!Html::input('text','mobile','Mobile Number. <span class="required">*</span>','', ['ng-model' => 'contact.mobile'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {!!Html::input('text','telephone','telephone <span class="required">*</span>','', ['ng-model' => 'contact.telephone'])!!}
+                        {!!Html::input('text','telephone','Telephone Number. <span class="required">*</span>','', ['ng-model' => 'contact.telephone'])!!}
                     </div>
                     <div class="row form-input-field text-left">
                         {!!Html::input('text','email','Email <span class="required">*</span>','', ['ng-model' => 'contact.email'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {{--{!!Html::select('branch','Branch <span class="required">*</span>', '','')!!}--}}
-                        {!!Html::input('text','branch','Branch <span class="required">*</span>','', ['ng-model' => 'contact.branch'])!!}
+                        {!!Html::select('branch','Branch <span class="required">*</span>', $branch,'',['ng-model' => 'contact.branch'])!!}
                     </div>
                     <h4 style="margin-bottom: 20px; text-align:left" class="page-header">Best Time To Call</h4>
                     <div class="row form-input-field text-left">
@@ -34,7 +33,7 @@
                         {!!Html::input('text','subject','Subject <span class="required">*</span>','', ['ng-model' => 'contact.subject'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {!!Html::text('comment','Comment <span class="required">*</span>','', ['ng-model' => 'contact.comment'])!!}
+                        {!!Html::text('message','Message <span class="required">*</span>','', ['ng-model' => 'contact.message'])!!}
                     </div>
                 </div>
 

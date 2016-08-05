@@ -1710,14 +1710,14 @@
 		$scope.error = false;
 		$scope.contact = {
 			name: '',
-			phone: '',
+			mobile: '',
 			telephone: '',
 			email: '',
 			branch: '',
 			callFrom: '',
 			callTo: '',
 			subject: '',
-			comment: ''
+			message: ''
 		};
 		$scope.save = function () {
 			$scope.validate($scope.contact);
@@ -1734,11 +1734,11 @@
 			if (contact.name == '') {
 				contactErrors.push('Name is a required field.');
 			}
-			if (contact.phone == '') {
-				contactErrors.push('Phone is a required field.');
+			if (contact.mobile == '') {
+				contactErrors.push('Mobile phone no. is a required field.');
 			}
 			if (contact.telephone == '') {
-				contactErrors.push('Telephone is a required field.');
+				contactErrors.push('Telephone no. is a required field.');
 			}
 			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			if(contact.email && !rgxEmail.test(contact.email))
@@ -1748,9 +1748,6 @@
 			if(contact.email == '')
 			{
 				contactErrors.push('Email is a required field.');
-			}
-			if (contact.name == '') {
-				contactErrors.push('Name is a required field.');
 			}
 			if (contact.branch == '') {
 				contactErrors.push('Branch is a required field.');
@@ -1764,8 +1761,8 @@
 			if (contact.subject == '') {
 				contactErrors.push('Subject is a required field.');
 			}
-			if (contact.comment == '') {
-				contactErrors.push('Comment is a required field.');
+			if (contact.message == '') {
+				contactErrors.push('Message is a required field.');
 			}
 
 			if (contactErrors.length > 0) {
@@ -1801,38 +1798,30 @@
 			toggleLoading();
 			togglePagination(data.total);
 		});
-		$scope.params = {
-			name: '',
-			branch: '',
-			incident_no: ''
-		};
+
 		$scope.filter = function () {
-			$scope.params.date_range_from = $('#date_range_from').val();
-			$scope.params.date_range_to = $('#date_range_to').val();
-			$scope.API.save($scope.params, function (data) {
+			var params = {
+				name: $('#name').val(),
+				branch: $('#branch').val(),
+				incident_no: $('#incident_no').val(),
+				date_range_from: $('#date_range_from').val(),
+				date_range_to: $('#date_range_to').val()
+			};
+			$scope.API.save(params, function (data) {
 				$scope.records = data.records;
 				$scope.total = data.total;
 			})
 		};
+		var params = [
+			'name',
+			'branch',
+			'incident_no',
+			'date_range_from',
+			'date_range_to'
+		];
 		// Download report
-		// downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
-
+		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
 	}
-
-	/**
-	 * User StatusReply us controller
-	 */
-	app.controller('StatusReply', ['$scope', '$resource', '$routeParams', '$location', '$log', StatusReply]);
-
-	function StatusReply($scope, $resource, $routeParams, $location, $log) {
-		$scope.reply = {}
-		var API = $resource('/user/edit/'+$routeParams.id);
-
-		API.get(params,function(data){
-
-		});
-	};
-	
 	/**
 	 * Save user profile
 	 */
@@ -2162,9 +2151,6 @@
 				    	//$log.info(data);
 				    });
 					break;
-				//case 'validate':
-				//	alert('wew');
-				//	break;
 			}
 
 			$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
