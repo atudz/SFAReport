@@ -48,7 +48,7 @@
                                             Greetings!</p>
                                         <article>
                                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                {!! $comment !!}</p>
+                                                {!! $message !!}</p>
                                         </article>
                                     </td>
                                 </tr>
@@ -59,7 +59,7 @@
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Name: {!! $name !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Phone: {!! $phone !!}</p>
+                                            Phone: {!! $mobile !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Telephone: {!! $telephone !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">

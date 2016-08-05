@@ -8,15 +8,15 @@ class ContactUs extends ModelCore
 {
     protected $table = 'contact_us';
     protected $fillable = [
-        'user_id',
-        'phone',
+        'full_name',
+        'mobile',
         'telephone',
         'email',
         'location_assignment_code',
         'time_from',
         'time_to',
         'subject',
-        'comment',
+        'message',
         'status'
     ];
 

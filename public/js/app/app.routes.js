@@ -126,11 +126,6 @@
 					controller: 'SummaryOfIncidentReport'
 					/*controllerAs: 'sync'*/
 				})
-				.when('/status.reply',{
-					templateUrl: '/user/statusreply',
-					controller: 'StatusReply'
-					/*controllerAs: 'sync'*/
-				})
 				.when('/profile.changepassword',{
 					templateUrl: '/changepass',
 					controller: 'ChangePassword',

@@ -5761,7 +5761,7 @@ class ReportsPresenter extends PresenterCore
     			break;
 			case 'summaryofincidentsreport':
 				$columns = $this->getTableColumns($report);
-				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList();
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
 				$rows = $this->getSummaryOfIncidentReportSelectColumns();
 				$header = 'Summary Of Incident Report';
 				$filters = $this->getSummaryOfIncidentReportFilterData();
@@ -6156,9 +6156,9 @@ class ReportsPresenter extends PresenterCore
 	{
 		return [
 			'id',
-			'comment',
+			'message',
 			'status',
-			'name',
+			'full_name',
 		];
 	}
     
@@ -6350,6 +6350,12 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
+			case 'summaryofincidentsreport':
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$prepare->get();
+				$total = count($prepare);
+				$special = true;
+				break;
     		default:
     			return;
     	}
@@ -6389,7 +6395,6 @@ class ReportsPresenter extends PresenterCore
     		$data['max_limit'] = false;
     		$data['staggered'] = [];
     	}
-    	
     	return response()->json($data);
     }
     
@@ -6623,16 +6628,13 @@ class ReportsPresenter extends PresenterCore
      */
 	public function getSummaryOfIncidentReportFilterData()
 	{
-		$name = $this->request->get('name');
-		$branch = $this->request->get('branch');
-		$incident_no = $this->request->get('incident_no');
-		$role = $this->request->get('role');
-
+		$name = (ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first()->full_name) ?: 'All';
+		$branch = (ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first()->area_name) ?: 'All';
+		$incident_no = ($this->request->get('incident_no')) ?: 'All';
 		$filters = [
-			'name'                     => $name,
-			'location_assignment_code' => $branch,
-			'incident_no'              => $incident_no,
-			'role'                     => $role
+			'Name'         => $name,
+			'Branch'       => $branch,
+			'Incident No.' => $incident_no,
 		];
 
 		return $filters;
