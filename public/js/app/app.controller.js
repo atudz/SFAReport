@@ -1858,6 +1858,10 @@
 			{
 				locationErrors.push('Assignment is a required field.')
 			}
+			if ($('#assignment_date_from').val() > $('#assignment_date_to').val())
+			{
+				locationErrors.push('Invalid date range.');
+			}
 
 			if(locationErrors.length > 0)
 			{

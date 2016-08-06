@@ -58,6 +58,14 @@ class UserController extends ControllerCore
         		return response()->json($response);
         	}
         }
+		
+		if ($request->get('assignment_date_from') > $request->get('assignment_date_to')) {
+
+			$response['exists'] = true;
+			$response['error'] = 'Invalid date range.';
+
+			return response()->json($response);
+		}
 
         if($request->get('age') && 18 > $request->get('age'))
         {
