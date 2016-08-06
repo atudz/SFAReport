@@ -59,8 +59,7 @@ class UserController extends ControllerCore
         	}
         }
 
-        $roleGuest1 = $userGroupModel->whereName('Guest1')->first()->id;
-        if($request->get('age') && $request->get('role') == $roleGuest1 && 18 > $request->get('age'))
+        if($request->get('age') && 18 > $request->get('age'))
         {
             $response['exists'] = true;
             $response['error'] = 'User cannot be below 18.';
