@@ -1,5 +1,5 @@
 {!!Html::breadcrumb(['User List','Add User'])!!}
-{!!Html::pageheader('Add User')!!}
+{!!Html::pageheader('Edit User')!!}
 
 <div class="row">
 	<div class="col-lg-12">
