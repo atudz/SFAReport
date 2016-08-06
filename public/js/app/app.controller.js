@@ -1641,14 +1641,6 @@
 
 	    // Save user profile
 	    saveUser($scope,$resource,$location, $uibModal, $window, $log);
-
-	    $scope.req_salesman = 'hidden';
-		$scope.checkRole = function(){
-			if($scope.role_id == 4)
-				$scope.req_salesman = '';
-			else
-				$scope.req_salesman = 'hidden';
-		}
 	};
 
 
@@ -1724,11 +1716,17 @@
 				scope.req_salesman = 'hidden';
 		};
 		$('#salesman_code, #role ').bind('keyup change', function () {
-			if ($('#role').val() == 4 && $('#salesman_code').val() != '') {
-				$('#jr_salesman_code').prop('disabled', false);
+			if ($('#role').val() == 4) {
+				$('#span_salesman').removeClass('hidden');
+				if ($('#salesman_code').val() != '') {
+					$('#jr_salesman_code').prop('disabled', false);
+				} else {
+					$('#jr_salesman_code').prop('disabled', true);
+					$('#jr_salesman_code').val('');
+
+				}
 			} else {
-				$('#jr_salesman_code').prop('disabled', true);
-				$('#jr_salesman_code').val('');
+				$('#span_salesman').addClass('hidden');
 			}
 		});
 

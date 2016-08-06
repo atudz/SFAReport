@@ -60,7 +60,7 @@
 						{!!Html::input('text','mobile','Mobile No.')!!}
 					</div>					
 					<div class="row form-input-field">
-						{!!Html::input('text','salesman_code','Salesman Code <span class="required [[req_salesman]]" id="salesman_required">*</span>')!!}
+						{!!Html::input('text','salesman_code','Salesman Code <span id="span_salesman" class="required hidden" id="salesman_required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','jr_salesman_code','Jr. Salesman Code', '', ['ng-disabled' => 'true' ])!!}
