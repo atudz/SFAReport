@@ -1723,6 +1723,9 @@
 					$('#checkbox_jr_salesman').prop('disabled', false);
 				}
 			} else {
+				if ($('#checkbox_jr_salesman').is(':checked')) {
+					$('#checkbox_jr_salesman').trigger('click');
+				}
 				$('#checkbox_jr_salesman').prop('disabled', true);
 				$('#checkbox_jr_salesman').attr('checked', false);
 				$('#span_salesman').addClass('hidden');
@@ -1731,6 +1734,7 @@
 
 		$('#checkbox_jr_salesman').on('click', function () {
 			if ($(this).is(':checked')) {
+				$('#salesman_code').prop('disabled', true);
 				var API = resource('/controller/user/generate/' + $('#salesman_code').val());
 				API.get({}, function (data) {
 					scope.jr_salesman_code = data.result;
@@ -1738,6 +1742,7 @@
 				});
 			}
 			else {
+				$('#salesman_code').prop('disabled', false);
 				$('#label_jr_salesman_code').html('');
 				scope.jr_salesman_code = '';
 			}
