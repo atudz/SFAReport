@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -240,16 +241,19 @@ class UserController extends ControllerCore
 			'telephone'                => $request->get('telephone'),
 			'email'                    => $request->get('email'),
 			'location_assignment_code' => $request->get('branch'),
-			'time_from'                => $request->get('callFrom'),
-			'time_to'                  => $request->get('callTo'),
+			'time_from'                => Carbon::parse($request->get('callFrom'))->toTimeString(),
+			'time_to'                  => Carbon::parse($request->get('callTo'))->toTimeString(),
 			'subject'                  => $request->get('subject'),
 			'message'                  => $request->get('message'),
 			'status'                   => 'New'
 		];
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		$data['time_from'] = $request->get('callFrom');
+		$data['time_to'] = $request->get('callTo');
+
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
-		Mail::queue('emails.contact_us', $data, function ($message) use (&$data) {
+		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to('testmailgun101@gmail.com');
 			$message->subject($data['subject']);
@@ -257,7 +261,7 @@ class UserController extends ControllerCore
 		//reply email to sender.
 		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
-		Mail::queue('emails.auto_reply', $data, function ($message) use (&$data) {
+		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to($data['email']);
 			$message->subject($data['subject']);

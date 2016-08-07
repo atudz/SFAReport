@@ -1699,6 +1699,18 @@
 	app.controller('ContactUs', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUs]);
 
 	function ContactUs($scope, $resource, $routeParams, $location, $log) {
+		$('.timepicker').timepicker({
+			timeFormat: 'h:mm p',
+			interval: 30,
+			minTime: '12:00am',
+			maxTime: '11:30pm',
+			defaultTime: '7',
+			startTime: '07:00am',
+			dynamic: false,
+			dropdown: true,
+			scrollbar: true
+		});
+
 		$scope.error = false;
 		$scope.contact = {
 			name: '',
@@ -1712,17 +1724,19 @@
 			message: ''
 		};
 		$scope.save = function () {
+			$scope.contact.callFrom = $('#callFrom').val();
+			$scope.contact.callTo = $('#callTo').val();
 			$scope.validate($scope.contact);
-			if(!$scope.error){
+			if (!$scope.error) {
 				var API = $resource('controller/user/contact');
-				API.save($scope.contact, function(data){
-				});
+				API.save($scope.contact, function (data) {});
 			}
 		};
 
 		$scope.validate = function (contact) {
 			var contactErrors = [];
 			var contactErrorList = '';
+			$scope.error = false;
 			if (contact.name == '') {
 				contactErrors.push('Name is a required field.');
 			}
@@ -1743,12 +1757,6 @@
 			}
 			if (contact.branch == '') {
 				contactErrors.push('Branch is a required field.');
-			}
-			if (contact.callFrom == '') {
-				contactErrors.push('Call From is a required field.');
-			}
-			if (contact.callTo == '') {
-				contactErrors.push('Call To is a required field.');
 			}
 			if (contact.subject == '') {
 				contactErrors.push('Subject is a required field.');
