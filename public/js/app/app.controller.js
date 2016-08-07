@@ -2017,7 +2017,11 @@
 			{
 				case 'activate':
 					var API = $resource('/controller/user/activate/'+$scope.params.id);
-				    API.get();
+					API.get({}, function () {
+						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+							$("#table_success").slideUp(500);
+						});
+					});
 				    $scope.$parent.records[$scope.params.row].active = true;
 					break;
 				case 'deactivate':
