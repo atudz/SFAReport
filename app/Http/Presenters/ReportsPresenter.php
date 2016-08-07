@@ -6934,7 +6934,9 @@ class ReportsPresenter extends PresenterCore
 			'700'  => 'DU',
 			'800'  => 'GE',
 			'900'  => 'IL',
+			'1000' => 'ML',
 			'1100' => 'OZ',
+			'1200' => 'TA',
 			'1300' => 'ZA',
 			'1400' => 'OR',
 			'2100' => 'CB',
@@ -6946,7 +6948,9 @@ class ReportsPresenter extends PresenterCore
 			'2700' => 'DU',
 			'2800' => 'GE',
 			'2900' => 'IL',
+			'3000' => 'ML',
 			'3100' => 'OZ',
+			'3200' => 'TA',
 			'3300' => 'ZA',
 			'3400' => 'OR'
 		];
