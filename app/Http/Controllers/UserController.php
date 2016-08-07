@@ -81,10 +81,8 @@ class UserController extends ControllerCore
 			$exist = $userModel->where('salesman_code', $request->get('jr_salesman_code'))->where('id', '<>', $id)->exists();
 			if ($exist) {
 				$response['exists'] = true;
-				$code = $userModel->where('salesman_code', 'like',
-					$request->get('salesman_code') . '-%')->orderBy('salesman_code', 'desc')->first();
 				$response['error'] = 'Jr. Salesman code already exists available code is ' .
-					$this->generateJrSalesCode($code, $request->get('salesman_code')) .'.';
+					$this->generateJrSalesCode($request->get('salesman_code')) .'.';
 
 				return response()->json($response);
 			}
@@ -222,11 +220,32 @@ class UserController extends ControllerCore
         return trim($value);
     }
 
-	public function generateJrSalesCode($code, $salesman_code)
+	/**
+	 * This will generate a jr salesman code.
+	 * @param $salesman_code
+	 * @return string
+     */
+	public function generateJrSalesCode($salesman_code)
 	{
+		$code = ModelFactory::getInstance('User')->where('salesman_code', 'like',
+			$salesman_code . '-%')->orderBy('salesman_code', 'desc')->first();
 		if (!$code) {
 			return $salesman_code . "-001";
 		}
-		return $salesman_code . "-" . str_pad(((int) (explode("-", $code->salesman_code)[1]) + 1), 3, "00", STR_PAD_LEFT);
+
+		return $salesman_code . "-" . str_pad(((int)(explode("-", $code->salesman_code)[1]) + 1), 3, "00",
+			STR_PAD_LEFT);
+	}
+
+	/**
+	 * This will return a jr salesman code.
+	 * @param $code
+	 * @return mixed
+     */
+	public function getJrSalesmanCode($code)
+	{
+		$data['result'] = $this->generateJrSalesCode($code);
+
+		return response()->json($data);
 	}
 }
