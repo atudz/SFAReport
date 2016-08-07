@@ -20,8 +20,8 @@ class ContactUs extends Migration
             $table->string('mobile');
             $table->string('telephone');
             $table->string('location_assignment_code');
-            $table->string('time_from');
-            $table->string('time_to');
+            $table->time('time_from');
+            $table->time('time_to');
             $table->string('subject');
             $table->text('message');
             $table->string('action');
