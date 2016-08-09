@@ -6877,6 +6877,7 @@ class ReportsPresenter extends PresenterCore
     	}      	
     }
 
+
 	/**
 	 * This function will check if the invoice number has an
 	 * invoice code it append an invoice code for the invoice number
@@ -6973,4 +6974,18 @@ class ReportsPresenter extends PresenterCore
 
 		return $invoiceCode;
 	}
+
+    
+    
+    /**
+     * Check if synching
+     * @return number
+     */
+    public function isSynching()
+    {
+    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
+    	$value = $data ? $data->value : 0;
+    	return response()->json(['sync'=>$value]);
+    }
+
 }

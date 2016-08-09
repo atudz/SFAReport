@@ -45,7 +45,7 @@ class ReportsController extends ControllerCore
 				$reference = isset($prevData->reference_num) ? $prevData->reference_num : '';
 			}
 						
-			\DB::table($table)->where($pk,$id)->update([
+			\DB::table($table)->where($pk,$id)->lockForUpdate()->update([
 					$column => $value,
 					'updated_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
@@ -69,7 +69,7 @@ class ReportsController extends ControllerCore
 			
 			if($transfer)
 			{
-				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->update([
+				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->lockForUpdate()->update([
 						$column => $value,
 						'updated_at' => new \DateTime(),
 						'updated_by' => auth()->user()->id,
@@ -100,7 +100,7 @@ class ReportsController extends ControllerCore
 				if($reference)		
 					$prepare->where('reference_num',$reference);
 				
-				$prepare->update([
+				$prepare->lockForUpdate()->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
@@ -124,7 +124,7 @@ class ReportsController extends ControllerCore
 				$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
 				if($data2)
 				{
-					\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->update([
+					\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,

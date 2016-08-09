@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     	\App\Console\Commands\SyncSfa::class,
     	\App\Console\Commands\ChangeAdminPassword::class,
     	\App\Console\Commands\CleanSalesmanRecords::class,
+    	\App\Console\Commands\FixTableLogs::class,
     ];
 
     /**

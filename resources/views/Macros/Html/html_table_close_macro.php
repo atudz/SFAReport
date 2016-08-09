@@ -6,6 +6,12 @@ Html::macro('tclose', function($paginate=true) {
 	$html .= '</div>';
 
 	$html .= '
+			<script type="text/ng-template" id="Synchronizing">
+        		<div class="modal-body">			
+					<p class="text-center bold required">Synchronization on progess, please wait till its finished to edit.</p>									 					
+				</div>			    			
+    		</script>
+			
 			<script type="text/ng-template" id="EditColumnText">
         		<div class="modal-body">			
 					<p>[[params.name]]</p>	
