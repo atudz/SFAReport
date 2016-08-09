@@ -40,6 +40,8 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/getheaders/{type?}', ['as'=>'report-getheaders', 'uses'=>'ReportsPresenter@getTableColumns']);
 	Route::get('/export/{type}/{report}/{page?}', ['as'=>'report-export', 'uses'=>'ReportsPresenter@exportReport']);
 	Route::get('/getcount/{report}/{type?}', ['as'=>'report-count', 'uses'=>'ReportsPresenter@getDataCount']);
+	
+	Route::get('/synching', ['as'=>'synch', 'uses'=>'ReportsPresenter@isSynching']);
 });
 
 

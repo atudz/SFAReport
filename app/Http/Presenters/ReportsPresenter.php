@@ -6857,4 +6857,16 @@ class ReportsPresenter extends PresenterCore
 	    	$from->addDay();	    	
     	}      	
     }
+    
+    
+    /**
+     * Check if synching
+     * @return number
+     */
+    public function isSynching()
+    {
+    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
+    	$value = $data ? $data->value : 0;
+    	return response()->json(['sync'=>$value]);
+    }
 }

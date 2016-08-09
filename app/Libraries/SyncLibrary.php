@@ -45,6 +45,9 @@ class SyncLibrary extends LibraryCore
 	public function sync($display=false)
 	{		
 		$this->log('Synchronization started '.date('Y-m-d H:m:s')."\n");
+		
+		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>1]);
+		
 		try 
 		{
 			$dbh = new PDO("dblib:host=$this->host:$this->port;dbname=$this->database",$this->dbuser,$this->dbpass);
@@ -126,6 +129,8 @@ class SyncLibrary extends LibraryCore
 		
 		// update report summary columns
 		PresenterFactory::getInstance('Reports')->updateReportSummary();
+		
+		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>0]);
 		
 		return true;
 		

@@ -939,85 +939,86 @@
 		
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			
-			var selectOptions = options;
-			/*if(selectAPI)
-			{
-				//log.info(selectAPI);
-				var API = resource(selectAPI);
-				API.get({},function(data){
-					//log.info(data);
-					selectOptions = data.options;
-				});
-			}*/
-			
-			var stepInterval = 1;			
-			if(step)
-				stepInterval = step;
-			var total = column;
-			if(alias)
-				total = alias;
-			
-			scope.oldVal = '';
-			if(getTotal)
-				scope.oldVal = value;
-						
-			var template = '';
-			var inputType = '';
-			switch(type)
-			{
-				case 'date':
-					template = 'EditColumnDate';
-					inputType = 'datetime';
-					defaultDate = new Date(value);
-					break;
-				case 'select':
-					template = 'EditColumnSelect';
-					break;
-				case 'number':	
-					template = 'EditColumnText';
-					inputType = 'number';
-					value = Number(value);
-					break;
-				default:	
-					template = 'EditColumnText';
-					inputType = 'text';
-					break;	
-			}
-			//log.info(value);
-			
-			//log.info(selectOptions);
-			var params = {
-					table: table,
-					column: column,
-					id: id,
-					value: value,
-					selectOptions: selectOptions,
-					index: index,
-					name: name,
-					alias: alias,
-					total: total,
-					old: scope.oldVal,
-					getTotal: getTotal,
-					parentIndex: parentIndex,
-					type: inputType,
-					step: stepInterval
-			};
-			
-			
-			var modalInstance = modal.open({
-			 	animation: true,
-			 	scope: scope,
-				templateUrl: template,
-				controller: 'EditTableRecord',
-				windowClass: 'center-modal',
-				size: 'sm',
-				resolve: {
-					params: function () {
-						return params;
-				    }
+			resource('/reports/synching').get().$promise.then(function(data){
+				
+				var selectOptions = options;				
+				var stepInterval = 1;			
+				if(step)
+					stepInterval = step;
+				var total = column;
+				if(alias)
+					total = alias;
+				
+				scope.oldVal = '';
+				if(getTotal)
+					scope.oldVal = value;
+							
+				var template = '';
+				var inputType = '';
+				
+				if(data.sync == 1)
+				{
+					template = 'Synchronizing';
 				}
+				else
+				{
+					switch(type)
+					{
+						case 'date':
+							template = 'EditColumnDate';
+							inputType = 'datetime';
+							defaultDate = new Date(value);
+							break;
+						case 'select':
+							template = 'EditColumnSelect';
+							break;
+						case 'number':	
+							template = 'EditColumnText';
+							inputType = 'number';
+							value = Number(value);
+							break;
+						default:	
+							template = 'EditColumnText';
+							inputType = 'text';
+							break;	
+					}
+				}
+				
+				//log.info(value);
+				
+				var params = {
+						table: table,
+						column: column,
+						id: id,
+						value: value,
+						selectOptions: selectOptions,
+						index: index,
+						name: name,
+						alias: alias,
+						total: total,
+						old: scope.oldVal,
+						getTotal: getTotal,
+						parentIndex: parentIndex,
+						type: inputType,
+						step: stepInterval
+				};
+				
+				
+				var modalInstance = modal.open({
+				 	animation: true,
+				 	scope: scope,
+					templateUrl: template,
+					controller: 'EditTableRecord',
+					windowClass: 'center-modal',
+					size: 'sm',
+					resolve: {
+						params: function () {
+							return params;
+					    }
+					}
+				});
+					
 			});
-
 
 		}		
 		
