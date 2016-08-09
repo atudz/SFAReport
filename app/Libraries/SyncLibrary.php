@@ -125,12 +125,12 @@ class SyncLibrary extends LibraryCore
 			return false;
 		}
 		
-		$this->log('Synchronization ended '.date('Y-m-d H:m:s')."\n");
+		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>0]);
+		
+		$this->log('Synchronization ended '.date('Y-m-d H:m:s')."\n");		
 		
 		// update report summary columns
-		PresenterFactory::getInstance('Reports')->updateReportSummary();
-		
-		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>0]);
+		PresenterFactory::getInstance('Reports')->updateReportSummary();				
 		
 		return true;
 		
