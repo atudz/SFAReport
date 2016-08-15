@@ -25,20 +25,20 @@
                     <h4 style="margin-bottom: 20px; text-align:center" class="page-header">Best Time To Call</h4>
                     <div class="row form-input-field text-left">
                         <div class="form-group">
-                            <div class="col-xs-12 col-md-5 col-sm-5 control-label">
+                            <div class="col-xs-12 col-md-4 col-sm-4 control-label">
                                 <label for="name" class="">Call From <span class="required">*</span></label>
                             </div>
-                            <div class="col-xs-12 col-sm-6">
+                            <div class="col-xs-12 col-sm-8">
                                 <input class="timepicker text-center form-control" name="time_from" id="callFrom">
                             </div>
                         </div>
                     </div>
                     <div class="row form-input-field text-left">
                         <div class="form-group">
-                            <div class="col-xs-12 col-md-5 col-sm-5 control-label">
+                            <div class="col-xs-12 col-md-4 col-sm-4 control-label">
                                 <label for="name" class="">Call To <span class="required">*</span></label>
                             </div>
-                            <div class="col-xs-12 col-sm-6">
+                            <div class="col-xs-12 col-sm-8">
                                 <input class="timepicker text-center form-control" name="time_to" id="callTo">
                             </div>
                         </div>

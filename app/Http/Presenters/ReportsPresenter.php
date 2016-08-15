@@ -6628,8 +6628,10 @@ class ReportsPresenter extends PresenterCore
      */
 	public function getSummaryOfIncidentReportFilterData()
 	{
-		$name = (ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first()->full_name) ?: 'All';
-		$branch = (ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first()->area_name) ?: 'All';
+		$name = ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first();
+		$name = ($name) ? $name->full_name : 'All';
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first();
+		$branch = ($branch) ? $branch->area_name : 'All';
 		$incident_no = ($this->request->get('incident_no')) ?: 'All';
 		$filters = [
 			'Name'         => $name,

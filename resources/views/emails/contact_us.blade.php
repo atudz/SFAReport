@@ -25,7 +25,7 @@
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                 Incident #: {!! $reference_no !!} {!! $subject !!}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                From: {!! $name !!}</p>
+                                From: {!! $full_name !!}</p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                 To: Admin</p>
                             <img src="http://s3.amazonaws.com/save22.com-retailer-banner-picture/319831_331827250256910_1832915880_n.jpg"
@@ -48,7 +48,7 @@
                                             Greetings!</p>
                                         <article>
                                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                                {!! $message !!}</p>
+                                                {!! $email_message !!}</p>
                                         </article>
                                     </td>
                                 </tr>
@@ -57,7 +57,7 @@
                                         align="center" valign="top">
                                         <h3>Sender Information</h3>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Name: {!! $name !!}</p>
+                                            Name: {!! $full_name !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Phone: {!! $mobile !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
