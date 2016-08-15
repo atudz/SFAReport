@@ -1695,6 +1695,135 @@
 	};
 
 	/**
+	 * User Contact us controller
+	 */
+	app.controller('ContactUs', ['$scope', '$resource', '$routeParams', '$location', '$log', ContactUs]);
+
+	function ContactUs($scope, $resource, $routeParams, $location, $log) {
+		$('.timepicker').timepicker({
+			timeFormat: 'h:mm p',
+			interval: 30,
+			minTime: '12:00am',
+			maxTime: '11:30pm',
+			defaultTime: '7',
+			startTime: '07:00am',
+			dynamic: false,
+			dropdown: true,
+			scrollbar: true
+		});
+
+		$scope.error = false;
+		$scope.contact = {
+			name: '',
+			mobile: '',
+			telephone: '',
+			email: '',
+			branch: '',
+			callFrom: '',
+			callTo: '',
+			subject: '',
+			message: ''
+		};
+		$scope.save = function () {
+			$scope.contact.callFrom = $('#callFrom').val();
+			$scope.contact.callTo = $('#callTo').val();
+			$scope.validate($scope.contact);
+			if (!$scope.error) {
+				var API = $resource('controller/user/contact');
+				API.save($scope.contact, function (data) {});
+			}
+		};
+
+		$scope.validate = function (contact) {
+			var contactErrors = [];
+			var contactErrorList = '';
+			$scope.error = false;
+			if (contact.name == '') {
+				contactErrors.push('Name is a required field.');
+			}
+			if (contact.mobile == '') {
+				contactErrors.push('Mobile phone no. is a required field.');
+			}
+			if (contact.telephone == '') {
+				contactErrors.push('Telephone no. is a required field.');
+			}
+			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			if(contact.email && !rgxEmail.test(contact.email))
+			{
+				contactErrors.push('Invalid email address.');
+			}
+			if(contact.email == '')
+			{
+				contactErrors.push('Email is a required field.');
+			}
+			if (contact.branch == '') {
+				contactErrors.push('Branch is a required field.');
+			}
+			if (contact.subject == '') {
+				contactErrors.push('Subject is a required field.');
+			}
+			if (contact.message == '') {
+				contactErrors.push('Message is a required field.');
+			}
+
+			if (contactErrors.length > 0) {
+				contactErrorList = '<ul>';
+				for (var i = 0; i < contactErrors.length; i++) {
+					contactErrorList += '<li>' + contactErrors[i] + '</li>';
+				}
+				contactErrorList += '</ul>';
+				$('#error_list_contact').html(contactErrorList);
+				$scope.error = true;
+			}
+		};
+	}
+
+	/**
+	 * User Incident report controller
+	 */
+	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams', '$window', '$uibModal', '$location', '$log', SummaryOfIncidentReport]);
+
+	function SummaryOfIncidentReport($scope, $resource, $routeParams, $window, $location, $uibModal, $log) {
+		// Filter flag
+		$scope.toggleFilter = true;
+
+		// Fetch table data from server
+		$scope.records = [];
+
+		$scope.API = $resource('/reports/getdata/summaryofincidentreport');
+
+		toggleLoading(true);
+		$scope.API.get({}, function (data) {
+			$scope.records = data.records;
+			$scope.total = data.total;
+			toggleLoading();
+			togglePagination(data.total);
+		});
+
+		$scope.filter = function () {
+			var params = {
+				name: $('#name').val(),
+				branch: $('#branch').val(),
+				incident_no: $('#incident_no').val(),
+				date_range_from: $('#date_range_from').val(),
+				date_range_to: $('#date_range_to').val()
+			};
+			$scope.API.save(params, function (data) {
+				$scope.records = data.records;
+				$scope.total = data.total;
+			})
+		};
+		var params = [
+			'name',
+			'branch',
+			'incident_no',
+			'date_range_from',
+			'date_range_to'
+		];
+		// Download report
+		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
+	}
+	/**
 	 * Save user profile
 	 */
 	function saveUser(scope, resource, location, modal, window, log)

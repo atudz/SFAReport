@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ControllerCore
 {
@@ -247,5 +250,56 @@ class UserController extends ControllerCore
 		$data['result'] = $this->generateJrSalesCode($code);
 
 		return response()->json($data);
+	}
+
+	public function userContactUs(Request $request)
+	{
+		$data = [
+			'full_name'                => $request->get('name'),
+			'mobile'                   => $request->get('mobile'),
+			'telephone'                => $request->get('telephone'),
+			'email'                    => $request->get('email'),
+			'location_assignment_code' => $request->get('branch'),
+			'time_from'                => Carbon::parse($request->get('callFrom'))->toTimeString(),
+			'time_to'                  => Carbon::parse($request->get('callTo'))->toTimeString(),
+			'subject'                  => $request->get('subject'),
+			'message'                  => $request->get('message'),
+			'status'                   => 'New'
+		];
+		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		$data['time_from'] = $request->get('callFrom');
+		$data['time_to'] = $request->get('callTo');
+
+		//send email to admin.
+		$data['reference_no'] = $contactUs->id;
+		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to('testmailgun101@gmail.com');
+			$message->subject($data['subject']);
+		});
+		//reply email to sender.
+		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
+		$data['status'] = $contactUs->status;
+		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to($data['email']);
+			$message->subject($data['subject']);
+		});
+
+		return $contactUs;
+	}
+
+	/**
+	 * This will update the status or action from email event action.
+	 * @param Request $request
+	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+	public function userContactUsActionOrStatus(Request $request)
+	{
+		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
+		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
+		$contactUs->save();
+
+		return redirect('/#/summaryofincident.report');
 	}
 }

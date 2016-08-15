@@ -273,7 +273,9 @@ class ReportsPresenter extends PresenterCore
     		case 'userlist':
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
-                return PresenterFactory::getInstance('User')->getUserGroup();	
+                return PresenterFactory::getInstance('User')->getUserGroup();
+			case 'summaryofincidentreport':
+				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();
     	}
     }
     
@@ -4850,6 +4852,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
+			case 'summaryofincidentsreport':
+				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
     	}	
     }
     
@@ -5452,7 +5456,7 @@ class ReportsPresenter extends PresenterCore
      * @param unknown $report
      */
     public function exportReport($type, $report, $offset=0)
-    {    	
+    {
     	if(!in_array($type, $this->validExportTypes))
     	{
     		return;
@@ -5755,6 +5759,14 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
     			break;
+			case 'summaryofincidentsreport':
+				$columns = $this->getTableColumns($report);
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$rows = $this->getSummaryOfIncidentReportSelectColumns();
+				$header = 'Summary Of Incident Report';
+				$filters = $this->getSummaryOfIncidentReportFilterData();
+				$filename = 'Summary Of Incident Report';
+				break;
     		default:
     			return;
     	}	
@@ -6135,6 +6147,20 @@ class ReportsPresenter extends PresenterCore
     			'status',
     	];
     }
+
+	/**
+	 * Return summary of incident report select columns
+	 * @return multitype:string
+	 */
+	public function getSummaryOfIncidentReportSelectColumns()
+	{
+		return [
+			'id',
+			'message',
+			'status',
+			'full_name',
+		];
+	}
     
     /**
      * Return sales collection select columns
@@ -6324,6 +6350,12 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
+			case 'summaryofincidentsreport':
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$prepare->get();
+				$total = count($prepare);
+				$special = true;
+				break;
     		default:
     			return;
     	}
@@ -6363,7 +6395,6 @@ class ReportsPresenter extends PresenterCore
     		$data['max_limit'] = false;
     		$data['staggered'] = [];
     	}
-    	
     	return response()->json($data);
     }
     
@@ -6581,7 +6612,7 @@ class ReportsPresenter extends PresenterCore
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
     	$reference = $this->request->get('reference');
-    
+
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
@@ -6591,6 +6622,23 @@ class ReportsPresenter extends PresenterCore
     
     	return $filters;
     }
+
+	/**
+	 * Get Summary of incidents report filters.
+     */
+	public function getSummaryOfIncidentReportFilterData()
+	{
+		$name = (ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first()->full_name) ?: 'All';
+		$branch = (ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first()->area_name) ?: 'All';
+		$incident_no = ($this->request->get('incident_no')) ?: 'All';
+		$filters = [
+			'Name'         => $name,
+			'Branch'       => $branch,
+			'Incident No.' => $incident_no,
+		];
+
+		return $filters;
+	}
     
     
     /**
