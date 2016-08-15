@@ -50,12 +50,15 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/getemails/{id?}', ['as'=>'user-get-emails', 'uses'=>'UserPresenter@getUserEmails']);
 	Route::get('/getusernames/{id?}', ['as'=>'user-get-usernames', 'uses'=>'UserPresenter@getUsernames']);
 	Route::get('/list', ['as'=>'user-list', 'uses'=>'UserPresenter@userList']);
+	Route::get('/contactus', ['as'=>'user-contact-us', 'uses'=>'UserPresenter@contactUs']);
+	Route::get('/summaryofincidentreport', ['as'=>'user-summary-of-incident-report', 'uses'=>'UserPresenter@summaryOfIncidentReport']);
 	Route::get('/addEdit', ['as'=>'user-add-edit', 'uses'=>'UserPresenter@addEdit']);
 	Route::get('/edit', ['as'=>'user-edit', 'uses'=>'UserPresenter@edit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 	Route::get('/myprofile', ['as'=>'user-profile', 'uses'=>'UserPresenter@myProfile']);
 });
 
+	Route::get('contact-us', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -68,7 +71,7 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
 	Route::get('/reports/sync', ['as'=>'report-sync', 'uses'=>'ReportsController@sync']);
-
+	Route::get('/user/generate/{code}', ['as'=>'user-generate-jr-salesman-code', 'uses'=>'UserController@getJrSalesmanCode']);
 	Route::get('/user/activate/{id}', ['as'=>'user-activate', 'uses'=>'UserController@activate']);
 	Route::get('/user/deactivate/{id}', ['as'=>'user-deactivate', 'uses'=>'UserController@deactivate']);
 	Route::get('/user/delete/{id}', ['as'=>'user-delete', 'uses'=>'UserController@delete']);
@@ -77,6 +80,8 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	//Route::get('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
+	Route::post('/user/contact', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUs']);
+
 });
 
 
