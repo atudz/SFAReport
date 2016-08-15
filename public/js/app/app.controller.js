@@ -1716,19 +1716,38 @@
 			else
 				scope.req_salesman = 'hidden';
 		};
+
 		$('#salesman_code, #role ').bind('keyup change', function () {
 			if ($('#role').val() == 4) {
 				$('#span_salesman').removeClass('hidden');
 				if ($('#salesman_code').val() != '') {
-					$('#jr_salesman_code').prop('disabled', false);
-				} else {
-					$('#jr_salesman_code').prop('disabled', true);
-					$('#jr_salesman_code').val('');
-
+					$('#checkbox_jr_salesman').prop('disabled', false);
 				}
 			} else {
+				if ($('#checkbox_jr_salesman').is(':checked')) {
+					$('#checkbox_jr_salesman').trigger('click');
+				}
+				$('#checkbox_jr_salesman').prop('disabled', true);
+				$('#checkbox_jr_salesman').attr('checked', false);
 				$('#span_salesman').addClass('hidden');
 			}
+		});
+
+		$('#checkbox_jr_salesman').on('click', function () {
+			if ($(this).is(':checked')) {
+				$('#salesman_code').prop('disabled', true);
+				var API = resource('/controller/user/generate/' + $('#salesman_code').val());
+				API.get({}, function (data) {
+					scope.jr_salesman_code = data.result;
+					$('#label_jr_salesman_code').html(scope.jr_salesman_code);
+				});
+			}
+			else {
+				$('#salesman_code').prop('disabled', false);
+				$('#label_jr_salesman_code').html('');
+				scope.jr_salesman_code = '';
+			}
+
 		});
 
 		scope.save = function(edit,profile){
@@ -1900,40 +1919,14 @@
 				       role: $('#role').val(),
 				       area: $('#area').val(),
 				       salesman_code: $('#salesman_code').val(),
-						jr_salesman_code: $('#jr_salesman_code').val(),
+						jr_salesman_code: scope.jr_salesman_code,
 				       assignment_type: $('#assignment_type').val(),
 				       assignment_date_from: $('#assignment_date_from').val(),
 				       assignment_date_to: $('#assignment_date_to').val()
 				};
-				
-				//check if the new user is van salesman.
-				if($.trim($('#salesman_code').val()) && $('#role').val() == 4){
-					if(!$('#jr_salesman_code').val()){
-
-						var params = {
-							items: items, message: 'Are you a Jr. Salesman?'
-						};
-						var modalInstance = modal.open({
-							animation: true,
-							templateUrl: 'Confirm',
-							controller: 'Confirm',
-							windowClass: 'center-modal',
-							size: 'sm',
-							resolve: {
-								params: function () {
-									return params;
-								}
-							}
-						});
-						return false;
-
-					}
-				}
 
 				API = resource('controller/user/save');
-				//log.info(params);
 				API.save(items, function(data){
-					//log.info(data);
 					if(data.error)
 					{
 						locationErrorList = '<ul>'+data.error+'</ul>';
@@ -2037,9 +2030,6 @@
 				    	//$log.info(data);
 				    });
 					break;
-				//case 'validate':
-				//	alert('wew');
-				//	break;
 			}
 
 			$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
@@ -2173,48 +2163,6 @@
 		//$log.info(params);
 
 		$scope.cancel = function () {
-			$uibModalInstance.dismiss('cancel');
-		};
-
-	};
-
-	/**
-	 * User Action Controller
-	 */
-	app.controller('Confirm',['$scope','$uibModalInstance','$window', '$resource','params', '$location','$log', Confirm]);
-
-	function Confirm($scope, $uibModalInstance, $window, $resource, params, $location, $log) {
-		$scope.params = params;
-		$scope.ok = function () {
-
-			$('#jr_salesman_code').focus();
-			$uibModalInstance.dismiss('cancel');
-		};
-
-		$scope.cancel = function () {
-			var API = $resource('controller/user/save');
-			API.save(params.items, function (data) {
-				if (data.error) {
-					var locationErrorList = '<ul>' + data.error + '</ul>';
-					$scope.personalInfoError = false;
-					$scope.locationInfoError = false;
-					if (data.exists) {
-						var errorId = '#error_list_personal'
-						$scope.personalInfoError = true;
-					}
-					else {
-						var errorId = '#error_list_location';
-						$scope.locationInfoError = true;
-					}
-
-					$(errorId).html(locationErrorList);
-
-					$scope.success = false;
-				} else {
-					$scope.success = true;
-					$location.path('user.list');
-				}
-			});
 			$uibModalInstance.dismiss('cancel');
 		};
 

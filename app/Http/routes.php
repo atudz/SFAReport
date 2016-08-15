@@ -68,7 +68,7 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/login', ['as'=>'userlogin', 'uses'=>'AuthController@authenticate']);
 	Route::post('/reports/save', ['as'=>'report-save', 'uses'=>'ReportsController@save']);
 	Route::get('/reports/sync', ['as'=>'report-sync', 'uses'=>'ReportsController@sync']);
-
+	Route::get('/user/generate/{code}', ['as'=>'user-generate-jr-salesman-code', 'uses'=>'UserController@getJrSalesmanCode']);
 	Route::get('/user/activate/{id}', ['as'=>'user-activate', 'uses'=>'UserController@activate']);
 	Route::get('/user/deactivate/{id}', ['as'=>'user-deactivate', 'uses'=>'UserController@deactivate']);
 	Route::get('/user/delete/{id}', ['as'=>'user-delete', 'uses'=>'UserController@delete']);
