@@ -269,12 +269,16 @@ class UserController extends ControllerCore
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
 		$data['time_from'] = $request->get('callFrom');
 		$data['time_to'] = $request->get('callTo');
+		
+		// use the variable email_message to avoid error.
+		// Object of class Illuminate\Mail\Message could not be converted to string.
+		$data['email_message'] = $contactUs->message;
 
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
 		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
-			$message->to('testmailgun101@gmail.com');
+			$message->to(config('system.from'));
 			$message->subject($data['subject']);
 		});
 		//reply email to sender.
