@@ -167,6 +167,13 @@ class UserPresenter extends PresenterCore
 		}
 
 		if ($this->request->has('date_range_from') && $this->request->get('date_range_from') != '' && $this->request->has('date_range_to') && $this->request->has('date_range_to') != '') {
+			if ($this->request->get('date_range_from') > $this->request->has('date_range_to')) {
+				$response['exists'] = true;
+				$response['error'] = 'Invalid date range.';
+
+				return response()->json($response);
+			}
+
 			$filterDateRange = FilterFactory::getInstance('DateRange');
 			$summary = $filterDateRange->addFilter($summary, 'date_range', function ($self, $model) {
 				return $model->whereBetween('created_at', $self->formatValues($self->getValue()));
