@@ -11,10 +11,10 @@
                         {!!Html::input('text','name','Name <span class="required">*</span>','', ['ng-model' => 'contact.name'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {!!Html::input('text','mobile','Mobile Number. <span class="required">*</span>','', ['ng-model' => 'contact.mobile'])!!}
+                        {!!Html::input('text','mobile','Mobile Number <span class="required">*</span>','', ['ng-model' => 'contact.mobile'])!!}
                     </div>
                     <div class="row form-input-field text-left">
-                        {!!Html::input('text','telephone','Telephone Number. <span class="required">*</span>','', ['ng-model' => 'contact.telephone'])!!}
+                        {!!Html::input('text','telephone','Telephone Number <span class="required">*</span>','', ['ng-model' => 'contact.telephone'])!!}
                     </div>
                     <div class="row form-input-field text-left">
                         {!!Html::input('text','email','Email <span class="required">*</span>','', ['ng-model' => 'contact.email'])!!}

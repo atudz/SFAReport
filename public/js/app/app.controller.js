@@ -1742,10 +1742,10 @@
 				contactErrors.push('Name is a required field.');
 			}
 			if (contact.mobile == '') {
-				contactErrors.push('Mobile phone no. is a required field.');
+				contactErrors.push('Mobile number is a required field.');
 			}
 			if (contact.telephone == '') {
-				contactErrors.push('Telephone no. is a required field.');
+				contactErrors.push('Telephone number is a required field.');
 			}
 			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			if(contact.email && !rgxEmail.test(contact.email))
