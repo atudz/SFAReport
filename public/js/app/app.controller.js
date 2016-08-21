@@ -1789,6 +1789,7 @@
 
 		// Fetch table data from server
 		$scope.records = [];
+		$scope.error = false;
 
 		$scope.API = $resource('/reports/getdata/summaryofincidentreport');
 
@@ -1808,10 +1809,19 @@
 				date_range_from: $('#date_range_from').val(),
 				date_range_to: $('#date_range_to').val()
 			};
-			$scope.API.save(params, function (data) {
-				$scope.records = data.records;
-				$scope.total = data.total;
-			})
+			$scope.validate();
+			if (!$scope.error) {
+				$scope.API.save(params, function (data) {
+					$scope.records = data.records;
+					$scope.total = data.total;
+				})
+			}
+		};
+		$scope.validate = function () {
+			if ($('#date_range_from').val() > $('#date_range_to').val()) {
+				$scope.error = true;
+				$('#error_filter_contact').html('<ul><li>Invalid date range.</li></ul>');
+			}
 		};
 		var params = [
 			'name',
