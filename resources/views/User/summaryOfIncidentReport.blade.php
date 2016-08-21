@@ -19,8 +19,8 @@
                 {!!Html::topen(['no_download'=>$isGuest2,'no_loading'=>true])!!}
                 {!!Html::theader($tableHeaders)!!}
                 <tbody>
-                <tr ng-repeat="record in records |filter:query" ng-if="records.length != 0">
-                    <td class="bold">[[ record.id ]]</td>
+                <tr ng-repeat="record in records |filter:query | orderBy:propertyName:reverse" ng-if="records.length != 0">
+                    <td class="bold">[[ record.id | number ]]</td>
                     <td class="bold">[[ record.message | limitTo: 20 ]] [[ record.message.length > 40 ? '...' : '' ]]</td>
                     <td class="bold">[[ record.status ]]</td>
                     <td class="bold">[[ record.full_name ]]</td>

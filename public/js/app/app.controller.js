@@ -1786,6 +1786,8 @@
 	function SummaryOfIncidentReport($scope, $resource, $routeParams, $window, $location, $uibModal, $log) {
 		// Filter flag
 		$scope.toggleFilter = true;
+		$scope.propertyName = 'id';
+		$scope.reverse = true;
 
 		// Fetch table data from server
 		$scope.records = [];
@@ -1797,6 +1799,13 @@
 		$scope.API.get({}, function (data) {
 			$scope.records = data.records;
 			$scope.total = data.total;
+
+			// this function will convert id string to int.
+			// for proper sorting of id.
+			angular.forEach($scope.records, function (record) {
+				record.id = parseInt(record.id);
+			});
+
 			toggleLoading();
 			togglePagination(data.total);
 		});
@@ -1826,6 +1835,10 @@
 				$scope.error = true;
 				$('#error_filter_contact').html('<ul><li>Invalid date range.</li></ul>');
 			}
+		};
+		$scope.sort = function(propertyName) {
+			$scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
+			$scope.propertyName = propertyName;
 		};
 		var params = [
 			'name',
