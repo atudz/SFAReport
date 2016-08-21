@@ -92,7 +92,7 @@ class UserController extends ControllerCore
 		}
 
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		if ($request->get('salesman_code') && $exist) {
+		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
 
