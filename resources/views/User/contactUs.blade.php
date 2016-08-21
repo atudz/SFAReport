@@ -6,6 +6,10 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="col-sm-8 well">
+                    <div class="pull-left col-md-12 alert alert-success" ng-show="success" style="margin-bottom:10px;padding-left:0px;">
+                        <button type="button" class="close" aria-label="Close" ng-click="success = !success"><span aria-hidden="true">&times;</span></button>
+                        <div class="error-list">Successfully sent.</div>
+                    </div>
                     {!!Html::error('error','error_list_contact')!!}
                     <div class="row form-input-field text-left">
                         {!!Html::input('text','name','Name <span class="required">*</span>','', ['ng-model' => 'contact.name'])!!}
