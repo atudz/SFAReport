@@ -1421,10 +1421,23 @@
 	    	created_at_to: 'created_at_to'
 	    };
 
-	    //Sort table records
-	    $scope.sortColumn = '';
-		$scope.sortDirection = 'asc';
-		sortColumn($scope,API,params,$log);
+        //Sort table records
+        // $scope.sortColumn = '';
+        // $scope.sortDirection = 'asc';
+        // sortColumn($scope,API,params,$log);
+
+		// This function and variable will sort the list of user's.
+		$scope.propertyName = 'fullname';
+		$scope.reverse = false;
+		$scope.sort = function (propertyName) {
+			if(propertyName == 'lastname'){
+				propertyName = 'fullname';
+			}
+			$scope.reverse = (propertyName !== null && $scope.propertyName === propertyName)
+				? !$scope.reverse : false;
+			$scope.propertyName = propertyName;
+			$scope.friends = orderBy(friends, $scope.propertyName, $scope.reverse);
+		};
 
 	    // Filter table records
 	    filterSubmit($scope,API,params,$log);
