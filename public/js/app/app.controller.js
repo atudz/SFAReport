@@ -1711,7 +1711,7 @@
 			dropdown: true,
 			scrollbar: true
 		});
-
+		$scope.success = false;
 		$scope.error = false;
 		$scope.contact = {
 			name: '',
@@ -1730,7 +1730,9 @@
 			$scope.validate($scope.contact);
 			if (!$scope.error) {
 				var API = $resource('controller/user/contact');
-				API.save($scope.contact, function (data) {});
+				API.save($scope.contact, function (data) {
+					$scope.success = true;
+				});
 			}
 		};
 
