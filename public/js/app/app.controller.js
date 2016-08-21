@@ -2159,7 +2159,11 @@
 					break;
 				case 'deactivate':
 			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);
-				    API.get();
+				    API.get({}, function () {
+						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+							$("#table_success").slideUp(500);
+						});
+					});
 				    $scope.$parent.records[$scope.params.row].active = false;
 					break;
 				case 'delete':
