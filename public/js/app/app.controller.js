@@ -1802,6 +1802,8 @@
 		});
 
 		$scope.filter = function () {
+			toggleLoading(true);
+			$scope.toggleFilter = true;
 			var params = {
 				name: $('#name').val(),
 				branch: $('#branch').val(),
@@ -1814,6 +1816,8 @@
 				$scope.API.save(params, function (data) {
 					$scope.records = data.records;
 					$scope.total = data.total;
+					toggleLoading();
+					togglePagination(data.total);
 				})
 			}
 		};
