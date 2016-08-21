@@ -35,7 +35,7 @@
 					{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<!-- Record list -->
-						<tr ng-repeat="record in records|filter:query" id="[[record.id]]">
+						<tr ng-repeat="record in records | filter:query | orderBy:propertyName:reverse" id="[[record.id]]">
 							<td>[[record.fullname]]</td>
 							<td>[[record.email]]</td>
 							<td>[[record.role]]</td>
