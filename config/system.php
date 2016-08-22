@@ -13,7 +13,7 @@ return [
 	'error_email' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com',
 
 	// System default email from
-	'from' => 'Sunpride Admin',
+	'from' => 'nstech.adm1n@gmail.com, nstech.us3r@gmail.com, nstech.t3st@gmail.com',
 		
 	// System default email
 	'from_email' => 'noreply@sunpride.com',
