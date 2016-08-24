@@ -6634,9 +6634,9 @@ class ReportsPresenter extends PresenterCore
 		$branch = ($branch) ? $branch->area_name : 'All';
 		$incident_no = ($this->request->get('incident_no')) ?: 'All';
 		$filters = [
-			'Name'         => $name,
-			'Branch'       => $branch,
-			'Incident No.' => $incident_no,
+			'Full Name'     => $name,
+			'Branch'        => $branch,
+			'Incident #'    => $incident_no,
 		];
 
 		return $filters;
