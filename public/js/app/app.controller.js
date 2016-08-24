@@ -2193,6 +2193,9 @@
 				    API.get({},function(data){
 				    	$('#'+$scope.params.id).remove();
 				    	//$log.info(data);
+						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+							$("#table_success").slideUp(500);
+						});
 				    });
 					break;
 			}
