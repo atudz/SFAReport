@@ -1783,9 +1783,9 @@
 	/**
 	 * User Incident report controller
 	 */
-	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams', '$window', '$uibModal', '$location', '$log', SummaryOfIncidentReport]);
+	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams','$uibModal', '$window', '$location', '$log', SummaryOfIncidentReport]);
 
-	function SummaryOfIncidentReport($scope, $resource, $routeParams, $window, $location, $uibModal, $log) {
+	function SummaryOfIncidentReport($scope, $resource, $routeParams, $uibModal, $window, $location, $log) {
 		// Filter flag
 		$scope.toggleFilter = true;
 		$scope.propertyName = 'id';
@@ -1864,7 +1864,7 @@
 		scope.roleId = 1;
 		scope.change = function(){
 			log.info(scope.roleId);
-		}
+		};
 
 		scope.req_salesman = 'hidden';
 		scope.role = 1;

@@ -6352,8 +6352,7 @@ class ReportsPresenter extends PresenterCore
     			break;
 			case 'summaryofincidentsreport':
 				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
-				$prepare->get();
-				$total = count($prepare);
+				$total = count($prepare->get());
 				$special = true;
 				break;
     		default:
