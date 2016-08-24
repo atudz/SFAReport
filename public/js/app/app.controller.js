@@ -1839,6 +1839,9 @@
 			}
 		};
 		$scope.sort = function(propertyName) {
+			if(propertyName == 'name'){
+				propertyName = 'full_name';
+			}
 			$scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
 			$scope.propertyName = propertyName;
 		};
