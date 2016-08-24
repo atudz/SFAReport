@@ -27,7 +27,7 @@
                                    style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6em; color: #1919ff; margin: 0; padding: 0;">no-reply@sunpride
                                     .com</a></p>
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                To: {!! $name !!}</p>
+                                To: {!! $full_name !!}</p>
                             <img src="http://s3.amazonaws.com/save22.com-retailer-banner-picture/319831_331827250256910_1832915880_n.jpg"
                                  alt="sunpride" title="sunpride" style="width: 600px; margin: auto;">
                             <!-- button -->
@@ -37,7 +37,7 @@
                                     <td style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; line-height: 1.6em; border-radius: 25px; text-align: left; vertical-align: top;  margin: 0; padding: 0;"
                                         align="center" valign="top">
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                            Hi {!! $name !!}</p>
+                                            Hi {!! $full_name !!}</p>
                                         <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6em; font-weight: normal; margin: 0 0 10px; padding: 0;">
                                             Greetings!</p>
                                         <article>
