@@ -1767,7 +1767,6 @@
 			if (contact.message == '') {
 				contactErrors.push('Message is a required field.');
 			}
-
 			if (contactErrors.length > 0) {
 				contactErrorList = '<ul>';
 				for (var i = 0; i < contactErrors.length; i++) {
@@ -1813,8 +1812,7 @@
 		});
 
 		$scope.filter = function () {
-			toggleLoading(true);
-			$scope.toggleFilter = true;
+			$scope.error = false;
 			var params = {
 				name: $('#name').val(),
 				branch: $('#branch').val(),
@@ -1824,7 +1822,9 @@
 			};
 			$scope.validate();
 			if (!$scope.error) {
+				toggleLoading(true);
 				$scope.API.save(params, function (data) {
+					$scope.toggleFilter = true;
 					$scope.records = data.records;
 					$scope.total = data.total;
 					toggleLoading();
