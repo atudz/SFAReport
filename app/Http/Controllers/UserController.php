@@ -90,9 +90,11 @@ class UserController extends ControllerCore
 				return response()->json($response);
 			}
 		}
+		$appSalesmanModel = ModelFactory::getInstance('AppSalesman');
+		$appSalesmanExists = $appSalesmanModel->where('salesman_code', $request->get('salesman_code'))->where('salesman_id','<>',$id)->exists();
 
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist) {
+		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist || $appSalesmanExists) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
 
