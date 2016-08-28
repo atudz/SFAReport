@@ -269,8 +269,12 @@ class UserPresenter extends PresenterCore
 		$prepare = \DB::table('user')
 						->selectRaw($select)
 						->leftJoin('user_group','user.user_group_id','=','user_group.id')
-						->leftJoin('app_area','app_area.area_code','=','user.location_assignment_code');		
-		 
+						->leftJoin('app_area','app_area.area_code','=','user.location_assignment_code');
+		
+		if ($this->request->has('sort') || $this->request->has('order')) {
+			$sort = $this->request->get('sort') != 'lastname' ? $this->request->get('sort') : 'fullname';
+			$prepare->orderBy($sort, $this->request->get('order'));
+		}
 		$fnameFilter = FilterFactory::getInstance('Text');
 		$prepare = $fnameFilter->addFilter($prepare,'fullname', function($filter, $model){
 						return $model->where(function ($query) use ($filter){
