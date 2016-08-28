@@ -28,4 +28,12 @@ class ContactUs extends ModelCore
     {
         return $this->belongsTo('App\Http\Models\User', 'user_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function areas()
+    {
+        return $this->hasMany('App\Http\Models\AppArea', 'area_code', 'location_assignment_code');
+    }
 }
