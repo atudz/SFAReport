@@ -5489,6 +5489,7 @@ class ReportsPresenter extends PresenterCore
     	$textSize = '12px';
     	$vaninventory = false;
     	$salesSummary = false;
+		$summaryOfIncident = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
@@ -5771,6 +5772,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Summary Of Incident Report';
 				$filters = $this->getSummaryOfIncidentReportFilterData();
 				$filename = 'Summary Of Incident Report';
+				$summaryOfIncident = true;
 				break;
     		default:
     			return;
@@ -5789,6 +5791,11 @@ class ReportsPresenter extends PresenterCore
 	    	{
 	    		$records = $this->populateScrInvoice($records);
 	    	}
+			if($summaryOfIncident){
+				foreach($records as $record){
+					$record->location_assignment_code = $record->areas[0]->area_name;
+				}
+			}
     	}
     	//dd($rows);
     	//dd($filters);
@@ -6161,9 +6168,13 @@ class ReportsPresenter extends PresenterCore
 	{
 		return [
 			'id',
+			'subject',	
 			'message',
+			'action',
 			'status',
 			'full_name',
+			'location_assignment_code',
+			'created_at'
 		];
 	}
     
@@ -6629,18 +6640,27 @@ class ReportsPresenter extends PresenterCore
 
 	/**
 	 * Get Summary of incidents report filters.
-     */
+	 */
 	public function getSummaryOfIncidentReportFilterData()
 	{
-		$name = ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first();
+		$name = ModelFactory::getInstance('ContactUs')->where('full_name',
+			$this->request->get('name'))->distinct()->first();
 		$name = ($name) ? $name->full_name : 'All';
-		$branch = ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first();
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code', $this->request->get('branch'))->first();
 		$branch = ($branch) ? $branch->area_name : 'All';
 		$incident_no = ($this->request->get('incident_no')) ?: 'All';
+		$subject = ($this->request->get('subject')) ?: 'All';
+		$action = ($this->request->get('action')) ?: 'All';
+		$status = ($this->request->get('status')) ?: 'All';
+		$date = ($this->request->get('date_range_from') && $this->request->get('date_range_to')) ? $this->request->get('date_range_from') . ' - ' . $this->request->get('date_range_to') : 'All';
 		$filters = [
-			'Full Name'     => $name,
-			'Branch'        => $branch,
-			'Incident #'    => $incident_no,
+			'Reporter'   => $name,
+			'Branch'     => $branch,
+			'Incident #' => $incident_no,
+			'Subject'    => $subject,
+			'Action'     => $action,
+			'Status'     => $status,
+			'Date'       => $date
 		];
 
 		return $filters;

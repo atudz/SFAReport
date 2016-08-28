@@ -150,7 +150,7 @@ class UserPresenter extends PresenterCore
 	 */
 	public function getPreparedSummaryOfIncidentReportList($withCode = true)
 	{
-		$summary = ModelFactory::getInstance('ContactUs')->with('users');
+		$summary = ModelFactory::getInstance('ContactUs')->with('users')->with('areas');
 		if ($this->request->has('name') && !is_numeric($this->request->get('name'))) {
 			$filterName = FilterFactory::getInstance('Text');
 			$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
@@ -171,6 +171,26 @@ class UserPresenter extends PresenterCore
 				return $model->where('id', $self->getValue());
 			});
 		}
+		if ($this->request->has('subject') && $this->request->get('subject') != '') {
+			$filterSubject = FilterFactory::getInstance('Text');
+			$summary = $filterSubject->addFilter($summary, 'subject', function ($self, $model) {
+				return $model->where('subject', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('action') && $this->request->get('action') != '') {
+			$filterAction = FilterFactory::getInstance('Text');
+			$summary = $filterAction->addFilter($summary, 'action', function ($self, $model) {
+				return $model->where('action', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('status') && $this->request->get('status') != '') {
+			$filterStatus = FilterFactory::getInstance('Text');
+			$summary = $filterStatus->addFilter($summary, 'status', function ($self, $model) {
+				return $model->where('status', $self->getValue());
+			});
+		}
 
 		if ($this->request->has('date_range_from') && $this->request->get('date_range_from') != '' && $this->request->has('date_range_to') && $this->request->has('date_range_to') != '') {
 			if ($this->request->get('date_range_from') > $this->request->has('date_range_to')) {
@@ -186,7 +206,14 @@ class UserPresenter extends PresenterCore
 			});
 		}
 		if ($withCode) {
-			return $summary->orderBy('created_at', 'desc')->get();
+//			return $summary->get();
+//=======
+			$records = $summary->orderBy('created_at', 'desc')->get();
+			foreach($records as $record){
+				$record->location_assignment_code = $record->areas[0]->area_name;
+			}
+			return $records;
+//>>>>>>> add new columns in filter download for contact us
 		} else {
 			return $summary;
 		}
@@ -377,10 +404,15 @@ class UserPresenter extends PresenterCore
 	public function getIncidentReportTableColumns()
 	{
 		$headers = [
-			['name'=>'Incident #', 'sort'=>'id'],
-			['name'=>'Summary', 'sort'=>'message'],
-			['name'=>'Status', 'sort'=>'status'],
-			['name'=>'Submitted By', 'sort'=>'name']
+			['name' => 'Incident #', 'sort' => 'id'],
+			['name' => 'Subject', 'sort' => 'subject'],
+			['name' => 'Summary', 'sort' => 'message'],
+			['name' => 'Action', 'sort' => 'action'],
+			['name' => 'Status', 'sort' => 'status'],
+			['name' => 'Reported By', 'sort' => 'name'],
+			['name' => 'Branch', 'sort' => 'location_assignment_code'],
+			['name' => 'Date', 'sort' => 'created_at']
+
 		];
 
 		return $headers;
