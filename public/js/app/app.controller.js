@@ -1852,6 +1852,9 @@
 			var params = {
 				name: $('#name').val(),
 				branch: $('#branch').val(),
+				subject: $('#subject').val(),
+				action: $('#action').val(),
+				status: $('#status').val(),
 				incident_no: $('#incident_no').val(),
 				date_range_from: $('#date_range_from').val(),
 				date_range_to: $('#date_range_to').val()
@@ -1889,6 +1892,9 @@
 			'name',
 			'branch',
 			'incident_no',
+			'subject',
+			'action',
+			'status',
 			'date_range_from',
 			'date_range_to'
 		];
