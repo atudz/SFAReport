@@ -96,7 +96,7 @@ class UserController extends ControllerCore
 
 		//this will check if the salesman code exists in app salesman.
 		$salesmanCodeExists = $appSalesmanRaw->exists();
-		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && !$salesmanCodeExists) {
+		if ((($request->has('jr_salesman_code') || $request->get('salesman_code')) && !$salesmanCodeExists)) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code does not exists in master list.';
 
@@ -107,9 +107,17 @@ class UserController extends ControllerCore
 		$appSalesmanExists = $appSalesmanRaw->where('Status','A')->exists();
 
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist || $appSalesmanExists) {
+		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist || $appSalesmanExists)) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
+
+			return response()->json($response);
+		}
+
+		//this will check if the salesman code is inactive. this will be used for validation for jr salesman.
+		if (($request->has('jr_salesman_code') && $request->get('salesman_code')) && !$appSalesmanExists) {
+			$response['exists'] = true;
+			$response['error'] = 'The salesman code that you\'ve entered is already been inactive.';
 
 			return response()->json($response);
 		}
