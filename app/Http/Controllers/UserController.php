@@ -90,9 +90,24 @@ class UserController extends ControllerCore
 				return response()->json($response);
 			}
 		}
+		$appSalesmanModel = ModelFactory::getInstance('AppSalesman');
+		//this will query a raw value to app salesman model.
+		$appSalesmanRaw = $appSalesmanModel->where('salesman_code', $request->get('salesman_code'));
+
+		//this will check if the salesman code exists in app salesman.
+		$salesmanCodeExists = $appSalesmanRaw->exists();
+		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && !$salesmanCodeExists) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code does not exists in master list.';
+
+			return response()->json($response);
+		}
+
+		//this will check if the code is already been used. it will be determined using column name status as active or A.
+		$appSalesmanExists = $appSalesmanRaw->where('Status','A')->exists();
 
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist) {
+		if (!$request->has('jr_salesman_code') && $request->get('salesman_code') && $exist || $appSalesmanExists) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
 
