@@ -100,22 +100,32 @@ class ReportsController extends ControllerCore
 				if($reference)		
 					$prepare->where('reference_num',$reference);
 				
-				$prepare->lockForUpdate()->update([
+				$updated = $prepare->lockForUpdate()->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 				]);
+				
+				if(!$updated)
+					$updated = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
+													$column => $value,
+													'updated_at' => new \DateTime(),
+													'updated_by' => auth()->user()->id,
+								]);
 					
-				$insertData[] = [
-						'table' => 'txn_collection_invoice',
-						'column' => $column,
-						'pk_id' => $data1->collection_invoice_id,
-						'before' => $data1->invoice_number,
-						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
-						'updated_at' => new \DateTime(),
-						'created_at' => new \DateTime(),
-						'updated_by' => auth()->user()->id,
-				];
+				if($updated)
+				{
+					$insertData[] = [
+							'table' => 'txn_collection_invoice',
+							'column' => $column,
+							'pk_id' => $data1->collection_invoice_id,
+							'before' => $data1->invoice_number,
+							'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+							'updated_at' => new \DateTime(),
+							'created_at' => new \DateTime(),
+							'updated_by' => auth()->user()->id,
+					];
+				}
 			}			
 			
 			
