@@ -2369,8 +2369,8 @@ class ReportsPresenter extends PresenterCore
     			
     			$val = $stockOnHand[$code];
     			if(false !== strpos($val, '('))
-    				$val = '-' . str_replace(['(',')'], '', $val);
-    			$shortOverStocks[$code] = isset($replenishment->{$code}) ? $replenishment->{$code} - $val : (int)$val;
+    				$val = (int)str_replace(['(',')'], '', $val) * -1;
+    			$shortOverStocks[$code] = isset($replenishment->{$code}) ? $replenishment->{$code} - (int)$val : (0 - (int)$val);
     		}    		
     	}
     	
