@@ -41,6 +41,8 @@
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!number_format($record->$row,2,'.',',')!!}	
+								@elseif(ctype_alnum($record->$row))
+									{!!strtoupper($record->$row)!!}
 								@else
 									{!!$record->$row!!}
 								@endif
@@ -49,9 +51,11 @@
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!number_format($record[$row],2,'.',',')!!}	
+								@elseif(ctype_alnum($record[$row]))
+									{!!strtoupper($record[$row])!!}
 								@else
 									{!!$record[$row]!!}
-								@endif									
+								@endif								
 							@endif
 						</td>
 					@endforeach
