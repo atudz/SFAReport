@@ -6590,7 +6590,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$filters = [
     			'Salesman' => $salesman,
-    			'Company' => $company,
+    			'Company Code' => $company,
     			'Customer' => $customer,
     			'Invoice Date' => $invoiceDate,
     			'Invoice #' => $invoiceNum,
