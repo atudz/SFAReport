@@ -137,7 +137,7 @@
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
+									{!!$record->$row!!}	
 								@else
 									{!!$record->$row!!}
 								@endif
@@ -145,7 +145,7 @@
 								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
+									{!!$record->$row!!}	
 								@else
 									{!!$record[$row]!!}
 								@endif									
