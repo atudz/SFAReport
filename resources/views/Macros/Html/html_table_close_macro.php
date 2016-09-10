@@ -1,5 +1,4 @@
 <?php
-
 Html::macro('tclose', function($paginate=true) {
 
 	$html = '</table>';
@@ -13,48 +12,89 @@ Html::macro('tclose', function($paginate=true) {
     		</script>
 			
 			<script type="text/ng-template" id="EditColumnText">
-        		<div class="modal-body">			
-					<p>[[params.name]]</p>	
-					<form class="form-inline">
-				         <div class="form-group">
-							<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control input-sm" step="[[params.step]]">
-						 </div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
-					</form>   										 					
+        		<div class="modal-body">
+	        		 <form class="form-horizontal">
+	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+	        		 <p>EDIT [[params.name]]</p>
+						  <div class="form-group">
+							    <label class="control-label col-sm-3"></label>
+							    <div class="col-sm-9">
+							      	<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control" step="[[params.step]]">
+							    </div>
+						  </div>
+						  <div class="form-group">
+							    <label class="control-label col-sm-3">Remarks:</label>
+							    <div class="col-sm-9">
+							      	<textarea class="form-control" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.type]]</textarea>
+							    </div>
+						  </div>
+						  <div class="form-group">
+						    <div class="col-sm-offset-3 col-sm-9">
+						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+						    </div>
+						  </div>
+					</form>										 					
 				</div>			    			
     		</script>
 			
 			<script type="text/ng-template" id="EditColumnSelect">
         		<div class="modal-body">
-					<p>[[params.name]]</p>					
-					<form class="form-inline">
-				         <div class="form-group">
-							<select class="form-control" ng-model="params.value">
-							  <option ng-repeat="option in params.selectOptions">[[option]]</option>							  
-							</select>
-						 </div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
-					</form>   										 					
+        			<form class="form-horizontal">
+        			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+	        		 	<p>EDIT [[params.name]]</p>
+						<div class="form-group">
+						    <label class="control-label col-sm-3"></label>
+						    <div class="col-sm-9">
+						      	<select class="form-control" ng-model="params.value">
+								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+								</select>
+						    </div>
+						</div>
+						<div class="form-group">
+						    <label class="control-label col-sm-3">Remarks:</label>
+						    <div class="col-sm-9">
+						      	<textarea class="form-control" name="comment" rows="5" id="comment"></textarea>
+						    </div>
+						</div>
+						<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-9">
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+						</div>
+						</div>
+					</form>  										 					
 				</div>			    			
     		</script>
 
 			<script type="text/ng-template" id="EditColumnDate">
-        		<div class="modal-body">		
-					<p>[[params.name]]</p>			
-					<form class="form-inline">
-				         <div class="form-group">
-							<div class="col-sm-8" data-ng-controller="EditableColumnsCalendar" style="padding-left:0px;margin-left:0px;">
-							 	<p class="input-group">
+        		<div class="modal-body">
+        			<form class="form-horizontal">
+        			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+	        		 	<p>EDIT [[params.name]]</p>	
+						<div class="form-group">
+						    <label class="control-label col-sm-3"></label>
+						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
+						      	<p class="input-group col-sm-12">
 									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
 							 		<span class="input-group-btn">
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
 							 		</span>
 							 	</p>
-						 	</div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
+						    </div>
+						</div>
+						<div class="form-group">
+						    <label class="control-label col-sm-3">Remarks:</label>
+						    <div class="col-sm-9">
+						      	<textarea class="form-control" name="comment" rows="5" id="comment"></textarea>
+						    </div>
+						</div>
+						<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-9">
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+						</div>
+						</div>
 					</form>   										 					
 				</div>			    			
     		</script>
@@ -62,7 +102,7 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p>[[params.message]]</p>			
+					<p>EDIT [[params.message]]</p>			
 					<form class="form-inline">				         
 						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
