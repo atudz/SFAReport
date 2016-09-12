@@ -179,7 +179,7 @@ class UserPresenter extends PresenterCore
 			});
 		}
 		if ($withCode) {
-			return $summary->get();
+			return $summary->orderBy('created_at', 'desc')->get();
 		} else {
 			return $summary;
 		}
