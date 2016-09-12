@@ -53,6 +53,10 @@
                     <div class="row form-input-field text-left">
                         {!!Html::text('message','Message <span class="required">*</span>','', ['ng-model' => 'contact.message'])!!}
                     </div>
+                    <div class="row form-input-field text-left">
+                        <label class="control-label">Select an image file:</label>
+                        <input type="file" class="form-control" nv-file-select uploader="uploader" />
+                    </div>
                 </div>
 
                 <div class="rs-mini-toolbar">
