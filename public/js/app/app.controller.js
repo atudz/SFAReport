@@ -1829,13 +1829,14 @@
 					$scope.total = data.total;
 					toggleLoading();
 					togglePagination(data.total);
+					$('#date_range_error').addClass('hide');
 				})
 			}
 		};
 		$scope.validate = function () {
 			if ($('#date_range_from').val() > $('#date_range_to').val()) {
 				$scope.error = true;
-				$('#error_filter_contact').html('<ul><li>Invalid date range.</li></ul>');
+				$('#date_range_error').removeClass('hide');
 			}
 		};
 		$scope.sort = function(propertyName) {
