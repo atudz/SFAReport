@@ -76,6 +76,8 @@
 
 	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{
+		$scope.propertyName = 'id';
+		$scope.reverse = true;
 	    var params = [
 		          'company_code',
 		          'invoice_date_from',
@@ -83,6 +85,11 @@
 		          'area'
 
 		];
+
+		$scope.sort = function(propertyName) {
+			$scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
+			$scope.propertyName = propertyName;
+		};
 
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
@@ -1160,10 +1167,10 @@
 
 	    params = filter;
 
-	    //Sort table records
-	    scope.sortColumn = '';
-		scope.sortDirection = 'asc';
-		sortColumn(scope,API,params,log, TableFix);
+        // //Sort table records
+        // scope.sortColumn = '';
+		// scope.sortDirection = 'asc';
+		// sortColumn(scope,API,params,log, TableFix);
 
 	    // Filter table records
 	    filterSubmit(scope,API,params,log, report, TableFix);
