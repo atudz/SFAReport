@@ -622,7 +622,7 @@
 				}
 			});
 			$('p[id$="_error"]').addClass('hide');
-			scope.toggleFilter = true;
+			// scope.toggleFilter = true;
 			toggleLoading();
 	    	scope.items = []
 	    	$('#no_records_div').removeClass('hide');
@@ -741,7 +741,7 @@
 		    	params = {salesman:$('#salesman').val()};
 		    }
 
-			scope.toggleFilter = true;
+			// scope.toggleFilter = true;
 			toggleLoading(true);
 	    	API.save(params,function(data){
 	    		//log.info(data);
