@@ -57,6 +57,9 @@
                         <label class="control-label">Select an image file:</label>
                         <input type="file" class="form-control" nv-file-select uploader="uploader" />
                     </div>
+                    <div class="row form-input-field text-left">
+                        <button class="btn btn-default" ng-click="uploader.uploadAll()" ng-show="uploader.queue.length">Upload</button>
+                    </div>
                 </div>
 
                 <div class="rs-mini-toolbar">

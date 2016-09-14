@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends ControllerCore
 {
@@ -336,5 +338,39 @@ class UserController extends ControllerCore
 		$contactUs->save();
 
 		return redirect('/#/summaryofincident.report');
+	}
+
+	public function userContactUsFileUpload(Request $request)
+	{
+		try {
+			dd($request->all());
+			$user = Auth::user();
+			$directory = DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'files';
+			mt_srand(time()); //seed the generator with the current timestamp
+			$basename = md5(mt_rand());
+			$filename = $basename . $request->get('file')->getClientOriginalName(). '.' . $request->get('file')->getClientOriginalExtension();
+
+			$request->get('file')->move(public_path($directory), $filename);
+
+
+//			if ($user->avatar()->count() > 0) {
+//				$user->avatar()->update([
+//					'path' => $directory . DIRECTORY_SEPARATOR . $filename
+//				]);
+//			} else {
+//				$user->avatar()->create([
+//					'path' => $directory . DIRECTORY_SEPARATOR . $filename
+//				]);
+//			}
+
+			return response()->json($user);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'text' => $e->getMessage(),
+				'code' => 500
+			]);
+		}
+
 	}
 }
