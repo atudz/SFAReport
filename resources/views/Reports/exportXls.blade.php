@@ -40,7 +40,7 @@
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
+									{!!$record->$row!!}	
 								@elseif(ctype_alnum($record->$row))
 									{!!strtoupper($record->$row)!!}
 								@else
@@ -50,7 +50,7 @@
 								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!number_format($record[$row],2,'.',',')!!}	
+									{!!$record[$row]!!}	
 								@elseif(ctype_alnum($record[$row]))
 									{!!strtoupper($record[$row])!!}
 								@else
