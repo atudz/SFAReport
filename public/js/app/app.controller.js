@@ -1826,6 +1826,9 @@
 				$scope.API.save(params, function (data) {
 					$scope.toggleFilter = true;
 					$scope.records = data.records;
+					angular.forEach($scope.records, function (record) {
+						record.id = parseInt(record.id);
+					});
 					$scope.total = data.total;
 					toggleLoading();
 					togglePagination(data.total);
