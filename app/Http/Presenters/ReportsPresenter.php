@@ -172,6 +172,7 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->title = 'Canned & Mixes';
     			$this->view->salesman = $this->getSalesman(true);
+				$this->view->auditor = $this->getAuditor();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
@@ -179,6 +180,7 @@ class ReportsPresenter extends PresenterCore
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
+    			$this->view->auditor = $this->getAuditor();
     			$this->view->salesman = $this->getSalesman(true);
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
@@ -271,7 +273,9 @@ class ReportsPresenter extends PresenterCore
     		case 'userlist':
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
-                return PresenterFactory::getInstance('User')->getUserGroup();	
+                return PresenterFactory::getInstance('User')->getUserGroup();
+			case 'summaryofincidentreport':
+				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();
     	}
     }
     
@@ -4848,6 +4852,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
+			case 'summaryofincidentsreport':
+				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
     	}	
     }
     
@@ -5303,6 +5309,16 @@ class ReportsPresenter extends PresenterCore
     		$salesman[0] = $user->salesman_code ? $user->salesman_code.'-'.$user->fullname : $user->fullname;
     	return $salesman;
     }
+
+	/**
+	 * @return array of auditor's name.
+	 */
+	public function getAuditor()
+	{
+		$response = ModelFactory::getInstance('user')->auditor()->get();
+
+		return $response->lists('full_name', 'id');
+	}
     
     
     /**
@@ -5314,7 +5330,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = \DB::table('app_customer')
 			    	->where('status','=','A')
 			    	->orderBy('customer_name');
-    	
+
     	if($strictSalesman && $this->isSalesman())
     	{
     		$customers = \DB::table('app_salesman_customer')
@@ -5440,7 +5456,7 @@ class ReportsPresenter extends PresenterCore
      * @param unknown $report
      */
     public function exportReport($type, $report, $offset=0)
-    {    	
+    {
     	if(!in_array($type, $this->validExportTypes))
     	{
     		return;
@@ -5743,6 +5759,14 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
     			break;
+			case 'summaryofincidentsreport':
+				$columns = $this->getTableColumns($report);
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$rows = $this->getSummaryOfIncidentReportSelectColumns();
+				$header = 'Summary Of Incident Report';
+				$filters = $this->getSummaryOfIncidentReportFilterData();
+				$filename = 'Summary Of Incident Report';
+				break;
     		default:
     			return;
     	}	
@@ -5779,8 +5803,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
-    	  
-    	if(in_array($type,['xls','xlsx']))
+		if (empty($current)) {
+			$records = $this->validateInvoiceNumber($records);
+		} else {
+			$current = $this->validateInvoiceNumber($current);
+		}
+
+		if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
@@ -5824,9 +5853,11 @@ class ReportsPresenter extends PresenterCore
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		if($report == 'salescollectionsummary')
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
-    		else
-    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
+    		elseif($report == 'salescollectionreport')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
+			else
+				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
@@ -6116,6 +6147,20 @@ class ReportsPresenter extends PresenterCore
     			'status',
     	];
     }
+
+	/**
+	 * Return summary of incident report select columns
+	 * @return multitype:string
+	 */
+	public function getSummaryOfIncidentReportSelectColumns()
+	{
+		return [
+			'id',
+			'message',
+			'status',
+			'full_name',
+		];
+	}
     
     /**
      * Return sales collection select columns
@@ -6305,6 +6350,11 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
+			case 'summaryofincidentsreport':
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$total = count($prepare->get());
+				$special = true;
+				break;
     		default:
     			return;
     	}
@@ -6344,7 +6394,6 @@ class ReportsPresenter extends PresenterCore
     		$data['max_limit'] = false;
     		$data['staggered'] = [];
     	}
-    	
     	return response()->json($data);
     }
     
@@ -6541,7 +6590,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$filters = [
     			'Salesman' => $salesman,
-    			'Company' => $company,
+    			'Company Code' => $company,
     			'Customer' => $customer,
     			'Invoice Date' => $invoiceDate,
     			'Invoice #' => $invoiceNum,
@@ -6562,7 +6611,7 @@ class ReportsPresenter extends PresenterCore
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
     	$reference = $this->request->get('reference');
-    
+
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
@@ -6572,6 +6621,25 @@ class ReportsPresenter extends PresenterCore
     
     	return $filters;
     }
+
+	/**
+	 * Get Summary of incidents report filters.
+     */
+	public function getSummaryOfIncidentReportFilterData()
+	{
+		$name = ModelFactory::getInstance('ContactUs')->where('full_name',$this->request->get('name'))->distinct()->first();
+		$name = ($name) ? $name->full_name : 'All';
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code',$this->request->get('branch'))->first();
+		$branch = ($branch) ? $branch->area_name : 'All';
+		$incident_no = ($this->request->get('incident_no')) ?: 'All';
+		$filters = [
+			'Full Name'     => $name,
+			'Branch'        => $branch,
+			'Incident #'    => $incident_no,
+		];
+
+		return $filters;
+	}
     
     
     /**
@@ -6857,6 +6925,109 @@ class ReportsPresenter extends PresenterCore
 	    	$from->addDay();	    	
     	}      	
     }
+
+
+	/**
+	 * This function will check if the invoice number has an
+	 * invoice code it append an invoice code for the invoice number
+	 * don't have invoice code.
+	 * @param $currents
+	 * @return mixed
+	 */
+	public function validateInvoiceNumber($currents)
+	{
+		foreach ($currents as $current) {
+			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
+			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
+				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
+					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
+
+				}
+				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
+					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
+				}
+			} elseif (isset($current->invoice_number)) {
+				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
+					$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
+
+				}
+			}
+		}
+
+		return $currents;
+	}
+
+	/**
+	 * This will return an Area code of a specific customer.
+	 * @param $customerCode
+	 * @return mixed
+	 */
+	public function getCustomerAreaCode($customerCode)
+	{
+		return ModelFactory::getInstance('AppCustomer')->where('customer_code',
+			$customerCode)->select('area_code')->first();
+	}
+
+	/**
+	 * Array list of Area codes.
+	 * @return array
+	 */
+	public function arrayOfAreaCodes()
+	{
+		$areaCodes = [
+			'100'  => 'CB',
+			'200'  => 'CB',
+			'300'  => 'BA',
+			'400'  => 'BU',
+			'500'  => 'CD',
+			'600'  => 'DV',
+			'700'  => 'DU',
+			'800'  => 'GE',
+			'900'  => 'IL',
+			'1000' => 'ML',
+			'1100' => 'OZ',
+			'1200' => 'TA',
+			'1300' => 'ZA',
+			'1400' => 'OR',
+			'2100' => 'CB',
+			'2200' => 'CB',
+			'2300' => 'BA',
+			'2400' => 'BU',
+			'2500' => 'CD',
+			'2600' => 'DV',
+			'2700' => 'DU',
+			'2800' => 'GE',
+			'2900' => 'IL',
+			'3000' => 'ML',
+			'3100' => 'OZ',
+			'3200' => 'TA',
+			'3300' => 'ZA',
+			'3400' => 'OR'
+		];
+
+		return $areaCodes;
+	}
+
+	/**
+	 * This will generate an invoice code for an invoice number.
+	 * @param $customerCode
+	 * @return string
+	 */
+	public function generateInvoiceNumber($customerCode)
+	{
+		$invoiceCode = '';
+		$areaCodes = $this->arrayOfAreaCodes();
+		$customer = $this->getCustomerAreaCode($customerCode);
+		$code = explode('_', $customerCode)[0];
+		if ($code == 1000) {
+			$invoiceCode = 'C' . $areaCodes[$customer->area_code];
+		} elseif ($code == 2000) {
+			$invoiceCode = 'D' . $areaCodes[$customer->area_code];
+		}
+
+		return $invoiceCode;
+	}
+
     
     
     /**
@@ -6869,4 +7040,5 @@ class ReportsPresenter extends PresenterCore
     	$value = $data ? $data->value : 0;
     	return response()->json(['sync'=>$value]);
     }
+
 }

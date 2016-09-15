@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ControllerCore
 {
@@ -58,9 +61,16 @@ class UserController extends ControllerCore
         		return response()->json($response);
         	}
         }
+		
+		if ($request->get('assignment_date_from') > $request->get('assignment_date_to')) {
 
-        $roleGuest1 = $userGroupModel->whereName('Guest1')->first()->id;
-        if($request->get('age') && $request->get('role') == $roleGuest1 && 18 > $request->get('age'))
+			$response['exists'] = true;
+			$response['error'] = 'Invalid date range.';
+
+			return response()->json($response);
+		}
+
+        if($request->get('age') && 18 > $request->get('age'))
         {
             $response['exists'] = true;
             $response['error'] = 'User cannot be below 18.';
@@ -70,14 +80,47 @@ class UserController extends ControllerCore
         $userModel = ModelFactory::getInstance('User');
 
         $id = (int)$request->get('id');
-        $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
+		if ($request->has('jr_salesman_code')) {
+			$exist = $userModel->where('salesman_code', $request->get('jr_salesman_code'))->where('id', '<>', $id)->exists();
+			if ($exist) {
+				$response['exists'] = true;
+				$response['error'] = 'Jr. Salesman code already exists available code is ' .
+					$this->generateJrSalesCode($request->get('salesman_code')) .'.';
 
-        if($request->get('salesman_code') && $exist)
-        {
-            $response['exists'] = true;
-            $response['error'] = 'Salesman code already exists.';
-            return response()->json($response);
-        }
+				return response()->json($response);
+			}
+		}
+		$appSalesmanModel = ModelFactory::getInstance('AppSalesman');
+		//this will query a raw value to app salesman model.
+		$appSalesmanRaw = $appSalesmanModel->where('salesman_code', $request->get('salesman_code'));
+
+		//this will check if the salesman code exists in app salesman.
+		$salesmanCodeExists = $appSalesmanRaw->exists();
+		if ((($request->has('jr_salesman_code') || $request->get('salesman_code')) && !$salesmanCodeExists)) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code does not exists in master list.';
+
+			return response()->json($response);
+		}
+
+		//this will check if the code is already been used. it will be determined using column name status as active or A.
+		$appSalesmanExists = $appSalesmanRaw->where('Status','A')->exists();
+
+        $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
+		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist || $appSalesmanExists)) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code already exists.';
+
+			return response()->json($response);
+		}
+
+		//this will check if the salesman code is inactive. this will be used for validation for jr salesman.
+		if (($request->has('jr_salesman_code') && $request->get('salesman_code')) && !$appSalesmanExists) {
+			$response['exists'] = true;
+			$response['error'] = 'The salesman code that you\'ve entered is already been inactive.';
+
+			return response()->json($response);
+		}
         
         $user = $userModel
         			->where(function($query) use($request) {
@@ -108,8 +151,7 @@ class UserController extends ControllerCore
      	$user->gender = $request->get('gender');
      	$user->age = $request->get('age');
         $user->user_group_id = $request->get('role');
-        $user->salesman_code = $request->get('salesman_code');
-        
+		$user->salesman_code = $request->has('jr_salesman_code') ? $request->get('jr_salesman_code') : $request->get('salesman_code');
         $user->location_assignment_code = $request->get('area');
         $user->location_assignment_type = $request->get('assignment_type');
         if($request->get('assignment_date_from'))
@@ -203,4 +245,88 @@ class UserController extends ControllerCore
     {
         return trim($value);
     }
+
+	/**
+	 * This will generate a jr salesman code.
+	 * @param $salesman_code
+	 * @return string
+     */
+	public function generateJrSalesCode($salesman_code)
+	{
+		$code = ModelFactory::getInstance('User')->where('salesman_code', 'like',
+			$salesman_code . '-%')->orderBy('salesman_code', 'desc')->first();
+		if (!$code) {
+			return $salesman_code . "-001";
+		}
+
+		return $salesman_code . "-" . str_pad(((int)(explode("-", $code->salesman_code)[1]) + 1), 3, "00",
+			STR_PAD_LEFT);
+	}
+
+	/**
+	 * This will return a jr salesman code.
+	 * @param $code
+	 * @return mixed
+     */
+	public function getJrSalesmanCode($code)
+	{
+		$data['result'] = $this->generateJrSalesCode($code);
+
+		return response()->json($data);
+	}
+
+	public function userContactUs(Request $request)
+	{
+		$data = [
+			'full_name'                => $request->get('name'),
+			'mobile'                   => $request->get('mobile'),
+			'telephone'                => $request->get('telephone'),
+			'email'                    => $request->get('email'),
+			'location_assignment_code' => $request->get('branch'),
+			'time_from'                => Carbon::parse($request->get('callFrom'))->toTimeString(),
+			'time_to'                  => Carbon::parse($request->get('callTo'))->toTimeString(),
+			'subject'                  => $request->get('subject'),
+			'message'                  => $request->get('message'),
+			'status'                   => 'New'
+		];
+		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
+		$data['time_from'] = $request->get('callFrom');
+		$data['time_to'] = $request->get('callTo');
+		
+		// use the variable email_message to avoid error.
+		// Object of class Illuminate\Mail\Message could not be converted to string.
+		$data['email_message'] = $contactUs->message;
+
+		//send email to admin.
+		$data['reference_no'] = $contactUs->id;
+		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to(config('system.from'));
+			$message->subject($data['subject']);
+		});
+		//reply email to sender.
+		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
+		$data['status'] = $contactUs->status;
+		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), $data['subject']);
+			$message->to($data['email']);
+			$message->subject($data['subject']);
+		});
+
+		return $contactUs;
+	}
+
+	/**
+	 * This will update the status or action from email event action.
+	 * @param Request $request
+	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+	public function userContactUsActionOrStatus(Request $request)
+	{
+		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
+		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
+		$contactUs->save();
+
+		return redirect('/#/summaryofincident.report');
+	}
 }

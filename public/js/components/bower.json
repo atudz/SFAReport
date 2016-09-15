@@ -16,5 +16,8 @@
     "latest",
     "js"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "jquery-timepicker-wvega": "^1.3.5"
+  }
 }
