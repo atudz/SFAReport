@@ -7034,11 +7034,21 @@ class ReportsPresenter extends PresenterCore
      * Check if synching
      * @return number
      */
-    public function isSynching()
+    public function isSynching($id,$column)
     {
-    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
-    	$value = $data ? $data->value : 0;
-    	return response()->json(['sync'=>$value]);
-    }
+        $data = \DB::table('settings')->where('name','synching_sfi')->first();
+        $resultdata = \DB::table('table_logs')->where(array('pk_id'=>$id,'column'=>$column,))->orderBy('id','desc')->get();
+        if($data->value)
+        {
+            $value['sync'] = 1;
+            $value['com'] = $resultdata;
+        }
+        else
+        {
+            $value['sync'] = 0;
+            $value['com'] = $resultdata;
+        }
+        return response()->json(['sync_data'=>$value]);
+    }   
 
 }

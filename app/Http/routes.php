@@ -41,7 +41,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/export/{type}/{report}/{page?}', ['as'=>'report-export', 'uses'=>'ReportsPresenter@exportReport']);
 	Route::get('/getcount/{report}/{type?}', ['as'=>'report-count', 'uses'=>'ReportsPresenter@getDataCount']);
 	
-	Route::get('/synching', ['as'=>'synch', 'uses'=>'ReportsPresenter@isSynching']);
+	Route::get('/synching/{id}/{column}', ['as'=>'synch', 'uses'=>'ReportsPresenter@isSynching']);
 });
 
 

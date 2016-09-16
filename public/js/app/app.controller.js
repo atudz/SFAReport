@@ -938,10 +938,12 @@
 	{
 
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
-			
-			resource('/reports/synching').get().$promise.then(function(data){
-				
-				var selectOptions = options;				
+			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
+				var selectOptions = options;
+				if(typeof data.sync_data.com[0] !== "undefined"){
+					var comments = data.sync_data.com[0].comment;
+		    	}
+
 				var stepInterval = 1;			
 				if(step)
 					stepInterval = step;
@@ -955,19 +957,20 @@
 							
 				var template = '';
 				var inputType = '';
-				
-				if(data.sync == 1)
+				if(data.sync_data.sync == 1)
 				{
 					template = 'Synchronizing';
 				}
 				else
 				{
+
 					switch(type)
 					{
 						case 'date':
 							template = 'EditColumnDate';
 							inputType = 'datetime';
 							defaultDate = new Date(value);
+
 							break;
 						case 'select':
 							template = 'EditColumnSelect';
@@ -983,14 +986,12 @@
 							break;	
 					}
 				}
-				
-				//log.info(value);
-				
 				var params = {
 						table: table,
 						column: column,
 						id: id,
 						value: value,
+						comment: comments,
 						selectOptions: selectOptions,
 						index: index,
 						name: name,
@@ -1023,7 +1024,6 @@
 		}
 
 	}
-
 	/**
 	 * Export report
 	 */
@@ -1292,6 +1292,11 @@
 				{
 					error = true;
 				}
+				else if($('#comment').val() == '')
+				{
+					document.getElementById("editError").style.display = "block";
+					error = true;
+				}
 				else
 				{
 					var val = $scope.params.value;
@@ -1303,12 +1308,15 @@
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{
 				error = true;
+			}else if($('#comment').val() == '')
+			{
+				document.getElementById("editError").style.display = "block";
+				error = true;
 			}
 			//$log.info($scope.params);
 			if(!error)
 			{
 				API.save($scope.params, function(data){
-					//$log.info(data);
 					//$log.info($scope.params.value);
 
 					// Van Inventory customization
