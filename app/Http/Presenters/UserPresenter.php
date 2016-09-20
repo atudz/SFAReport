@@ -206,14 +206,7 @@ class UserPresenter extends PresenterCore
 			});
 		}
 		if ($withCode) {
-//			return $summary->get();
-//=======
-			$records = $summary->orderBy('created_at', 'desc')->get();
-			foreach($records as $record){
-				$record->location_assignment_code = $record->areas[0]->area_name;
-			}
-			return $records;
-//>>>>>>> add new columns in filter download for contact us
+			return $summary->orderBy('created_at', 'desc')->get();
 		} else {
 			return $summary;
 		}
