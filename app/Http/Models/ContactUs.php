@@ -36,4 +36,12 @@ class ContactUs extends ModelCore
     {
         return $this->hasMany('App\Http\Models\AppArea', 'area_code', 'location_assignment_code');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function file()
+    {
+        return $this->morphOne('App\Http\Models\File', 'fileable');
+    }
 }

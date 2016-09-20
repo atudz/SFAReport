@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use App\Http\Models\ContactUs;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -340,30 +341,26 @@ class UserController extends ControllerCore
 		return redirect('/#/summaryofincident.report');
 	}
 
-	public function userContactUsFileUpload(Request $request)
+	/**
+	 * This function will handle file uploads.
+	 * @param $support_id
+	 * @param Request $request
+	 * @return mixed
+     */
+	public function userContactUsFileUpload($support_id, Request $request)
 	{
 		try {
-			dd($request->all());
-			$user = Auth::user();
+			$file = $request->all();
 			$directory = DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'files';
 			mt_srand(time()); //seed the generator with the current timestamp
 			$basename = md5(mt_rand());
-			$filename = $basename . $request->get('file')->getClientOriginalName(). '.' . $request->get('file')->getClientOriginalExtension();
+			$filename = $basename . snake_case($file['file']->getClientOriginalName()) . '.' . $file['file']->getClientOriginalExtension();
 
-			$request->get('file')->move(public_path($directory), $filename);
+			$file['file']->move(storage_path('app/support-page-files'), $filename);
+			$contactFile = ContactUs::find($support_id);
+			$contactFile->file()->create(['path' => $directory . DIRECTORY_SEPARATOR . $filename]);
 
-
-//			if ($user->avatar()->count() > 0) {
-//				$user->avatar()->update([
-//					'path' => $directory . DIRECTORY_SEPARATOR . $filename
-//				]);
-//			} else {
-//				$user->avatar()->create([
-//					'path' => $directory . DIRECTORY_SEPARATOR . $filename
-//				]);
-//			}
-
-			return response()->json($user);
+			return response()->json($contactFile);
 
 		} catch (Exception $e) {
 			return response()->json([
