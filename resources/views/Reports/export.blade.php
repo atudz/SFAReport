@@ -13,7 +13,7 @@
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
-						<td>{{$record->$row}}</td>
+						<td>{{str_replace(array('%','(',')', ','),'', $record->$row)}}</td>
 					@endforeach
 				</tr>
 			@endforeach				
