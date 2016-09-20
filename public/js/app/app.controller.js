@@ -1733,20 +1733,9 @@
 	/**
 	 * User Contact us controller
 	 */
-	app.controller('ContactUs', ['$scope', '$resource', '$routeParams', '$location', '$log', 'FileUploader', ContactUs]);
+	app.controller('ContactUs', ['$scope', '$resource', '$http', ContactUs]);
 
-	function ContactUs($scope, $resource, $routeParams, $location, $log, FileUploader) {
-		$('.timepicker').timepicker({
-			timeFormat: 'h:mm p',
-			interval: 30,
-			minTime: '12:00am',
-			maxTime: '11:30pm',
-			defaultTime: '7',
-			startTime: '07:00am',
-			dynamic: false,
-			dropdown: true,
-			scrollbar: true
-		});
+	function ContactUs($scope, $resource, $http) {
 		$scope.success = false;
 		$scope.error = false;
 		$scope.contact = {
@@ -1760,6 +1749,18 @@
 			subject: '',
 			message: ''
 		};
+		$('.timepicker').timepicker({
+			timeFormat: 'h:mm p',
+			interval: 30,
+			minTime: '12:00am',
+			maxTime: '11:30pm',
+			defaultTime: '7',
+			startTime: '07:00am',
+			dynamic: false,
+			dropdown: true,
+			scrollbar: true
+		});
+
 		$scope.save = function () {
 			$scope.contact.callFrom = $('#callFrom').val();
 			$scope.contact.callTo = $('#callTo').val();
@@ -1768,41 +1769,49 @@
 				var API = $resource('controller/user/contact');
 				API.save($scope.contact, function (data) {
 					$scope.success = true;
+					if ($scope.contactFile) {
+						$scope.uploadFile(data);
+					}
 				});
 			}
+		};
+
+		$scope.uploadFile = function (data) {
+			$http.post('/controller/user/contact/file/' + data.id, $scope.contactFile, {
+				withCredentials: true,
+				headers: {'Content-Type': undefined},
+				transformRequest: angular.identity
+			}).success('File Successfully uploaded.').error('Error in uploading file.');
+		};
+
+		$scope.readFile = function (files) {
+			var fd = new FormData();
+			//Take the first selected file
+			fd.append("file", files[0]);
+			$scope.contactFile = fd;
 		};
 
 		$scope.validate = function (contact) {
 			var contactErrors = [];
 			var contactErrorList = '';
-			$scope.error = false;
-			if (contact.name == '') {
-				contactErrors.push('Name is a required field.');
-			}
-			if (contact.mobile == '') {
-				contactErrors.push('Mobile number is a required field.');
-			}
-			if (contact.telephone == '') {
-				contactErrors.push('Telephone number is a required field.');
-			}
 			var rgxEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-			if(contact.email && !rgxEmail.test(contact.email))
-			{
-				contactErrors.push('Invalid email address.');
-			}
-			if(contact.email == '')
-			{
-				contactErrors.push('Email is a required field.');
-			}
-			if (contact.branch == '') {
-				contactErrors.push('Branch is a required field.');
-			}
-			if (contact.subject == '') {
-				contactErrors.push('Subject is a required field.');
-			}
-			if (contact.message == '') {
-				contactErrors.push('Message is a required field.');
-			}
+			$scope.error = false;
+
+			angular.forEach(angular.element(".contact-file-form [data-required=true]"), function (item) {
+				var field = $(item).attr("name");
+				var value = $(item).val();
+				if (value == "") {
+					if (field == "mobile" || field == 'telephone') {
+						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " number is required.");
+					} else {
+						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " is required.");
+					}
+				}
+				if ((field == 'email' && value != "") && !rgxEmail.test(value)) {
+					contactErrors.push('Email is not valid.');
+				}
+			});
+
 			if (contactErrors.length > 0) {
 				contactErrorList = '<ul>';
 				for (var i = 0; i < contactErrors.length; i++) {
@@ -1812,39 +1821,6 @@
 				$('#error_list_contact').html(contactErrorList);
 				$scope.error = true;
 			}
-		};
-		//TODO: need to be modified this is just a partial and references for file uploading.
-		$scope.uploader = new FileUploader({
-			url: '/controller/user/contact/file'
-		});
-
-		// $scope.uploader.onAfterAddingFile = function(item) {
-		// 	var reader = new FileReader();
-		// 	reader.onload = function(event) {
-		// 		$scope.$apply(function(){
-		// 			$scope.file = event.target.result;
-		// 		});
-		// 	};
-		// 	reader.readAsDataURL(item._file);
-		// };
-        //
-		// $scope.uploader.onBeforeUploadItem = function(item) {
-		// 	var blob = dataURItoBlob($scope.file);
-		// 	item._file = blob;
-		// };
-        //
-		// var dataURItoBlob = function(dataURI) {
-		// 	var binary = atob(dataURI.split(',')[1]);
-		// 	var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-		// 	var array = [];
-		// 	for(var i = 0; i < binary.length; i++) {
-		// 		array.push(binary.charCodeAt(i));
-		// 	}
-		// 	return new Blob([new Uint8Array(array)], {type: mimeString});
-		// };
-
-		$scope.uploader.onCompleteItem = function () {
-			$scope.uploader.clearQueue();
 		};
 	}
 
