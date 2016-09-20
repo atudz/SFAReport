@@ -351,12 +351,12 @@ class UserController extends ControllerCore
 	{
 		try {
 			$file = $request->all();
-			$directory = DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'files';
+			$directory = 'app' . DIRECTORY_SEPARATOR . 'support-page-files';
 			mt_srand(time()); //seed the generator with the current timestamp
 			$basename = md5(mt_rand());
 			$filename = $basename . snake_case($file['file']->getClientOriginalName()) . '.' . $file['file']->getClientOriginalExtension();
 
-			$file['file']->move(storage_path('app/support-page-files'), $filename);
+			$file['file']->move(storage_path($directory), $filename);
 			$contactFile = ContactUs::find($support_id);
 			$contactFile->file()->create(['path' => $directory . DIRECTORY_SEPARATOR . $filename]);
 
