@@ -4866,7 +4866,8 @@ class ReportsPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
-    			['name'=>'Remarks'],
+                ['name'=>'Remarks'],
+    			['name'=>'Remarks Comment'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Gross Amount'],
