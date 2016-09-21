@@ -16,7 +16,6 @@ class AddColumnCommentTableLogs extends Migration
             $table->string('comment','1000')->nullable();                     
         });  
     }
-
     /**
      * Reverse the migrations.
      *
