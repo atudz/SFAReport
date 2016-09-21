@@ -1765,10 +1765,14 @@
 		$scope.save = function () {
 			$scope.contact.callFrom = $('#callFrom').val();
 			$scope.contact.callTo = $('#callTo').val();
+			if($scope.contactFile){
+				$scope.contact.file = true;
+			}
 			$scope.validate($scope.contact);
 			if (!$scope.error) {
 				$scope.loading = true;
 				$scope.error = false;
+				$scope.success = false;
 				var API = $resource('controller/user/contact');
 				API.save($scope.contact, function (data) {
 					$scope.success = true;

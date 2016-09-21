@@ -304,20 +304,45 @@ class UserController extends ControllerCore
 		$data['time_from'] = $request->get('callFrom');
 		$data['time_to'] = $request->get('callTo');
 
+		if (!$request->get('file')) {
+			return $this->mail($data, $contactUs);
+		}
+
+		return response()->json($contactUs, 200);
+
+	}
+
+	/**
+	 * This function will handle the sending of email.
+	 * @param $data
+	 * @param $contactUs
+	 * @param string $pathFile
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function mail($data, $contactUs, $pathFile = '', $name = '')
+	{
 		// use the variable email_message to avoid error.
 		// Object of class Illuminate\Mail\Message could not be converted to string.
 		$data['email_message'] = $contactUs->message;
 
 		//send email to admin.
 		$data['reference_no'] = $contactUs->id;
-		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
+
+		Mail::send('emails.contact_us', $data, function ($message) use (&$data, $pathFile, $name) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to(config('system.from'));
+			if ($pathFile) {
+				$message->attach($pathFile, ['as' => $name]);
+
+			}
 			$message->subject($data['subject']);
 		});
+
 		//reply email to sender.
 		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
+
 		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to($data['email']);
@@ -329,7 +354,6 @@ class UserController extends ControllerCore
 		} else {
 			return response()->json('Email not send.', 471);
 		}
-
 	}
 
 	/**
