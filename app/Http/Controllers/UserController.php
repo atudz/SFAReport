@@ -303,7 +303,7 @@ class UserController extends ControllerCore
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
 		$data['time_from'] = $request->get('callFrom');
 		$data['time_to'] = $request->get('callTo');
-		
+
 		// use the variable email_message to avoid error.
 		// Object of class Illuminate\Mail\Message could not be converted to string.
 		$data['email_message'] = $contactUs->message;
@@ -324,7 +324,12 @@ class UserController extends ControllerCore
 			$message->subject($data['subject']);
 		});
 
-		return $contactUs;
+		if (count(Mail::failures()) > 0) {
+			return response()->json($contactUs, 200);
+		} else {
+			return response()->json('Email not send.', 471);
+		}
+
 	}
 
 	/**

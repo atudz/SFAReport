@@ -1738,6 +1738,7 @@
 	function ContactUs($scope, $resource, $http) {
 		$scope.success = false;
 		$scope.error = false;
+		$scope.loading = false;
 		$scope.contact = {
 			name: '',
 			mobile: '',
@@ -1766,12 +1767,20 @@
 			$scope.contact.callTo = $('#callTo').val();
 			$scope.validate($scope.contact);
 			if (!$scope.error) {
+				$scope.loading = true;
+				$scope.error = false;
 				var API = $resource('controller/user/contact');
 				API.save($scope.contact, function (data) {
 					$scope.success = true;
+					$scope.loading = false;
 					if ($scope.contactFile) {
 						$scope.uploadFile(data);
 					}
+				}, function (data) {
+					$scope.loading = false;
+					var contactErrorList = '<ul><li>' +JSON.stringify(data.data).replace(/['"]+/g, '') + '</li></ul>';
+					$('#error_list_contact').html(contactErrorList);
+					$scope.error = true;
 				});
 			}
 		};

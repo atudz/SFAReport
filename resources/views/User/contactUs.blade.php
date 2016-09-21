@@ -12,6 +12,10 @@
                                     aria-hidden="true">&times;</span></button>
                         <div class="error-list">Successfully sent.</div>
                     </div>
+                    <div class="pull-left col-md-12 alert alert-info" ng-show="loading"
+                         style="margin-bottom:10px;padding-left:0px;">
+                        <span><i class="fa fa-spinner fa-lg fa-pulse"></i> Sending email please wait for a while.</span>
+                    </div>
                     {!!Html::error('error','error_list_contact')!!}
                     <div class="row form-input-field text-left">
                         {!!Html::input('text','name','Name <span class="required">*</span>','', ['ng-model' => 'contact.name', 'data-required' => 'true'])!!}
