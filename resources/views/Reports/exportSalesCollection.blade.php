@@ -137,17 +137,17 @@
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!$record->$row!!}	
+									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@else
-									{!!$record->$row!!}
+									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!$record[$row]!!}	
+									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@else
-									{!!$record[$row]!!}
+									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
 								@endif									
 							@endif
 						</td>
@@ -162,7 +162,7 @@
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">																
 								@if(isset($currentSummary[$row]))
-									{!!str_replace(',', '', $currentSummary[$row])!!}									
+									{!!str_replace(array('%',')','(', ','),'', $currentSummary[$row])!!}									
 								@endif													
 							</th>
 						@endif						
