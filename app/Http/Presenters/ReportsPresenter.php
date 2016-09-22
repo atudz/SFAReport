@@ -10,6 +10,7 @@ use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
+use Mockery\Exception;
 
 class ReportsPresenter extends PresenterCore
 {
@@ -6940,7 +6941,7 @@ class ReportsPresenter extends PresenterCore
 	 */
 	public function validateInvoiceNumber($currents)
 	{
-		foreach ($currents as $current) {
+		foreach ($currents as &$current) {
 			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
 			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
 				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
@@ -6955,6 +6956,11 @@ class ReportsPresenter extends PresenterCore
 					$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
 
 				}
+			} elseif (is_array($current) && array_key_exists('invoice_number', $current)) {
+				if ($current['invoice_number'] != " " && is_numeric($current['invoice_number'])) {
+					$current['invoice_number'] = $this->generateInvoiceNumber($current['customer_name'],
+							true) . $current['invoice_number'];
+				}
 			}
 		}
 
@@ -6963,13 +6969,21 @@ class ReportsPresenter extends PresenterCore
 
 	/**
 	 * This will return an Area code of a specific customer.
-	 * @param $customerCode
+	 * @param $customer
+	 * @param bool $isName
 	 * @return mixed
+	 * @internal param $customerCode
 	 */
-	public function getCustomerAreaCode($customerCode)
+	public function getCustomerAreaCode($customer, $isName = false)
 	{
-		return ModelFactory::getInstance('AppCustomer')->where('customer_code',
-			$customerCode)->select('area_code')->first();
+		$code = ModelFactory::getInstance('AppCustomer');
+		if ($isName) {
+			$code = $code->where('customer_name', $customer)->select('area_code')->first();
+		} else {
+			$code = $code->where('customer_code', $customer)->select('area_code')->first();
+		}
+
+		return $code;
 	}
 
 	/**
@@ -7014,19 +7028,20 @@ class ReportsPresenter extends PresenterCore
 
 	/**
 	 * This will generate an invoice code for an invoice number.
-	 * @param $customerCode
+	 * @param $customer
+	 * @param bool $isVan
 	 * @return string
 	 */
-	public function generateInvoiceNumber($customerCode)
+	public function generateInvoiceNumber($customer, $isVan = false)
 	{
 		$invoiceCode = '';
 		$areaCodes = $this->arrayOfAreaCodes();
-		$customer = $this->getCustomerAreaCode($customerCode);
-		$code = explode('_', $customerCode)[0];
+		$customerCode = $this->getCustomerAreaCode($customer, $isVan)->area_code;
+		$code = (int)explode('_', $customer)[0];
 		if ($code == 1000) {
-			$invoiceCode = 'C' . $areaCodes[$customer->area_code];
+			$invoiceCode = 'C' . $areaCodes[$customerCode];
 		} elseif ($code == 2000) {
-			$invoiceCode = 'D' . $areaCodes[$customer->area_code];
+			$invoiceCode = 'D' . $areaCodes[$customerCode];
 		}
 
 		return $invoiceCode;
