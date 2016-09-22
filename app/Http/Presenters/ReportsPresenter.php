@@ -7038,7 +7038,7 @@ class ReportsPresenter extends PresenterCore
     {
         $data = \DB::table('settings')->where('name','synching_sfi')->first();
         $resultdata = \DB::table('table_logs')->where(array('pk_id'=>$id,'column'=>$column,))->orderBy('id','desc')->get();
-        if($data->value)
+        if(isset($data->value))
         {
             $value['sync'] = 1;
             $value['com'] = $resultdata;
