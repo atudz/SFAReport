@@ -100,7 +100,7 @@
 
 		  function timerIncrement() {
 			  idleTime = idleTime + 1;
-			  if (idleTime > 30) { // 19 minutes
+			  if (idleTime > 30) { // 30 minutes
 				  window.location.href = '/logout';
 			  }
 		  }
