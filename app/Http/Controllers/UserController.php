@@ -70,7 +70,7 @@ class UserController extends ControllerCore
 			return response()->json($response);
 		}
 
-        if($request->get('age') && 18 > $request->get('age'))
+        if($request->has('age') && 18 >= $request->get('age'))
         {
             $response['exists'] = true;
             $response['error'] = 'User cannot be below 18.';
