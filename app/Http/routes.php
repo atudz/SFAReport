@@ -82,6 +82,7 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 	Route::post('/user/contact', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUs']);
 	Route::post('/user/contact/file/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUsFileUpload']);
+	Route::get('/user/contact/mail/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@mail']);
 
 });
 

@@ -1765,9 +1765,7 @@
 		$scope.save = function () {
 			$scope.contact.callFrom = $('#callFrom').val();
 			$scope.contact.callTo = $('#callTo').val();
-			if($scope.contactFile){
-				$scope.contact.file = true;
-			}
+			$scope.contact.file = $scope.contactFile ? true : false;
 			$scope.validate($scope.contact);
 			if (!$scope.error) {
 				$scope.loading = true;
@@ -1775,18 +1773,25 @@
 				$scope.success = false;
 				var API = $resource('controller/user/contact');
 				API.save($scope.contact, function (data) {
-					$scope.success = true;
 					$scope.loading = false;
-					if ($scope.contactFile) {
-						$scope.uploadFile(data);
-					}
+					$scope.contactFile ? $scope.uploadFile(data) : $scope.toMail();
 				}, function (data) {
 					$scope.loading = false;
-					var contactErrorList = '<ul><li>' +JSON.stringify(data.data).replace(/['"]+/g, '') + '</li></ul>';
+					var contactErrorList = '<ul><li>' + JSON.stringify(data.data).replace(/['"]+/g, '') + '</li></ul>';
 					$('#error_list_contact').html(contactErrorList);
 					$scope.error = true;
 				});
 			}
+		};
+
+		$scope.toMail = function () {
+			var apiMail = $resource('/controller/user/contact/mail/38');
+			apiMail.get({}, function (data) {
+				$scope.success = true;
+				console.log(data);
+			}, function (data) {
+				console.log(data);
+			});
 		};
 
 		$scope.uploadFile = function (data) {
@@ -1794,7 +1799,9 @@
 				withCredentials: true,
 				headers: {'Content-Type': undefined},
 				transformRequest: angular.identity
-			}).success('File Successfully uploaded.').error('Error in uploading file.');
+			}).success(function (data) {
+				$scope.toMail();
+			}).error('Error in uploading file.');
 		};
 
 		$scope.readFile = function (files) {

@@ -301,41 +301,46 @@ class UserController extends ControllerCore
 			'status'                   => 'New'
 		];
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
-		$data['time_from'] = $request->get('callFrom');
-		$data['time_to'] = $request->get('callTo');
-
-		if (!$request->get('file')) {
-			return $this->mail($data, $contactUs);
-		}
 
 		return response()->json($contactUs, 200);
-
 	}
 
 	/**
 	 * This function will handle the sending of email.
-	 * @param $data
-	 * @param $contactUs
-	 * @param string $pathFile
-	 * @param string $name
-	 * @return mixed
+	 * @param $support_id
 	 */
-	public function mail($data, $contactUs, $pathFile = '', $name = '')
+	public function mail($support_id)
 	{
-		// use the variable email_message to avoid error.
-		// Object of class Illuminate\Mail\Message could not be converted to string.
-		$data['email_message'] = $contactUs->message;
+		$contactUs = ModelFactory::getInstance('ContactUs')->where('id', $support_id)->with('file')->first();
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code',
+			$contactUs->location_assignment_code)->select('area_name')->first();
+		$data = [
+			'reference_no'             => $contactUs->id,
+			'full_name'                => $contactUs->full_name,
+			'mobile'                   => $contactUs->mobile,
+			'telephone'                => $contactUs->telephone,
+			'email'                    => $contactUs->email,
+			'location_assignment_code' => $branch->area_name,
+			'time_from'                => date('h:i:s a', strtotime($contactUs->time_from)),
+			'time_to'                  => date('h:i:s a', strtotime($contactUs->time_to)),
+			'subject'                  => $contactUs->subject,
+			'email_message'            => $contactUs->message
+		];
+		//TODO: get the path of the file and add a new column to summary of incident of report.
+		dd($contactUs);
+		if ($contactUs->file){
+			$data['file_path'] = $contactUs->file->path;
+		}
 
-		//send email to admin.
-		$data['reference_no'] = $contactUs->id;
+		dd($data['file_path']);
 
-		Mail::send('emails.contact_us', $data, function ($message) use (&$data, $pathFile, $name) {
+		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to(config('system.from'));
-			if ($pathFile) {
-				$message->attach($pathFile, ['as' => $name]);
-
-			}
+//			if ($pathFile) {
+//				$message->attach($pathFile, ['as' => $name]);
+//
+//			}
 			$message->subject($data['subject']);
 		});
 
@@ -360,7 +365,7 @@ class UserController extends ControllerCore
 	 * This will update the status or action from email event action.
 	 * @param Request $request
 	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+	 */
 	public function userContactUsActionOrStatus(Request $request)
 	{
 		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
@@ -375,7 +380,7 @@ class UserController extends ControllerCore
 	 * @param $support_id
 	 * @param Request $request
 	 * @return mixed
-     */
+	 */
 	public function userContactUsFileUpload($support_id, Request $request)
 	{
 		try {
