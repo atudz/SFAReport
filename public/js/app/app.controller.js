@@ -394,7 +394,6 @@
 	{
 		$scope.dateFrom = null;
 	    $scope.dateTo = null;
-
 	    $scope.setFrom = function(from){
 	    	if(from)
 	    		$scope.dateFrom = new Date(from);
@@ -411,6 +410,7 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 
+	    	alert($scope.dateFrom);
 			$("input[id*='date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
@@ -936,6 +936,36 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
+		 scope.search = function() {
+		 	var hiddenVal = $('#hval').val();
+		 	var origVal = $('#nothval').val();
+	        if(hiddenVal == origVal)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
+		 scope.dateKeyup = function() {
+		 	var hiddenVal = $('#hdate_value').val();
+		 	var origVal = $('#date_value').val();
+		 	alert(hiddenVal);
+		 	alert(origVal);
+		 	return false;
+	        if(hiddenVal == origVal)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
+		 scope.onkeyupSelect = function() {
+		 	var hiddenVal = $('#hval').val();
+		 	var origVal = $('#nothval').val();
+		 	alert($('#hselectOptions').val());
+		 	alert($('#date_value').val());
+		 	return false;
+	        if(hiddenVal == origVal)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
 
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
@@ -943,7 +973,6 @@
 				if(typeof data.sync_data.com[0] !== "undefined"){
 					var comments = data.sync_data.com[0].comment;
 		    	}
-
 				var stepInterval = 1;			
 				if(step)
 					stepInterval = step;
@@ -957,13 +986,12 @@
 							
 				var template = '';
 				var inputType = '';
-				if(data.sync_data.sync == 1)
+				if(data.sync_data.sync == 11)
 				{
 					template = 'Synchronizing';
 				}
 				else
 				{
-
 					switch(type)
 					{
 						case 'date':
@@ -991,6 +1019,7 @@
 						column: column,
 						id: id,
 						value: value,
+						oldval: value,
 						comment: comments,
 						selectOptions: selectOptions,
 						index: index,
