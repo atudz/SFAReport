@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class NavigationSeeder extends Seeder
+class Navigation1Seeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +11,7 @@ class NavigationSeeder extends Seeder
      */
     public function run()
     {
-        // Navigation main menu items
+               // Navigation main menu items
         $navigations = [
                 ['name'=>'Dashboard','url'=>'dashboard','class'=>'glyphicon glyphicon-dashboard','order'=>1,'created_at' => new DateTime(),'summary'=>0],
         		['name'=>'Sales & Collection','url'=>'','class'=>'glyphicon glyphicon-list-alt','order'=>2,'created_at' => new DateTime(),'summary'=>1],
@@ -28,8 +28,8 @@ class NavigationSeeder extends Seeder
     	// Navigation sub menu items
     	$navigation_item = [
     			['name'=>'Sales & Collection Report','url'=>'salescollection.report','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>1,'created_at' => new DateTime()],
-    			['name'=>'Posting','url'=>'salescollection.posting','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>2,'created_at' => new DateTime()],
-    			['name'=>'Monthly Sum of Sales','url'=>'salescollection.summary','class'=>'glyphicon glyphicon-share-alt','order'=>3,'parent_id'=>'2','created_at' => new DateTime()],
+    			['name'=>'Sales & Collection Posting','url'=>'salescollection.posting','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>2,'created_at' => new DateTime()],
+    			['name'=>'Sales & Collection Mon Sum of Sales','url'=>'salescollection.summary','class'=>'glyphicon glyphicon-share-alt','order'=>3,'parent_id'=>'2','created_at' => new DateTime()],
     	
     			['name'=>'Canned & Mixes','url'=>'vaninventory.canned','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>1,'created_at' => new DateTime()],
     			['name'=>'Frozen & Kassel','url'=>'vaninventory.frozen','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>2,'created_at' => new DateTime()],
@@ -48,6 +48,5 @@ class NavigationSeeder extends Seeder
     	
     	];
     	DB::table('navigation')->insert($navigation_item);
-    	
     }
 }
