@@ -72,7 +72,7 @@ class UserPresenter extends PresenterCore
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		return $this->view('addEdit');
 	}
-	
+
 	/**
 	 * Get user info
 	 * @param number $userId
@@ -81,7 +81,14 @@ class UserPresenter extends PresenterCore
 	public function getUser($userId)
 	{
 		$user = ModelFactory::getInstance('User')->find($userId);
+		$user->jr_salesman_code = '';
+		if (strpos($user->salesman_code, '-')) {
+			$code = explode('-', $user->salesman_code);
+			$user->jr_salesman_code = $user->salesman_code;
+			$user->salesman_code = $code[0];
+		}
 		$data = $user ? $user->toArray() : [];
+
 		return response()->json($data);
 	}
 	
