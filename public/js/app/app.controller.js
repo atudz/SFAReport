@@ -1773,8 +1773,7 @@
 				$scope.success = false;
 				var API = $resource('controller/user/contact');
 				API.save($scope.contact, function (data) {
-					$scope.loading = false;
-					$scope.contactFile ? $scope.uploadFile(data) : $scope.toMail();
+					$scope.contactFile ? $scope.uploadFile(data) : $scope.toMail(data);
 				}, function (data) {
 					$scope.loading = false;
 					var contactErrorList = '<ul><li>' + JSON.stringify(data.data).replace(/['"]+/g, '') + '</li></ul>';
@@ -1784,13 +1783,16 @@
 			}
 		};
 
-		$scope.toMail = function () {
-			var apiMail = $resource('/controller/user/contact/mail/38');
+		$scope.toMail = function (data) {
+			var apiMail = $resource('/controller/user/contact/mail/' + data.id);
 			apiMail.get({}, function (data) {
 				$scope.success = true;
-				console.log(data);
+				$scope.loading = false;
 			}, function (data) {
-				console.log(data);
+				$scope.loading = false;
+				var contactErrorList = '<ul><li>' + JSON.stringify(data.data).replace(/['"]+/g, '') + '</li></ul>';
+				$('#error_list_contact').html(contactErrorList);
+				$scope.error = true;
 			});
 		};
 
@@ -1800,8 +1802,13 @@
 				headers: {'Content-Type': undefined},
 				transformRequest: angular.identity
 			}).success(function (data) {
-				$scope.toMail();
-			}).error('Error in uploading file.');
+				$scope.toMail(data);
+			}, function (data) {
+				$scope.loading = false;
+				var contactErrorList = '<ul><li>Error in uploading file.</li></ul>';
+				$('#error_list_contact').html(contactErrorList);
+				$scope.error = true;
+			});
 		};
 
 		$scope.readFile = function (files) {
