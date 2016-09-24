@@ -17,6 +17,7 @@ class CreateFilesTable extends Migration
             $table->integer('fileable_id');
             $table->string('fileable_type');
             $table->string('path');
+            $table->string('filename')->nullable();
             $table->timestamps();
 
         });
