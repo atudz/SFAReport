@@ -30,7 +30,7 @@
                     <td class="bold">[[ record.action ]]</td>
                     <td class="bold">[[ record.status ]]</td>
                     <td class="bold">[[ record.full_name ]]</td>
-                    <td class="bold">[[ record.location_assignment_code ]]</td>
+                    <td class="bold">[[ record.areas[0].area_name ]]</td>
                     <td class="bold">[[ record.created_at ]]</td>
                 </tr>
                 </tbody>
