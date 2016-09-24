@@ -15,17 +15,18 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p>EDIT [[params.name]]</p>
+	        		 <p class="text-center bold required error-edit" id="regExerror">Special character is not allowed.</p>
+	        		 <p><strong><EDIT [[params.name]]</strong></p>
 						  <div class="form-group">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control" step="[[params.step]]">
+							      	<input type="[[params.type]]" ng-model="params.value" ng-keyup="Regex()" min="0" class="form-control regEx" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon regEx" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -42,7 +43,8 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p>EDIT [[params.name]]</p>
+        			<p class="text-center bold required error-edit" id="regExerror">Special character is not allowed.</p>
+	        		 	<p><strong><EDIT [[params.name]]</strong></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
@@ -54,7 +56,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon regEx" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -71,7 +73,8 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p>EDIT [[params.name]]</p>	
+        			<p class="text-center bold required error-edit" id="regExerror">Special character is not allowed.</p>
+	        		 	<p><strong><EDIT [[params.name]]</strong></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
@@ -86,7 +89,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon regEx"  ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -102,7 +105,7 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p>EDIT [[params.message]]</p>			
+					<p><strong><EDIT [[params.name]]</strong></p>		
 					<form class="form-inline">				         
 						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
