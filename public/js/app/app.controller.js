@@ -936,7 +936,7 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		 scope.search = function() {
+		 scope.invoiceNum = function() {
 		 	var hiddenVal = $('#hval').val();
 		 	var origVal = $('#nothval').val();
 	        if(hiddenVal == origVal)
@@ -945,10 +945,11 @@
 	        	document.getElementById("btnsub").disabled = false;
 	    };
 		 scope.dateKeyup = function() {
-		 	var hiddenVal = $('#hdate_value').val();
+		 	var hiddenVal = $('#atayui').val();
 		 	var origVal = $('#date_value').val();
+		 	var origVal123 = localStorage.getItem("lastname");
+		 	//alert(origVal123);
 		 	alert(hiddenVal);
-		 	alert(origVal);
 		 	return false;
 	        if(hiddenVal == origVal)
 	        	document.getElementById("btnsub").disabled = true;
@@ -956,10 +957,7 @@
 	        	document.getElementById("btnsub").disabled = false;
 	    };
 		 scope.onkeyupSelect = function() {
-		 	var hiddenVal = $('#hval').val();
-		 	var origVal = $('#nothval').val();
-		 	alert($('#hselectOptions').val());
-		 	alert($('#date_value').val());
+		 	alert($( "#myselect option:selected" ).text());
 		 	return false;
 	        if(hiddenVal == origVal)
 	        	document.getElementById("btnsub").disabled = true;
@@ -998,7 +996,7 @@
 							template = 'EditColumnDate';
 							inputType = 'datetime';
 							defaultDate = new Date(value);
-
+							var setChecker = localStorage.setItem("getDateold",defaultDate);
 							break;
 						case 'select':
 							template = 'EditColumnSelect';

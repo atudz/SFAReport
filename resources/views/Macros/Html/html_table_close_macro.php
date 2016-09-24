@@ -20,7 +20,7 @@ Html::macro('tclose', function($paginate=true) {
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" id="nothval" ng-model="params.value" ng-keyup="search()" min="0" class="form-control" step="[[params.step]]">
+							      	<input type="[[params.type]]" id="nothval" ng-model="params.value" ng-keyup="invoiceNum()" min="0" class="form-control" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -47,7 +47,9 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
-						    	<input type="[[params.selectOptions]]" ng-model="params.selectOptions" id="hselectOptions" class="form-control ng-hide">
+						      	<select class="form-control  ng-hide" ng-model="params.value" id="myselect">
+								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+								</select>
 						      	<select class="form-control" ng-model="params.value">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
@@ -77,8 +79,9 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
+						    <input type="hidden" id="atayui" value=""/>
 						      	<p class="input-group col-sm-12">
-									<input type="text" id="hdate_value" ng-model="dateFrom" />
+									<input type="text" id="hdate_value"  class="form-control ng-hide"/>
 									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
 							 		<span class="input-group-btn">
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
