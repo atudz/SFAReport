@@ -286,6 +286,11 @@ class UserController extends ControllerCore
 		return response()->json($data);
 	}
 
+	/**
+	 * This function will store the report for support page.
+	 * @param Request $request
+	 * @return mixed
+     */
 	public function userContactUs(Request $request)
 	{
 		$data = [
@@ -311,7 +316,7 @@ class UserController extends ControllerCore
 	 */
 	public function mail($support_id)
 	{
-		$contactUs = ModelFactory::getInstance('ContactUs')->where('id', $support_id)->with('file')->first();
+		$contactUs = ModelFactory::getInstance('ContactUs')->with('file')->where('id', $support_id)->first();
 		$branch = ModelFactory::getInstance('AppArea')->where('area_code',
 			$contactUs->location_assignment_code)->select('area_name')->first();
 		$data = [
@@ -326,21 +331,18 @@ class UserController extends ControllerCore
 			'subject'                  => $contactUs->subject,
 			'email_message'            => $contactUs->message
 		];
-		//TODO: get the path of the file and add a new column to summary of incident of report.
-		dd($contactUs);
-		if ($contactUs->file){
-			$data['file_path'] = $contactUs->file->path;
-		}
 
-		dd($data['file_path']);
+		if ($contactUs->file) {
+			$data['file_path'] = $contactUs->file->path;
+			$data['file_name'] = $contactUs->file->filename;
+		}
 
 		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to(config('system.from'));
-//			if ($pathFile) {
-//				$message->attach($pathFile, ['as' => $name]);
-//
-//			}
+			if (!empty($data['file_path'])) {
+				$message->attach($data['file_path'], ['as' => $data['file_name']]);
+			}
 			$message->subject($data['subject']);
 		});
 
@@ -388,11 +390,14 @@ class UserController extends ControllerCore
 			$directory = 'app' . DIRECTORY_SEPARATOR . 'support-page-files';
 			mt_srand(time()); //seed the generator with the current timestamp
 			$basename = md5(mt_rand());
-			$filename = $basename . snake_case($file['file']->getClientOriginalName()) . '.' . $file['file']->getClientOriginalExtension();
+			$filename = $basename . snake_case($file['file']->getClientOriginalName());
 
 			$file['file']->move(storage_path($directory), $filename);
 			$contactFile = ContactUs::find($support_id);
-			$contactFile->file()->create(['path' => $directory . DIRECTORY_SEPARATOR . $filename]);
+			$contactFile->file()->create([
+				'path'     => storage_path($directory . DIRECTORY_SEPARATOR . $filename),
+				'filename' => $file['file']->getClientOriginalName()
+			]);
 
 			return response()->json($contactFile);
 
