@@ -19,7 +19,7 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control" step="[[params.step]]">
+							      	<input type="[[params.type]]" ng-model="params.value" ng-keyup="Regex()" min="0" class="form-control regEx" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">

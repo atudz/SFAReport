@@ -936,7 +936,18 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-
+		scope.Regex = function() {
+         	var pattern = /^[a-zA-Z0-9]*$/;
+         	var patternComment = /^[a-zA-Z0-9 .,]*$/;
+         	if(!pattern.test($('.regEx').val().trim()))
+			{
+				document.getElementById("regExerror").style.display = "block";
+			}else if(!patternComment.test($('textarea.regEx').html().trim())){
+				document.getElementById("regExerror").style.display = "block";
+			}else{
+				document.getElementById("regExerror").style.display = "none";	
+			}
+        };
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
 				var selectOptions = options;
