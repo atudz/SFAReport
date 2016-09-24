@@ -7034,15 +7034,11 @@ class ReportsPresenter extends PresenterCore
 	 */
 	public function generateInvoiceNumber($customer, $isVan = false)
 	{
-		$invoiceCode = '';
 		$areaCodes = $this->arrayOfAreaCodes();
 		$customerCode = $this->getCustomerAreaCode($customer, $isVan)->area_code;
 		$code = (int)explode('_', $customer)[0];
-		if ($code == 1000) {
-			$invoiceCode = 'C' . $areaCodes[$customerCode];
-		} elseif ($code == 2000) {
-			$invoiceCode = 'D' . $areaCodes[$customerCode];
-		}
+		$invoice_key = config('system.invoice_key');
+		$invoiceCode = $invoice_key[$code] . $areaCodes[$customerCode];
 
 		return $invoiceCode;
 	}
