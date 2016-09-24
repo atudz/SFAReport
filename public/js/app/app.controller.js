@@ -1705,6 +1705,7 @@
 	    	//$log.info(data);
 	    	$scope.id = data.id;
 	    	$scope.age = Number(data.age);
+			$scope.isJr = $scope.records.jr_salesman_code != ''	 ? true : false;
 
 
 	    	if(data.location_assignment_from){
@@ -1934,21 +1935,47 @@
 		});
 
 		$('#checkbox_jr_salesman').on('click', function () {
-			if ($(this).is(':checked')) {
+			if ($(this).is(':checked') && typeof scope.records.jr_salesman_code == 'undefined') {
 				$('#salesman_code').prop('disabled', true);
-				var API = resource('/controller/user/generate/' + $('#salesman_code').val());
-				API.get({}, function (data) {
-					scope.jr_salesman_code = data.result;
-					$('#label_jr_salesman_code').html(scope.jr_salesman_code);
-				});
+				scope.generateJrSalesmanCode();
+			} else if (typeof scope.records.jr_salesman_code != "undefined" && scope.records.jr_salesman_code != '') {
+				// this function will trigger in a reverse behavior for variable isJr.
+				if (scope.isJr) {
+					$('#salesman_code').prop('disabled', false);
+					$('#label_jr_salesman_code').html('');
+				} else {
+					$('#salesman_code').prop('disabled', true);
+					$('#label_jr_salesman_code').html(scope.records.jr_salesman_code);
+				}
+			} else if (scope.records.jr_salesman_code == '' && scope.records.salesman_code != '') {
+				$('#salesman_code').prop('disabled', true);
+				scope.generateJrSalesmanCode();
+				scope.records.jr_salesman_code = scope.jr_salesman_code;
 			}
 			else {
 				$('#salesman_code').prop('disabled', false);
 				$('#label_jr_salesman_code').html('');
 				scope.jr_salesman_code = '';
 			}
-
 		});
+
+		// this function will trigger in edit user for jr salesman code;
+		scope.editChangeSalesmanCode = function () {
+			if (scope.records.jr_salesman_code) {
+				scope.generateJrSalesmanCode(scope.records.id);
+			}
+		};
+		
+		scope.generateJrSalesmanCode = function (id) {
+			var API = resource('/controller/user/generate/' + $('#salesman_code').val());
+			if (id) {
+				API = resource('/controller/user/generate/' + $('#salesman_code').val() + '/' + id);
+			}
+			API.get({}, function (data) {
+				id ? scope.records.jr_salesman_code = data.result : scope.jr_salesman_code = data.result;
+				$('#label_jr_salesman_code').html(scope.jr_salesman_code);
+			});
+		};
 
 		scope.save = function(edit,profile){
 			var personalInfoErrors = [];
@@ -2103,26 +2130,26 @@
 			{
 				var editMode = (edit) ? true:false;
 				var items = {
-					   edit_mode: editMode,
-					   id: scope.id,
-				       fname: $('#fname').val(),
-				       lname: $('#lname').val(),
-				       mname: $('#mname').val(),
-				       email: $('#email').val(),
-				       username: $('#username').val(),
-				       password: $('#password').val(),
-				       address: $('#address').val(),
-				       gender: $('#gender').val(),
-				       age: $('#age').val(),
-				       telephone: $('#telephone').val(),
-				       mobile: $('#mobile').val(),
-				       role: $('#role').val(),
-				       area: $('#area').val(),
-				       salesman_code: $('#salesman_code').val(),
-						jr_salesman_code: scope.jr_salesman_code,
-				       assignment_type: $('#assignment_type').val(),
-				       assignment_date_from: $('#assignment_date_from').val(),
-				       assignment_date_to: $('#assignment_date_to').val()
+					edit_mode: editMode,
+					id: scope.id,
+					fname: $('#fname').val(),
+					lname: $('#lname').val(),
+					mname: $('#mname').val(),
+					email: $('#email').val(),
+					username: $('#username').val(),
+					password: $('#password').val(),
+					address: $('#address').val(),
+					gender: $('#gender').val(),
+					age: $('#age').val(),
+					telephone: $('#telephone').val(),
+					mobile: $('#mobile').val(),
+					role: $('#role').val(),
+					area: $('#area').val(),
+					salesman_code: $('#salesman_code').val(),
+					jr_salesman_code: typeof scope.records.jr_salesman_code == 'undefined' || typeof scope.isJr == 'undefined' || !scope.isJr ? scope.jr_salesman_code : scope.records.jr_salesman_code,
+					assignment_type: $('#assignment_type').val(),
+					assignment_date_from: $('#assignment_date_from').val(),
+					assignment_date_to: $('#assignment_date_to').val()
 				};
 
 				API = resource('controller/user/save');
