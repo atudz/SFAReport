@@ -6320,7 +6320,7 @@ class ReportsPresenter extends PresenterCore
     	else
     		$limit = config('system.report_limit_pdf');
     	
-    	if(in_array($report,['salesreportpermaterial','salesreportperpeso']) && !in_array($type,['xls','xlsx']))
+    	if(in_array($report,['salesreportpermaterial','salesreportperpeso','salescollectionreport']) && !in_array($type,['xls','xlsx']))
     		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
