@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p><strong><EDIT [[params.name]]</strong></p>
+	        		 <p><EDIT [[params.name]]</p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
@@ -43,14 +43,14 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p><EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
-						      	<select class="form-control  ng-hide" ng-model="params.value" id="myselect">
+						      	<select class="form-control ng-hide" id="oldSelected">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
-						      	<select class="form-control" ng-model="params.value">
+						      	<select class="form-control" ng-model="params.value"  id="newSelected">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
 						    </div>
@@ -58,7 +58,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="onkeyupSelect()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="selectKeyup()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -75,7 +75,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p><EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">

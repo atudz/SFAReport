@@ -410,7 +410,6 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 
-	    	alert($scope.dateFrom);
 			$("input[id*='date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
@@ -945,21 +944,23 @@
 	        	document.getElementById("btnsub").disabled = false;
 	    };
 		 scope.dateKeyup = function() {
-		 	var hiddenVal = $('#atayui').val();
-		 	var origVal = $('#date_value').val();
-		 	var origVal123 = localStorage.getItem("lastname");
-		 	//alert(origVal123);
-		 	alert(hiddenVal);
-		 	return false;
-	        if(hiddenVal == origVal)
+		 	var newVal = $('#date_value').val();
+		 	var origVal = localStorage.getItem("getDateold");
+		 	var date = new Date(origVal);
+		 	var date1 = new Date(newVal);
+			var originalDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+			var newDate = (date1.getMonth() + 1) + '/' + date1.getDate() + '/' +  date1.getFullYear();
+	        if(originalDate == newDate)
 	        	document.getElementById("btnsub").disabled = true;
 	        else
 	        	document.getElementById("btnsub").disabled = false;
 	    };
-		 scope.onkeyupSelect = function() {
-		 	alert($( "#myselect option:selected" ).text());
-		 	return false;
-	        if(hiddenVal == origVal)
+		 scope.selectKeyup = function() {
+		 	var e = document.getElementById("oldSelected");
+			var oldSel = e.options[e.selectedIndex].value;
+		 	var e1 = document.getElementById("newSelected");
+			var newSel = e1.options[e1.selectedIndex].value;
+	        if(oldSel == newSel)
 	        	document.getElementById("btnsub").disabled = true;
 	        else
 	        	document.getElementById("btnsub").disabled = false;
@@ -984,7 +985,7 @@
 							
 				var template = '';
 				var inputType = '';
-				if(data.sync_data.sync == 11)
+				if(data.sync_data.sync == 1)
 				{
 					template = 'Synchronizing';
 				}
@@ -996,7 +997,7 @@
 							template = 'EditColumnDate';
 							inputType = 'datetime';
 							defaultDate = new Date(value);
-							var setChecker = localStorage.setItem("getDateold",defaultDate);
+							localStorage.setItem("getDateold",defaultDate);
 							break;
 						case 'select':
 							template = 'EditColumnSelect';
