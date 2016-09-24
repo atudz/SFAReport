@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p><strong><EDIT [[params.name]]</strong></p>
+	        		 <p class="bold"><EDIT [[params.name]]</p>
 						  <div class="form-group">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
@@ -42,7 +42,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p  class="bold"><EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
@@ -71,7 +71,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p  class="bold"><EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
@@ -102,7 +102,7 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p><strong><EDIT [[params.name]]</strong></p>		
+					<p  class="bold"><EDIT [[params.name]]</p>		
 					<form class="form-inline">				         
 						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
