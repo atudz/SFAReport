@@ -147,10 +147,12 @@ class UserPresenter extends PresenterCore
 
 	/**
 	 * Get the prepared list of summary of incident reports.
+	 * @param bool $withCode
+	 * @return
 	 */
 	public function getPreparedSummaryOfIncidentReportList($withCode = true)
 	{
-		$summary = ModelFactory::getInstance('ContactUs')->with('users')->with('areas');
+		$summary = ModelFactory::getInstance('ContactUs')->with('users', 'areas', 'file');
 		if ($this->request->has('name') && !is_numeric($this->request->get('name'))) {
 			$filterName = FilterFactory::getInstance('Text');
 			$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
