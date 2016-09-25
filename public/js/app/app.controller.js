@@ -1762,6 +1762,15 @@
 			scrollbar: true
 		});
 
+		var apiMaxFileSize = $resource('/user/file-size');
+		apiMaxFileSize.get({}, function (data) {
+			$scope.maxFileSize = (data.value * 1000);
+		}, function () {
+			var contactErrorList = '<ul><li>Whoops, looks like something went wrong.</li></ul>';
+			$('#error_list_contact').html(contactErrorList);
+			$scope.error = true;
+		});
+
 		$scope.save = function () {
 			$scope.contact.callFrom = $('#callFrom').val();
 			$scope.contact.callTo = $('#callTo').val();
@@ -1812,9 +1821,17 @@
 		};
 
 		$scope.readFile = function (files) {
+			$scope.error = false;
 			var fd = new FormData();
 			//Take the first selected file
 			fd.append("file", files[0]);
+			var size = (files[0].size / 1000); //convert the bytes to kb by dividing the of bytes by 1000
+			if (size > $scope.maxFileSize) { // 10000kb or 10mb
+				$scope.error = true;
+				var contactErrorList = '<ul><li>Max File size is 10mb.</li></ul>';
+				$('#error_list_contact').html(contactErrorList);
+				return false;
+			}
 			$scope.contactFile = fd;
 		};
 
