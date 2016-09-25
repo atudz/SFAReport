@@ -1687,7 +1687,9 @@
 	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log', UserEdit]);
 
 	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
-
+		$scope.regExemail = function(){
+		   //alert("here regex");
+		}
 		$scope.age = '';
 		$scope.from = null;
 		$scope.to = null;
