@@ -69,8 +69,7 @@ class UserController extends ControllerCore
 
 			return response()->json($response);
 		}
-
-        if($request->has('age') && 18 >= $request->get('age'))
+        if($request->has('age') && 17 >= $request->get('age'))
         {
             $response['exists'] = true;
             $response['error'] = 'User cannot be below 18.';
@@ -267,9 +266,18 @@ class UserController extends ControllerCore
 	 * This will return a jr salesman code.
 	 * @param $code
 	 * @return mixed
-     */
-	public function getJrSalesmanCode($code)
+	 */
+	public function getJrSalesmanCode($code, $user_id = 0)
 	{
+		if ($user_id) {
+			$salesman_code = ModelFactory::getInstance('User')->where('id', $user_id)->select('salesman_code')->first();
+			$getCode = explode('-', $salesman_code->salesman_code);
+			if ($code == $getCode[0]) {
+				$data['result'] = $salesman_code->salesman_code;
+
+				return response()->json($data);
+			}
+		}
 		$data['result'] = $this->generateJrSalesCode($code);
 
 		return response()->json($data);

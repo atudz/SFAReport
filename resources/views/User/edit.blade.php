@@ -126,9 +126,23 @@
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
 			 				<label for="salesman_code" class="col-sm-3 control-label">Salesman Code<span class="required [[req_salesman]]" id="salesman_required">*</span></label>
-			 				<div class="col-sm-6"><input placeholder="" class="form-control" id="salesman_code" name="salesman_code" type="text" ng-model="records.salesman_code">	</div>
+			 				<div class="col-sm-6"><input placeholder="" class="form-control" id="salesman_code" name="salesman_code" type="text" ng-model="records.salesman_code" ng-disabled="isJr" ng-blur="editChangeSalesmanCode()">	</div>
 			 			</div>
-					</div>									
+					</div>
+					<div class="row form-input-field" ng-show="records.user_group_id == '4'">
+						<div class="form-group form-group-sm">
+							<label for="salesman_code" class="col-sm-3 control-label">Jr Salesman Code</label>
+							<div class="checkbox checkbox-inline" style="margin-top: auto;">
+								<input type="checkbox" id="checkbox_jr_salesman" ng-model="isJr"
+									   ng-true-value="true" ng-false-value="false"
+									   style="margin-top: auto; margin-left: auto;">
+									<span id="label_jr_salesman_code" style="display: inline-block; margin: auto; margin-left: 15px;"
+										  class="ng-binding">[[ records.jr_salesman_code ]]
+
+									</span>
+							</div>
+						</div>
+					</div>
 				</div>
 					
 					
