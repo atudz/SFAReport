@@ -394,7 +394,6 @@
 	{
 		$scope.dateFrom = null;
 	    $scope.dateTo = null;
-
 	    $scope.setFrom = function(from){
 	    	if(from)
 	    		$scope.dateFrom = new Date(from);
@@ -936,25 +935,42 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.Regex = function() {
-         	var pattern = /^[a-zA-Z0-9]*$/;
-         	var patternComment = /^[a-zA-Z0-9 .,]*$/;
-         	if(!pattern.test($('.regEx').val().trim()))
-			{
-				document.getElementById("regExerror").style.display = "block";
-			}else if(!patternComment.test($('textarea.regEx').html().trim())){
-				document.getElementById("regExerror").style.display = "block";
-			}else{
-				document.getElementById("regExerror").style.display = "none";	
-			}
-        };
+		scope.invoiceNum = function() {
+		 	var hiddenVal = $('#hval').val();
+		 	var origVal = $('#nothval').val();
+	        if(hiddenVal == origVal)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
+		 scope.dateKeyup = function() {
+		 	var newVal = $('#date_value').val();
+		 	var origVal = localStorage.getItem("getDateold");
+		 	var date = new Date(origVal);
+		 	var date1 = new Date(newVal);
+			var originalDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+			var newDate = (date1.getMonth() + 1) + '/' + date1.getDate() + '/' +  date1.getFullYear();
+	        if(originalDate == newDate)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
+		 scope.selectKeyup = function() {
+		 	var e = document.getElementById("oldSelected");
+			var oldSel = e.options[e.selectedIndex].value;
+		 	var e1 = document.getElementById("newSelected");
+			var newSel = e1.options[e1.selectedIndex].value;
+	        if(oldSel == newSel)
+	        	document.getElementById("btnsub").disabled = true;
+	        else
+	        	document.getElementById("btnsub").disabled = false;
+	    };
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
 				var selectOptions = options;
 				if(typeof data.sync_data.com[0] !== "undefined"){
 					var comments = data.sync_data.com[0].comment;
 		    	}
-
 				var stepInterval = 1;			
 				if(step)
 					stepInterval = step;
@@ -974,14 +990,13 @@
 				}
 				else
 				{
-
 					switch(type)
 					{
 						case 'date':
 							template = 'EditColumnDate';
 							inputType = 'datetime';
 							defaultDate = new Date(value);
-
+							localStorage.setItem("getDateold",defaultDate);
 							break;
 						case 'select':
 							template = 'EditColumnSelect';
@@ -1002,6 +1017,7 @@
 						column: column,
 						id: id,
 						value: value,
+						oldval: value,
 						comment: comments,
 						selectOptions: selectOptions,
 						index: index,

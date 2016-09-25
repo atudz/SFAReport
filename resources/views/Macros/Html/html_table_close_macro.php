@@ -17,20 +17,21 @@ Html::macro('tclose', function($paginate=true) {
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
 	        		 <p class="bold">EDIT [[params.name]] </p>
 						  <div class="form-group">
+							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" ng-model="params.value" ng-keyup="Regex()" min="0" class="form-control regEx" step="[[params.step]]">
+							      	<input type="[[params.type]]" id="nothval" ng-model="params.value" ng-keyup="invoiceNum()" min="0" class="form-control" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control inner-addon" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control" ng-model="params.comment" ng-keyup="invoiceNum()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-offset-3 col-sm-9">
-						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
 								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						    </div>
 						  </div>
@@ -46,7 +47,10 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
-						      	<select class="form-control" ng-model="params.value">
+						      	<select class="form-control ng-hide" id="oldSelected">
+								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+								</select>
+						      	<select class="form-control" ng-model="params.value"  id="newSelected">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
 						    </div>
@@ -54,12 +58,12 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="selectKeyup()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
 							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
@@ -75,7 +79,9 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
+						    <input type="hidden" id="atayui" value=""/>
 						      	<p class="input-group col-sm-12">
+									<input type="text" id="hdate_value"  class="form-control ng-hide"/>
 									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
 							 		<span class="input-group-btn">
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -86,12 +92,12 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="dateKeyup()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
 						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
