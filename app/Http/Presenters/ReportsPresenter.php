@@ -2103,7 +2103,10 @@ class ReportsPresenter extends PresenterCore
     	// Get Replenishment data 
     	$prepare = \DB::table('txn_replenishment_header')    					
     					->selectRaw('replenishment_date, UPPER(reference_number) reference_number')
-    					->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+    					->leftJoin('app_salesman_van', function($join){
+    						$join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+    						$join->where('app_salesman_van.status','=','A');
+    					});
     	
     	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
     	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
