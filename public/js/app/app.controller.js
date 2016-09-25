@@ -1918,6 +1918,15 @@
 				scope.req_salesman = 'hidden';
 		};
 
+		$('#age').on('change keyup', function () {
+			// Remove invalid characters
+			var sanitized = $(this).val().replace(/[^-0-9]/g, '');
+			// Remove non-leading minus signs
+			sanitized = sanitized.replace(/(.)-+/g, '$1');
+			// Update value
+			$(this).val(sanitized);
+		});
+
 		$('#salesman_code, #role ').bind('keyup change', function () {
 			if ($('#role').val() == 4) {
 				$('#span_salesman').removeClass('hidden');
