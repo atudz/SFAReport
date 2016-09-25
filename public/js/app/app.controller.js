@@ -937,16 +937,28 @@
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 		scope.Regex = function() {
-         	var pattern = /^[a-zA-Z0-9]*$/;
-         	var patternComment = /^[a-zA-Z0-9 .,]*$/;
-         	if(!pattern.test($('.regEx').val().trim()))
+         	if($('.regEx').val())
 			{
-				document.getElementById("regExerror").style.display = "block";
-			}else if(!patternComment.test($('textarea.regEx').html().trim())){
-				document.getElementById("regExerror").style.display = "block";
-			}else{
-				document.getElementById("regExerror").style.display = "none";	
+				var str=document.getElementById("regExpr");
+			    var regex=/[^a-zA-Z0-9 -]/gi;
+			    str.value=str.value.replace(regex ,"");
 			}
+			if($('textarea.regEx').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			if($('textarea.regEx1').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			if($('textarea.regEx2').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			
         };
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
@@ -968,7 +980,7 @@
 							
 				var template = '';
 				var inputType = '';
-				if(data.sync_data.sync == 1)
+				if(data.sync_data.sync == 11)
 				{
 					template = 'Synchronizing';
 				}
