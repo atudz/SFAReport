@@ -426,4 +426,13 @@ class UserPresenter extends PresenterCore
 		 
 		return $headers;
 	}
+
+	/**
+	 * This function will query the max file size in settings table.
+	 * @return mixed
+	 */
+	public function getFileSize()
+	{
+		return ModelFactory::getInstance('Setting')->where('name', 'max_file_size')->select('value')->first();
+	}
 }

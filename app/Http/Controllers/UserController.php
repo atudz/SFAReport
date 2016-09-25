@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use App\Factories\PresenterFactory;
 use App\Http\Models\ContactUs;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends ControllerCore
 {
@@ -387,6 +386,15 @@ class UserController extends ControllerCore
 	{
 		try {
 			$file = $request->all();
+			//multiple by 1000 to convert the mb to kb.
+			$fileSize = 1000 * PresenterFactory::getInstance('User')->getFileSize()->value;
+			// divided by 1000 to convert the bytes to kb.
+			$uploadedSize = ($file['file']->getSize() / 1000);
+
+			if ($uploadedSize > $fileSize) {
+
+				return response()->json('Max File size is 10mb.');
+			}
 			$directory = 'app' . DIRECTORY_SEPARATOR . 'support-page-files';
 			mt_srand(time()); //seed the generator with the current timestamp
 			$basename = md5(mt_rand());
