@@ -985,7 +985,7 @@
 							
 				var template = '';
 				var inputType = '';
-				if(data.sync_data.sync == 11)
+				if(data.sync_data.sync == 1)
 				{
 					template = 'Synchronizing';
 				}
