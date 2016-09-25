@@ -1143,6 +1143,8 @@ tr.modified {
 	display:none;
 }
 
-
+textarea.fxresize{
+    resize: none;
+}
 
  

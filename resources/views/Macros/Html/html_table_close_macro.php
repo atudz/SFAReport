@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p><strong><EDIT [[params.name]]</strong></p>
+	        		 <p>EDIT [[params.name]]</p>
 						  <div class="form-group">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
@@ -25,7 +25,7 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control inner-addon" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -42,7 +42,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p>EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
@@ -54,7 +54,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -71,7 +71,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p><strong><EDIT [[params.name]]</strong></p>
+	        		 	<p>EDIT [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
@@ -86,7 +86,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -102,7 +102,7 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p><strong><EDIT [[params.name]]</strong></p>		
+					<p>EDIT [[params.name]]</p>		
 					<form class="form-inline">				         
 						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
