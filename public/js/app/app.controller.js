@@ -1688,7 +1688,11 @@
 
 	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
 		$scope.regExemail = function(){
-		   //alert("here regex");
+		   if($('#email').val()){
+				var str=document.getElementById("email");
+			    var regex=/[^a-zA-Z0-9 ._@-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
 		}
 		$scope.age = '';
 		$scope.from = null;
