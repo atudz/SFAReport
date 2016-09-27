@@ -26,7 +26,7 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control" ng-model="params.comment" ng-keyup="invoiceNum()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -58,7 +58,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon regEx2" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -92,7 +92,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon regEx1" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
