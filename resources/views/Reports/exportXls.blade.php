@@ -34,8 +34,16 @@
 			@endif			
 			@foreach($records as $record)
 				<tr>
-					@foreach($rows as $row)
-						<td align="left" style="wrap-text:true">
+					@foreach($rows as $key=>$row)
+						@if($header == "Monthly Summary of Sales")
+							@if($key > 3)
+								<th colspan="3" align="left" style="wrap-text:true">
+							@else
+								<th align="left" style="wrap-text:true">
+							@endif
+						@else
+							<th align="left" style="wrap-text:true">
+						@endif
 							@if(is_object($record) && isset($record->$row))
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
@@ -67,7 +75,15 @@
 					<th>Total</th>
 					@foreach($rows as $key=>$row)
 						@if($key > 0)
-							<th align="left" style="wrap-text:true">
+							@if($header == "Monthly Summary of Sales")
+								@if($key > 3)
+									<th colspan="3" align="left" style="wrap-text:true">
+								@else
+									<th align="left" style="wrap-text:true">
+								@endif
+							@else
+								<th align="left" style="wrap-text:true">
+							@endif
 								@if(is_object($summary) && isset($summary->$row))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
