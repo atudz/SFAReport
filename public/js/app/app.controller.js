@@ -935,36 +935,30 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.invoiceNum = function() {
-		 	var hiddenVal = $('#hval').val();
-		 	var origVal = $('#nothval').val();
-	        if(hiddenVal == origVal)
-	        	document.getElementById("btnsub").disabled = true;
-	        else
-	        	document.getElementById("btnsub").disabled = false;
-	    };
-		 scope.dateKeyup = function() {
-		 	var newVal = $('#date_value').val();
-		 	var origVal = localStorage.getItem("getDateold");
-		 	var date = new Date(origVal);
-		 	var date1 = new Date(newVal);
-			var originalDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
-			var newDate = (date1.getMonth() + 1) + '/' + date1.getDate() + '/' +  date1.getFullYear();
-	        if(originalDate == newDate)
-	        	document.getElementById("btnsub").disabled = true;
-	        else
-	        	document.getElementById("btnsub").disabled = false;
-	    };
-		 scope.selectKeyup = function() {
-		 	var e = document.getElementById("oldSelected");
-			var oldSel = e.options[e.selectedIndex].value;
-		 	var e1 = document.getElementById("newSelected");
-			var newSel = e1.options[e1.selectedIndex].value;
-	        if(oldSel == newSel)
-	        	document.getElementById("btnsub").disabled = true;
-	        else
-	        	document.getElementById("btnsub").disabled = false;
-	    };
+		scope.Regex = function() {
+         	if($('.regEx').val())
+			{
+				var str=document.getElementById("regExpr");
+			    var regex=/[^a-zA-Z0-9 -]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			if($('textarea.regEx').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			if($('textarea.regEx1').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			if($('textarea.regEx2').html()){
+				var str=document.getElementById("comment");
+			    var regex=/[^a-zA-Z0-9 .,-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+			
+        };
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
 				var selectOptions = options;

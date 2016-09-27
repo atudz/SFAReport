@@ -20,7 +20,7 @@ Html::macro('tclose', function($paginate=true) {
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" id="nothval" ng-model="params.value" ng-keyup="invoiceNum()" min="0" class="form-control" step="[[params.step]]">
+							      	<input type="[[params.type]]" ng-model="params.value" id="regExpr" ng-keyup="Regex()" min="0" class="form-control regEx" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -58,7 +58,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="selectKeyup()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon regEx2" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -92,7 +92,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control" ng-model="params.comment" ng-keyup="dateKeyup()"  name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon regEx1" ng-keyup="Regex()" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
