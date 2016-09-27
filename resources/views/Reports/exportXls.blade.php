@@ -89,13 +89,13 @@
 										@if($row == 'quantity')
 											{!!$summary->$row!!}
 										@else
-											({!!number_format($summary->$row,2,'.',',').str_repeat('&nbsp;', 25) !!})
+											({!!number_format($summary->$row,2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
 											{!!$summary->$row!!}
 										@else
-											{!!number_format($summary->$row,2,'.',',').str_repeat('&nbsp;', 25) !!}
+											{!!number_format($summary->$row,2,'.',',')!!}
 										@endif
 									@endif									
 								@elseif(is_array($summary) && isset($summary[$row]))
@@ -103,13 +103,13 @@
 										@if($row == 'quantity')
 											{!!$summary[$row]!!}
 										@else
-											({!!number_format($summary[$row],2,'.',',').str_repeat('&nbsp;', 25) !!})
+											({!!number_format($summary[$row],2,'.',',') !!})
 										@endif
 									@else
 										@if($row == 'quantity')
 											{!!$summary[$row]!!}
 										@else
-											{!!number_format($summary[$row],2,'.',',').str_repeat('&nbsp;', 25) !!}
+											{!!number_format($summary[$row],2,'.',',')!!}
 										@endif
 									@endif
 								@endif													

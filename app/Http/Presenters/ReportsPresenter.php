@@ -5610,9 +5610,6 @@ class ReportsPresenter extends PresenterCore
 							<th rowspan="2" align="center">SCR#</th>
 							<th colspan="2" align="center">Invoice Number</th>
 							<th rowspan="2" align="center">Invoice Date</th>
-							<th rowspan="2" colspan="3" align="center" style="wrap-text:true">Total Collected Amount</th>
-							<th rowspan="2" colspan="3" align="center" style="wrap-text:true">12% Sales Tax</th>
-							<th rowspan="2" colspan="3" align="center" style="wrap-text:true">Amount Subject To Commission</th>
 						</tr>
     					<tr>';
     			
@@ -5621,7 +5618,11 @@ class ReportsPresenter extends PresenterCore
 							
     			$theadRaw .= '
     						<th align="center">From</th>
-							<th align="center">To</th>    						
+                            <th align="center">To</th>                          
+							<th align="center"></th>
+                            <th colspan="3" align="center" style="wrap-text:true">Total Collected Amount</th>
+                            <th colspan="3" align="center" style="wrap-text:true">12% Sales Tax</th>
+                            <th colspan="3" align="center" style="wrap-text:true">Amount Subject To Commission</th>   						
 					    </tr>'; 
     			$prepare = $this->getPreparedSalesCollectionSummary();
     			$rows = $this->getSalesCollectionSummarySelectColumns();
