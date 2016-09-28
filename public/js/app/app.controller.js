@@ -1688,7 +1688,8 @@
 
 	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
 		$scope.regExemail = function(){
-		   if($('#email').val()){
+			var email = $('#email').val();
+		    if(email){
 				var str=document.getElementById("email");
 			    var regex=/[^a-zA-Z0-9 ._@-]/gi;
 			    str.value=str.value.replace(regex ,"");
@@ -1905,6 +1906,14 @@
 	 */
 	function saveUser(scope, resource, location, modal, window, log)
 	{
+		scope.regExemail = function(){
+			var email = $('#email').val();
+		   if(email){
+				var str=document.getElementById("email");
+			    var regex=/[^a-zA-Z0-9 ._@-]/gi;
+			    str.value=str.value.replace(regex ,"");
+			}
+		}
 		scope.personalInfoError = false;
 		scope.locationInfoError = false;
 		scope.success = false;
