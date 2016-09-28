@@ -1691,7 +1691,7 @@
 			var email = $('#email').val();
 		    if(email){
 				var str=document.getElementById("email");
-			    var regex=/[^a-zA-Z0-9 ._@-]/gi;
+			    var regex=/[^a-zA-Z0-9._@-]/gi;
 			    str.value=str.value.replace(regex ,"");
 			}
 		}
@@ -1910,7 +1910,7 @@
 			var email = $('#email').val();
 		   if(email){
 				var str=document.getElementById("email");
-			    var regex=/[^a-zA-Z0-9 ._@-]/gi;
+			    var regex=/[^a-zA-Z0-9._@-]/gi;
 			    str.value=str.value.replace(regex ,"");
 			}
 		}
