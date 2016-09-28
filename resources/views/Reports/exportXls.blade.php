@@ -42,7 +42,7 @@
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@elseif(ctype_alnum($record->$row))
-									{!!strtoupper($record->$row)!!}
+									{!!str_replace(array('%',')','(', ','),'', strtoupper($record->$row))!!}
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
 								@endif
@@ -52,7 +52,7 @@
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@elseif(ctype_alnum($record[$row]))
-									{!!strtoupper($record[$row])!!}
+									{!!str_replace(array('%',')','(', ','),'', strtoupper($record[$row]))!!}
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
 								@endif								
