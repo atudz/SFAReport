@@ -5721,11 +5721,11 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'customerlist':
     			$columns = $this->getTableColumns($report);
-    			$prepare = $this->getPreparedCustomerList();
-    			$rows = $this->getCustomerSelectColumns();
-    			$header = 'Customer List';
-    			$filters = $this->getSalesReportFilterData($report);
-    			$filename = 'Customer List';
+                $prepare = $this->getPreparedCustomerList();
+                $rows = $this->getCustomerSelectColumns();
+                $header = 'Customer List';
+                $filters = $this->getSalesReportFilterData($report);
+                $filename = 'Customer List';
     			break;
     		case 'salesmanlist':
     			$columns = $this->getTableColumns($report);    			
@@ -6452,7 +6452,7 @@ class ReportsPresenter extends PresenterCore
     				$filters = [
     							'Salesman' => $salesman,
     							'Area' => $area,
-    							'Company' => $company_code,
+    							'Company Code' => $company_code,
     							'Status' => $status,
     							'Sfa Modified Date' => $sfa_modified_date,
     				];
@@ -6467,7 +6467,7 @@ class ReportsPresenter extends PresenterCore
     				$filters = [
     							'Salesman' => $salesman,
     							'Area' => $area,
-    							'Company' => $company_code,
+    							'Company Code' => $company_code,
     							'Status' => $status,
     							'Sfa Modified Date' => $sfa_modified_date,
     				];
