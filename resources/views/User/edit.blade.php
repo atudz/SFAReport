@@ -51,7 +51,7 @@
 						<div class="form-group form-group-sm">						
 							<label for="email" class="col-sm-3 control-label">Email <span class="required">*</span></label>
 			 				<div class="col-sm-6">
-			 					<input placeholder="" class="form-control" id="email" name="email" type="text" ng-model="records.email">
+			 					<input placeholder="" class="form-control" id="email" ng-keyup="regExemail()" name="email" type="text" ng-model="records.email">
 			 				</div>			 				
 			 			</div>
 					</div>

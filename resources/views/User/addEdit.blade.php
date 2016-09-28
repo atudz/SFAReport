@@ -33,7 +33,7 @@
 						{!!Html::input('text','mname','Middle Name')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','email','Email <span class="required">*</span>')!!}
+						{!!Html::input('text','email','Email <span class="required">*</span>','',['ng-keyup'=>'regExemail()','id'=>'email'])!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','username','Username')!!}
