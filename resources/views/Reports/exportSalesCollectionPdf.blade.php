@@ -180,9 +180,23 @@
 			{!!$theadRaw!!}
 		@else
 			<tr>
-				@foreach($columns as $column)
-					<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
-				@endforeach
+			@foreach($columns as $column)
+				@if(preg_replace('/\s+/', '',$column['name']) == 'CustomerCode' && preg_replace('/\s+/', '',$column['name']) == 'CustomerName')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 9, "<br>\n",TRUE)!!}</th>
+				@elseif(preg_replace('/\s+/', '',$column['name']) == 'RemarksComment')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 7, "<br>\n",TRUE)!!}</th>
+				@elseif(preg_replace('/\s+/', '',$column['name']) == 'OtherDeductionAmount')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 13, "<br>\n",TRUE)!!}</th>
+				@elseif(preg_replace('/\s+/', '',$column['name']) == 'InvoiceCollectibleAmount')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 12, "<br>\n",TRUE)!!}</th>
+				@elseif(preg_replace('/\s+/', '',$column['name']) == 'CollectionDate')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 11, "<br>\n",TRUE)!!}</th>
+				@elseif(preg_replace('/\s+/', '',$column['name']) == 'TotalCollectedAmount')
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 10, "<br>\n",TRUE)!!}</th>
+				@else
+					<th align="center" style="wrap-text:true">{!!wordwrap($column['name'], 8, "<br>\n",TRUE)!!}</th>
+				@endif
+			@endforeach
 			</tr>
 		@endif
 		</thead>
