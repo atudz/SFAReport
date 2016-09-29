@@ -147,10 +147,12 @@ class UserPresenter extends PresenterCore
 
 	/**
 	 * Get the prepared list of summary of incident reports.
+	 * @param bool $withCode
+	 * @return
 	 */
 	public function getPreparedSummaryOfIncidentReportList($withCode = true)
 	{
-		$summary = ModelFactory::getInstance('ContactUs')->with('users');
+		$summary = ModelFactory::getInstance('ContactUs')->with('users', 'areas', 'file');
 		if ($this->request->has('name') && !is_numeric($this->request->get('name'))) {
 			$filterName = FilterFactory::getInstance('Text');
 			$summary = $filterName->addFilter($summary, 'name', function ($self, $model) {
@@ -169,6 +171,26 @@ class UserPresenter extends PresenterCore
 			$filterIncidentNo = FilterFactory::getInstance('Text');
 			$summary = $filterIncidentNo->addFilter($summary, 'incident_no', function ($self, $model) {
 				return $model->where('id', $self->getValue());
+			});
+		}
+		if ($this->request->has('subject') && $this->request->get('subject') != '') {
+			$filterSubject = FilterFactory::getInstance('Text');
+			$summary = $filterSubject->addFilter($summary, 'subject', function ($self, $model) {
+				return $model->where('subject', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('action') && $this->request->get('action') != '') {
+			$filterAction = FilterFactory::getInstance('Text');
+			$summary = $filterAction->addFilter($summary, 'action', function ($self, $model) {
+				return $model->where('action', $self->getValue());
+			});
+		}
+
+		if ($this->request->has('status') && $this->request->get('status') != '') {
+			$filterStatus = FilterFactory::getInstance('Text');
+			$summary = $filterStatus->addFilter($summary, 'status', function ($self, $model) {
+				return $model->where('status', $self->getValue());
 			});
 		}
 
@@ -377,10 +399,15 @@ class UserPresenter extends PresenterCore
 	public function getIncidentReportTableColumns()
 	{
 		$headers = [
-			['name'=>'Incident #', 'sort'=>'id'],
-			['name'=>'Summary', 'sort'=>'message'],
-			['name'=>'Status', 'sort'=>'status'],
-			['name'=>'Submitted By', 'sort'=>'name']
+			['name' => 'Incident #', 'sort' => 'id'],
+			['name' => 'Subject', 'sort' => 'subject'],
+			['name' => 'Summary', 'sort' => 'message'],
+			['name' => 'Action', 'sort' => 'action'],
+			['name' => 'Status', 'sort' => 'status'],
+			['name' => 'Reported By', 'sort' => 'name'],
+			['name' => 'Branch', 'sort' => 'location_assignment_code'],
+			['name' => 'Date', 'sort' => 'created_at']
+
 		];
 
 		return $headers;
@@ -398,5 +425,14 @@ class UserPresenter extends PresenterCore
 		];
 		 
 		return $headers;
+	}
+
+	/**
+	 * This function will query the max file size in settings table.
+	 * @return mixed
+	 */
+	public function getFileSize()
+	{
+		return ModelFactory::getInstance('Setting')->where('name', 'max_file_size')->select('value')->first();
 	}
 }

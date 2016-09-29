@@ -46,6 +46,7 @@ Route::group(['prefix' => 'reports'],function(){
 
 
 Route::group(['prefix' => 'user'],function(){
+	Route::get('/file-size', ['as'=>'user-get', 'uses'=>'UserPresenter@getFileSize']);
 	Route::get('/edit/{id}', ['as'=>'user-get', 'uses'=>'UserPresenter@getUser']);
 	Route::get('/getemails/{id?}', ['as'=>'user-get-emails', 'uses'=>'UserPresenter@getUserEmails']);
 	Route::get('/getusernames/{id?}', ['as'=>'user-get-usernames', 'uses'=>'UserPresenter@getUsernames']);
@@ -81,6 +82,8 @@ Route::group(['prefix' => 'controller'],function(){
 	//Route::get('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 	Route::post('/user/contact', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUs']);
+	Route::post('/user/contact/file/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUsFileUpload']);
+	Route::get('/user/contact/mail/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@mail']);
 
 });
 

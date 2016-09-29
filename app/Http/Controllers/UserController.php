@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
 use App\Factories\ModelFactory;
+use App\Factories\PresenterFactory;
+use App\Http\Models\ContactUs;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends ControllerCore
@@ -283,6 +285,11 @@ class UserController extends ControllerCore
 		return response()->json($data);
 	}
 
+	/**
+	 * This function will store the report for support page.
+	 * @param Request $request
+	 * @return mixed
+     */
 	public function userContactUs(Request $request)
 	{
 		$data = [
@@ -298,37 +305,68 @@ class UserController extends ControllerCore
 			'status'                   => 'New'
 		];
 		$contactUs = ModelFactory::getInstance('ContactUs')->create($data);
-		$data['time_from'] = $request->get('callFrom');
-		$data['time_to'] = $request->get('callTo');
-		
-		// use the variable email_message to avoid error.
-		// Object of class Illuminate\Mail\Message could not be converted to string.
-		$data['email_message'] = $contactUs->message;
 
-		//send email to admin.
-		$data['reference_no'] = $contactUs->id;
+		return response()->json($contactUs, 200);
+	}
+
+	/**
+	 * This function will handle the sending of email.
+	 * @param $support_id
+	 */
+	public function mail($support_id)
+	{
+		$contactUs = ModelFactory::getInstance('ContactUs')->with('file')->where('id', $support_id)->first();
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code',
+			$contactUs->location_assignment_code)->select('area_name')->first();
+		$data = [
+			'reference_no'             => $contactUs->id,
+			'full_name'                => $contactUs->full_name,
+			'mobile'                   => $contactUs->mobile,
+			'telephone'                => $contactUs->telephone,
+			'email'                    => $contactUs->email,
+			'location_assignment_code' => $branch->area_name,
+			'time_from'                => date('h:i:s a', strtotime($contactUs->time_from)),
+			'time_to'                  => date('h:i:s a', strtotime($contactUs->time_to)),
+			'subject'                  => $contactUs->subject,
+			'email_message'            => $contactUs->message
+		];
+
+		if ($contactUs->file) {
+			$data['file_path'] = $contactUs->file->path;
+			$data['file_name'] = $contactUs->file->filename;
+		}
+
 		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to(config('system.from'));
+			if (!empty($data['file_path'])) {
+				$message->attach($data['file_path'], ['as' => $data['file_name']]);
+			}
 			$message->subject($data['subject']);
 		});
+
 		//reply email to sender.
 		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
+
 		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to($data['email']);
 			$message->subject($data['subject']);
 		});
 
-		return $contactUs;
+		if (count(Mail::failures()) > 0) {
+			return response()->json($contactUs, 200);
+		} else {
+			return response()->json('Email not send.', 471);
+		}
 	}
 
 	/**
 	 * This will update the status or action from email event action.
 	 * @param Request $request
 	 * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+	 */
 	public function userContactUsActionOrStatus(Request $request)
 	{
 		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
@@ -336,5 +374,47 @@ class UserController extends ControllerCore
 		$contactUs->save();
 
 		return redirect('/#/summaryofincident.report');
+	}
+
+	/**
+	 * This function will handle file uploads.
+	 * @param $support_id
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function userContactUsFileUpload($support_id, Request $request)
+	{
+		try {
+			$file = $request->all();
+			//multiple by 1000 to convert the mb to kb.
+			$fileSize = 1000 * PresenterFactory::getInstance('User')->getFileSize()->value;
+			// divided by 1000 to convert the bytes to kb.
+			$uploadedSize = ($file['file']->getSize() / 1000);
+
+			if ($uploadedSize > $fileSize) {
+
+				return response()->json('Max File size is 10mb.');
+			}
+			$directory = 'app' . DIRECTORY_SEPARATOR . 'support-page-files';
+			mt_srand(time()); //seed the generator with the current timestamp
+			$basename = md5(mt_rand());
+			$filename = $basename . snake_case($file['file']->getClientOriginalName());
+
+			$file['file']->move(storage_path($directory), $filename);
+			$contactFile = ContactUs::find($support_id);
+			$contactFile->file()->create([
+				'path'     => storage_path($directory . DIRECTORY_SEPARATOR . $filename),
+				'filename' => $file['file']->getClientOriginalName()
+			]);
+
+			return response()->json($contactFile);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'text' => $e->getMessage(),
+				'code' => 500
+			]);
+		}
+
 	}
 }
