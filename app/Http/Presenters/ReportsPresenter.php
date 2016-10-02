@@ -5787,6 +5787,15 @@ class ReportsPresenter extends PresenterCore
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
+	    			if ($report == 'bir') {
+	    				foreach ($records as &$record) {
+	    					$sheet->setColumnFormat([
+	    							'A' => 'MM/DD/YYYY'
+	    					]);
+	    					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
+	    				}
+	    			}
+	    				
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
