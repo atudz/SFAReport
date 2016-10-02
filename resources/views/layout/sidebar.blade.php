@@ -12,22 +12,31 @@
             @foreach($menu as $nav)
             {{--*/ $counter++ /*--}}
 	            <li @if(count($nav['sub'])) class="parent" href="#sub-item-{{$counter}}" @endif>
-	            <a href="@if($nav['url'])#{{$nav['url']}}@endif"><span class="{{$nav['class']}}"></span>             
-	            	{{$nav['name']}} 
-	            	@if($nav['sub'] && count($nav['sub'])) 
-	            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
-	            	@endif
-	            </a>
-	            
-	            @if($nav['sub'] && count($nav['sub']))	            
-	            <ul class="children collapse" id="sub-item-{{$counter}}">
-	                @foreach($nav['sub'] as $item)
-	                	<li>
-	                		<a href="#{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
-	                	</li>
-	                @endforeach
-	            </ul>
-	            @endif
+	            	@if($nav['link'])
+			            <a target="_BLANK" href="{{$nav['url']}}"><span class="{{$nav['class']}}"></span>             
+			            	{{$nav['name']}} 
+			            	@if($nav['sub'] && count($nav['sub'])) 
+			            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+			            	@endif
+			            </a>			            
+			         @else
+			         	<a href="@if($nav['url'])#{{$nav['url']}}@endif"><span class="{{$nav['class']}}"></span>             
+			            	{{$nav['name']}} 
+			            	@if($nav['sub'] && count($nav['sub'])) 
+			            		<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>
+			            	@endif
+			            </a>
+			            
+			            @if($nav['sub'] && count($nav['sub']))	            
+			            <ul class="children collapse" id="sub-item-{{$counter}}">
+			                @foreach($nav['sub'] as $item)
+			                	<li>
+			                		<a href="#{{$item['url']}}"><span class="{{$item['class']}}"></span>{{$item['name']}}</a>
+			                	</li>
+			                @endforeach
+			            </ul>
+			         @endif
+		            @endif
 	            </li>
         	@endforeach
     @endif
