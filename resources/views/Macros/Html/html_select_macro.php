@@ -20,10 +20,10 @@ Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[
 		$options = array_merge($options,$addons);
 	
 	$html = '<div class="form-group">
-			 	<div class="col-xs-12 col-md-4 col-sm-3 control-label">
+			 	<div class="col-xs-12 col-md-5 col-sm-5 control-label">
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>
-			 	<div class="col-xs-12 col-sm-8	">'.
+			 	<div class="col-xs-12 col-sm-6">'.
 			 		Form::select($name, $list, null, $options).
 			 '	</div>
 			 </div>';

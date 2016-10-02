@@ -13,12 +13,4 @@ class AppArea extends ModelCore
 	protected $table = 'app_area';
 	
 	protected $timestamp = false;
-
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-	public function contacts()
-	{
-		return $this->belongsTo('App\Http\Models\ContactUs');
-	}
 }

@@ -27,7 +27,7 @@
 				{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
-							<td>[[record.salesman_name]]</td>	
+							<td>[[record.salesman_name]]</td>						
 							<td>[[record.area_name]]</td>
 							<td>[[record.customer_code]]</td>
 							<td>[[record.customer_name]]</td>

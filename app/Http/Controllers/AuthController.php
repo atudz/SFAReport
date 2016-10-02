@@ -89,7 +89,7 @@ class AuthController extends ControllerCore
 			$m->to($email)->subject('Forgot Password');
 		});		
 		
-		return redirect('/login')->with('successMsg','New password has been sent to your email.');
+		return redirect('/login')->with('successMsg','New password has been send to your email.');
 	}
 
 	/**

@@ -25,7 +25,6 @@ class ReportsController extends ControllerCore
 		else 
 			$value = new \DateTime($request->get('value'));
 		$id = $request->get('id');
-		$comment = $request->get('comment');
 		
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
@@ -61,7 +60,6 @@ class ReportsController extends ControllerCore
 					'updated_at' => new \DateTime(),
 					'created_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
-					'comment' => $comment,
 			]);
 		}
 		
@@ -86,7 +84,6 @@ class ReportsController extends ControllerCore
 						'updated_at' => new \DateTime(),
 						'created_at' => new \DateTime(),
 						'updated_by' => auth()->user()->id,
-						'comment' => $comment,
 				]);
 			}
 			
@@ -127,7 +124,6 @@ class ReportsController extends ControllerCore
 							'updated_at' => new \DateTime(),
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
-							'comment' => $comment,
 					];
 				}
 			}			
@@ -153,7 +149,6 @@ class ReportsController extends ControllerCore
 							'updated_at' => new \DateTime(),
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
-							'comment' => $comment,
 					];
 				}
 			}
@@ -164,22 +159,6 @@ class ReportsController extends ControllerCore
 		
 		$data['success'] = true;
 		return response()->json($data);	
-	}
-	
-	/**
-	 * Update databsae record
-	 * @param unknown $table
-	 * @param unknown $id
-	 * @param unknown $value
-	 * @return boolean
-	 */
-	public function getComment(Request $request)
-	{
-		$contactUs = ModelFactory::getInstance('table_logs')->find($request->get('id'));
-		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
-		$contactUs->save();
-
-		return redirect('/#/summaryofincident.report');
 	}
 	
 	

@@ -89,9 +89,7 @@
 							@if(false !== strpos($row,'date') && $record->$row)
 								{{ date('m/d/Y', strtotime($record->$row)) }}
 							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
-								{!!wordwrap(number_format($record->$row,2,'.',','), 5, "<br>\n",TRUE)!!}
-							@elseif(ctype_alnum($record->$row))
-								{!!wordwrap(strtoupper($record->$row),5,"<br>\n",TRUE)!!}
+								{!!number_format($record->$row,2,'.',',')!!}
 							@else
 								{!!$record->$row!!}
 							@endif
@@ -99,9 +97,7 @@
 							@if(false !== strpos($row,'date') && $record[$row])
 								{{ date('m/d/Y', strtotime($record[$row])) }}
 							@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))
-								{!!wordwrap(number_format($record[$row],2,'.',','), 5, "<br>\n",TRUE)!!}
-							@elseif(ctype_alnum($record[$row]))
-								{!!wordwrap(strtoupper($record->$row), 5, "<br>\n",TRUE)!!}
+								{!!number_format($record[$row],2,'.',',')!!}
 							@else
 								{!!$record[$row]!!}
 							@endif

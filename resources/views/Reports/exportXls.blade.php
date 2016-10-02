@@ -14,7 +14,7 @@
 				@foreach($filters as $label=>$val)
 					<tr>
 						<td align="left"><strong>{{$label}}</strong></td>
-						<td align="left">{{str_replace(array('%',')','(', ','),'', $val)}}</td>
+						<td align="left">{{$val}}</td>
 					</tr>
 				@endforeach
 			@endif
@@ -40,22 +40,18 @@
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
-								@elseif(ctype_alnum($record->$row))
-									{!!strtoupper($record->$row)!!}
+									{!!number_format($record->$row,2,'.',',')!!}	
 								@else
-									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
+									{!!$record->$row!!}
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
-								@elseif(ctype_alnum($record[$row]))
-									{!!strtoupper($record[$row])!!}
+									{!!number_format($record[$row],2,'.',',')!!}	
 								@else
-									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
-								@endif								
+									{!!$record[$row]!!}
+								@endif									
 							@endif
 						</td>
 					@endforeach
@@ -71,29 +67,29 @@
 								@if(is_object($summary) && isset($summary->$row))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!str_replace(array('%',')','(', ','),'', $summary->$row)!!}
+											{!!$summary->$row!!}
 										@else
-											{!!str_replace(array('%',')','(', ','),'', $summary->$row)!!}
+											({!!number_format($summary->$row,2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!str_replace(array('%',')','(', ','),'', $summary->$row)!!}
+											{!!$summary->$row!!}
 										@else
-											{!!str_replace(array('%',')','(', ','),'', $summary->$row)!!}
+											{!!number_format($summary->$row,2,'.',',')!!}
 										@endif
 									@endif									
 								@elseif(is_array($summary) && isset($summary[$row]))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!str_replace(array('%',')','(', ','),'', $summary[$row])!!}
+											{!!$summary[$row]!!}
 										@else
-											{!!str_replace(array('%',')','(', ','),'', $summary[$row])!!}
+											({!!number_format($summary[$row],2,'.',',')!!})
 										@endif
 									@else
 										@if($row == 'quantity')
-											{!!str_replace(array('%',')','(', ','),'', $summary[$row])!!}
+											{!!$summary[$row]!!}
 										@else
-											{!!str_replace(array('%',')','(', ','),'', $summary[$row])!!}
+											{!!number_format($summary[$row],2,'.',',')!!}
 										@endif
 									@endif
 								@endif													

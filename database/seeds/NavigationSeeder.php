@@ -27,9 +27,9 @@ class NavigationSeeder extends Seeder
     	
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Sales & Collection Report','url'=>'salescollection.report','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>1,'created_at' => new DateTime()],
-    			['name'=>'Sales & Collection Posting','url'=>'salescollection.posting','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>2,'created_at' => new DateTime()],
-    			['name'=>'Sales & Collection Monthly Sum of Sales','url'=>'salescollection.summary','class'=>'glyphicon glyphicon-share-alt','order'=>3,'parent_id'=>'2','created_at' => new DateTime()],
+    			['name'=>'Report','url'=>'salescollection.report','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>1,'created_at' => new DateTime()],
+    			['name'=>'Posting','url'=>'salescollection.posting','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'2','order'=>2,'created_at' => new DateTime()],
+    			['name'=>'Monthly Summary of Sales','url'=>'salescollection.summary','class'=>'glyphicon glyphicon-share-alt','order'=>3,'parent_id'=>'2','created_at' => new DateTime()],
     	
     			['name'=>'Canned & Mixes','url'=>'vaninventory.canned','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>1,'created_at' => new DateTime()],
     			['name'=>'Frozen & Kassel','url'=>'vaninventory.frozen','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>2,'created_at' => new DateTime()],

@@ -30,7 +30,4 @@
             </div>
         </div><!-- /.col-->
     </div><!-- /.row -->    
-    <div class="text-center">
-        <p class="mute text-center">Copyright 2016 <strong>{{env('PRODUCT')}} {{ env('SETUP') }} {{env('VERSION')}}</strong></p> 
-    </div>
 @stop
