@@ -38,11 +38,7 @@
 						<td align="left" style="wrap-text:true">
 							@if(is_object($record) && isset($record->$row))
 								@if(false !== strpos($row,'date') && $record->$row)
-									@if($report == 'bir')
-										{{ $record->$row }}
-									@else
-										{{ date('m/d/Y', strtotime($record->$row)) }}
-									@endif
+									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@elseif(ctype_alnum($record->$row))
