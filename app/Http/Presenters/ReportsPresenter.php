@@ -1689,6 +1689,11 @@ class ReportsPresenter extends PresenterCore
     	return response()->json($data);  
     }
     
+    /**
+     * Populate scr invoice
+     * @param array $items
+     * @return unknown
+     */
     public function populateScrInvoice($items = [])
     {
     	
@@ -1708,6 +1713,8 @@ class ReportsPresenter extends PresenterCore
     	if($this->request->get('company_code'))
     		$except .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
     	
+    	$except .= " AND tsoh.served_status='Y'";
+    	
     	foreach($items as $k=>$item)
     	{
     		$date = (new Carbon($item->invoice_date))->format('Y-m-d');
@@ -1723,7 +1730,11 @@ class ReportsPresenter extends PresenterCore
     	return $items;
     }
     
-    
+    /**
+     * Get Sales order
+     * @param string $select
+     * @param string $where
+     */
     public function getSO($select='*',$where=' 1 ')
     {
     	$query = '
