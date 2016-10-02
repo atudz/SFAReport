@@ -1,5 +1,5 @@
 {!!Html::breadcrumb(['Sales & Collection','Posting'])!!}
-{!!Html::pageheader('Sales & Collection Posting')!!}
+{!!Html::pageheader('Posting')!!}
 
 <div class="row">
 	<div class="col-lg-12">

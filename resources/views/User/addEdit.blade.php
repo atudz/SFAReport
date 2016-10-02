@@ -33,7 +33,7 @@
 						{!!Html::input('text','mname','Middle Name')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','email','Email <span class="required">*</span>')!!}
+						{!!Html::input('text','email','Email <span class="required">*</span>','',['ng-keyup'=>'regExemail()','id'=>'email'])!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','username','Username')!!}
@@ -60,8 +60,23 @@
 						{!!Html::input('text','mobile','Mobile No.')!!}
 					</div>					
 					<div class="row form-input-field">
-						{!!Html::input('text','salesman_code','Salesman Code <span class="required [[req_salesman]]" id="salesman_required">*</span>')!!}
-					</div>									
+						{!!Html::input('text','salesman_code','Salesman Code <span id="span_salesman" class="required hidden">*</span>')!!}
+					</div>
+					<div class="row form-input-field">
+						<div class="form-group">
+							<div class="col-xs-12 col-md-4 col-sm-4 control-label">
+								<label for="jr_salesman_code" class="">Jr. Salesman Code</label>
+							</div>
+							<div class="col-xs-5">
+								<div class="checkbox checkbox-inline" style="margin-top: auto;">
+									<input disabled type="checkbox" id="checkbox_jr_salesman" style="margin-top: auto;">
+									<span id="label_jr_salesman_code" style="display: inline-block; margin: auto;">
+										[[ jr_salesman_code ]]
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 					
 					

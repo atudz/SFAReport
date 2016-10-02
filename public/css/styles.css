@@ -1139,7 +1139,12 @@ tr.modified {
 .required {
 	color: red;
 }
+.error-edit {
+	display:none;
+}
 
-
+textarea.fxresize{
+    resize: none;
+}
 
  
