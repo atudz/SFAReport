@@ -29,6 +29,7 @@ class ReportsController extends ControllerCore
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
 		$reference='';
+		$salesman='';
 		$syncTables = config('sync.sync_tables');
 		if($pk = array_shift($syncTables[$table]))
 		{
@@ -43,6 +44,7 @@ class ReportsController extends ControllerCore
 			{
 				$prevInvoiceNum = $before;
 				$reference = isset($prevData->reference_num) ? $prevData->reference_num : '';
+				$salesman = isset($prevData->salesman_code) ? $prevData->salesman_code : '';
 			}
 						
 			\DB::table($table)->where($pk,$id)->lockForUpdate()->update([
@@ -99,6 +101,8 @@ class ReportsController extends ControllerCore
 				$prepare = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum);
 				if($reference)		
 					$prepare->where('reference_num',$reference);
+				if($salesman)
+					$prepare->where('modified_by',$salesman);
 				
 				$updated = $prepare->lockForUpdate()->update([
 							$column => $value,
@@ -113,8 +117,8 @@ class ReportsController extends ControllerCore
 													'updated_by' => auth()->user()->id,
 								]);
 					
-				if($updated)
-				{
+				//if($updated)
+				//{
 					$insertData[] = [
 							'table' => 'txn_collection_invoice',
 							'column' => $column,
@@ -125,7 +129,7 @@ class ReportsController extends ControllerCore
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 					];
-				}
+				//}
 			}			
 			
 			
