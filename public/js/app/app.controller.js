@@ -1745,7 +1745,7 @@
 			mobile: '',
 			telephone: '',
 			email: '',
-			branch: '',
+			branch: "300",
 			callFrom: '',
 			callTo: '',
 			subject: '',
@@ -1834,6 +1834,11 @@
 				return false;
 			}
 			$scope.contactFile = fd;
+		};
+
+		$scope.resetFile = function () {
+			$scope.contactFile = '';
+			$('#contactFile').val('');
 		};
 
 		$scope.validate = function (contact) {

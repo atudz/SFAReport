@@ -66,11 +66,17 @@
                             <label for="name" class="">Attach File</label>
                         </div>
                         <div class="col-xs-12 col-sm-8">
-                            <input type="file" name="file"
+                            <input type="file" name="file" id="contactFile"
                                    onchange="angular.element(this).scope().readFile(this.files)"
                                    class="form-control"/>
                         </div>
                     </div>
+                    <div class="row pull-right">
+                        <div class="col-xs-12 col-md-3 col-sm-4">
+                            <button type="reset" class="btn btn-primary" ng-click="resetFile()">reset file</button>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="rs-mini-toolbar">
