@@ -51,9 +51,9 @@
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
 									@if($report == 'bir')
-										{{ $record->$row }}
+										{{ $record[$row] }}
 									@else
-										{{ date('m/d/Y', strtotime($record->$row)) }}
+										{{ date('m/d/Y', strtotime($record[$row])) }}
 									@endif
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!number_format($record[$row],2,'.',',')!!}	
