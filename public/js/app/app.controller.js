@@ -1280,17 +1280,33 @@
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 		$scope.change = function () {
 			var sanitized;
-			$('#regExpr').on('keyup', function (e) {
+			$('#regExpr').on('keyup', function () {
 				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
-				// Update value
 				$("#regExpr").val(sanitized);
+				
 				if (($('#regExpr').val() != $('#hval').val()) && ($scope.params.updated == true)) {
 					$('#btnsub').attr('disabled', false);
 				} else {
 					$('#btnsub').attr('disabled', 'disabled');
 				}
-
+				return;
 			});
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && $scope.params.updated) {
+				$('#btnsub').attr('disabled', false);
+			}
+			else if (typeof $('#date_value').val() !== "undefined" && $scope.params.updated) {
+				var date = new Date($('#date_value').val());
+				var oldDate = new Date($scope.params.oldval);
+				date = date.getDate() + date.getMonth() + date.getFullYear();
+				oldDate = oldDate.getDate() + oldDate.getMonth() + oldDate.getFullYear();
+				if (date !== oldDate) {
+					$('#btnsub').attr('disabled', false);
+				} else {
+					$('#btnsub').attr('disabled', 'disabled');
+				}
+			} else {
+				$('#btnsub').attr('disabled', 'disabled');
+			}
 		};
 
 		$scope.params = params;
