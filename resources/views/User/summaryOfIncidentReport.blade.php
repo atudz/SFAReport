@@ -8,7 +8,6 @@
                 {!!Html::fopen('Toggle Filter')!!}
                 <div class="col-md-6">
 
-                    {!!Html::error('error','error_filter_contact')!!}
                     {!!Html::select('name','Reported By:', $name,'All')!!}
                     {!!Html::select('branch','Branch:', $branch, 'All')!!}
                     {!!Html::input('text','incident_no','Incident #:','')!!}
