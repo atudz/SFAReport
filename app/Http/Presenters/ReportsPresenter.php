@@ -4872,7 +4872,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
                 ['name'=>'Remarks'],
-    			['name'=>'Remarks Comment'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Gross Amount'],
@@ -7083,13 +7082,8 @@ class ReportsPresenter extends PresenterCore
 		$resultdata = ModelFactory::getInstance('TableLog');
 		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('id',
 			'desc')->get();
-		if ($data && $data->value) {
-			$value['sync'] = 1;
-			$value['com'] = $resultdata;
-		} else {
-			$value['sync'] = 0;
-			$value['com'] = $resultdata;
-		}
+		$value['sync'] = ($data && $data->value) ? 1 : 0;
+		$value['com'] = $resultdata;
 
 		return response()->json(['sync_data' => $value]);
 	}
