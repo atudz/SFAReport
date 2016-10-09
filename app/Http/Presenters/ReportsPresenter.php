@@ -4872,7 +4872,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
                 ['name'=>'Remarks'],
-    			['name'=>'Remarks Comment'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Gross Amount'],
@@ -7072,27 +7071,21 @@ class ReportsPresenter extends PresenterCore
 		return $invoiceCode;
 	}
 
-    
-    
-    /**
-     * Check if synching
-     * @return number
-     */
-    public function isSynching($id,$column)
-    {
-        $data = \DB::table('settings')->where('name','synching_sfi')->first();
-        $resultdata = \DB::table('table_logs')->where(array('pk_id'=>$id,'column'=>$column,))->orderBy('id','desc')->get();
-        if(isset($data->value))
-        {
-            $value['sync'] = 1;
-            $value['com'] = $resultdata;
-        }
-        else
-        {
-            $value['sync'] = 0;
-            $value['com'] = $resultdata;
-        }
-        return response()->json(['sync_data'=>$value]);
-    }   
+
+	/**
+	 * Check if synching
+	 * @return number
+	 */
+	public function isSynching($id, $column)
+	{
+		$data = \DB::table('settings')->where('name', 'synching_sfi')->first();
+		$resultdata = ModelFactory::getInstance('TableLog');
+		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('id',
+			'desc')->get();
+		$value['sync'] = ($data && $data->value) ? 1 : 0;
+		$value['com'] = $resultdata;
+
+		return response()->json(['sync_data' => $value]);
+	}
 
 }

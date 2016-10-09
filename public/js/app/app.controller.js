@@ -935,37 +935,14 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.Regex = function() {
-         	if($('.regEx').val())
-			{
-				var str=document.getElementById("regExpr");
-			    var regex=/[^a-zA-Z0-9 -]/gi;
-			    str.value=str.value.replace(regex ,"");
-			}
-			if($('textarea.regEx').html()){
-				var str=document.getElementById("comment");
-			    var regex=/[^a-zA-Z0-9 .,-]/gi;
-			    str.value=str.value.replace(regex ,"");
-			}
-			if($('textarea.regEx1').html()){
-				var str=document.getElementById("comment");
-			    var regex=/[^a-zA-Z0-9 .,-]/gi;
-			    str.value=str.value.replace(regex ,"");
-			}
-			if($('textarea.regEx2').html()){
-				var str=document.getElementById("comment");
-			    var regex=/[^a-zA-Z0-9 .,-]/gi;
-			    str.value=str.value.replace(regex ,"");
-			}
-			
-        };
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
 				var selectOptions = options;
+				var updated = true;
 				if(typeof data.sync_data.com[0] !== "undefined"){
-					var comments = data.sync_data.com[0].comment;
-		    	}
-				var stepInterval = 1;			
+					var comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
+				}
+				var stepInterval = 1;
 				if(step)
 					stepInterval = step;
 				var total = column;
@@ -1022,7 +999,8 @@
 						getTotal: getTotal,
 						parentIndex: parentIndex,
 						type: inputType,
-						step: stepInterval
+						step: stepInterval,
+						updated: updated
 				};
 				
 				
@@ -1300,6 +1278,36 @@
 	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
 
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
+		$scope.change = function () {
+			var sanitized;
+			$('#regExpr').on('keyup', function () {
+				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
+				$("#regExpr").val(sanitized);
+				
+				if (($('#regExpr').val() != $('#hval').val()) && ($scope.params.updated == true)) {
+					$('#btnsub').attr('disabled', false);
+				} else {
+					$('#btnsub').attr('disabled', 'disabled');
+				}
+				return;
+			});
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && $scope.params.updated) {
+				$('#btnsub').attr('disabled', false);
+			}
+			else if (typeof $('#date_value').val() !== "undefined" && $scope.params.updated) {
+				var date = new Date($('#date_value').val());
+				var oldDate = new Date($scope.params.oldval);
+				date = date.getDate() + date.getMonth() + date.getFullYear();
+				oldDate = oldDate.getDate() + oldDate.getMonth() + oldDate.getFullYear();
+				if (date !== oldDate) {
+					$('#btnsub').attr('disabled', false);
+				} else {
+					$('#btnsub').attr('disabled', 'disabled');
+				}
+			} else {
+				$('#btnsub').attr('disabled', 'disabled');
+			}
+		};
 
 		$scope.params = params;
 		//$log.info(params);

@@ -70,6 +70,15 @@ class User extends ModelCore implements AuthenticatableContract, CanResetPasswor
 	}
 
 	/**
+	 * User's releation to contact_us table.
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function logs()
+	{
+		return $this->hasMany('App\Http\Models\ContactUs', 'updated_by', 'id');
+	}
+
+	/**
 	 * Query scope for filtering admin users
 	 * @param unknown $query
 	 */

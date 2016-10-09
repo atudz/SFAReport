@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
+use App\Factories\ModelFactory;
 use Illuminate\Http\Request;
 use App\Factories\LibraryFactory;
 
@@ -165,23 +166,6 @@ class ReportsController extends ControllerCore
 		$data['success'] = true;
 		return response()->json($data);	
 	}
-	
-	/**
-	 * Update databsae record
-	 * @param unknown $table
-	 * @param unknown $id
-	 * @param unknown $value
-	 * @return boolean
-	 */
-	public function getComment(Request $request)
-	{
-		$contactUs = ModelFactory::getInstance('table_logs')->find($request->get('id'));
-		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
-		$contactUs->save();
-
-		return redirect('/#/summaryofincident.report');
-	}
-	
 	
 	/**
 	 * Sync reports from SFA db

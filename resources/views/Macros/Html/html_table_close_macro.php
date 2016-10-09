@@ -15,12 +15,12 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p class="bold">EDIT [[params.name]] </p>
+	        		 <p class="bold">Edit [[params.name]] </p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
 							    <div class="col-sm-9">
-							      	<input type="[[params.type]]" ng-model="params.value" id="regExpr" ng-keyup="Regex()" min="0" class="form-control regEx" step="[[params.step]]">
+							      	<input type="[[params.type]]" ng-model="params.value" id="regExpr" ng-change="change()" min="0" class="form-control regEx" step="[[params.step]]">
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -31,7 +31,7 @@ Html::macro('tclose', function($paginate=true) {
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-offset-3 col-sm-9">
-						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
+						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
 								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						    </div>
 						  </div>
@@ -43,14 +43,14 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">EDIT [[params.name]]</p>
+	        		 	<p  class="bold">Edit [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
 						      	<select class="form-control ng-hide" id="oldSelected">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
-						      	<select class="form-control" ng-model="params.value"  id="newSelected">
+						      	<select class="form-control" ng-model="params.value"  id="newSelected" ng-change="change()">
 								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 								</select>
 						    </div>
@@ -63,7 +63,7 @@ Html::macro('tclose', function($paginate=true) {
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
 							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
@@ -75,14 +75,14 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">EDIT [[params.name]]</p>
+	        		 	<p  class="bold">Edit [[params.name]]</p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
 						    <input type="hidden" id="atayui" value=""/>
 						      	<p class="input-group col-sm-12">
-									<input type="text" id="hdate_value"  class="form-control ng-hide"/>
-									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
+									<input type="date" id="hdate_value"  class="form-control ng-hide"/>
+									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;" ng-change="change()"/>
 							 		<span class="input-group-btn">
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
 							 		</span>
@@ -97,7 +97,7 @@ Html::macro('tclose', function($paginate=true) {
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled>Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
 						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
@@ -108,7 +108,7 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p  class="bold"><EDIT [[params.name]]</p>		
+					<p class="bold">Edit [[params.name]]</p>		
 					<form class="form-inline">				         
 						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
