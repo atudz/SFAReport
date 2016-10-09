@@ -1,4 +1,4 @@
-{!!Html::breadcrumb(['User List','Add User'])!!}
+{!!Html::breadcrumb(['User List','Edit User'])!!}
 {!!Html::pageheader('Edit User')!!}
 
 <div class="row">
