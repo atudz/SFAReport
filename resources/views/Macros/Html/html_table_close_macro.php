@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p class="bold">Edit [[params.name]]</p>
+	        		 <p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
@@ -43,7 +43,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">Edit [[params.name]]</p>
+	        		 	<p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
@@ -75,7 +75,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">Edit [[params.name]]</p>
+	        		 	<p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
