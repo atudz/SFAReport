@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p class="bold">Edit [[params.name]] </p>
+	        		 <p class="bold">Edit [[params.name]]</p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
@@ -26,7 +26,7 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
@@ -58,7 +58,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
@@ -92,7 +92,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">

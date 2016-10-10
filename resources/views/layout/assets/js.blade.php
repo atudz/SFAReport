@@ -31,3 +31,7 @@
         });
     });
 </script>
+
+<script>
+	var user = {!! Auth::user()->load('group') !!}
+</script>
