@@ -953,7 +953,7 @@
 				// this will check if response data comments has defined and has a value.
 				// then overwright the value of variable comments with the response data.
 				if (typeof data.sync_data.com[0] !== "undefined") {
-					comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
+					comments = data.sync_data.com[0].comment;
 				}
 
 				switch (url[4]) {
