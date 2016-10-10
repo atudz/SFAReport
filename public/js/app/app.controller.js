@@ -938,6 +938,9 @@
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				var selectOptions = options;
+				var url = window.location.href;
+				url = url.split("/");
+				var reportType = "";
 				var updated = true;
 				var date = new Date();
 				// append 0 if character of the month is less than 2.
@@ -952,6 +955,27 @@
 				if (typeof data.sync_data.com[0] !== "undefined") {
 					comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
 				}
+
+				switch (url[4]) {
+					case "salescollection.report":
+						reportType = "Sales & Collection - Report";
+						break;
+					case "vaninventory.canned":
+						reportType = "Van Inventory - Canned & Mixes";
+						break;
+
+					case "vaninventory.frozen":
+						reportType = "Van Inventory - Frozen & Kassel";
+						break;
+
+					case "salesreport.permaterial":
+						reportType = "Sales Report - Per Material";
+						break;
+					case "salesreport.pesovalue":
+						reportType = "Sales Report - Peso Value";
+						break;
+				}
+
 				var stepInterval = 1;
 				if(step)
 					stepInterval = step;
@@ -1010,7 +1034,8 @@
 						parentIndex: parentIndex,
 						type: inputType,
 						step: stepInterval,
-						updated: updated
+						updated: updated,
+						report_type: reportType
 				};
 				
 				
