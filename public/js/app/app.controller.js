@@ -936,11 +936,21 @@
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
-			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
+			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				var selectOptions = options;
 				var updated = true;
-				if(typeof data.sync_data.com[0] !== "undefined"){
-					var comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
+				var date = new Date();
+				// append 0 if character of the month is less than 2.
+				var month = date.getMonth();
+				month = month < 10 ? "0" + month : month;
+				// get the current date with format of YYYY-MM-DD H:m:s.
+				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+				// initialize a default value for comments.
+				var comments = date + "@" + window.user.firstname + " " + window.user.lastname + ":";
+				// this will check if response data comments has defined and has a value.
+				// then overwright the value of variable comments with the response data.
+				if (typeof data.sync_data.com[0] !== "undefined") {
+					comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
 				}
 				var stepInterval = 1;
 				if(step)
@@ -1307,6 +1317,27 @@
 			} else {
 				$('#btnsub').attr('disabled', 'disabled');
 			}
+		};
+
+		var date = new Date();
+		// append 0 if character of the month is less than 2.
+		var month = date.getMonth();
+		month = month < 10 ? "0" + month : month;
+		// get the current date with format of YYYY-MM-DD H:m:s.
+		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+		// initialize a default value for comments.
+		var comments = date + "@" + $window.user.firstname + " " + $window.user.lastname + ":";
+
+		// this will control the default value of text area not to be deleted or change.
+		$scope.commentChange = function () {
+			$("#comment").keydown(function () {
+				var field = this;
+				setTimeout(function () {
+					if (field.value.indexOf(comments) !== 0) {
+						$(field).val(comments);
+					}
+				}, 1);
+			});
 		};
 
 		$scope.params = params;
