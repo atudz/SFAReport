@@ -941,7 +941,7 @@
 				var url = window.location.href;
 				url = url.split("/");
 				var reportType = "";
-				var updated = true;
+				var updated = false;
 				var date = new Date();
 				// append 0 if character of the month is less than 2.
 				var month = date.getMonth();
@@ -954,6 +954,7 @@
 				// then overwright the value of variable comments with the response data.
 				if (typeof data.sync_data.com[0] !== "undefined") {
 					comments = data.sync_data.com[0].comment;
+					updated = true;
 				}
 
 				switch (url[4]) {
@@ -1314,22 +1315,25 @@
 
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 		$scope.change = function () {
+			if($scope.params.updated){
+				return false;
+			}
 			var sanitized;
 			$('#regExpr').on('keyup', function () {
 				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
 				$("#regExpr").val(sanitized);
 				
-				if (($('#regExpr').val() != $('#hval').val()) && ($scope.params.updated == true)) {
+				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated)) {
 					$('#btnsub').attr('disabled', false);
 				} else {
 					$('#btnsub').attr('disabled', 'disabled');
 				}
 				return;
 			});
-			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && $scope.params.updated) {
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && !$scope.params.updated) {
 				$('#btnsub').attr('disabled', false);
 			}
-			else if (typeof $('#date_value').val() !== "undefined" && $scope.params.updated) {
+			else if (typeof $('#date_value').val() !== "undefined" && !$scope.params.updated) {
 				var date = new Date($('#date_value').val());
 				var oldDate = new Date($scope.params.oldval);
 				date = date.getDate() + date.getMonth() + date.getFullYear();
@@ -1377,7 +1381,7 @@
 				{
 					error = true;
 				}
-				else if($('#comment').val() == '')
+				else if($('#comment').val() == comments || $('#comment').val() == '')
 				{
 					document.getElementById("editError").style.display = "block";
 					error = true;
@@ -1393,7 +1397,7 @@
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{
 				error = true;
-			}else if($('#comment').val() == '')
+			}else if($('#comment').val() == comments || $('#comment').val() == '')
 			{
 				document.getElementById("editError").style.display = "block";
 				error = true;

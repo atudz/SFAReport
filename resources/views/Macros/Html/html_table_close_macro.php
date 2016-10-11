@@ -31,7 +31,7 @@ Html::macro('tclose', function($paginate=true) {
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-offset-3 col-sm-9">
-						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						    </div>
 						  </div>
@@ -63,7 +63,7 @@ Html::macro('tclose', function($paginate=true) {
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
@@ -97,7 +97,7 @@ Html::macro('tclose', function($paginate=true) {
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
