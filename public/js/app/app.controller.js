@@ -951,10 +951,60 @@
 		
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			
-			resource('/reports/synching').get().$promise.then(function(data){
+			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				
-				var selectOptions = options;				
-				var stepInterval = 1;			
+				var selectOptions = options;
+				var url = window.location.href;
+				url = url.split("/");
+				var reportType = "";
+				var report = "";
+				var updated = false;
+				var date = new Date();
+				// append 0 if character of the month is less than 2.
+				var month = date.getMonth();
+				month = month < 10 ? "0" + month : month;
+				// get the current date with format of YYYY-MM-DD H:m:s.
+				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+				// initialize a default value for comments.
+				var commentLists = [];
+				if (typeof data.sync_data.com[0] !== "undefined") {
+					angular.forEach(data.sync_data.com, function (comment) {
+						commentLists.push(comment);
+					});
+				}
+
+				switch (url[4]) {
+					case "salescollection.report":
+						reportType = "Sales & Collection - Report";
+						report = 'salescollectionreport';
+						break;
+					case "vaninventory.canned":
+						reportType = "Van Inventory - Canned & Mixes";
+						report = 'vaninventorycanned';
+						break;
+					case "vaninventory.frozen":
+						reportType = "Van Inventory - Frozen & Kassel";
+						report = 'vaninventoryfrozen';
+						break;
+					case "salesreport.permaterial":
+						reportType = "Sales Report - Per Material";
+						report = 'salesreportpermaterial';
+						break;
+					case "salesreport.pesovalue":
+						reportType = "Sales Report - Peso Value";
+						report = 'salesreportperpeso';
+						break;
+					case "vaninventory.stocktransfer":
+						reportType = "Van Inventory - Stock Transfer";
+						report = 'stocktransfer';
+						break;			
+					case 'cashpayments':
+						reportType = "Cash Payments";
+						report = 'cashpayments';
+						break;
+				}
+				
+				var stepInterval = 1;
 				if(step)
 					stepInterval = step;
 				var total = column;
@@ -980,6 +1030,7 @@
 							template = 'EditColumnDate';
 							inputType = 'datetime';
 							defaultDate = new Date(value);
+							localStorage.setItem("getDateold",defaultDate);
 							break;
 						case 'select':
 							template = 'EditColumnSelect';
@@ -1003,6 +1054,8 @@
 						column: column,
 						id: id,
 						value: value,
+						oldval: value,						
+						commentLists: commentLists,
 						selectOptions: selectOptions,
 						index: index,
 						name: name,
@@ -1012,7 +1065,10 @@
 						getTotal: getTotal,
 						parentIndex: parentIndex,
 						type: inputType,
-						step: stepInterval
+						step: stepInterval,
+						updated: updated,
+						report: report,
+						report_type: reportType
 				};
 				
 				
@@ -1022,7 +1078,7 @@
 					templateUrl: template,
 					controller: 'EditTableRecord',
 					windowClass: 'center-modal',
-					size: 'sm',
+					size: 'lg',
 					resolve: {
 						params: function () {
 							return params;
@@ -1292,99 +1348,98 @@
 	
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
+		$scope.change = function () {
+
+			$('#regExpr').on('click keyup', function () {
+				if (($('#regExpr').val() != $('#hval').val()) && ($.trim($('#regExpr').val()))) {
+					$('#btnsub').attr('disabled', false);
+				} else {
+					$('#btnsub').attr('disabled', 'disabled');
+				}
+				return;
+			});
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val())) {
+				$('#btnsub').attr('disabled', false);
+			}
+			else if (typeof $('#date_value').val() !== "undefined") {
+				var date = new Date($('#date_value').val());
+				var oldDate = new Date($scope.params.oldval);
+				date = date.getDate() + date.getMonth() + date.getFullYear();
+				oldDate = oldDate.getDate() + oldDate.getMonth() + oldDate.getFullYear();
+				if (date !== oldDate) {
+					$('#btnsub').attr('disabled', false);
+				} else {
+					$('#btnsub').attr('disabled', 'disabled');
+				}
+			} else {
+				$('#btnsub').attr('disabled', 'disabled');
+			}
+		};
+
 		$scope.params = params;
-		$scope.showError = false;
-		$scope.errorMsg = '';
-		//$log.info(params);
-		
+
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
 			var error = false;
-			if($scope.params.type == 'datetime')
-			{
-				if(!$('#date_value').val())
-				{
+			if ($scope.params.type == 'datetime') {
+				if (!$('#date_value').val()) {
 					error = true;
-					$scope.showError = true;
-					$scope.errorMsg = 'This field is required.';
 				}
-				else
-				{
+				else if ($('#comment').val() == '') {
+					document.getElementById("editError").style.display = "block";
+					error = true;
+				}
+				else {
 					var val = $scope.params.value;
-					//$log.info('date_value ' + val);
-					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];					
+					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 				}
-
-			}
-			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
-			{
+			} else if ($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0))) {
 				error = true;
-				$scope.showError = true;
-				$scope.errorMsg = 'Invalid input.';
-			}
-			else if($scope.params.value.length == 0)
-			{
+			} else if (typeof $('#regExpr').val() != "undefined" && $scope.params.column == "invoice_number" && $.isNumeric($('#regExpr').val().substring(0, 2))) {
+				document.getElementById("editErrorInvoice").style.display = "block";
 				error = true;
-				$scope.showError = true;
-				$scope.errorMsg = 'This field is required.';
+			} else if ($('#comment').val() == '') {
+				document.getElementById("editError").style.display = "block";
+				error = true;
 			}
+			if (!error) {
+				API.save($scope.params, function (data) {
 
-			
-			//$log.info($scope.params);
-			if(!error)
-			{
-				API.save($scope.params, function(data){
-					//$log.info(data);
-					//$log.info($scope.params.value);
-					
 					// Van Inventory customization
-					if($scope.params.table == 'txn_stock_transfer_in_header')
-					{
+					if ($scope.params.table == 'txn_stock_transfer_in_header' && $scope.params.report != 'stocktransfer') {
 						var stocks = 'stocks';
-						if($scope.params.alias)
-						{
-							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;						
-						}					
-						else
-						{
+						if ($scope.params.alias) {
+							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;
+						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
-						}					
-						$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
+						}
+						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
 					}
-					else
-					{
-						if($scope.params.alias)
-						{
+					else {
+						if ($scope.params.alias) {
 							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
-							if($scope.params.getTotal)
+							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
-						}					
-						else
-						{
+						} else {
 							$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
-							if($scope.params.getTotal)
+							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
-						}					
-						$('#'+$scope.params.index).addClass('modified');
+						}
+						$('#' + $scope.params.index).addClass('modified');
 
-						if(typeof EditableFixTable !== 'undefined'){
+						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
 						}
-					}								
+					}
 				});
-				
+
 				$uibModalInstance.dismiss('cancel');
 			}
 		};
-		
+
 		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-		
-		/*$scope.getDate = function(date){
-	          var dateOut = new Date(date);
-	          return dateOut;
-	    };*/
 	};
 	
 	

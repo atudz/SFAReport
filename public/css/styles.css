@@ -1140,6 +1140,31 @@ tr.modified {
 	color: red;
 }
 
+.error-edit {
+	display:none;
+}
+
+textarea.fxresize{
+    resize: none;
+}
+
+.scrollit {
+	overflow:scroll;
+	height:100px;
+}
+
+.borderless td, .borderless th {
+	border: none;
+}
+
+.modal-open .modal {
+	overflow: hidden;
+}
+
+.no-side-padding {
+	padding-left: 0px;
+	padding-right:0px;
+}
 
 
  

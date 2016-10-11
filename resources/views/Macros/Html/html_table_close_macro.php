@@ -13,51 +13,176 @@ Html::macro('tclose', function($paginate=true) {
     		</script>
 			
 			<script type="text/ng-template" id="EditColumnText">
-        		<div class="modal-body">			
-					<p>[[params.name]]</p>	
-					<form class="form-inline">
-				         <div class="form-group">
-							<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control input-sm" step="[[params.step]]">
-							<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
-						 </div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
-					</form>   										 					
+        		<div class="modal-body">
+	        		 <form class="form-horizontal">
+	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+	        		 <p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
+	        		 <p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
+						  <div class="form-group">
+							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
+							    <label class="control-label col-sm-3"></label>
+							    <div class="col-sm-9">
+							      	<input type="[[params.type]]" ng-model="params.value" id="regExpr" ng-change="change()" min="0" class="form-control regEx" step="[[params.step]]">
+							    </div>
+						  </div>
+						  <div class="form-group">
+							    <label class="col-sm-3">Remarks:</label>
+							    <div class="col-sm-9">
+							      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()"></textarea>
+							    </div>
+						  </div>
+						  <div class="form-group" ng-show="params.commentLists.length">
+						  	<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+							<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+						  </div>
+						  <div class="form-group">
+						    <div class="col-sm-12">
+								<div class="pull-right">	
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+								</div>
+						    </div>
+						  </div>
+					</form>										 					
 				</div>			    			
     		</script>
 			
 			<script type="text/ng-template" id="EditColumnSelect">
         		<div class="modal-body">
-					<p>[[params.name]]</p>					
-					<form class="form-inline">
-				         <div class="form-group">
-							<select class="form-control" ng-model="params.value">
-							  <option ng-repeat="option in params.selectOptions">[[option]]</option>							  
-							</select>
-							<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
+        			<form class="form-horizontal">
+        			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+        			<p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
+	        		 	<p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
+						<div class="form-group">
+						    <label class="control-label col-sm-3"></label>
+						    <div class="col-sm-9">
+						      	<select class="form-control ng-hide" id="oldSelected">
+								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+								</select>
+						      	<select class="form-control" ng-model="params.value"  id="newSelected" ng-change="change()">
+								  	<option ng-repeat="option in params.selectOptions">[[option]]</option>							  
+								</select>
+						    </div>
+						</div>
+						<div class="form-group">
+						    <label class="col-sm-3">Remarks:</label>
+						    <div class="col-sm-9">
+						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()"></textarea>
+						    </div>
+						</div>
+						<div class="form-group" ng-show="params.commentLists.length">
+							<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+							<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 						 </div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
-					</form>   										 					
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="pull-right">
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</form>  										 					
 				</div>			    			
     		</script>
 
 			<script type="text/ng-template" id="EditColumnDate">
-        		<div class="modal-body">		
-					<p>[[params.name]]</p>			
-					<form class="form-inline">
-				         <div class="form-group">
-							<div class="col-sm-8" data-ng-controller="EditableColumnsCalendar" style="padding-left:0px;margin-left:0px;">
-							 	<p class="input-group">
-									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;"/>
+        		<div class="modal-body">
+        			<form class="form-horizontal">
+        			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+        			<p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
+	        		 	<p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
+						<div class="form-group">
+						    <label class="control-label col-sm-3"></label>
+						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
+						    <input type="hidden" id="atayui" value=""/>
+						      	<p class="input-group col-sm-12">
+									<input type="date" id="hdate_value"  class="form-control ng-hide"/>
+									<input required type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event,\'date_value\')" class="form-control" uib-datepicker-popup="[[format]]" ng-model="dateFrom" is-open="date_value" datepicker-options="dateOptions" close-text="Close" onkeydown="return false;" ng-change="change()"/>
 							 		<span class="input-group-btn">
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
 							 		</span>
 							 	</p>
-								<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
-						 	</div>
-						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
-						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
+						    </div>
+						</div>
+						<div class="form-group">
+						    <label class="col-sm-3">Remarks:</label>
+						    <div class="col-sm-9">
+						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()"></textarea>
+						    </div>
+						</div>
+						<div class="form-group" ng-show="params.commentLists.length">
+							<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+						 	<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<div class="pull-right">
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+								</div>
+							</div>
+						</div>
 					</form>   										 					
 				</div>			    			
     		</script>
@@ -65,9 +190,9 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p>[[params.message]]</p>			
+					<p class="bold">[[params.message]]</p>		
 					<form class="form-inline">				         
-						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
+						 <button class="btn btn-danger" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
 					</form>   										 					
 				</div>			    			

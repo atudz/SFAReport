@@ -7212,10 +7212,31 @@ class ReportsPresenter extends PresenterCore
      * Check if synching
      * @return number
      */
-    public function isSynching()
+	public function isSynching($id, $column)
     {
-    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
-    	$value = $data ? $data->value : 0;
-    	return response()->json(['sync'=>$value]);
+    	$data = \DB::table('settings')->where('name', 'synching_sfi')->first();
+    	
+    	$comments = [];
+    	$logs = ModelFactory::getInstance('TableLog')
+    						->where('pk_id', $id)
+    						->where('column', $column)
+    						->with('users')
+    						->orderBy('created_at','asc')
+    						->get();
+    	
+    	$format = '%1s edited to %2s reason: %3s edited by: %4s %5s';
+    	foreach($logs as $log)
+    	{    		
+    		//CCB14614 edited to CCB14613 reason : wrong invoice no. inputted edited by: suez 12/6/2016 1:40 PM
+    		$date = (new Carbon($log->created_at))->format('m/d/Y g:i A');
+    		$comment = '('.$log->before.') edited to ('.$log->value.') Remarks: ('.$log->comment.') Edited By: '.$log->users->fullname.' '.$date;
+    		//$comment = sprintf($format,$log->before,$log->value,$log->comment,$log->users->firstname,$date);
+    		$comments[] = $comment;    		
+    	}
+    						
+    	$value['sync'] = ($data && $data->value) ? 1 : 0;
+    	$value['com'] = $comments;
+    	
+    	return response()->json(['sync_data' => $value]);
     }
 }
