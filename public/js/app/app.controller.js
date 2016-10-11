@@ -936,12 +936,47 @@
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
-			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){			
+			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				var selectOptions = options;
-				var updated = true;
-				if(typeof data.sync_data.com[0] !== "undefined"){
-					var comments = data.sync_data.com[0].created_at + " @" + data.sync_data.com[0].users.firstname + " " + data.sync_data.com[0].users.lastname + " : " + data.sync_data.com[0].comment;
+				var url = window.location.href;
+				url = url.split("/");
+				var reportType = "";
+				var updated = false;
+				var date = new Date();
+				// append 0 if character of the month is less than 2.
+				var month = date.getMonth();
+				month = month < 10 ? "0" + month : month;
+				// get the current date with format of YYYY-MM-DD H:m:s.
+				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+				// initialize a default value for comments.
+				var comments = date + "@" + window.user.firstname + " " + window.user.lastname + ":";
+				// this will check if response data comments has defined and has a value.
+				// then overwright the value of variable comments with the response data.
+				if (typeof data.sync_data.com[0] !== "undefined") {
+					comments = data.sync_data.com[0].comment;
+					updated = true;
 				}
+
+				switch (url[4]) {
+					case "salescollection.report":
+						reportType = "Sales & Collection - Report";
+						break;
+					case "vaninventory.canned":
+						reportType = "Van Inventory - Canned & Mixes";
+						break;
+
+					case "vaninventory.frozen":
+						reportType = "Van Inventory - Frozen & Kassel";
+						break;
+
+					case "salesreport.permaterial":
+						reportType = "Sales Report - Per Material";
+						break;
+					case "salesreport.pesovalue":
+						reportType = "Sales Report - Peso Value";
+						break;
+				}
+
 				var stepInterval = 1;
 				if(step)
 					stepInterval = step;
@@ -1000,7 +1035,8 @@
 						parentIndex: parentIndex,
 						type: inputType,
 						step: stepInterval,
-						updated: updated
+						updated: updated,
+						report_type: reportType
 				};
 				
 				
@@ -1279,22 +1315,25 @@
 
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 		$scope.change = function () {
+			if($scope.params.updated){
+				return false;
+			}
 			var sanitized;
 			$('#regExpr').on('keyup', function () {
 				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
 				$("#regExpr").val(sanitized);
 				
-				if (($('#regExpr').val() != $('#hval').val()) && ($scope.params.updated == true)) {
+				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated)) {
 					$('#btnsub').attr('disabled', false);
 				} else {
 					$('#btnsub').attr('disabled', 'disabled');
 				}
 				return;
 			});
-			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && $scope.params.updated) {
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && !$scope.params.updated) {
 				$('#btnsub').attr('disabled', false);
 			}
-			else if (typeof $('#date_value').val() !== "undefined" && $scope.params.updated) {
+			else if (typeof $('#date_value').val() !== "undefined" && !$scope.params.updated) {
 				var date = new Date($('#date_value').val());
 				var oldDate = new Date($scope.params.oldval);
 				date = date.getDate() + date.getMonth() + date.getFullYear();
@@ -1309,6 +1348,27 @@
 			}
 		};
 
+		var date = new Date();
+		// append 0 if character of the month is less than 2.
+		var month = date.getMonth();
+		month = month < 10 ? "0" + month : month;
+		// get the current date with format of YYYY-MM-DD H:m:s.
+		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+		// initialize a default value for comments.
+		var comments = date + "@" + $window.user.firstname + " " + $window.user.lastname + ":";
+
+		// this will control the default value of text area not to be deleted or change.
+		$scope.commentChange = function () {
+			$("#comment").keydown(function () {
+				var field = this;
+				setTimeout(function () {
+					if (field.value.indexOf(comments) !== 0) {
+						$(field).val(comments);
+					}
+				}, 1);
+			});
+		};
+
 		$scope.params = params;
 		//$log.info(params);
 
@@ -1321,7 +1381,7 @@
 				{
 					error = true;
 				}
-				else if($('#comment').val() == '')
+				else if($('#comment').val() == comments || $('#comment').val() == '')
 				{
 					document.getElementById("editError").style.display = "block";
 					error = true;
@@ -1337,7 +1397,7 @@
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{
 				error = true;
-			}else if($('#comment').val() == '')
+			}else if($('#comment').val() == comments || $('#comment').val() == '')
 			{
 				document.getElementById("editError").style.display = "block";
 				error = true;

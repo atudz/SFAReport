@@ -15,7 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 <p class="bold">Edit [[params.name]] </p>
+	        		 <p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
 							    <label class="control-label col-sm-3"></label>
@@ -26,12 +26,12 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 							    </div>
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-offset-3 col-sm-9">
-						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						    </div>
 						  </div>
@@ -43,7 +43,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">Edit [[params.name]]</p>
+	        		 	<p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9">
@@ -58,12 +58,12 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>
@@ -75,7 +75,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
-	        		 	<p  class="bold">Edit [[params.name]]</p>
+	        		 	<p  class="strong">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
 						    <div class="col-sm-9" data-ng-controller="EditableColumnsCalendar">
@@ -92,12 +92,12 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="params.updated">Submit</button>
+						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
 						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 						</div>

@@ -27,6 +27,7 @@ class ReportsController extends ControllerCore
 			$value = new \DateTime($request->get('value'));
 		$id = $request->get('id');
 		$comment = $request->get('comment');
+		$report_type = $request->has('report_type') ? $request->get('report_type') : null;
 		
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
@@ -63,6 +64,7 @@ class ReportsController extends ControllerCore
 					'created_at' => new \DateTime(),
 					'updated_by' => auth()->user()->id,
 					'comment' => $comment,
+					'report_type' => $report_type,
 			]);
 		}
 		
@@ -88,6 +90,7 @@ class ReportsController extends ControllerCore
 						'created_at' => new \DateTime(),
 						'updated_by' => auth()->user()->id,
 						'comment' => $comment,
+						'report_type' => $report_type,
 				]);
 			}
 			
@@ -129,6 +132,7 @@ class ReportsController extends ControllerCore
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
+							'report_type' => $report_type,
 					];
 				}
 			}			
@@ -155,6 +159,7 @@ class ReportsController extends ControllerCore
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
+							'report_type' => $report_type,
 					];
 				}
 			}
