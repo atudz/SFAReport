@@ -5334,16 +5334,12 @@ class ReportsPresenter extends PresenterCore
 				->where('salesman_code', auth()->user()->salesman_code)->lists('customer_code');
 			$prepare->whereIn('customer_code', $customers);
 		} elseif ($this->isAcounting()) {
-			$codes = [];
 			$appArea = ModelFactory::getInstance('AppArea');
 			$areaName = $appArea->where('area_code',
 				auth()->user()->location_assignment_code)->select('area_name')->first();
 			$areaName = explode(" ", $areaName->area_name)[1];
-			$areaCodes = $appArea->where('area_name', 'LIKE', '%' . $areaName . '%')->select('area_code')->get();
-			$areaCodes->each(function ($areaCode) use (&$codes) {
-				array_push($codes, $areaCode->area_code);
-			});
-			$prepare->whereIn('area_code', $codes);
+			$areaCodes = $appArea->where('area_name', 'LIKE', '%' . $areaName . '%')->lists('area_code');
+			$prepare->whereIn('area_code', $areaCodes);
 		}
 
 		return $prepare->lists('customer_name', 'customer_code');
