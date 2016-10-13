@@ -5318,30 +5318,32 @@ class ReportsPresenter extends PresenterCore
     		$salesman[0] = $user->salesman_code ? $user->salesman_code.'-'.$user->fullname : $user->fullname;
     	return $salesman;
     }
-    
-    
-    /**
-     * Get Customers
-     * @return multitype:
-     */
-    public function getCustomer($strictSalesman=true)
-    {
-    	$prepare = \DB::table('app_customer')
-			    	->where('status','=','A')
-			    	->orderBy('customer_name');
-    	
-    	if($strictSalesman && $this->isSalesman())
-    	{
-    		$customers = \DB::table('app_salesman_customer')
-	    					->distinct()
-	    					->select(['salesman_customer_id','customer_code'])
-	    					->where('salesman_code',auth()->user()->salesman_code)
-	    					->lists('customer_code');
-    		$prepare->whereIn('customer_code',$customers);
-    	}
-    	    	
-    	return $prepare->lists('customer_name','customer_code');
-    }
+
+
+	/**
+	 * Get Customers
+	 * @return multitype:
+	 */
+	public function getCustomer($strictSalesman = true)
+	{
+		$prepare = ModelFactory::getInstance('AppCustomer')->where('status', '=', 'A')
+			->orderBy('customer_name');
+		if ($strictSalesman && $this->isSalesman()) {
+			$customers = \DB::table('app_salesman_customer')->distinct()
+				->select(['salesman_customer_id', 'customer_code'])
+				->where('salesman_code', auth()->user()->salesman_code)->lists('customer_code');
+			$prepare->whereIn('customer_code', $customers);
+		} elseif ($this->isAcounting()) {
+			$appArea = ModelFactory::getInstance('AppArea');
+			$areaName = $appArea->where('area_code',
+				auth()->user()->location_assignment_code)->select('area_name')->first();
+			$areaName = explode(" ", $areaName->area_name)[1];
+			$areaCodes = $appArea->where('area_name', 'LIKE', '%' . $areaName . '%')->lists('area_code');
+			$prepare->whereIn('area_code', $areaCodes);
+		}
+
+		return $prepare->lists('customer_name', 'customer_code');
+	}
     
     /**
      * Get Customer Code
