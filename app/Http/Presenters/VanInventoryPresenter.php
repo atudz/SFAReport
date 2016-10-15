@@ -4,7 +4,6 @@ namespace App\Http\Presenters;
 
 use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
-use App\Factories\ModelFactory;
 use App\Factories\FilterFactory;
 
 class VanInventoryPresenter extends PresenterCore
@@ -33,15 +32,15 @@ class VanInventoryPresenter extends PresenterCore
     public function getStockTransferColumns()
     {
     	$headers = [    			
-    			['name'=>'Stock Transfer #','sort'=>'stock_transfer_number'],
+    			['name'=>'Stock Transfer No.','sort'=>'stock_transfer_number'],
     			['name'=>'Transaction Date','sort'=>'transfer_date'],
     			['name'=>'From Loc/Van Salesman','sort'=>'dest_van_code'],    			
     			['name'=>'Segment','sort'=>'segment_code'],
     			['name'=>'Brand','sort'=>'brand'],
     			['name'=>'Item Code','sort'=>'item_code'],
     			['name'=>'Item Description','sort'=>'description'],
-    			['name'=>'UOM','sort'=>'uom_code'],
-    			['name'=>'Qty','sort'=>'quantity'],
+    			['name'=>'UOM'],
+    			['name'=>'Qty'],
     		
     	];
     	
@@ -56,7 +55,8 @@ class VanInventoryPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedStockTransfer();
     	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();    	
+    	$data['records'] = $result->items();   
+    	$data['total'] = $result->total();
     	return response()->json($data);
     }
     
@@ -66,6 +66,8 @@ class VanInventoryPresenter extends PresenterCore
     public function getPreparedStockTransfer()
     {
     	$select = '
+    			txn_stock_transfer_in_header.stock_transfer_in_header_id,
+    			txn_stock_transfer_in_detail.stock_transfer_in_detail_id,
     			txn_stock_transfer_in_header.stock_transfer_number,
     			txn_stock_transfer_in_header.transfer_date,
     			txn_stock_transfer_in_header.dest_van_code,
@@ -82,8 +84,12 @@ class VanInventoryPresenter extends PresenterCore
 					    ->leftJoin('txn_stock_transfer_in_detail','txn_stock_transfer_in_header.stock_transfer_number','=','txn_stock_transfer_in_detail.stock_transfer_number')
 					    ->leftJoin('app_item_master','app_item_master.item_code','=','txn_stock_transfer_in_detail.item_code')
 					    ->leftJoin('app_item_brand','app_item_master.brand_code','=','app_item_brand.brand_code')
-					    ->leftJoin('app_salesman_customer','app_salesman_customer.salesman_code','=','txn_stock_transfer_in_header.salesman_code')
-					    ->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code');
+					    ->leftJoin(\DB::raw('
+			    			(select apsc.salesman_code,ac.area_code from app_salesman_customer apsc
+					    	 join app_customer ac on ac.customer_code = apsc.customer_code
+							group by apsc.salesman_code) salesman_area'), function($join){
+					    		$join->on('txn_stock_transfer_in_header.salesman_code','=','salesman_area.salesman_code');
+						});
     	 
     	
 		if($this->isSalesman())
@@ -118,8 +124,8 @@ class VanInventoryPresenter extends PresenterCore
     	$transferDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $transferDateFilter->addFilter($prepare,'transfer_date');
     	
-    	$segmentFilter = FilterFactory::getInstance('Select');
-    	$prepare = $segmentFilter->addFilter($prepare,'item_code',
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
     			function($self, $model){
     				return $model->where('txn_stock_transfer_in_detail.item_code','=',$self->getValue());
     			});
@@ -130,6 +136,7 @@ class VanInventoryPresenter extends PresenterCore
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('txn_stock_transfer_in_header.transfer_date','desc');
+    		$prepare->orderBy('txn_stock_transfer_in_header.stock_transfer_number');
     	}
     	    	
     	return $prepare;

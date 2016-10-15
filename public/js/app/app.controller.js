@@ -139,7 +139,7 @@
 	    reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
 
 	    //editable rows
-	    //editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
 	
