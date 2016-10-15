@@ -5888,7 +5888,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if($report == 'salescollectionsummary')
+    		if(in_array($report,['salescollectionsummary','stocktransfer']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');

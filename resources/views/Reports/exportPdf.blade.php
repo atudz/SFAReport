@@ -84,14 +84,12 @@
 		@foreach($records as $record)
 			<tr>
 				@foreach($rows as $row)
-					<td align="left" >
+					<td align="left" style="wrap-text:true">
 						@if(is_object($record) && isset($record->$row))
 							@if(false !== strpos($row,'date') && $record->$row)
 								{{ date('m/d/Y', strtotime($record->$row)) }}
 							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
-								{!!wordwrap(number_format($record->$row,2,'.',','), 5, "<br>\n",TRUE)!!}
-							@elseif(ctype_alnum($record->$row))
-								{!!wordwrap(strtoupper($record->$row),5,"<br>\n",TRUE)!!}
+								{!!number_format($record->$row,2,'.',',')!!}
 							@else
 								{!!$record->$row!!}
 							@endif
@@ -99,9 +97,7 @@
 							@if(false !== strpos($row,'date') && $record[$row])
 								{{ date('m/d/Y', strtotime($record[$row])) }}
 							@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))
-								{!!wordwrap(number_format($record[$row],2,'.',','), 5, "<br>\n",TRUE)!!}
-							@elseif(ctype_alnum($record[$row]))
-								{!!wordwrap(strtoupper($record->$row), 5, "<br>\n",TRUE)!!}
+								{!!number_format($record[$row],2,'.',',')!!}
 							@else
 								{!!$record[$row]!!}
 							@endif
@@ -116,7 +112,7 @@
 				<th>Total</th>
 				@foreach($rows as $key=>$row)
 					@if($key > 0)
-						<th align="left" >
+						<th align="left" style="wrap-text:true">
 							@if(is_object($summary) && isset($summary->$row))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
 									@if($row == 'quantity')
