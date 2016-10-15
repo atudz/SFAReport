@@ -48,6 +48,25 @@ class VanInventoryPresenter extends PresenterCore
     }
     
     /**
+     * Return STock transfer report columns
+     * @return multitype:string
+     */
+    public function getStockTransferReportSelectColumns()
+    {
+    	return [
+    			'stock_transfer_number',
+    			'transfer_date',
+    			'dest_van_code',
+    			'segment_code',
+    			'brand',
+    			'item_code',
+    			'description',
+    			'uom_code',
+    			'quantity'
+    	];
+    }
+    
+    /**
      * Get Stock transfer data report
      * @return \App\Core\PaginatorCore
      */
@@ -111,7 +130,7 @@ class VanInventoryPresenter extends PresenterCore
     	$areaFilter = FilterFactory::getInstance('Select');
     	$prepare = $areaFilter->addFilter($prepare,'area',
     			function($self, $model){
-    				return $model->where('app_customer.area_code','=',$self->getValue());
+    				return $model->where('salesman_area.area_code','=',$self->getValue());
     			});
     	
     	$segmentFilter = FilterFactory::getInstance('Select');
@@ -140,6 +159,33 @@ class VanInventoryPresenter extends PresenterCore
     	}
     	    	
     	return $prepare;
+    }
+    
+    
+    /**
+     * Get stock transfer filter data
+     */
+    public function getStockTransferFilterData()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$salesman = $this->request->get('salesman_code') ? $salesman = $reportsPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';   
+    	$company_code = $this->request->get('company_code') ? $reportsPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    	$material = $this->request->get('item_code') ? $reportsPresenter->getItems()[$this->request->get('item_code')] : 'All';
+    	$segment = $this->request->get('segment') ? $reportsPresenter->getItemSegmentCode()[$this->request->get('segment')] : 'All';
+    	$transferDate = ($this->request->get('transfer_date_from') && $this->request->get('transfer_date_to')) ? $this->request->get('transfer_date_from').' - '.$this->request->get('transfer_date_to') : 'All';    	
+    	$stockTransferNum = $this->request->get('stock_transfer_number');
+    	
+    	$filters = [
+    			'Salesman' => $salesman,    			    		
+    			'Company Code' => $company_code,
+    			'Area' => $area,
+    			'Segment' => $segment,
+    			'Material' => $material,    			
+    			'Stock Transer Date' => $transferDate,
+    			'Stock Transfer No.' => $stockTransferNum,
+    	];
+    	return $filters;
     }
 
 }

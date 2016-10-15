@@ -124,11 +124,11 @@
 	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 	    var params = [
-	    		  'salesman',
+	    		  'salesman_code',
 		          'company_code',
 		          'area',
 		          'segment',
-		          'material',
+		          'item_code',
 		          'transfer_date_from',
 		          'transfer_date_to',		          		          
 		          'stock_transfer_number'		          

@@ -4861,6 +4861,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getMaterialPriceListColumns();
 			case 'summaryofincidentsreport':
 				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
     	}	
     }
     
@@ -5777,6 +5779,16 @@ class ReportsPresenter extends PresenterCore
 				$filters = $this->getSummaryOfIncidentReportFilterData();
 				$filename = 'Summary Of Incident Report';
 				$summaryOfIncident = true;
+				break;
+				
+			case 'stocktransfer':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);				
+				$prepare = $vanInventoryPresenter->getPreparedStockTransfer();
+				$rows = $vanInventoryPresenter->getStockTransferReportSelectColumns();
+				$header = 'Stock Transfer Report';
+				$filters = $vanInventoryPresenter->getStockTransferFilterData();
+				$filename = 'Stock Transfer Report';
 				break;
     		default:
     			return;

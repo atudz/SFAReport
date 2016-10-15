@@ -8,7 +8,7 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
-						{!!Html::select('salesman','Salesman', $salesman)!!}						
+						{!!Html::select('salesman_code','Salesman', $salesman)!!}						
 						{!!Html::select('company_code','Company Code', $companyCode)!!}
 						{!!Html::select('area','Area', $areas)!!}												
 						{!!Html::select('segment','Segment', $segments)!!}													 																															
