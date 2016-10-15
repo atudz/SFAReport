@@ -116,7 +116,34 @@
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 
+	/**
+	 * Van Inventory Stock Transfer Report
+	 */
+	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix',StockTransfer]);
+	
+	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman',
+		          'company_code',
+		          'area',
+		          'segment',
+		          'material',
+		          'transfer_date_from',
+		          'transfer_date_to',		          		          
+		          'stock_transfer_number'		          
 
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
+
+	    //editable rows
+	    //editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
+	
+	
 	/**
 	 * Van Inventory Controller
 	 */

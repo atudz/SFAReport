@@ -277,7 +277,9 @@ class ReportsPresenter extends PresenterCore
             case 'usergrouplist':
                 return PresenterFactory::getInstance('User')->getUserGroup();
 			case 'summaryofincidentreport':
-				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();
+				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
     	}
     }
     
@@ -6380,6 +6382,10 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
 				$total = count($prepare->get());
 				$special = true;
+				break;
+			case 'stocktransfer':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
+				$total = $prepare->count();
 				break;
     		default:
     			return;
