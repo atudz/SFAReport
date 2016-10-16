@@ -38,6 +38,18 @@
 			 margin: auto;
     		 width: 65%;
 		}
+		
+		.revision {
+			font-size: {{$fontSize}};
+		}
+		
+		.rev-label {
+			padding: 3px 3px;
+		}
+		.clear {
+			clear: both;
+		}
+		
 	</style>
 </head>
 <body>
@@ -54,8 +66,15 @@
 			@endif
 		</div>
 	@endif
-	<table class="no-border">
-			<tbody>				
+	@if($revision = latest_revision($report))
+		<div class="revision" align="right">
+			<div class="rev-label">
+				<span><strong>Revision No.</strong> {{$revision}}</span>
+			</div>								
+		</div>
+	@endif
+	<table class="no-border clear">
+			<tbody>												
 				@if(isset($filters))
 					@foreach($filters as $label=>$val)
 						<tr>

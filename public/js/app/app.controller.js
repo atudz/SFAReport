@@ -968,6 +968,7 @@
 				var url = window.location.href;
 				url = url.split("/");
 				var reportType = "";
+				var report = "";
 				var updated = false;
 				var date = new Date();
 				// append 0 if character of the month is less than 2.
@@ -987,21 +988,28 @@
 				switch (url[4]) {
 					case "salescollection.report":
 						reportType = "Sales & Collection - Report";
+						report = 'salescollectionreport';
 						break;
 					case "vaninventory.canned":
 						reportType = "Van Inventory - Canned & Mixes";
+						report = 'vaninventorycanned';
 						break;
-
 					case "vaninventory.frozen":
 						reportType = "Van Inventory - Frozen & Kassel";
+						report = 'vaninventoryfrozen';
 						break;
-
 					case "salesreport.permaterial":
 						reportType = "Sales Report - Per Material";
+						report = 'salesreportpermaterial';
 						break;
 					case "salesreport.pesovalue":
 						reportType = "Sales Report - Peso Value";
+						report = 'salesreportperpeso';
 						break;
+					case "vaninventory.stocktransfer":
+						reportType = "Van Inventory - Stock Transfer";
+						report = 'stocktransfer';
+						break;					
 				}
 
 				var stepInterval = 1;
@@ -1063,6 +1071,7 @@
 						type: inputType,
 						step: stepInterval,
 						updated: updated,
+						report: report,
 						report_type: reportType
 				};
 				
