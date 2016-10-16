@@ -87,7 +87,7 @@ class VanInventoryPresenter extends PresenterCore
     	$select = '
     			txn_stock_transfer_in_header.stock_transfer_in_header_id,
     			txn_stock_transfer_in_detail.stock_transfer_in_detail_id,
-    			txn_stock_transfer_in_header.stock_transfer_number,
+    			UPPER(txn_stock_transfer_in_header.stock_transfer_number) stock_transfer_number,
     			txn_stock_transfer_in_header.transfer_date,
     			txn_stock_transfer_in_header.dest_van_code,
 				app_item_master.segment_code,
@@ -95,7 +95,10 @@ class VanInventoryPresenter extends PresenterCore
     			txn_stock_transfer_in_detail.item_code,
 				app_item_master.description,
     			txn_stock_transfer_in_detail.uom_code,
-    			txn_stock_transfer_in_detail.quantity
+    			txn_stock_transfer_in_detail.quantity,
+    			IF(txn_stock_transfer_in_header.updated_by,\'modified\',
+	    			IF(txn_stock_transfer_in_detail.updated_by,\'modified\',\'\')
+	    		) updated
     			';
     	
     	$prepare = \DB::table('txn_stock_transfer_in_header')

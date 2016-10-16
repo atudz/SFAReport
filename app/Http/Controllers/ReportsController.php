@@ -66,6 +66,13 @@ class ReportsController extends ControllerCore
 					'comment' => $comment,
 					'report_type' => $report_type,
 			]);
+			
+			\DB::table('revisions')->insert([
+					'revision_number' => generate_revision($report_type),
+					'report_type' => $report_type,
+					'updated_at' => new \DateTime(),
+					'created_at' => new \DateTime(),
+			]);
 		}
 		
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
@@ -91,6 +98,13 @@ class ReportsController extends ControllerCore
 						'updated_by' => auth()->user()->id,
 						'comment' => $comment,
 						'report_type' => $report_type,
+				]);
+				
+				\DB::table('revisions')->insert([
+						'revision_number' => generate_revision($report_type),
+						'report_type' => $report_type,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
 				]);
 			}
 			
@@ -165,7 +179,15 @@ class ReportsController extends ControllerCore
 			}
 			
 			if($insertData)
-				\DB::table('table_logs')->insert($insertData);
+			{
+			   \DB::table('table_logs')->insert($insertData);
+			   \DB::table('revisions')->insert([
+						'revision_number' => generate_revision($report_type),
+						'report_type' => $report_type,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+				]);
+			}
 		}
 		
 		$data['success'] = true;

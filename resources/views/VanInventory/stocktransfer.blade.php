@@ -51,7 +51,7 @@
 							<td>[[record.uom_code]]</td>
 							<td>
 								@if($isAdmin || $isAuditor)
-									<a href="" class="editable-click" ng-click="editColumn('number','txn_stock_transfer_in_detail','quantity',record.txn_stock_transfer_in_detail,record.quantity,$index,'Qty','quantity',false,$parent.$index)">
+									<a href="" class="editable-click" ng-click="editColumn('number','txn_stock_transfer_in_detail','quantity',record.stock_transfer_in_detail_id,record.quantity,$index,'Qty','quantity',false,$parent.$index)">
 	    								[[record.quantity]]
 	  								</a>
 	  							@else
