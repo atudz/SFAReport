@@ -1322,8 +1322,7 @@
 			$('#regExpr').on('keyup', function () {
 				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
 				$("#regExpr").val(sanitized);
-				
-				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated)) {
+				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated) && ($.trim($('#regExpr').val()))) {
 					$('#btnsub').attr('disabled', false);
 				} else {
 					$('#btnsub').attr('disabled', 'disabled');
