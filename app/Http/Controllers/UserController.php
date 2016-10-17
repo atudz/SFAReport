@@ -93,8 +93,9 @@ class UserController extends ControllerCore
 		}
 		$appSalesmanModel = ModelFactory::getInstance('AppSalesman');
 		//this will query a raw value to app salesman model.
-		$appSalesmanRaw = $appSalesmanModel->where('salesman_code', $request->get('salesman_code'));
-
+		$salesman_name = strtoupper($request->get('lname') . "," . $request->get('fname'));
+		$appSalesmanRaw = $appSalesmanModel->where('salesman_code',
+			$request->get('salesman_code'))->where('salesman_name', $salesman_name)->where();
 		//this will check if the salesman code exists in app salesman.
 		$salesmanCodeExists = $appSalesmanRaw->exists();
 		if ((($request->has('jr_salesman_code') || $request->get('salesman_code')) && !$salesmanCodeExists)) {
@@ -108,7 +109,7 @@ class UserController extends ControllerCore
 		$appSalesmanExists = $appSalesmanRaw->where('Status','A')->exists();
 
         $exist = $userModel->where('salesman_code',$request->get('salesman_code'))->where('id','<>',$id)->exists();
-		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist && $appSalesmanExists)) {
+		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist && !$appSalesmanExists)) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
 
