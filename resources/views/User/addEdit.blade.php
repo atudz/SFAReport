@@ -27,7 +27,7 @@
 						{!!Html::input('text','fname','First Name <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','lname','Last Name')!!}
+						{!!Html::input('text','lname','Last Name <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('text','mname','Middle Name')!!}
@@ -36,7 +36,7 @@
 						{!!Html::input('text','email','Email <span class="required">*</span>','',['ng-keyup'=>'regExemail()','id'=>'email'])!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('text','username','Username')!!}
+						{!!Html::input('text','username','Username <span class="required">*</span>')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::input('password','password','Password <span class="required">*</span>')!!}

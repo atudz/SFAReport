@@ -2163,6 +2163,14 @@
 			{
 				personalInfoErrors.push('First Name is a required field.');
 			}
+			if(!$.trim($('#lname').val()))
+			{
+				personalInfoErrors.push('Last Name is a required field.');
+			}
+			if(!$.trim($('#username').val()))
+			{
+				personalInfoErrors.push('Username is a required field.');
+			}
 			if(!$.trim($('#email').val()))
 			{
 				personalInfoErrors.push('Email is a required field.');
