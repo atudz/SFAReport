@@ -1917,7 +1917,7 @@
 
 			angular.forEach(angular.element(".contact-file-form [data-required=true]"), function (item) {
 				var field = $(item).attr("name");
-				var value = $(item).val();
+				var value = $.trim($(item).val());
 				if (value == "") {
 					if (field == "mobile" || field == 'telephone') {
 						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " number is required.");
@@ -1928,6 +1928,7 @@
 				if ((field == 'email' && value != "") && !rgxEmail.test(value)) {
 					contactErrors.push('Email is not valid.');
 				}
+				$(item).val(value);
 			});
 
 			if (contactErrors.length > 0) {
@@ -2040,7 +2041,7 @@
 			    var regex=/[^a-zA-Z0-9._@-]/gi;
 			    str.value=str.value.replace(regex ,"");
 			}
-		}
+		};
 		scope.personalInfoError = false;
 		scope.locationInfoError = false;
 		scope.success = false;
@@ -2158,7 +2159,7 @@
 			//$log.info($scope.usernameList);*/
 
 			// validate personal info
-			if(!$('#fname').val())
+			if(!$.trim($('#fname').val()))
 			{
 				personalInfoErrors.push('First Name is a required field.');
 			}
