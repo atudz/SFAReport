@@ -108,9 +108,9 @@ Html::macro('tclose', function($paginate=true) {
 			
 			<script type="text/ng-template" id="Confirm">
         		<div class="modal-body">		
-					<p class="bold">Edit [[params.name]]</p>		
+					<p class="bold">[[params.message]]</p>		
 					<form class="form-inline">				         
-						 <button class="btn btn-default" type="button btn-sm" ng-click="ok()">Yes</button>
+						 <button class="btn btn-danger" type="button btn-sm" ng-click="ok()">Yes</button>
 						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">No</button>					 		
 					</form>   										 					
 				</div>			    			
