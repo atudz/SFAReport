@@ -48,7 +48,7 @@
 						{!!Html::select('gender','Gender', $gender, '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::input('number','age','Age <span class="required">*</span>','',['min'=>15])!!}
+						{!!Html::input('number','age','Age <span class="required">*</span>','',['min'=>18])!!}
 					</div>					
 					<div class="row form-input-field">
 						{!!Html::input('text','address','Address')!!}

@@ -96,7 +96,7 @@
 						<div class="form-group form-group-sm">
 			 			<label for="age" class="col-sm-3 control-label">Age <span class="required">*</span></label>
 			 				<div class="col-sm-6">
-			 					<input placeholder="" class="form-control" id="age" min="0" name="age" type="number" ng-model="age">
+			 					<input placeholder="" class="form-control" id="age" min="18" name="age" type="number" ng-model="age">
 			 				</div>
 			 			</div>
 					</div>					
