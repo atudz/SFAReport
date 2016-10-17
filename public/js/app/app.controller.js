@@ -1917,7 +1917,7 @@
 
 			angular.forEach(angular.element(".contact-file-form [data-required=true]"), function (item) {
 				var field = $(item).attr("name");
-				var value = $(item).val();
+				var value = $.trim($(item).val());
 				if (value == "") {
 					if (field == "mobile" || field == 'telephone') {
 						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " number is required.");
@@ -1928,6 +1928,7 @@
 				if ((field == 'email' && value != "") && !rgxEmail.test(value)) {
 					contactErrors.push('Email is not valid.');
 				}
+				$(item).val(value);
 			});
 
 			if (contactErrors.length > 0) {
@@ -2040,7 +2041,7 @@
 			    var regex=/[^a-zA-Z0-9._@-]/gi;
 			    str.value=str.value.replace(regex ,"");
 			}
-		}
+		};
 		scope.personalInfoError = false;
 		scope.locationInfoError = false;
 		scope.success = false;
@@ -2158,11 +2159,11 @@
 			//$log.info($scope.usernameList);*/
 
 			// validate personal info
-			if(!$('#fname').val())
+			if(!$.trim($('#fname').val()))
 			{
 				personalInfoErrors.push('First Name is a required field.');
 			}
-			if(!$('#email').val())
+			if(!$.trim($('#email').val()))
 			{
 				personalInfoErrors.push('Email is a required field.');
 			}
@@ -2198,11 +2199,11 @@
 
 			if(!edit)
 			{
-				if(!$('#password').val())
+				if(!$.trim($('#password').val()))
 				{
 					personalInfoErrors.push('Password is a required field.');
 				}
-				if(!$('#confirm_pass').val())
+				if(!$.trim($('#confirm_pass').val()))
 				{
 					personalInfoErrors.push('Confirm password is a required field.');
 				}
@@ -2213,7 +2214,7 @@
 				}
 			}
 
-			if(!$('#age').val())
+			if(!$.trim($('#age').val()))
 			{
 				personalInfoErrors.push('Age is a required field.');
 			}
@@ -2282,20 +2283,20 @@
 				var items = {
 					edit_mode: editMode,
 					id: scope.id,
-					fname: $('#fname').val(),
-					lname: $('#lname').val(),
-					mname: $('#mname').val(),
-					email: $('#email').val(),
-					username: $('#username').val(),
-					password: $('#password').val(),
-					address: $('#address').val(),
+					fname: $.trim($('#fname').val()),
+					lname: $.trim($('#lname').val()),
+					mname: $.trim($('#mname').val()),
+					email: $.trim($('#email').val()),
+					username: $.trim($('#username').val()),
+					password: $.trim($('#password').val()),
+					address: $.trim($('#address').val()),
 					gender: $('#gender').val(),
-					age: $('#age').val(),
-					telephone: $('#telephone').val(),
-					mobile: $('#mobile').val(),
+					age: $.trim($('#age').val()),
+					telephone: $.trim($('#telephone').val()),
+					mobile: $.trim($('#mobile').val()),
 					role: $('#role').val(),
 					area: $('#area').val(),
-					salesman_code: $('#salesman_code').val(),
+					salesman_code: $.trim($('#salesman_code').val()),
 					jr_salesman_code: typeof scope.records.jr_salesman_code == 'undefined' || typeof scope.isJr == 'undefined' || !scope.isJr ? scope.jr_salesman_code : scope.records.jr_salesman_code,
 					assignment_type: $('#assignment_type').val(),
 					assignment_date_from: $('#assignment_date_from').val(),
