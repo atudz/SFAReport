@@ -22,4 +22,13 @@ class AppCustomer extends ModelCore
 	{
 		return $this->hasMany('App\Http\Models\TxnSalesOrderHeader','customer_code','customer_code');
 	}
+
+	/**
+	 * AppCustomer relation to AppSalesmanCustomer.
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function salesmanCustomers()
+	{
+		return $this->belongsTo('App\Http\Models\AppSalesmanCustomer', 'customer_code', 'customer_code');
+	}
 }
