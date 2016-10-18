@@ -134,7 +134,7 @@ class UserController extends ControllerCore
         if($user)
         {
         	$response['exists'] = true;
-        	$response['error'] = 'User already exists.';
+        	$response['error'] = 'Username already exist.';
         	return response()->json($response);        	
         }
 
