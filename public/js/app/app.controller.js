@@ -949,7 +949,7 @@
 				// get the current date with format of YYYY-MM-DD H:m:s.
 				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 				// initialize a default value for comments.
-				var comments = date + "@" + window.user.firstname + " " + window.user.lastname + ":";
+				var comments = date + "@" + window.user.username + ":";
 				// this will check if response data comments has defined and has a value.
 				// then overwright the value of variable comments with the response data.
 				if (typeof data.sync_data.com[0] !== "undefined") {
@@ -1354,7 +1354,7 @@
 		// get the current date with format of YYYY-MM-DD H:m:s.
 		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 		// initialize a default value for comments.
-		var comments = date + "@" + $window.user.firstname + " " + $window.user.lastname + ":";
+		var comments = date + "@" + $window.user.username + ":";
 
 		// this will control the default value of text area not to be deleted or change.
 		$scope.commentChange = function () {
