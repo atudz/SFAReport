@@ -114,7 +114,7 @@ class UserController extends ControllerCore
 			}])->first();
 
 		//this will check if the salesman exists and matches the salesman name, branch and salesman_code in existing data in the database.
-		$appSalesmanExists = ($appSalesmanRaw && ($appSalesmanRaw->salesmans && $appSalesmanRaw->salesmans[0]->salesman_name == $salesman_name) && ($appSalesmanRaw->customers && $appSalesmanRaw->customers[0]->area_code == $request->get('area'))) ?: false;
+		$appSalesmanExists = ($appSalesmanRaw && ($appSalesmanRaw->salesmans && $appSalesmanRaw->salesmans[0]->salesman_name == $salesman_name)) ?: false;
 		$exist = $userModel->where('salesman_code', $request->get('salesman_code'))->where('id', '<>', $id)->exists();
 		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist || !$appSalesmanExists)) {
 			$response['exists'] = true;
@@ -123,8 +123,17 @@ class UserController extends ControllerCore
 			return response()->json($response);
 		}
 
+		$branch = ($appSalesmanRaw && $appSalesmanRaw->customers && $appSalesmanRaw->customers[0]->area_code == $request->get('area')) ?: false;
+		if (($request->has('jr_salesman_code') || $request->has('salesman_code')) && !$branch) {
+			$response['exists'] = true;
+			$response['error'] = 'Salesman code does not match to its corresponding branch.';
+
+			return response()->json($response);
+		}
+
+		$appSalesman = $appSalesmanModel->where('salesman_code', $request->get('salesman_code'))->where('status', 'A')->first();
 		//this will check if the salesman code is inactive. this will be used for validation for jr salesman.
-		if (($request->has('jr_salesman_code') && $request->get('salesman_code')) && !$appSalesmanExists) {
+		if (($request->has('jr_salesman_code') && $request->get('salesman_code')) && !$appSalesman) {
 			$response['exists'] = true;
 			$response['error'] = 'The salesman code that you\'ve entered is already been inactive.';
 
