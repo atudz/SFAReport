@@ -33,7 +33,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">
-							<label for="lname" class="col-sm-3 control-label">Last Name</label>
+							<label for="lname" class="col-sm-3 control-label">Last Name <span class="required">*</span></label>
 				 			<div class="col-sm-6">
 				 				<input placeholder="" class="form-control" id="lname" name="lname" type="text" ng-model="records.lastname">
 				 			</div>				 								
@@ -57,7 +57,7 @@
 					</div>
 					<div class="row form-input-field">
 						<div class="form-group form-group-sm">						
-							<label for="username" class="col-sm-3 control-label">Username</label>
+							<label for="username" class="col-sm-3 control-label">Username <span class="required">*</span></label>
 			 				<div class="col-sm-6">
 			 					<input placeholder="" class="form-control" id="username" name="username" type="text" ng-model="records.username">
 			 				</div>			 				
