@@ -1319,7 +1319,7 @@
 				return false;
 			}
 			var sanitized;
-			$('#regExpr').on('keyup', function () {
+			$('#regExpr').on('click keyup', function () {
 				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
 				$("#regExpr").val(sanitized);
 				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated) && ($.trim($('#regExpr').val()))) {
