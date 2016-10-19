@@ -145,6 +145,48 @@
 	
 	
 	/**
+	 * User List controller
+	 */
+	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);
+
+	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log) {
+
+		$scope.save = function (){
+			$log.info('test1234');
+			var API = $resource('controller/vaninventory/stocktransfer');
+			
+			var params = {
+				'stock_transfer_number': $('#stock_transfer_number').val(),
+			    'transfer_date_from': $('#transfer_date_from').val(),
+				'src_van_code': $('#src_van_code').val(),
+				'dest_van_code': $('#dest_van_code').val(),
+				'device_code': $('#device_code').val(),
+				'item_code': $('#item_code').val(),
+				'salesman_code': $('#salesman_code').val(),
+				'uom_code': $('#uom_code').val(),
+				'quantity': $('#quantity').val(),
+			};
+			
+			API.save(params).$promise.then(function(data){
+				$('.help-block').html('');
+				$location.path('vaninventory.stocktransfer');
+			}, function(error){
+				if(error.data){
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						if(-1 !== index.indexOf('_from')){
+							$('[id='+index+']').parent().next('.help-block').html(val);
+						} else {
+							$('[id='+index+']').next('.help-block').html(val);
+						}						
+					});
+				}
+			});
+		}
+	};
+	
+	
+	/**
 	 * Van Inventory Controller
 	 */
 	function vanInventoryController(scope, resource, modal, window, reportType, log, InventoryFixTable)

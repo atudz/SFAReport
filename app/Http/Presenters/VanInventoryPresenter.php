@@ -5,9 +5,35 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
 use App\Factories\FilterFactory;
+use DB;
+use App\Http\Requests\StockTransferRequest;
 
 class VanInventoryPresenter extends PresenterCore
 {
+	/**
+	 * Return van & inventory view
+	 * @param string $type
+	 * @return string The rendered html view
+	 */
+	public function create()
+	{
+// 		$reportsPresenter = PresenterFactory::getInstance('Reports');
+// 		$this->view->companyCode = $reportsPresenter->getCompanyCode();
+// 		$this->view->salesman = $reportsPresenter->getSalesman(true);
+// 		$this->view->areas = $reportsPresenter->getArea();
+// 		$this->view->items = $reportsPresenter->getItems();
+// 		$this->view->segments = $reportsPresenter->getItemSegmentCode();
+// 		$this->view->tableHeaders = $this->getStockTransferColumns();
+		$reportsPresenter = PresenterFactory::getInstance('Reports');
+		$this->view->itemCodes = $this->getItemCodes();
+		$this->view->items = $reportsPresenter->getItems();
+		$this->view->segments = $reportsPresenter->getItemSegmentCode();
+		$this->view->brands = $this->getBrands();
+		$this->view->uom = $this->getUom();
+		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		return $this->view('add');
+	}
+	
     /**
      * Return van & inventory view
      * @param string $type
@@ -24,6 +50,7 @@ class VanInventoryPresenter extends PresenterCore
     	$this->view->tableHeaders = $this->getStockTransferColumns();
     	return $this->view('stocktransfer');    	    	
     }
+    
     
     /**
      * Get Stock transfer column headers
@@ -191,4 +218,41 @@ class VanInventoryPresenter extends PresenterCore
     	return $filters;
     }
 
+    
+    /**
+     * Get item codes
+     * @return unknown
+     */
+    public function getItemCodes()
+    {
+		return DB::table('app_item_master')
+					->where('status','A')
+					->orderBy('item_code')
+					->lists('item_code','item_code');
+    }
+    
+    /**
+     * Get item codes
+     * @return unknown
+     */
+    public function getUom()
+    {
+    	return DB::table('app_item_uom')
+    	->where('status','A')
+    	->orderBy('uom_code')
+    	->lists('description','uom_code');
+    }
+    
+    
+    /**
+     * Get item brands
+     * @return unknown
+     */
+    public function getBrands()
+    {
+    	return DB::table('app_item_brand')
+    			->where('status','A')
+		    	->orderBy('description')
+		    	->lists('description','brand_code');
+    }
 }

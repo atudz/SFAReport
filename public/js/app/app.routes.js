@@ -48,6 +48,11 @@
 					controller: 'StockTransfer',
 					//controllerAs: 'vic'*/
 				})
+				.when('/stocktransfer.add',{
+					templateUrl: '/reports/stocktransfer/add',
+					controller: 'StockTransferAdd',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				

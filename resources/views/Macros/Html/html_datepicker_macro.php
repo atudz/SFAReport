@@ -17,7 +17,9 @@ Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=fals
 	$html .= '<span class="input-group-btn">
 			 			<button type="button" class="btn btn-default btn-sm" ng-click="open($event,\''.$name.'_from\')"><i class="glyphicon glyphicon-calendar"></i></button>
 			 		</span>
-			 	</p>';
+			 	</p>
+				<span class="error help-block"></span>
+			 	';
 	if($fromTo)
 	{
 		$html .= '
