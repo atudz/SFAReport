@@ -116,7 +116,13 @@ class UserController extends ControllerCore
 		//this will check if the salesman exists and matches the salesman name, branch and salesman_code in existing data in the database.
 		$appSalesmanExists = ($appSalesmanRaw && ($appSalesmanRaw->salesmans && $appSalesmanRaw->salesmans[0]->salesman_name == $salesman_name)) ?: false;
 		$exist = $userModel->where('salesman_code', $request->get('salesman_code'))->where('id', '<>', $id)->exists();
-		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && ($exist || !$appSalesmanExists)) {
+		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && $exist) {
+			if (!$appSalesmanExists) {
+				$response['exists'] = true;
+				$response['error'] = 'Salesman code does not match to its corresponding Name.';
+
+				return response()->json($response);
+			}
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
 
