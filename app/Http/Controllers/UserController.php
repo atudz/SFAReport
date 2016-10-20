@@ -119,7 +119,7 @@ class UserController extends ControllerCore
 		if ((!$request->has('jr_salesman_code') && $request->get('salesman_code')) && $exist) {
 			if (!$appSalesmanExists) {
 				$response['exists'] = true;
-				$response['error'] = 'Salesman code does not match to its corresponding Name.';
+				$response['error'] = 'Salesman code does not match to its corresponding van salesman name.';
 
 				return response()->json($response);
 			}
