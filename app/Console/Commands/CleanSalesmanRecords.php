@@ -38,8 +38,8 @@ class CleanSalesmanRecords extends Command
     public function dateRange()
     {
     	return [
-    		(new Carbon('2016-09-03'))->startOfDay(),	
-    		(new Carbon('2016-09-30'))->endOfDay(),
+    		(new Carbon('2016-10-01'))->startOfDay(),	
+    		(new Carbon('2016-10-21'))->endOfDay(),
     	];
     }
     
@@ -49,11 +49,8 @@ class CleanSalesmanRecords extends Command
     public function getSalesman()
     {
 		return [
-			'L06',
-			'L07',
-			'L08',
-			'L09',
-			'C02',
+			'I02',
+			'I04',			
 		];    	
     }
    
