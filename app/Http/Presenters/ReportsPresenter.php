@@ -356,7 +356,7 @@ class ReportsPresenter extends PresenterCore
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
     	
-    	$data['records'] = $result;
+    	$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
     	if($summary1)
@@ -1266,7 +1266,7 @@ class ReportsPresenter extends PresenterCore
     		}
     	}
     	    	
-    	$data['records'] = $records;
+    	$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
@@ -1680,7 +1680,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesCollectionSummary();
     	$result = $this->paginate($prepare);
-    	$data['records'] = $this->populateScrInvoice($result->items());
+		$data['records'] = $this->validateInvoiceNumber($this->populateScrInvoice($result->items()));
     	 
     	$data['summary'] = '';
     	if($result->total())
@@ -2398,8 +2398,11 @@ class ReportsPresenter extends PresenterCore
     	
 
     	unset($replenishment->replenishment_date);
-    	unset($replenishment->reference_number);	    	    
-    	
+    	unset($replenishment->reference_number);
+		if (!$reports && !empty($data['records'])) {
+			$this->validateInvoiceNumber($data['records']);
+		}
+
     	return ($reports) ? $reportRecords : response()->json($data);
     }
     
@@ -2796,7 +2799,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $this->getPreparedUnpaidInvoice();
     	
     	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
+    	$data['records'] = $this->validateInvoiceNumber($result->items());
     	
     	$data['summary'] = '';
     	if($result->total())
@@ -3334,9 +3337,9 @@ class ReportsPresenter extends PresenterCore
     
     	$prepare = $this->getPreparedSalesReportMaterial(); 
     		
-    	$result = $this->paginate($prepare);    	    	
-    	$data['records'] = $result->items();
-    	
+    	$result = $this->paginate($prepare);
+    	$data['records'] = $this->validateInvoiceNumber($result->items());
+
     	$data['summary'] = '';
     	if($result->total())
     	{
@@ -3715,7 +3718,7 @@ class ReportsPresenter extends PresenterCore
     		$prepare->orderBy('sales.invoice_number');
     	}
     	
-    	return $prepare;	
+    	return $prepare;
     }
     
     
@@ -3729,8 +3732,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $this->getPreparedSalesReportPeso();
     	 
     	$result = $this->paginate($prepare);    	
-    	$data['records'] = $result->items();
-    	
+    	$data['records'] = $this->validateInvoiceNumber($result->items());
     	$data['summary'] = '';
     	if($result->total())
     	{
@@ -6976,15 +6978,18 @@ class ReportsPresenter extends PresenterCore
 			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
 				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
 					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
-
 				}
 				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
 					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
 				}
 			} elseif (isset($current->invoice_number)) {
 				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
-					$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
-
+					if (isset($current->customer_code)) {
+						$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
+					} else {
+						$current->invoice_number = $this->generateInvoiceNumber($current->customer_name,
+								true) . $current->invoice_number;
+					}
 				}
 			} elseif (is_array($current) && array_key_exists('invoice_number', $current)) {
 				if ($current['invoice_number'] != " " && is_numeric($current['invoice_number'])) {
