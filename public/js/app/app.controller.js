@@ -948,15 +948,14 @@
 				// get the current date with format of YYYY-MM-DD H:m:s.
 				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 				// initialize a default value for comments.
-				var comments = '';
+				var comment = '';
+				var commentLists = [];
 				if (typeof data.sync_data.com[0] !== "undefined") {
 					angular.forEach(data.sync_data.com, function (comment) {
-						comments += comment.comment + " / ";
+						commentLists.push(comment.comment);
 					});
 				}
-				comments += date + "@" + window.user.username + ":";
-				// this will check if response data comments has defined and has a value.
-				// then overwright the value of variable comments with the response data.
+				comment += date + "@" + window.user.username + ":";
 
 				switch (url[4]) {
 					case "salescollection.report":
@@ -1025,7 +1024,8 @@
 						id: id,
 						value: value,
 						oldval: value,
-						comment: comments,
+						comment: comment,
+						commentLists: commentLists,
 						selectOptions: selectOptions,
 						index: index,
 						name: name,
@@ -1046,7 +1046,7 @@
 					templateUrl: template,
 					controller: 'EditTableRecord',
 					windowClass: 'center-modal',
-					size: 'sm',
+					size: 'lg',
 					resolve: {
 						params: function () {
 							return params;
@@ -1342,16 +1342,14 @@
 			}
 		};
 
-		var comments = '';
-		var isComments = false;
+		var date = new Date();
+		var month = date.getMonth();
+		month = month < 10 ? "0" + month : month;
+		// get the current date with format of YYYY-MM-DD H:m:s.
+		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+		var comments = date + "@" + window.user.username + ":";
 		// this will control the default value of text area not to be deleted or change.
 		$scope.commentChange = function () {
-			if (!isComments) {
-				comments = $scope.params.comment;
-				comments = comments.substring(0, comments.length - 1);
-				isComments = true;
-			}
-
 			$("#comment").keydown(function () {
 				var field = this;
 				setTimeout(function () {
