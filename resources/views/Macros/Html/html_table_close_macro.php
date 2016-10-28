@@ -27,8 +27,16 @@ Html::macro('tclose', function($paginate=true) {
 						  <div class="form-group">
 							    <label class="control-label col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
-							      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
+							      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 							    </div>
+						  </div>
+						  <div class="form-group" ng-show="params.commentLists.length">
+						  	<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+						 	<ul class="list-styled" style="display: block">
+						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
+							</ul>
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-offset-3 col-sm-9">
@@ -60,9 +68,17 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
 						</div>
+						<div class="form-group" ng-show="params.commentLists.length">
+							<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+						 	<ul class="list-styled" style="display: block">
+						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
+							</ul>
+						 </div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
 						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
@@ -95,8 +111,16 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 						    <label class="control-label col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
-						      	<textarea class="form-control inner-addon fxresize"  ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
+						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
+						</div>
+						<div class="form-group" ng-show="params.commentLists.length">
+							<div>
+								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
+							</div>
+						 	<ul class="list-styled" style="display: block">
+						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
+							</ul>
 						</div>
 						<div class="form-group">
 						<div class="col-sm-offset-3 col-sm-9">
