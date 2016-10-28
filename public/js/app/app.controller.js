@@ -1046,7 +1046,7 @@
 					templateUrl: template,
 					controller: 'EditTableRecord',
 					windowClass: 'center-modal',
-					size: 'sm',
+					size: 'lg',
 					resolve: {
 						params: function () {
 							return params;

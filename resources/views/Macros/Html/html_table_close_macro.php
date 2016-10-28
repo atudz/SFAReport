@@ -25,7 +25,7 @@ Html::macro('tclose', function($paginate=true) {
 							    </div>
 						  </div>
 						  <div class="form-group">
-							    <label class="control-label col-sm-3">Remarks:</label>
+							    <label class="col-sm-3">Remarks:</label>
 							    <div class="col-sm-9">
 							      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 							    </div>
@@ -66,7 +66,7 @@ Html::macro('tclose', function($paginate=true) {
 						    </div>
 						</div>
 						<div class="form-group">
-						    <label class="control-label col-sm-3">Remarks:</label>
+						    <label class="col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
 						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
@@ -109,7 +109,7 @@ Html::macro('tclose', function($paginate=true) {
 						    </div>
 						</div>
 						<div class="form-group">
-						    <label class="control-label col-sm-3">Remarks:</label>
+						    <label class="col-sm-3">Remarks:</label>
 						    <div class="col-sm-9">
 						      	<textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.comment" name="comment" rows="5" id="comment" ng-change="commentChange()">[[params.comment]]</textarea>
 						    </div>
