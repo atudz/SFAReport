@@ -39,9 +39,11 @@ Html::macro('tclose', function($paginate=true) {
 							</ul>
 						  </div>
 						  <div class="form-group">
-						    <div class="col-sm-offset-3 col-sm-9">
-						      	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
-								<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+						    <div class="col-sm-12">
+								<div class="pull-right">	
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+								</div>
 						    </div>
 						  </div>
 					</form>										 					
@@ -80,10 +82,12 @@ Html::macro('tclose', function($paginate=true) {
 							</ul>
 						 </div>
 						<div class="form-group">
-						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
-							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
-						</div>
+							<div class="col-sm-12">
+								<div class="pull-right">
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+								</div>
+							</div>
 						</div>
 					</form>  										 					
 				</div>			    			
@@ -123,10 +127,12 @@ Html::macro('tclose', function($paginate=true) {
 							</ul>
 						</div>
 						<div class="form-group">
-						<div class="col-sm-offset-3 col-sm-9">
-						  	<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
-						 	<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
-						</div>
+							<div class="col-sm-12">
+								<div class="pull-right">
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+								</div>
+							</div>
 						</div>
 					</form>   										 					
 				</div>			    			
