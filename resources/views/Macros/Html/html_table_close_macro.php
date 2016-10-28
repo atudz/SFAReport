@@ -15,6 +15,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
 	        		 <form class="form-horizontal">
 	        		 <p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+	        		 <p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
 	        		 <p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
 						  <div class="form-group">
 							    <input type="[[params.type]]" id="hval" ng-model="params.oldval" min="0" class="form-control ng-hide" step="[[params.step]]">
@@ -43,6 +44,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+        			<p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
 	        		 	<p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
@@ -75,6 +77,7 @@ Html::macro('tclose', function($paginate=true) {
         		<div class="modal-body">
         			<form class="form-horizontal">
         			<p class="text-center bold required error-edit" id="editError">Please input remarks to proceed.</p>
+        			<p class="text-center bold required error-edit" id="editErrorInvoice">Please input invoice prefix to proceed.</p>
 	        		 	<p  class="bold">[[params.report_type]] <span> ([[params.name]])</span></p>
 						<div class="form-group">
 						    <label class="control-label col-sm-3"></label>
