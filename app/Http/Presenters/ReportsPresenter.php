@@ -7087,8 +7087,8 @@ class ReportsPresenter extends PresenterCore
 	{
 		$data = \DB::table('settings')->where('name', 'synching_sfi')->first();
 		$resultdata = ModelFactory::getInstance('TableLog');
-		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('id',
-			'desc')->get();
+		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('created_at',
+			'asc')->get();
 		$value['sync'] = ($data && $data->value) ? 1 : 0;
 		$value['com'] = $resultdata;
 

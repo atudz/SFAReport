@@ -941,7 +941,6 @@
 				var url = window.location.href;
 				url = url.split("/");
 				var reportType = "";
-				var updated = false;
 				var date = new Date();
 				// append 0 if character of the month is less than 2.
 				var month = date.getMonth();
@@ -949,13 +948,15 @@
 				// get the current date with format of YYYY-MM-DD H:m:s.
 				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 				// initialize a default value for comments.
-				var comments = date + "@" + window.user.username + ":";
+				var comments = '';
+				if (typeof data.sync_data.com[0] !== "undefined") {
+					angular.forEach(data.sync_data.com, function (comment) {
+						comments += comment.comment + " / ";
+					});
+				}
+				comments += date + "@" + window.user.username + ":";
 				// this will check if response data comments has defined and has a value.
 				// then overwright the value of variable comments with the response data.
-				if (typeof data.sync_data.com[0] !== "undefined") {
-					comments = data.sync_data.com[0].comment;
-					updated = true;
-				}
 
 				switch (url[4]) {
 					case "salescollection.report":
@@ -1035,7 +1036,6 @@
 						parentIndex: parentIndex,
 						type: inputType,
 						step: stepInterval,
-						updated: updated,
 						report_type: reportType
 				};
 				
@@ -1311,28 +1311,23 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
+	app.controller('EditTableRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable', EditTableRecord]);
 
-	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
+	function EditTableRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable) {
 		$scope.change = function () {
-			if($scope.params.updated){
-				return false;
-			}
-			var sanitized;
+
 			$('#regExpr').on('click keyup', function () {
-				sanitized = $("#regExpr").val().replace(/[^a-zA-Z0-9._()/]/gi, '');
-				$("#regExpr").val(sanitized);
-				if (($('#regExpr').val() != $('#hval').val()) && (!$scope.params.updated) && ($.trim($('#regExpr').val()))) {
+				if (($('#regExpr').val() != $('#hval').val()) && ($.trim($('#regExpr').val()))) {
 					$('#btnsub').attr('disabled', false);
 				} else {
 					$('#btnsub').attr('disabled', 'disabled');
 				}
 				return;
 			});
-			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val()) && !$scope.params.updated) {
+			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val())) {
 				$('#btnsub').attr('disabled', false);
 			}
-			else if (typeof $('#date_value').val() !== "undefined" && !$scope.params.updated) {
+			else if (typeof $('#date_value').val() !== "undefined") {
 				var date = new Date($('#date_value').val());
 				var oldDate = new Date($scope.params.oldval);
 				date = date.getDate() + date.getMonth() + date.getFullYear();
@@ -1347,17 +1342,16 @@
 			}
 		};
 
-		var date = new Date();
-		// append 0 if character of the month is less than 2.
-		var month = date.getMonth();
-		month = month < 10 ? "0" + month : month;
-		// get the current date with format of YYYY-MM-DD H:m:s.
-		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-		// initialize a default value for comments.
-		var comments = date + "@" + $window.user.username + ":";
-
+		var comments = '';
+		var isComments = false;
 		// this will control the default value of text area not to be deleted or change.
 		$scope.commentChange = function () {
+			if (!isComments) {
+				comments = $scope.params.comment;
+				comments = comments.substring(0, comments.length - 1);
+				isComments = true;
+			}
+
 			$("#comment").keydown(function () {
 				var field = this;
 				setTimeout(function () {
@@ -1369,75 +1363,61 @@
 		};
 
 		$scope.params = params;
-		//$log.info(params);
 
 		$scope.save = function () {
 			var API = $resource('controller/reports/save');
 			var error = false;
-			if($scope.params.type == 'datetime')
-			{
-				if(!$('#date_value').val())
-				{
+			if ($scope.params.type == 'datetime') {
+				if (!$('#date_value').val()) {
 					error = true;
 				}
-				else if($('#comment').val() == comments || $('#comment').val() == '')
-				{
+				else if ($('#comment').val() == comments || $('#comment').val() == '') {
 					document.getElementById("editError").style.display = "block";
 					error = true;
 				}
-				else
-				{
+				else {
 					var val = $scope.params.value;
-					//$log.info('date_value ' + val);
 					$scope.params.value = $('#date_value').val() + " " + val.split(" ")[1];
 				}
-
-			}
-			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
-			{
+			} else if ($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0))) {
 				error = true;
-			}else if($('#comment').val() == comments || $('#comment').val() == '')
-			{
+			} else if (typeof $('#regExpr').val() != "undefined" && $scope.params.column == "invoice_number" && $.isNumeric($('#regExpr').val().substring(0, 2))) {
+				document.getElementById("editErrorInvoice").style.display = "block";
+				error = true;
+			} else if ($('#comment').val() == comments || $('#comment').val() == '') {
 				document.getElementById("editError").style.display = "block";
 				error = true;
 			}
-			//$log.info($scope.params);
-			if(!error)
-			{
-				API.save($scope.params, function(data){
-					//$log.info($scope.params.value);
+			if (!error) {
+				var comments = $scope.params.comment.split('/');
+				$scope.params.comment = comments[comments.length - 1];
+				console.log(JSON.stringify($scope.params.comment));
+
+				API.save($scope.params, function (data) {
 
 					// Van Inventory customization
-					if($scope.params.table == 'txn_stock_transfer_in_header')
-					{
+					if ($scope.params.table == 'txn_stock_transfer_in_header') {
 						var stocks = 'stocks';
-						if($scope.params.alias)
-						{
+						if ($scope.params.alias) {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;
-						}
-						else
-						{
+						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						$('#'+$scope.params.parentIndex+'_'+$scope.params.index).addClass('modified');
+						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
 					}
-					else
-					{
-						if($scope.params.alias)
-						{
+					else {
+						if ($scope.params.alias) {
 							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
-							if($scope.params.getTotal)
+							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.alias] = Number($scope.summary[$scope.params.alias]) - Number($scope.params.old) + Number($scope.params.value);
-						}
-						else
-						{
+						} else {
 							$scope.records[$scope.params.index][$scope.params.column] = $scope.params.value;
-							if($scope.params.getTotal)
+							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						$('#'+$scope.params.index).addClass('modified');
+						$('#' + $scope.params.index).addClass('modified');
 
-						if(typeof EditableFixTable !== 'undefined'){
+						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
 						}
 					}
@@ -1451,10 +1431,6 @@
 			$uibModalInstance.dismiss('cancel');
 		};
 
-		/*$scope.getDate = function(date){
-	          var dateOut = new Date(date);
-	          return dateOut;
-	    };*/
 	};
 
 
