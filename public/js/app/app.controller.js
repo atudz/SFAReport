@@ -116,7 +116,76 @@
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 
+	/**
+	 * Van Inventory Stock Transfer Report
+	 */
+	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix',StockTransfer]);
+	
+	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman_code',
+		          'company_code',
+		          'area',
+		          'segment',
+		          'item_code',
+		          'transfer_date_from',
+		          'transfer_date_to',		          		          
+		          'stock_transfer_number'		          
 
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
+	
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);
+
+	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log) {
+
+		$scope.save = function (){
+			$log.info('test1234');
+			var API = $resource('controller/vaninventory/stocktransfer');
+			
+			var params = {
+				'stock_transfer_number': $('#stock_transfer_number').val(),
+			    'transfer_date_from': $('#transfer_date_from').val(),
+				'src_van_code': $('#src_van_code').val(),
+				'dest_van_code': $('#dest_van_code').val(),
+				'device_code': $('#device_code').val(),
+				'item_code': $('#item_code').val(),
+				'salesman_code': $('#salesman_code').val(),
+				'uom_code': $('#uom_code').val(),
+				'quantity': $('#quantity').val(),
+			};
+			
+			API.save(params).$promise.then(function(data){
+				$('.help-block').html('');
+				$location.path('vaninventory.stocktransfer');
+			}, function(error){
+				if(error.data){
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						if(-1 !== index.indexOf('_from')){
+							$('[id='+index+']').parent().next('.help-block').html(val);
+						} else {
+							$('[id='+index+']').next('.help-block').html(val);
+						}						
+					});
+				}
+			});
+		}
+	};
+	
+	
 	/**
 	 * Van Inventory Controller
 	 */
@@ -941,6 +1010,8 @@
 				var url = window.location.href;
 				url = url.split("/");
 				var reportType = "";
+				var report = "";
+				var updated = false;
 				var date = new Date();
 				// append 0 if character of the month is less than 2.
 				var month = date.getMonth();
@@ -960,21 +1031,28 @@
 				switch (url[4]) {
 					case "salescollection.report":
 						reportType = "Sales & Collection - Report";
+						report = 'salescollectionreport';
 						break;
 					case "vaninventory.canned":
 						reportType = "Van Inventory - Canned & Mixes";
+						report = 'vaninventorycanned';
 						break;
-
 					case "vaninventory.frozen":
 						reportType = "Van Inventory - Frozen & Kassel";
+						report = 'vaninventoryfrozen';
 						break;
-
 					case "salesreport.permaterial":
 						reportType = "Sales Report - Per Material";
+						report = 'salesreportpermaterial';
 						break;
 					case "salesreport.pesovalue":
 						reportType = "Sales Report - Peso Value";
+						report = 'salesreportperpeso';
 						break;
+					case "vaninventory.stocktransfer":
+						reportType = "Van Inventory - Stock Transfer";
+						report = 'stocktransfer';
+						break;					
 				}
 
 				var stepInterval = 1;
@@ -1036,6 +1114,8 @@
 						parentIndex: parentIndex,
 						type: inputType,
 						step: stepInterval,
+						updated: updated,
+						report: report,
 						report_type: reportType
 				};
 				

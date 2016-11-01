@@ -19,6 +19,22 @@ Html::macro('topen', function($options=[]) {
 			      	</div>';
 	}
 
+	if(isset($options['add_link']))
+	{
+		$html .= '
+						<div class="pull-left" style="padding:0px 5px 0px 10px">
+							<a href="#'.$options['add_link'].'" class="btn btn-primary btn-sm">Add</a>
+				      	</div>';
+	}
+	
+	if(isset($options['save_controller']))
+	{
+		$html .= '
+						<div class="pull-left" style="padding:0px 5px" ng-controller="'.$options['save_controller'].'">
+							<button type="button" class="btn btn-warning btn-sm">Save</button>
+				      	</div>';
+	}
+	
 	if(!$no_download)
 	{						
 		$html.= '<div class="pull-right">					

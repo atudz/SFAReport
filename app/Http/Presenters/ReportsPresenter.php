@@ -277,7 +277,9 @@ class ReportsPresenter extends PresenterCore
             case 'usergrouplist':
                 return PresenterFactory::getInstance('User')->getUserGroup();
 			case 'summaryofincidentreport':
-				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();
+				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
     	}
     }
     
@@ -4861,6 +4863,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getMaterialPriceListColumns();
 			case 'summaryofincidentsreport':
 				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
     	}	
     }
     
@@ -5778,6 +5782,16 @@ class ReportsPresenter extends PresenterCore
 				$filename = 'Summary Of Incident Report';
 				$summaryOfIncident = true;
 				break;
+				
+			case 'stocktransfer':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);				
+				$prepare = $vanInventoryPresenter->getPreparedStockTransfer();
+				$rows = $vanInventoryPresenter->getStockTransferReportSelectColumns();
+				$header = 'Stock Transfer Report';
+				$filters = $vanInventoryPresenter->getStockTransferFilterData();
+				$filename = 'Stock Transfer Report';
+				break;
     		default:
     			return;
     	}	
@@ -5876,7 +5890,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if($report == 'salescollectionsummary')
+    		if(in_array($report,['salescollectionsummary','stocktransfer']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
@@ -6382,6 +6396,10 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
 				$total = count($prepare->get());
 				$special = true;
+				break;
+			case 'stocktransfer':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
+				$total = $prepare->count();
 				break;
     		default:
     			return;

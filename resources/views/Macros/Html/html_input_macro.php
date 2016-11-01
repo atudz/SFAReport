@@ -17,7 +17,8 @@ Html::macro('input', function($type, $name, $label, $placeholder='', $attributes
 			 	</div>
 			 	<div class="col-xs-12 col-sm-8">'.
 			 		Form::input($type, $name, null, $options) .
-			 '	</div>
+			 '	<span class="error help-block"></span>
+			 	</div>
 			 </div>';
 	
 	return $html;

@@ -40,6 +40,8 @@
 								@if(false !== strpos($row,'date') && $record->$row)
 									@if($report == 'bir')
 										{{ $record->$row }}
+									@elseif($report == 'stocktransfer')
+										{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
 									@else
 										{{ date('m/d/Y', strtotime($record->$row)) }}
 									@endif
@@ -52,7 +54,13 @@
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
-									{{ date('m/d/Y', strtotime($record[$row])) }}
+									@if($report == 'bir')
+										{{ $record[$row] }}
+									@elseif($report == 'stocktransfer')
+										{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+									@else	
+										{{ date('m/d/Y', strtotime($record[$row])) }}
+									@endif
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@elseif(ctype_alnum($record[$row]))

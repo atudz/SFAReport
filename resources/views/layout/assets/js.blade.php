@@ -33,5 +33,5 @@
 </script>
 
 <script>
-	var user = {!! Auth::user()->load('group') !!}
+	var user = @if(Auth::user()) {!! Auth::user()->load('group') !!} @endif 
 </script>

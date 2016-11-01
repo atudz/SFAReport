@@ -28,6 +28,7 @@ class ReportsController extends ControllerCore
 		$id = $request->get('id');
 		$comment = $request->get('comment');
 		$report_type = $request->has('report_type') ? $request->get('report_type') : null;
+		$report = $request->has('report') ? $request->get('report') : null;
 		
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
@@ -66,6 +67,14 @@ class ReportsController extends ControllerCore
 					'comment' => $comment,
 					'report_type' => $report_type,
 			]);
+			
+			\DB::table('revisions')->insert([
+					'revision_number' => generate_revision($report),
+					'report_type' => $report,
+					'updated_at' => new \DateTime(),
+					'created_at' => new \DateTime(),
+					'modified_by' => auth()->user()->id,
+			]);
 		}
 		
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
@@ -91,6 +100,14 @@ class ReportsController extends ControllerCore
 						'updated_by' => auth()->user()->id,
 						'comment' => $comment,
 						'report_type' => $report_type,
+						'modified_by' => auth()->user()->id,
+				]);
+				
+				\DB::table('revisions')->insert([
+						'revision_number' => generate_revision($report),
+						'report_type' => $report,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
 				]);
 			}
 			
@@ -133,6 +150,7 @@ class ReportsController extends ControllerCore
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
 							'report_type' => $report_type,
+							'modified_by' => auth()->user()->id,
 					];
 				}
 			}			
@@ -165,7 +183,15 @@ class ReportsController extends ControllerCore
 			}
 			
 			if($insertData)
-				\DB::table('table_logs')->insert($insertData);
+			{
+			   \DB::table('table_logs')->insert($insertData);
+			   \DB::table('revisions')->insert([
+						'revision_number' => generate_revision($report),
+						'report_type' => $report,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+				]);
+			}
 		}
 		
 		$data['success'] = true;
