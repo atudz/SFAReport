@@ -16,8 +16,14 @@ class VanInventoryController extends ControllerCore
 	 */
 	public function saveStockTransfer(StockTransferRequest $request)
 	{
+		$nextPkId = ModelFactory::getInstance('TxnStockTransferInHeader')->max('stock_transfer_in_header_id');
+		if($nextPkId >= config('system.custom_pk_start'))
+			$nextPkId++;
+		else
+			$nextPkId = config('system.custom_pk_start');
+		
 		$stockTransfer = ModelFactory::getInstance('TxnStockTransferInHeader');
-		$stockTransfer->stock_transfer_in_header_id = 2000000000;
+		$stockTransfer->stock_transfer_in_header_id = $nextPkId;
 		$stockTransfer->stock_transfer_number = $request->stock_transfer_number;
 		$stockTransfer->salesman_code = $request->salesman_code;
 		$stockTransfer->dest_van_code = $request->dest_van_code;
@@ -33,8 +39,14 @@ class VanInventoryController extends ControllerCore
 		
 		if($stockTransfer->save())
 		{
+			$nextPkId = ModelFactory::getInstance('TxnStockTransferInDetail')->max('stock_transfer_in_detail_id');
+			if($nextPkId >= config('system.custom_pk_start'))
+				$nextPkId++;
+			else
+				$nextPkId = config('system.custom_pk_start');
+				
 			$stockDetail = ModelFactory::getInstance('TxnStockTransferInDetail');
-			$stockDetail->stock_transfer_in_detail_id = 2000000000;
+			$stockDetail->stock_transfer_in_detail_id = $nextPkId;
 			$stockDetail->stock_transfer_number = $request->stock_transfer_number;
 			$stockDetail->item_code = $request->item_code;
 			$stockDetail->quantity = $request->quantity;
