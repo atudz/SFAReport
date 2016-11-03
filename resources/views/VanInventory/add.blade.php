@@ -44,8 +44,8 @@
 						</div>
 						
 						<div class="col-md-4 col-md-offset-6" style="padding-top:10px;">
-							<button class="btn btn-warning" ng-click="save()">Save</button>&nbsp;&nbsp;
-							<a href="#vaninventory.stocktransfer" class="btn btn-success">Cancel</a>
+							<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;
+							<a href="#vaninventory.stocktransfer" class="btn btn-warning">Cancel</a>
 						</div>
 					</div>										
 			</div>			
