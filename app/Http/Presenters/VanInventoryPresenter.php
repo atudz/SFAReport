@@ -213,7 +213,7 @@ class VanInventoryPresenter extends PresenterCore
     			'Area' => $area,
     			'Segment' => $segment,
     			'Material' => $material,    			
-    			'Stock Transer Date' => $transferDate,
+    			'Stock Transfer Date' => $transferDate,
     			'Stock Transfer No.' => $stockTransferNum,
     	];
     	return $filters;
