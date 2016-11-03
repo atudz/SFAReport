@@ -199,7 +199,7 @@ class VanInventoryPresenter extends PresenterCore
     {
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$salesman = $this->request->get('salesman_code') ? $salesman = $reportsPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
-    	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';   
+    	$area = $this->request->get('area') ? $reportsPresenter->getArea()[$this->request->get('area')] : 'All';   
     	$company_code = $this->request->get('company_code') ? $reportsPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
     	$material = $this->request->get('item_code') ? $reportsPresenter->getItems()[$this->request->get('item_code')] : 'All';
     	$segment = $this->request->get('segment') ? $reportsPresenter->getItemSegmentCode()[$this->request->get('segment')] : 'All';
