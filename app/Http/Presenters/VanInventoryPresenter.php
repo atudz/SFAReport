@@ -121,7 +121,7 @@ class VanInventoryPresenter extends PresenterCore
     			app_item_brand.description as brand,
     			txn_stock_transfer_in_detail.item_code,
 				app_item_master.description,
-    			txn_stock_transfer_in_detail.uom_code,
+    			app_item_uom.description as uom_code,
     			txn_stock_transfer_in_detail.quantity,
     			IF(txn_stock_transfer_in_header.updated_by,\'modified\',
 	    			IF(txn_stock_transfer_in_detail.updated_by,\'modified\',\'\')
@@ -133,6 +133,7 @@ class VanInventoryPresenter extends PresenterCore
 					    ->leftJoin('txn_stock_transfer_in_detail','txn_stock_transfer_in_header.stock_transfer_number','=','txn_stock_transfer_in_detail.stock_transfer_number')
 					    ->leftJoin('app_item_master','app_item_master.item_code','=','txn_stock_transfer_in_detail.item_code')
 					    ->leftJoin('app_item_brand','app_item_master.brand_code','=','app_item_brand.brand_code')
+					    ->leftJoin('app_item_uom','txn_stock_transfer_in_detail.uom_code','=','app_item_uom.uom_code')
 					    ->leftJoin(\DB::raw('
 			    			(select apsc.salesman_code,ac.area_code from app_salesman_customer apsc
 					    	 join app_customer ac on ac.customer_code = apsc.customer_code
