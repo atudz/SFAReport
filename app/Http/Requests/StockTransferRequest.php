@@ -33,7 +33,7 @@ class StockTransferRequest extends Request
         	'salesman_code' => 'required',
         	'uom_code' => 'required',
         	'salesman_code' => 'required',
-        	'quantity' => 'required',
+        	'quantity' => 'required|integer|min:0',
         ];
     }
     

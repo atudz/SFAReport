@@ -40,7 +40,7 @@
 							{!!Html::select('uom_code','UOM <span class="required">*</span>', $uom, 'Select')!!}
 						</div>
 						<div class="row form-input-field">
-							{!!Html::input('text','quantity','Quantity <span class="required">*</span>')!!}
+							{!!Html::input('number','quantity','Quantity <span class="required">*</span>',null,['min'=>0])!!}
 						</div>
 						
 						<div class="col-md-4 col-md-offset-6" style="padding-top:10px;">
