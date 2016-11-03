@@ -36,4 +36,20 @@ class StockTransferRequest extends Request
         	'quantity' => 'required',
         ];
     }
+    
+    /**
+     * Set custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+    	return [
+    			'transfer_date_from' => 'transaction date',
+    			'src_van_code' => 'source van code',
+    			'item_code' => 'item',
+    			'salesman_code' => 'salesman',
+    			'uom_code' => 'uom',
+    	];
+    }
 }
