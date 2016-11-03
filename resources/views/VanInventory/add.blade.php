@@ -1,4 +1,4 @@
-{!!Html::breadcrumb(['Van Invetory','Stock Transfer', 'Add Row'])!!}
+{!!Html::breadcrumb(['Van Inventory','Stock Transfer', 'Add Row'])!!}
 {!!Html::pageheader('Add Row')!!}
 
 <div class="row">
