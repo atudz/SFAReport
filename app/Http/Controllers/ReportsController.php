@@ -99,8 +99,7 @@ class ReportsController extends ControllerCore
 						'created_at' => new \DateTime(),
 						'updated_by' => auth()->user()->id,
 						'comment' => $comment,
-						'report_type' => $report_type,
-						'modified_by' => auth()->user()->id,
+						'report_type' => $report_type						
 				]);
 				
 				\DB::table('revisions')->insert([
@@ -108,6 +107,7 @@ class ReportsController extends ControllerCore
 						'report_type' => $report,
 						'updated_at' => new \DateTime(),
 						'created_at' => new \DateTime(),
+						'modified_by' => auth()->user()->id,
 				]);
 			}
 			
@@ -149,8 +149,7 @@ class ReportsController extends ControllerCore
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
-							'report_type' => $report_type,
-							'modified_by' => auth()->user()->id,
+							'report_type' => $report_type,							
 					];
 				}
 			}			
@@ -190,6 +189,7 @@ class ReportsController extends ControllerCore
 						'report_type' => $report,
 						'updated_at' => new \DateTime(),
 						'created_at' => new \DateTime(),
+			   			'modified_by' => auth()->user()->id
 				]);
 			}
 		}
