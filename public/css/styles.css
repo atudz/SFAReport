@@ -1087,9 +1087,6 @@ h5.page-header
  .sortable:hover{color:black;}
  .sorted{background-color:#d9edf7}
 
- .toggle-save-button {
- 	color: 
- }
  
  a.editable-click {
  	cursor:pointer;
@@ -1147,4 +1144,15 @@ textarea.fxresize{
     resize: none;
 }
 
- 
+.scrollit {
+	overflow:scroll;
+	height:100px;
+}
+
+.borderless td, .borderless th {
+	border: none;
+}
+
+.modal-open .modal {
+	overflow: hidden;
+}

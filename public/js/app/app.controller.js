@@ -1467,10 +1467,6 @@
 				error = true;
 			}
 			if (!error) {
-				var comments = $scope.params.comment.split('/');
-				$scope.params.comment = comments[comments.length - 1];
-				console.log(JSON.stringify($scope.params.comment));
-
 				API.save($scope.params, function (data) {
 
 					// Van Inventory customization
