@@ -350,8 +350,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
-    	
-    	$data['records'] = $result;
+		$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
     	if($summary1)
@@ -1260,8 +1259,7 @@ class ReportsPresenter extends PresenterCore
     			}
     		}
     	}
-    	    	
-    	$data['records'] = $records;
+		$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
@@ -1675,7 +1673,7 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesCollectionSummary();
     	$result = $this->paginate($prepare);
-    	$data['records'] = $this->populateScrInvoice($result->items());
+		$data['records'] = $this->validateInvoiceNumber($this->populateScrInvoice($result->items()));
     	 
     	$data['summary'] = '';
     	if($result->total())
@@ -2404,8 +2402,12 @@ class ReportsPresenter extends PresenterCore
     	
 
     	unset($replenishment->replenishment_date);
-    	unset($replenishment->reference_number);	    	    
-    	
+    	unset($replenishment->reference_number);
+
+		if (!$reports && !empty($data['records'])) {
+			$this->validateInvoiceNumber($data['records']);
+		}
+
     	return ($reports) ? $reportRecords : response()->json($data);
     }
     
@@ -2805,7 +2807,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $this->getPreparedUnpaidInvoice();
     	
     	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
+		$data['records'] = $this->validateInvoiceNumber($result->items());
     	
     	$data['summary'] = '';
     	if($result->total())
@@ -3343,8 +3345,8 @@ class ReportsPresenter extends PresenterCore
     
     	$prepare = $this->getPreparedSalesReportMaterial(); 
     		
-    	$result = $this->paginate($prepare);    	    	
-    	$data['records'] = $result->items();
+    	$result = $this->paginate($prepare);
+		$data['records'] = $this->validateInvoiceNumber($result->items());
     	
     	$data['summary'] = '';
     	if($result->total())
@@ -3737,8 +3739,8 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesReportPeso();
     	 
-    	$result = $this->paginate($prepare);    	
-    	$data['records'] = $result->items();
+    	$result = $this->paginate($prepare);
+		$data['records'] = $this->validateInvoiceNumber($result->items());
     	
     	$data['summary'] = '';
     	if($result->total())
@@ -5799,6 +5801,12 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
+
+		if (empty($current)) {
+			$records = $this->validateInvoiceNumber($records);
+		} else {
+			$current = $this->validateInvoiceNumber($current);
+		}
     	  
     	if(in_array($type,['xls','xlsx']))
     	{    
@@ -6886,6 +6894,113 @@ class ReportsPresenter extends PresenterCore
 	    	$from->addDay();	    	
     	}      	
     }
+
+	/**
+	 * This function will check if the invoice number has an
+	 * invoice code it append an invoice code for the invoice number
+	 * don't have invoice code.
+	 * @param $currents
+	 * @return mixed
+	 */
+	public function validateInvoiceNumber($currents)
+	{
+		foreach ($currents as &$current) {
+			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
+			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
+				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
+					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
+				}
+				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
+					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
+				}
+			} elseif (isset($current->invoice_number)) {
+				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
+					if (isset($current->customer_code)) {
+						$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
+					} else {
+						$current->invoice_number = $this->generateInvoiceNumber($current->customer_name,
+								true) . $current->invoice_number;
+					}
+				}
+			} elseif (is_array($current) && array_key_exists('invoice_number', $current)) {
+				if ($current['invoice_number'] != " " && is_numeric($current['invoice_number'])) {
+					$current['invoice_number'] = $this->generateInvoiceNumber($current['customer_name'],
+							true) . $current['invoice_number'];
+				}
+			}
+		}
+		return $currents;
+	}
+	/**
+	 * This will return an Area code of a specific customer.
+	 * @param $customer
+	 * @param bool $isName
+	 * @return mixed
+	 * @internal param $customerCode
+	 */
+	public function getCustomerAreaCode($customer, $isName = false)
+	{
+		$code = ModelFactory::getInstance('AppCustomer');
+		if ($isName) {
+			$code = $code->where('customer_name', $customer)->select('area_code')->first();
+		} else {
+			$code = $code->where('customer_code', $customer)->select('area_code')->first();
+		}
+		return $code;
+	}
+	/**
+	 * Array list of Area codes.
+	 * @return array
+	 */
+	public function arrayOfAreaCodes()
+	{
+		$areaCodes = [
+			'100'  => 'CB',
+			'200'  => 'CB',
+			'300'  => 'BA',
+			'400'  => 'BU',
+			'500'  => 'CD',
+			'600'  => 'DV',
+			'700'  => 'DU',
+			'800'  => 'GE',
+			'900'  => 'IL',
+			'1000' => 'ML',
+			'1100' => 'OZ',
+			'1200' => 'TA',
+			'1300' => 'ZA',
+			'1400' => 'OR',
+			'2100' => 'CB',
+			'2200' => 'CB',
+			'2300' => 'BA',
+			'2400' => 'BU',
+			'2500' => 'CD',
+			'2600' => 'DV',
+			'2700' => 'DU',
+			'2800' => 'GE',
+			'2900' => 'IL',
+			'3000' => 'ML',
+			'3100' => 'OZ',
+			'3200' => 'TA',
+			'3300' => 'ZA',
+			'3400' => 'OR'
+		];
+		return $areaCodes;
+	}
+	/**
+	 * This will generate an invoice code for an invoice number.
+	 * @param $customer
+	 * @param bool $isVan
+	 * @return string
+	 */
+	public function generateInvoiceNumber($customer, $isVan = false)
+	{
+		$areaCodes = $this->arrayOfAreaCodes();
+		$customerCode = $this->getCustomerAreaCode($customer, $isVan)->area_code;
+		$code = (int)explode('_', $customer)[0];
+		$invoice_key = config('system.invoice_key');
+		$invoiceCode = $invoice_key[$code] . $areaCodes[$customerCode];
+		return $invoiceCode;
+	}
     
     
     /**
