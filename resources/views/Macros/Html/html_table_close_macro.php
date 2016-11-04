@@ -34,9 +34,25 @@ Html::macro('tclose', function($paginate=true) {
 						  	<div>
 								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
 							</div>
-						 	<ul class="list-styled" style="display: block">
-						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
-							</ul>
+							<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 						  </div>
 						  <div class="form-group">
 						    <div class="col-sm-12">
@@ -77,9 +93,25 @@ Html::macro('tclose', function($paginate=true) {
 							<div>
 								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
 							</div>
-						 	<ul class="list-styled" style="display: block">
-						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
-							</ul>
+							<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 						 </div>
 						<div class="form-group">
 							<div class="col-sm-12">
@@ -122,9 +154,25 @@ Html::macro('tclose', function($paginate=true) {
 							<div>
 								<label class="control-label" style="padding-left: 20px">Remarks List:</label>
 							</div>
-						 	<ul class="list-styled" style="display: block">
-						 		<li ng-repeat="list in params.commentLists track by $index"><p style="margin: auto; padding-left: auto;">[[ list ]]</p></li>
-							</ul>
+						 	<table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1">
+                                            <div class="scrollit" style="padding-left:20px;">
+                                                <table class="borderless">
+                                                    <tbody>
+                                                        <tr ng-repeat="list in params.commentLists track by $index">
+                                                            <td>
+                                                                [[ list ]]
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-12">
