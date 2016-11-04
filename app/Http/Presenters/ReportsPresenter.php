@@ -365,7 +365,6 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
-    	
     	$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
@@ -1301,8 +1300,7 @@ class ReportsPresenter extends PresenterCore
     			}
     		}
     	}
-    	    	
-    	$data['records'] = $this->validateInvoiceNumber($records);
+		$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
@@ -1765,7 +1763,6 @@ class ReportsPresenter extends PresenterCore
     		$items[$k]->invoice_number_to = $maxInvoice ? $maxInvoice->invoice_number : '';
     		$items[$k]->scr_number = $item->salesman_code.'-'.$today = (new Carbon($item->or_date))->format('mdY');
     	}
-    	//dd($items);
     	return $items;
     }
     
@@ -1806,7 +1803,6 @@ class ReportsPresenter extends PresenterCore
 					) tsoh			
     			';	
     	
-    	//dd($query);
     	return \DB::select(\DB::raw($query));
     }
     
@@ -6078,7 +6074,7 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-    	  
+
     	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
