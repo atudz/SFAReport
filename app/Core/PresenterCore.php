@@ -105,6 +105,7 @@ class PresenterCore extends Controller
 		$this->view->isAccounting = $this->isAcounting();
 		$this->view->isGuest1 = $this->isGuest1();
 		$this->view->isGuest2 = $this->isGuest2();
+		$this->view->isSalesman = $this->isSalesman();
 
 		return view($templateName,$data, (array)$this->view);
 	}

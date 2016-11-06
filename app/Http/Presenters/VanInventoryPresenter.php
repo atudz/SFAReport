@@ -17,13 +17,6 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function create()
 	{
-// 		$reportsPresenter = PresenterFactory::getInstance('Reports');
-// 		$this->view->companyCode = $reportsPresenter->getCompanyCode();
-// 		$this->view->salesman = $reportsPresenter->getSalesman(true);
-// 		$this->view->areas = $reportsPresenter->getArea();
-// 		$this->view->items = $reportsPresenter->getItems();
-// 		$this->view->segments = $reportsPresenter->getItemSegmentCode();
-// 		$this->view->tableHeaders = $this->getStockTransferColumns();
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems();
@@ -144,7 +137,7 @@ class VanInventoryPresenter extends PresenterCore
     	
 		if($this->isSalesman())
 		{
-			$prepare->where('app_salesman.salesman_code',auth()->user()->salesman_code);
+			$prepare->where('txn_stock_transfer_in_header.salesman_code',auth()->user()->salesman_code);
 		}
 		else
 		{
