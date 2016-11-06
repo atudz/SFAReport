@@ -106,6 +106,7 @@ class PresenterCore extends Controller
 		$this->view->isGuest1 = $this->isGuest1();
 		$this->view->isGuest2 = $this->isGuest2();
 		$this->view->isSalesman = $this->isSalesman();
+		$this->view->isManager = $this->isManager();
 
 		return view($templateName,$data, (array)$this->view);
 	}
@@ -253,6 +254,19 @@ class PresenterCore extends Controller
 	
 		$group = auth()->user()->group->name;
 		return ('Van Salesman' == $group);
+	}
+	
+	/**
+	 * Determine if user is restricted
+	 * @return boolean
+	 */
+	public function isManager()
+	{
+		if(!auth()->user())
+			return false;
+	
+			$group = auth()->user()->group->name;
+			return ('Manager' == $group);
 	}
 	
 	/**
