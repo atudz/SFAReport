@@ -40,7 +40,7 @@ class AddManagerSeeder extends Seeder
     				'Master (Material Price)',
     				'Stock Transfer',
     				'Support Page',
-    				'Support Page',
+    				'Contact Us',
     		];
     		$mappings = [];
     		$today = new DateTime();
