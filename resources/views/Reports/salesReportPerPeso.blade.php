@@ -35,6 +35,7 @@
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
+						<td>[[record.customer_address]]</td>
 						<td>[[record.remarks]]</td>						
 						<td>[[record.van_code]]</td>
 						<td>[[record.device_code]]</td>

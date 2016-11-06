@@ -29,6 +29,7 @@
 				<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_code]]</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_name]]</td>
+					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_address]]</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
 							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
