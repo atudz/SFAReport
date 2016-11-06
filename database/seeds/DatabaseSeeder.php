@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGroupSeeder::class);
         $this->call(NavigationSeeder::class);
         $this->call(UserGroupToNavSeeder::class);       
+        $this->call(UserGroupToNavSeeder::class);
+        $this->call(AddManagerSeeder::class);
 
         Model::reguard();
     }
