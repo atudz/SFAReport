@@ -23,7 +23,7 @@
 			{!!Html::fclose()!!}
 			<!-- End Filter -->
 			
-			{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>$isGuest1])!!}
+			{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>($isGuest1 || $isManager)])!!}
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
 				<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
