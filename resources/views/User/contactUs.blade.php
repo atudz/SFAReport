@@ -75,20 +75,13 @@
                         <div class="col-xs-12 col-md-3 col-sm-4">
                             <button type="reset" class="btn btn-primary" ng-click="resetFile()">reset file</button>
                         </div>
-                    </div>
-
-                </div>
-
-                <div class="rs-mini-toolbar">
-                    <div class="rs-toolbar-savebtn">
-                        <a class="button-primary revgreen" ng-click="save()" id="button_save_slide-tb" original-title=""
-                           style="display: block; cursor:pointer;">
-                            <i class="fa fa-paper-plane"
-                               style="display: inline-block;vertical-align: middle;width: 25px;height: 20px;background-repeat: no-repeat;"></i>
-                            Send
-                        </a>
-                    </div>
-                </div>
+                    </div>      
+                    <div class="clearfix"></div>                                  
+					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
+						<button class="btn btn-success" ng-click="save()"><i class="fa fa-paper-plane"></i> &nbsp;Send</button>					
+					</div>
+                </div>                
+                
             </div>
         </div>
     </div>
