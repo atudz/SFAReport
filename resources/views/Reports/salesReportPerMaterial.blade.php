@@ -38,6 +38,7 @@
 						<td>[[record.activity_code]]</td>
 						<td>[[record.customer_code]]</td>
 						<td>[[record.customer_name]]</td>
+						<td>[[record.customer_address]]</td>
 						<td>
 							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">

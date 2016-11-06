@@ -31,6 +31,7 @@
 							<td>[[record.area_name]]</td>
 							<td>[[record.customer_code]]</td>
 							<td>[[record.customer_name]]</td>
+							<td>[[record.customer_address]]</td>
 							<td>[[record.remarks]]</td>
 							<td>[[record.invoice_number | uppercase]]</td>
 							<td>

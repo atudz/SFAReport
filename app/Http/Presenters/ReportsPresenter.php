@@ -533,6 +533,18 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
+	    		   IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    			) customer_address,
 				   remarks.remarks,    			   
 				   sotbl.invoice_number,
 				   sotbl.so_date invoice_date,
@@ -750,6 +762,7 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
+    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -889,6 +902,18 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
+	    		   IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    			) customer_address,
 				   remarks.remarks,    			   
 				   ti.invoice_number,
     			   ti.invoice_date,
@@ -1107,6 +1132,7 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
+    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -2911,6 +2937,18 @@ class ReportsPresenter extends PresenterCore
 			      app_area.area_name,
 			      app_customer.customer_code,
 			      app_customer.customer_name,
+    			  IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 			      f.remarks,
     			  vw_inv.invoice_number,
 			      coalesce(txn_sales_order_header.so_date,txn_invoice.invoice_date) invoice_date,
@@ -3371,6 +3409,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 				trh.van_code,
@@ -3454,6 +3504,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 			    all_so.van_code,
@@ -3594,6 +3656,7 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
+    			sales.customer_address,
     			sales.remarks,
                 sales.evaluated_objective_id,
 			    sales.van_code,
@@ -3760,6 +3823,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
 			    all_so.van_code,
 				all_so.device_code,
@@ -3892,6 +3967,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
 				trh.van_code,
 				trh.device_code,
@@ -3955,6 +4042,7 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
+    			sales.customer_address,
     			sales.remarks,
 			    sales.van_code,
 				sales.device_code,
@@ -4127,6 +4215,18 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
+        		IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4319,6 +4419,18 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
+    			IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4877,6 +4989,7 @@ class ReportsPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
+    			['name'=>'Customer Address'],
                 ['name'=>'Remarks'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
@@ -4948,6 +5061,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Area Name','sort'=>'area_name'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
@@ -5074,7 +5188,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],    			
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5116,6 +5231,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5151,6 +5267,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5192,6 +5309,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5913,6 +6031,7 @@ class ReportsPresenter extends PresenterCore
     		'activity_code',
     		'customer_code',
     		'customer_name',
+    		'customer_address',
     		'remarks',
     		'van_code',
     		'device_code',
@@ -5979,6 +6098,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6018,6 +6138,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6051,6 +6172,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6128,6 +6250,7 @@ class ReportsPresenter extends PresenterCore
 			    'area_name',
 			    'customer_code',
 			    'customer_name',
+    			'customer_address',
 			    'remarks',
 			    'invoice_number',
 			    'invoice_date',
@@ -6213,6 +6336,7 @@ class ReportsPresenter extends PresenterCore
     	$columns = [    	
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'invoice_number',
     			'invoice_date',
