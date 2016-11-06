@@ -186,6 +186,7 @@
 					<td></td>
 					<td></td>
 					<td></td>
+					<td></td>
 					<td class="bold">
 						<span ng-bind="summary.so_total_served = negate(summary.so_total_served)"></span>					
 					</td>
@@ -236,7 +237,7 @@
 					</td>									
 				</tr>
 				</tbody>
-				{!!Html::tfooter(true,27)!!}
+				{!!Html::tfooter(true,28)!!}
 			{!!Html::tclose(false)!!}
 	
 		</div>		

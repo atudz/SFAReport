@@ -85,6 +85,7 @@
 						<td></td>						
 						<td></td>												
 						<td></td>
+						<td></td>
 						<th>
 							<span ng-bind="summary.gross_amount_formatted = negate(summary.gross_amount)"></span>
 						</th>
@@ -107,7 +108,7 @@
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,23)!!}
+					{!!Html::tfooter(true,24)!!}
 				{!!Html::tclose()!!}
 			
 			</div>			

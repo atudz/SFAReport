@@ -98,6 +98,7 @@
 						<td></td>
 						<td></td>						
 						<td></td>
+						<td></td>
 						<th>[[summary.quantity]]</th>												
 						<td></td>
 						<th>
@@ -122,7 +123,7 @@
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,30)!!}
+					{!!Html::tfooter(true,31)!!}
 				{!!Html::tclose()!!}
 								
 			</div>			
