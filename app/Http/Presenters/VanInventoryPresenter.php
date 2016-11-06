@@ -181,6 +181,14 @@ class VanInventoryPresenter extends PresenterCore
     		$prepare->orderBy('txn_stock_transfer_in_header.transfer_date','desc');
     		$prepare->orderBy('txn_stock_transfer_in_header.stock_transfer_number');
     	}
+    	
+    	
+    	if(!$this->hasAdminRole() && auth()->user())
+    	{
+    		$reportsPresenter = PresenterFactory::getInstance('Reports');
+    		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		$prepare->whereIn('salesman_area.area_code',$codes);
+    	}
     	    	
     	return $prepare;
     }
