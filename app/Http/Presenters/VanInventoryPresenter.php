@@ -7,6 +7,8 @@ use App\Factories\PresenterFactory;
 use App\Factories\FilterFactory;
 use DB;
 use App\Http\Requests\StockTransferRequest;
+use Carbon\Carbon;
+use App\Factories\ModelFactory;
 
 class VanInventoryPresenter extends PresenterCore
 {
@@ -256,5 +258,197 @@ class VanInventoryPresenter extends PresenterCore
     			->where('status','A')
 		    	->orderBy('description')
 		    	->lists('description','brand_code');
+    }
+    
+    
+    /**
+     * Export Statement of Shortages and Overages Per Salesman 	
+     * @param string $type
+     * @return unknown
+     */
+    public function exportShortageOverages($type='canned')
+    {    	
+    	
+		$reportsPresenter = PresenterFactory::getInstance('Reports');    			
+    	$params = $this->request->all();
+    	$from = (new Carbon($params['transaction_date_from']))->startOfDay();
+    	$to = (new Carbon($params['transaction_date_to']))->endOfDay();
+
+    	// Beginning Balance / Actual Count
+    	// Get Replenishment data
+    	$prepare = \DB::table('txn_replenishment_header')
+					    	->selectRaw('replenishment_date, UPPER(reference_number) reference_number')
+					    	->leftJoin('app_salesman_van', function($join){
+					    		$join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+					    		$join->where('app_salesman_van.status','=','A');
+					    	});
+    		 
+    	$prepare->whereBetween('txn_replenishment_header.replenishment_date',[$from,$to]);
+    	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
+    	$prepare->orderBy('txn_replenishment_header.replenishment_header_id','desc');
+    		 
+    	$referenceNumFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+    		 
+    	if($this->request->has('salesman_code'))
+    		$prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
+    	
+    	$replenishment = $prepare->first();
+    	
+    	
+    	$records = [];
+    	$overages = [];
+    	$shortages = [];
+    	
+    	if($replenishment)
+    	{
+    		$replenishment = new Carbon($replenishment->replenishment_date);    		
+    		$params['transaction_date'] = $replenishment->format('Y/m/d');
+    		$this->request->replace($params);
+	    	$records = $reportsPresenter->getVanInventory(true);	    	
+	    	if($records)
+	    	{
+	    		array_pop($records);
+	    		$shortOver = array_pop($records);	    		
+	    		$actualCount =  array_pop($records);
+	    		$stockOnHand =  array_pop($records);
+	    		if($shortOver)
+	    		{
+	    			array_shift($shortOver);
+	    			$short = collect($shortOver)->filter(function ($value) {
+									    		return $value < 0;
+										})->all();	    								
+									
+					$shortItemCodes = [];					
+					if($short)
+					{
+						foreach($short as $code=>$val)
+						{
+							$itemCode = str_replace('code_', '', $code);
+							$shortages[$itemCode]['short_over'] = $val;
+							$shortages[$itemCode]['stock_on_hand'] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : 0;
+							$shortages[$itemCode]['actual_count'] = isset($actualCount[$code]) ? $actualCount[$code] : 0;
+							$shortItemCodes[] = $itemCode;
+						}
+						if($shortItemCodes)
+						{
+							$items = $this->getItemDetails($shortItemCodes);
+							if($items)
+							{
+								foreach($items as $item)
+								{
+									$shortages[$item->item_code]['item_code'] = $item->item_code;									
+									$shortages[$item->item_code]['description'] = $item->description;
+									$shortages[$item->item_code]['price'] = $item->unit_price;
+									$shortages[$item->item_code]['total_amount'] = bcmul($shortages[$itemCode]['short_over'], $item->unit_price, 2) ;
+								}
+							}
+							$shortages = collect($shortages);
+						}
+					}
+					
+					$over = collect($shortOver)->filter(function ($value) {
+										return $value > 0;
+								})->all();								
+					$overItemCodes = [];
+					if($over)
+					{
+						foreach($over as $code=>$val)
+						{
+							$itemCode = str_replace('code_', '', $code);
+							$overages[$itemCode]['short_over'] = $val;
+							$overages[$itemCode]['stock_on_hand'] = isset($stockOnHand[$code]) ? $stockOnHand[$code] : 0;
+							$overages[$itemCode]['actual_count'] = isset($actualCount[$code]) ? $actualCount[$code] : 0;							
+							$overItemCodes[] = $itemCode;
+						}
+						if($overItemCodes)
+						{
+							$items = $this->getItemDetails($overItemCodes);
+							if($items)
+							{
+								foreach($items as $item)
+								{
+									$overages[$item->item_code]['item_code'] = $item->item_code;
+									$overages[$item->item_code]['description'] = $item->description;
+									$overages[$item->item_code]['price'] = $item->unit_price;
+									$overages[$item->item_code]['total_amount'] = bcmul($overages[$item->item_code]['short_over'], $item->unit_price, 2) ;
+								}
+							}
+							$overages = collect($overages);
+						}
+					}
+	    			
+	    		}
+	    	}
+    	}
+
+    	
+    	$ref = '';
+    	$report = 'vaninventory'.$type;
+    	if($shortages || $overages)
+    	{
+    		add_ref($report, $from, $to,$this->request->get('salesman_code'));
+    		$ref = get_ref($report, $from, $to,$this->request->get('salesman_code'));
+    		if($ref)
+    		{
+    			$totalShortages = $shortages ? $shortages->sum('total_amount') : 0;
+    			$totalOverages = $overages ? $overages->sum('total_amount') : 0;
+    			$total = bcadd($totalShortages,$totalOverages,2);
+    			$audit = ModelFactory::getInstance('ReportStockAudit');
+    			if($type == 'canned')
+    				$audit->canned = $total;
+    			else 
+    				$audit->frozen = $total;
+    			$audit->reference_id = $ref->id;
+    			$audit->save();
+    		}
+    	}
+
+//     	$this->view->ref = get_ref('vaninventory'.$type, $from, $to,$this->request->get('salesman_code'));    	
+//     	$this->view->type = ($type == 'canned') ? 'CANNED & MIXES' : 'FROZEN & KASSEL';
+//     	$this->view->overages = $overages;
+//     	$this->view->shortages = $shortages;
+//     	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$this->request->get('salesman_code'))->first();
+//     	$this->view->salesman = $salesman ? $salesman->salesman_name : '';    	
+//     	$this->view->jrSalesman = $salesman ? $salesman->jr_salesman_name : '';
+//     	$this->view->area = $salesman ? $salesman->area_name : '';
+//     	$auditor = ModelFactory::getInstance('User')->find($this->request->get('audited_by'));
+//     	$this->view->auditor = $auditor ? $auditor->formal_name : '';
+//     	$this->view->auditorArea = $auditor->area ? trim(str_replace('SFI','',$auditor->area->area_name)) : '';    	
+//     	return $this->view('shortagesPdf');
+    	
+    	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$this->request->get('salesman_code'))->first();
+    	$auditor = ModelFactory::getInstance('User')->find($this->request->get('audited_by'));
+    	$params['type'] = ($type == 'canned') ? 'CANNED & MIXES' : 'FROZEN & KASSEL';
+    	$params['auditor'] = $auditor ? $auditor->formal_name : '';
+    	$params['salesman'] = $salesman ? $salesman->salesman_name : '';
+    	$params['jrSalesman'] = $salesman ? $salesman->jr_salesman_name : '';
+    	$params['area'] = $salesman ? $salesman->area_name : '';
+    	$params['auditorArea'] = $auditor->area ? trim(str_replace('SFI','',$auditor->area->area_name)) : '';
+    	$params['shortages'] = $shortages;
+    	$params['overages'] = $overages;
+    	$params['ref'] = $ref;
+    	
+    	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('folio')->setOrientation('portrait');   
+    	return $pdf->download('Van Inventory and History Report Statement of Shortages and Overages.pdf');
+    }
+    
+    /**
+     * Get Item details
+     * @param unknown $itemCodes
+     * @return unknown
+     */
+    public function getItemDetails($itemCodes)
+    {
+    	return DB::table('app_item_master')
+			    	->select(['app_item_master.description','app_item_master.item_code','app_item_price.unit_price'])
+			    	->leftJoin('app_item_price',function($join){
+			    		$join->on('app_item_price.item_code','=','app_item_master.item_code');
+			    		$join->where('app_item_price.uom_code','=','PCS');
+			    		$join->where('app_item_price.status','=','A');
+			    		$join->where('app_item_price.customer_price_group','=','PR01401120');
+			    	})
+			    	->whereIn('app_item_master.item_code',$itemCodes)
+			    	->get();
     }
 }

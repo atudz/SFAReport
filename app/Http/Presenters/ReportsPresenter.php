@@ -5125,17 +5125,13 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'Customer'],
-    			//['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice No.'],    			 
-    			//['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Slip No.'],
     			['name'=>'Transaction Date'],
     			['name'=>'Stock Transfer No.'],
-    			//['name'=>'Replenishment Date','sort'=>'replenishment_date'],
     			['name'=>'Replenishment Date'],
     			['name'=>'Replenishment Number']
-    			//['name'=>'Replenishment Number','sort'=>'replenishment_number']
     	];
     	
     	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name',$status);
@@ -5784,6 +5780,9 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '15px';
     			break;
     		case 'vaninventorycanned';
+    			if($type == 'pdf')
+    				return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('canned');
+    		
     			$vaninventory = true; 				    			
     			$columns = $this->getVanInventoryColumns('canned');
     			
@@ -5804,6 +5803,10 @@ class ReportsPresenter extends PresenterCore
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
     		case 'vaninventoryfrozen';
+    		
+    			if($type == 'pdf')
+    			return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('frozen');
+    		
     			$vaninventory = true;    			
     			$columns = $this->getVanInventoryColumns('frozen');
 
