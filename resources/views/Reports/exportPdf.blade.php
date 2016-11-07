@@ -105,7 +105,9 @@
 				@foreach($rows as $row)
 					<td align="left" style="wrap-text:true">
 						@if(is_object($record) && isset($record->$row))
-							@if(false !== strpos($row,'date') && $record->$row)
+							@if($row == 'from' && $report == 'stockaudit')
+								{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }}							
+							@elseif(false !== strpos($row,'date') && $record->$row)
 								@if($report == 'bir')
 									{{ $record->$row }}
 								@elseif($report == 'stocktransfer')
@@ -119,7 +121,9 @@
 								{!!$record->$row!!}
 							@endif
 						@elseif(is_array($record) && isset($record[$row]))
-							@if(false !== strpos($row,'date') && $record[$row])
+							@if($row == 'from' && $report == 'stockaudit')
+									{{ format_date($record['from'], 'M d') }} - {{ format_date($record['to'], 'M d Y') }}
+							@elseif(false !== strpos($row,'date') && $record[$row])
 								@if($report == 'bir')
 									{{ $record[$row] }}
 								@elseif($report == 'stocktransfer')

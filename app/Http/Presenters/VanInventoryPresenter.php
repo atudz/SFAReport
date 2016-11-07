@@ -39,11 +39,25 @@ class VanInventoryPresenter extends PresenterCore
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->companyCode = $reportsPresenter->getCompanyCode();
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
-    	$this->view->areas = $reportsPresenter->getArea();   
+    	$this->view->areas = $reportsPresenter->getArea();
     	$this->view->items = $reportsPresenter->getItems();
     	$this->view->segments = $reportsPresenter->getItemSegmentCode();
     	$this->view->tableHeaders = $this->getStockTransferColumns();
     	return $this->view('stocktransfer');    	    	
+    }
+    
+    /**
+     * Return van & inventory stock audit view
+     * @param string $type
+     * @return string The rendered html view
+     */
+    public function stockAudit()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$this->view->salesman = $reportsPresenter->getSalesman(true);    	
+    	$this->view->areas = $reportsPresenter->getRdsSalesmanArea();
+    	$this->view->tableHeaders = $this->getStockAuditColumns();
+    	return $this->view('stockAudit');
     }
     
     
@@ -67,6 +81,40 @@ class VanInventoryPresenter extends PresenterCore
     	];
     	
     	return $headers;
+    }
+    
+    /**
+     * Get Stock transfer column headers
+     * @return string[][]
+     */
+    public function getStockAuditColumns()
+    {
+    	$headers = [
+    			['name'=>'Area','sort'=>'area_name'],
+    			['name'=>'Salesman','sort'=>'salesman_name'],
+    			['name'=>'Canned & Mixes','sort'=>'canned'],
+    			['name'=>'Frozen & Kassel','sort'=>'frozen'],
+    			['name'=>'Period Covered'],
+    			['name'=>'Statement No.', 'sort'=>'reference_number'],    			    
+    	];
+    	 
+    	return $headers;
+    }
+    
+    /**
+     * Return STock transfer report columns
+     * @return multitype:string
+     */
+    public function getStockAuditReportSelectColumns()
+    {
+    	return [
+    			'area_name',
+    			'salesman_name',
+    			'canned',
+    			'frozen',
+    			'from',
+    			'reference_number',    			
+    	];
     }
     
     /**
@@ -99,6 +147,105 @@ class VanInventoryPresenter extends PresenterCore
     	$data['records'] = $result->items();   
     	$data['total'] = $result->total();
     	return response()->json($data);
+    }
+    
+    
+    /**
+     * Get Stock audit data report
+     * @return \App\Core\PaginatorCore
+     */
+    public function getStockAuditReport()
+    {
+    	$prepare = $this->getPreparedStockAudit();
+    	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    	return response()->json($data);
+    }
+    
+    
+    /**
+     * Get prepared statement for stock audit
+     * @return unknown
+     */
+    public function getPreparedStockAudit()
+    {
+    	$select = '
+    			report_stock_audit.canned,
+    			report_stock_audit.frozen,  
+    			CONCAT(\'REPORT#\',report_references.reference_number) as reference_number,
+    			report_references.from,
+    			report_references.to,
+    			rds_salesman.area_name,
+    			rds_salesman.salesman_name
+    			';
+    	 
+    	$prepare = \DB::table('report_stock_audit')
+    						->selectRaw($select)
+				    	->leftJoin('report_references','report_references.id','=','report_stock_audit.reference_id')
+				    	->leftJoin('rds_salesman','rds_salesman.salesman_code','=','report_references.salesman');
+    	    	
+    	if($this->isSalesman())
+    	{
+    		$prepare->where('report_references.salesman_code',auth()->user()->salesman_code);
+    	}
+    	else
+    	{
+    		$salesmanFilter = FilterFactory::getInstance('Select');
+    		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code',
+    				function($self, $model){
+    					return $model->where('report_references.salesman',$self->getValue());
+    				});
+    	}
+    	
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area',
+    			function($self, $model){
+    				return $model->where('rds_salesman.area_name',$self->getValue());
+    			});
+    	
+    	
+    	$referenceFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceFilter->addFilter($prepare,'reference_number',
+    			function($self, $model){
+    				return $model->where('report_references.reference_number','like','%'.$self->getValue().'%');
+    			});
+    	
+    	$monthlyFilter = FilterFactory::getInstance('Date');
+    	$prepare = $monthlyFilter->addFilter($prepare,'month_from',
+    			function($self, $model){
+    				$from = (new Carbon($self->getValue()))->startOfMonth();
+    				$to = (new Carbon($self->getValue()))->endOfMonth();    				
+    				return $model->where(function($query) use($from,$to){
+    					$query->whereBetween('report_references.from',[$from,$to]);
+    					$query->whereBetween('report_references.to',[$from,$to]);
+    				});
+    			});
+    	
+    	$yearFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $yearFilter->addFilter($prepare,'yearly_from',
+    			function($self, $model){
+    				$from = (new Carbon($self->getValue()))->startOfYear();
+    				$to = (new Carbon($self->getValue()))->endOfYear();
+    				return $model->where(function($query) use($from,$to){
+    					$query->whereBetween('report_references.from',[$from,$to]);
+    					$query->whereBetween('report_references.to',[$from,$to]);
+    				});
+    			});
+
+    	$periodFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $yearFilter->addFilter($prepare,'period',
+    			function($self, $model){
+    				$value = $self->getValue();
+    				return $model->where(function($query) use($value){
+    					$query->whereBetween('report_references.from',$value);
+    					$query->whereBetween('report_references.to',$value);
+    				});
+    			});
+    	
+		$prepare->orderBy('report_references.reference_number','desc');
+
+    	return $prepare;
     }
     
     /**
@@ -195,6 +342,30 @@ class VanInventoryPresenter extends PresenterCore
     	return $prepare;
     }
     
+    
+    /**
+     * Get stock transfer filter data
+     */
+    public function getStockAuditFilterData()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$salesman = $this->request->get('salesman_code') ? $salesman = $reportsPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    	$area = $this->request->get('area') ? $this->request->get('area') : 'All';    	
+    	$month = $this->request->get('month_from') ? (new Carbon($this->request->get('month_from')))->format('F') : '';    	
+    	$year = $this->request->get('year_from') ? (new Carbon($this->request->get('year_from')))->format('Y') : '';
+    	$period = ($this->request->get('period_from') && $this->request->get('period_to')) ? $this->request->get('period_from').' - '.$this->request->get('period_to') : 'All';
+    	$reference = $this->request->get('reference_number');
+    	 
+    	$filters = [
+    			'Salesman' => $salesman,    			
+    			'Area' => $area,
+    			'Monthly' => $month,
+    			'Yearly' => $year,
+    			'Period Covered' => $period,
+    			'Statement No.' => $reference,
+    	];
+    	return $filters;
+    }
     
     /**
      * Get stock transfer filter data

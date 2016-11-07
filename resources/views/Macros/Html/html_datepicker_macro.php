@@ -1,10 +1,12 @@
 <?php
 
-Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=false, $from='', $to='', $controller='Calendar') {
+Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=false, $from='', $to='', $controller='Calendar', $yearOnly=false) {
 				
 	$placeholderFrom = $fromTo ? 'placeholder="From"' : '';
 	$placeholderTo = $fromTo ? 'placeholder="To"' : '';
 	$options = $monthOnly ? '{minMode: \'month\'}' : 'dateOptions'; 
+	if($yearOnly)
+		$options = '{minMode: \'year\'}';
 	
 	$html = '<div class="form-group">
 			 	<div class="col-xs-12 col-md-4 col-sm-4 control-label">

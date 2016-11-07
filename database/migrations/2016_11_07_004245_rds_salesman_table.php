@@ -15,7 +15,7 @@ class RdsSalesmanTable extends Migration
     	Schema::create('rds_salesman', function (Blueprint $table) {
     		$table->increments('id');
     		$table->timestamps();
-    		$table->string('area_name')->nullable();
+    		$table->string('area_name')->nullable()->index();
     		$table->string('area_code')->nullable()->index();
     		$table->string('salesman_name');
     		$table->string('salesman_code')->index();

@@ -53,7 +53,11 @@
 					controller: 'StockTransferAdd',
 					//controllerAs: 'vic'*/
 				})
-				
+				.when('/vaninventory.stockaudit',{
+					templateUrl: '/reports/stockaudit',
+					controller: 'StockAudit',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report

@@ -280,6 +280,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
 			case 'stocktransfer':
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
+			case 'stockaudit':
+				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
     	}
     }
     
@@ -4736,6 +4738,16 @@ class ReportsPresenter extends PresenterCore
     	return $prepare->lists('area_code');	
     }
     
+    
+    /**
+     * Get salesman area codes
+     * @param unknown $salesmanCode
+     */
+    public function getRdsSalesmanArea()
+    {    	
+    	return ModelFactory::getInstance('RdsSalesman')->orderBy('area_name')->lists('area_name','area_name');
+    }
+    
     /**
      * Return Salesman List prepared statement
      * @return unknown
@@ -4977,6 +4989,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
 			case 'stocktransfer':
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
+			case 'stockaudit':
+				return PresenterFactory::getInstance('VanInventory')->getStockAuditColumns();
     	}	
     }
     
@@ -5913,6 +5927,16 @@ class ReportsPresenter extends PresenterCore
 				$filters = $vanInventoryPresenter->getStockTransferFilterData();
 				$filename = 'Stock Transfer Report';
 				break;
+				
+			case 'stockaudit':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedStockAudit();
+				$rows = $vanInventoryPresenter->getStockAuditReportSelectColumns();
+				$header = 'Stock Audit Report';
+				$filters = $vanInventoryPresenter->getStockAuditFilterData();
+				$filename = 'Stock Audit Report';
+				break;
     		default:
     			return;
     	}	
@@ -5959,7 +5983,7 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-
+		
 		if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
@@ -6011,7 +6035,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if(in_array($report,['salescollectionsummary','stocktransfer']))
+    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
@@ -6526,6 +6550,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'stocktransfer':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
+				$total = $prepare->count();
+				break;
+			case 'stockaudit':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockAudit();
 				$total = $prepare->count();
 				break;
     		default:
