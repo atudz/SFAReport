@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class StatementOfShortagesSeeder extends Seeder
+class StockAuditReportSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class StatementOfShortagesSeeder extends Seeder
     	
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Statement Of Shortages','url'=>'vaninventory.shortages','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>3,'created_at' => $today,'updated_at'=>$today],
+    			['name'=>'Stock Audit Report','url'=>'vaninventory.stockaudit','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>3,'created_at' => $today,'updated_at'=>$today],
     	];
     	
     	DB::table('navigation')->insert($navigation_item);
@@ -31,7 +31,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($adminID) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -49,7 +49,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($auditorID) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -67,7 +67,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($accountingID) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -85,7 +85,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($vanID) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -104,7 +104,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($guest1) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -123,7 +123,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($guest2) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -141,7 +141,7 @@ class StatementOfShortagesSeeder extends Seeder
     	if ($manager) {
     		//fetch all navigations
     		$navs = [
-    				'Statement Of Shortages',
+    				'Stock Audit Report',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {

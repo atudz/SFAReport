@@ -145,6 +145,30 @@
 	
 	
 	/**
+	 * Van Inventory Stock Audit Report
+	 */
+	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix',StockAudit]);
+	
+	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman_code',		          
+		          'area',
+		          'month',
+		          //'item_code',
+		          'period_from',
+		          'period_to',		          		          
+		          'reference_number'		          
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log, TableFix);
+
+	}
+	
+	
+	/**
 	 * User List controller
 	 */
 	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);

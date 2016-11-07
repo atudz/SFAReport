@@ -33,6 +33,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/vaninventory/{type?}', ['as'=>'van-inventory', 'uses'=>'ReportsPresenter@vanInventory']);	
 	Route::get('/stocktransfer', ['as'=>'stock-transfer', 'uses'=>'VanInventoryPresenter@stockTransfer']);	
 	Route::get('/stocktransfer/add', ['as'=>'stock-transfer-add', 'uses'=>'VanInventoryPresenter@create']);
+	Route::get('/stockaudit', ['as'=>'stock-audit', 'uses'=>'VanInventoryPresenter@stockAudit']);
 	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
