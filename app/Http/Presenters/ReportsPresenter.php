@@ -5983,7 +5983,7 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-
+		
 		if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){

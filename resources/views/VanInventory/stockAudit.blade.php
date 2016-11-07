@@ -1,5 +1,5 @@
 {!!Html::breadcrumb(['Van Inventory','Stock Audit'])!!}
-{!!Html::pageheader('Stock Transfer')!!}
+{!!Html::pageheader('Stock Audit')!!}
 
 <div class="row">
 	<div class="col-lg-12">
@@ -11,7 +11,7 @@
 						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All')!!}						
 						{!!Html::select('area','Area', $areas)!!}												
 						{!!Html::datepicker('month','Monthly',false,true)!!}
-						{!!Html::datepicker('year','Yearly',false,true)!!}												 																															
+						{!!Html::datepicker('year','Yearly',false,true,'','','Calendar',true)!!}												 																															
 					</div>					
 					<div class="col-md-6">	
 						{!!Html::datepicker('period','Period Covered',true)!!}

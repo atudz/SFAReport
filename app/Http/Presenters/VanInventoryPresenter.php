@@ -112,7 +112,7 @@ class VanInventoryPresenter extends PresenterCore
     			'salesman_name',
     			'canned',
     			'frozen',
-    			'period',
+    			'from',
     			'reference_number',    			
     	];
     }
@@ -211,21 +211,40 @@ class VanInventoryPresenter extends PresenterCore
     				return $model->where('report_references.reference_number','like','%'.$self->getValue().'%');
     			});
     	
-//     	$referenceFilter = FilterFactory::getInstance('Text');
-//     	$prepare = $referenceFilter->addFilter($prepare,'reference_number',
-//     			function($self, $model){
-//     				return $model->where('report_references.reference_number','like','%'.$self->getValue().'%');
-//     			});
+    	$monthlyFilter = FilterFactory::getInstance('Date');
+    	$prepare = $monthlyFilter->addFilter($prepare,'month_from',
+    			function($self, $model){
+    				$from = (new Carbon($self->getValue()))->startOfMonth();
+    				$to = (new Carbon($self->getValue()))->endOfMonth();    				
+    				return $model->where(function($query) use($from,$to){
+    					$query->whereBetween('report_references.from',[$from,$to]);
+    					$query->whereBetween('report_references.to',[$from,$to]);
+    				});
+    			});
     	
-//     	if(!$this->hasAdminRole() && auth()->user())
-//     	{
-//     		$reportsPresenter = PresenterFactory::getInstance('Reports');
-//     		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
-//     		$prepare->whereIn('salesman_area.area_code',$codes);
-//     	}
+    	$yearFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $yearFilter->addFilter($prepare,'yearly_from',
+    			function($self, $model){
+    				$from = (new Carbon($self->getValue()))->startOfYear();
+    				$to = (new Carbon($self->getValue()))->endOfYear();
+    				return $model->where(function($query) use($from,$to){
+    					$query->whereBetween('report_references.from',[$from,$to]);
+    					$query->whereBetween('report_references.to',[$from,$to]);
+    				});
+    			});
 
-		$prepare->orderBy('report_references.reference_number','desc');
+    	$periodFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $yearFilter->addFilter($prepare,'period',
+    			function($self, $model){
+    				$value = $self->getValue();
+    				return $model->where(function($query) use($value){
+    					$query->whereBetween('report_references.from',$value);
+    					$query->whereBetween('report_references.to',$value);
+    				});
+    			});
     	
+		$prepare->orderBy('report_references.reference_number','desc');
+
     	return $prepare;
     }
     
@@ -332,8 +351,8 @@ class VanInventoryPresenter extends PresenterCore
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$salesman = $this->request->get('salesman_code') ? $salesman = $reportsPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
     	$area = $this->request->get('area') ? $this->request->get('area') : 'All';    	
-    	$month = $this->request->get('item_code') ? $reportsPresenter->getItems()[$this->request->get('item_code')] : 'All';
-    	$year = $this->request->get('segment') ? $reportsPresenter->getItemSegmentCode()[$this->request->get('segment')] : 'All';
+    	$month = $this->request->get('month_from') ? (new Carbon($this->request->get('month_from')))->format('F') : '';    	
+    	$year = $this->request->get('year_from') ? (new Carbon($this->request->get('year_from')))->format('Y') : '';
     	$period = ($this->request->get('period_from') && $this->request->get('period_to')) ? $this->request->get('period_from').' - '.$this->request->get('period_to') : 'All';
     	$reference = $this->request->get('reference_number');
     	 

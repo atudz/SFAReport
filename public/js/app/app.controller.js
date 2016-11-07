@@ -154,8 +154,8 @@
 	    var params = [
 	    		  'salesman_code',		          
 		          'area',
-		          'month',
-		          //'item_code',
+		          'month_from',
+		          'year_from',
 		          'period_from',
 		          'period_to',		          		          
 		          'reference_number'		          
@@ -753,7 +753,9 @@
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
 
-					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) 
+						&& report != 'salescollectionsummary'
+						&& report != 'stockaudit')
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).html('Invalid date range.');
