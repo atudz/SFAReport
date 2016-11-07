@@ -27,7 +27,7 @@ function generate_revision($reportType, $prefix='')
  */
 function latest_revision($reportType, $prefix='REV')
 {
-	$max = DB::table('revisions')->where('report_type',$reportType)->max('revision_number');
+	$max = DB::table('report_revisions')->where('report',$reportType)->max('revision_number');
 	return $max;
 }
 
