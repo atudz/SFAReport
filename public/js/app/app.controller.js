@@ -213,7 +213,8 @@
 		          'invoice_number',
 		          'stock_transfer_number',
 		          'return_slip_num',
-		          'reference_number'
+		          'reference_number',
+		          'audited_by'
 		];
 
 	    // Filter table records

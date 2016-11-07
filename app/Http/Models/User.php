@@ -50,6 +50,14 @@ class User extends ModelCore implements AuthenticatableContract, CanResetPasswor
 	}
 	
 
+	/**
+	 * This model's relation to area
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function area()
+	{
+		return $this->belongsTo('App\Http\Models\AppArea','location_assignment_code','area_code');
+	}
 	
 	/**
 	 * User's relation to user_group table
@@ -119,6 +127,8 @@ class User extends ModelCore implements AuthenticatableContract, CanResetPasswor
 		{
 			case 'fullname':
 				return $this->attributes['firstname'] . ' ' .$this->attributes['lastname'] ;
+			case 'formal_name':
+				return $this->attributes['lastname'] . ', '. $this->attributes['firstname'];
 			case 'gender_value':
 				if($this->gender == 1)
 				{

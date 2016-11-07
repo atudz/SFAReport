@@ -12,12 +12,13 @@ class Revisions extends Migration
      */
     public function up()
     {
-    	Schema::create('revisions', function (Blueprint $table) {
+    	Schema::create('report_revisions', function (Blueprint $table) {
     		$table->increments('id');    		
     		$table->timestamps();
-    		$table->string('revision_number');
-    		$table->string('report_type');    		
-    		$table->unsignedInteger('modified_by')->index()->nullable();
+    		$table->string('revision_number')->index();
+    		$table->string('report')->index();    
+    		$table->unsignedInteger('user_id')->index()->nullable();
+    		$table->unsignedInteger('table_log_id')->index()->nullable();
     	});
     }
 
@@ -28,6 +29,6 @@ class Revisions extends Migration
      */
     public function down()
     {
-    	Schema::drop('revisions');
+    	Schema::drop('report_revisions');
     }
 }

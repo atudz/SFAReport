@@ -55,26 +55,30 @@ class ReportsController extends ControllerCore
 					'updated_by' => auth()->user()->id,
 			]);
 
-			\DB::table('table_logs')->insert([
-					'table' => $table,
-					'column' => $column,
-					'pk_id' => $id,
-					'before' => $before,
-					'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value, 
-					'updated_at' => new \DateTime(),
-					'created_at' => new \DateTime(),
-					'updated_by' => auth()->user()->id,
-					'comment' => $comment,
-					'report_type' => $report_type,
-			]);
+			$logId = \DB::table('table_logs')->insertGetId([
+									'table' => $table,
+									'column' => $column,
+									'pk_id' => $id,
+									'before' => $before,
+									'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value, 
+									'updated_at' => new \DateTime(),
+									'created_at' => new \DateTime(),
+									'updated_by' => auth()->user()->id,
+									'comment' => $comment,
+									'report_type' => $report_type,
+					]);
 			
-			\DB::table('revisions')->insert([
-					'revision_number' => generate_revision($report),
-					'report_type' => $report,
-					'updated_at' => new \DateTime(),
-					'created_at' => new \DateTime(),
-					'modified_by' => auth()->user()->id,
-			]);
+			if($logId)
+			{
+				\DB::table('report_revisions')->insert([
+						'revision_number' => generate_revision($report),
+						'report' => $report,
+						'updated_at' => new \DateTime(),
+						'created_at' => new \DateTime(),
+						'user_id' => auth()->user()->id,
+						'table_log_id' => $logId
+				]);
+			}
 		}
 		
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
@@ -89,26 +93,18 @@ class ReportsController extends ControllerCore
 						'updated_by' => auth()->user()->id,
 				]);
 					
-				\DB::table('table_logs')->insert([
-						'table' => 'txn_stock_transfer_in_detail',
-						'column' => $column,
-						'pk_id' => $transfer->stock_transfer_in_detail_id,
-						'before' => $transfer->stock_transfer_number,
-						'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
-						'updated_at' => new \DateTime(),
-						'created_at' => new \DateTime(),
-						'updated_by' => auth()->user()->id,
-						'comment' => $comment,
-						'report_type' => $report_type						
-				]);
-				
-				\DB::table('revisions')->insert([
-						'revision_number' => generate_revision($report),
-						'report_type' => $report,
-						'updated_at' => new \DateTime(),
-						'created_at' => new \DateTime(),
-						'modified_by' => auth()->user()->id,
-				]);
+				\DB::table('table_logs')->insertGetId([
+									'table' => 'txn_stock_transfer_in_detail',
+									'column' => $column,
+									'pk_id' => $transfer->stock_transfer_in_detail_id,
+									'before' => $transfer->stock_transfer_number,
+									'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
+									'updated_at' => new \DateTime(),
+									'created_at' => new \DateTime(),
+									'updated_by' => auth()->user()->id,
+									'comment' => $comment,
+									'report_type' => $report_type						
+							]);								
 			}
 			
 		}
@@ -183,14 +179,7 @@ class ReportsController extends ControllerCore
 			
 			if($insertData)
 			{
-			   \DB::table('table_logs')->insert($insertData);
-			   \DB::table('revisions')->insert([
-						'revision_number' => generate_revision($report),
-						'report_type' => $report,
-						'updated_at' => new \DateTime(),
-						'created_at' => new \DateTime(),
-			   			'modified_by' => auth()->user()->id
-				]);
+			 	\DB::table('table_logs')->insert($insertData);			 			  
 			}
 		}
 		
@@ -208,4 +197,5 @@ class ReportsController extends ControllerCore
 		$data['logs'] = $result ? true : '';		
 		return response()->json($data);
 	}
+	
 }
