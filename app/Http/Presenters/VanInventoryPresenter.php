@@ -60,6 +60,23 @@ class VanInventoryPresenter extends PresenterCore
     	return $this->view('stockAudit');
     }
     
+    /**
+     * Return van & inventory stock audit view
+     * @param string $type
+     * @return string The rendered html view
+     */
+    public function flexiDeal()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$this->view->salesman = $reportsPresenter->getSalesman(true);
+    	$this->view->areas = $reportsPresenter->getArea();
+    	$this->view->companyCode = $reportsPresenter->getCompanyCode();
+    	$this->view->customers = $reportsPresenter->getCustomer();
+    	$this->view->items = $reportsPresenter->getItemCodes();
+    	$this->view->tableHeaders = $this->getFlexiDealColumns();    	
+    	return $this->view('flexiDeal');
+    }
+    
     
     /**
      * Get Stock transfer column headers
@@ -81,6 +98,56 @@ class VanInventoryPresenter extends PresenterCore
     	];
     	
     	return $headers;
+    }
+    
+    /**
+     * Get Stock transfer column headers
+     * @return string[][]
+     */
+    public function getFlexiDealColumns()
+    {
+    	$headers = [
+    			['name'=>'Area','sort'=>'area_name'],
+    			['name'=>'Salesman Code','sort'=>'salesman_code'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Customer','sort'=>'customer_name'],
+    			['name'=>'Invoice No.','sort'=>'invoice_number'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
+    			['name'=>'Customer Address'],
+    			['name'=>'Regular Item Code','sort'=>'item_code'],
+    			['name'=>'Regular Item Description'],
+    			['name'=>'Quantity','sort'=>'regular_order_qty'],
+    			['name'=>'Deal Item Code','sort'=>'trade_item_code'],
+    			['name'=>'Deal Item Description'],
+    			['name'=>'Quantity','sort'=>'trade_order_qty'],
+    			['name'=>'Amount','sort'=>'gross_served_amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * Return STock transfer report columns
+     * @return multitype:string
+     */
+    public function getFlexiDealReportSelectColumns()
+    {
+    	return [
+    			'area_name',
+    			'salesman_code',
+    			'salesman_name',
+    			'customer_name',
+    			'invoice_number',
+    			'invoice_date',
+    			'customer_address',
+    			'item_code',
+    			'item_desc',
+    			'regular_order_qty',
+    			'trade_item_code',
+    			'deal_item_desc',
+    			'trade_order_qty',
+    			'gross_order_amount',
+    	];
     }
     
     /**
@@ -163,6 +230,145 @@ class VanInventoryPresenter extends PresenterCore
     	return response()->json($data);
     }
     
+    
+    /**
+     * Get Stock audit data report
+     * @return \App\Core\PaginatorCore
+     */
+    public function getFlexiDealReport()
+    {
+    	$prepare = $this->getPreparedFlexiDeal();
+    	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    	
+    	$data['summary'] = '';
+    	if($result->total())
+    	{
+    		$prepare = $this->getPreparedFlexiDeal(true);
+    		$data['summary'] = $prepare->first();
+    	}
+    	
+    	return response()->json($data);
+    }
+    
+    
+    /**
+     * Get Prepared statement for stock transfer
+     * @param string $summary
+     * @return unknown
+     */
+    public function getPreparedFlexiDeal($summary=false)
+    {
+    	$select = '
+    			app_area.area_name,
+    			txn_sales_order_header.salesman_code,    			
+    			app_salesman.salesman_name,
+    			app_customer.customer_name,
+				txn_sales_order_header.invoice_number,
+    			txn_sales_order_header.so_date as invoice_date,
+    			IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		) customer_address,
+    			
+				txn_sales_order_deal.item_code,
+    			regular.description as item_desc,
+    			txn_sales_order_deal.regular_order_qty,
+    			txn_sales_order_deal.trade_item_code,
+    			deal.description as deal_item_desc,
+    			txn_sales_order_deal.trade_order_qty,
+    			txn_sales_order_deal.gross_order_amount,
+    			IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
+    			';
+    	
+    	if($summary)
+    	{
+    		$select = '
+    			  SUM(txn_sales_order_deal.regular_order_qty) regular_order_qty,
+    			  SUM(txn_sales_order_deal.trade_order_qty) trade_order_qty,
+			      SUM(txn_sales_order_deal.gross_order_amount) gross_order_amount			      
+    			';
+    	}
+    	 
+    	$prepare = \DB::table('txn_sales_order_deal')
+				    	->selectRaw($select)
+				    	->leftJoin('txn_sales_order_header','txn_sales_order_header.reference_num','=','txn_sales_order_deal.reference_num')
+				    	->leftJoin('app_salesman', function($join){
+				    		$join->on('txn_sales_order_header.salesman_code','=','app_salesman.salesman_code');
+				    		$join->where('app_salesman.status','=','A');
+				    	})
+				    	->leftJoin('app_item_master as regular','regular.item_code','=','txn_sales_order_deal.item_code')
+				    	->leftJoin('app_item_master as deal','deal.item_code','=','txn_sales_order_deal.trade_item_code')
+				    	->leftJoin('app_customer','txn_sales_order_header.customer_code','=','app_customer.customer_code')
+				    	->leftJoin('app_area','app_customer.area_code','=','app_area.area_code');
+    
+    	 
+    	if($this->isSalesman())
+    	{
+    		$prepare->where('txn_sales_order_header.salesman_code',auth()->user()->salesman_code);
+    	}
+    	else
+    	{
+    		$salesmanFilter = FilterFactory::getInstance('Select');
+    		$prepare = $salesmanFilter->addFilter($prepare,'salesam_code',
+    			function($self, $model){
+    				return $model->where('txn_sales_order_header.salesman_code',$self->getValue());
+    			});
+    	}
+    		
+    	$companyCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $companyCodeFilter->addFilter($prepare,'company_code',
+    			function($self, $model){
+    				return $model->where('app_customer.customer_code','like',$self->getValue().'%');
+    			});
+    	 
+    	$areaFilter = FilterFactory::getInstance('Select');
+    	$prepare = $areaFilter->addFilter($prepare,'area_code',
+    			function($self, $model){
+    				return $model->where('app_customer.area_code','=',$self->getValue());
+    			});    	 
+    	 
+    	$itemCodeFilter = FilterFactory::getInstance('Select');
+    	$prepare = $itemCodeFilter->addFilter($prepare,'item_code',
+    			function($self, $model){
+    				return $model->where('txn_sales_order_deal.item_code','=',$self->getValue());
+    			});
+    	
+    	$customerFilter = FilterFactory::getInstance('Select');
+    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
+    			function($self, $model){
+    				return $model->where('txn_sales_order_header.customer_code',$self->getValue());
+    			});
+    	
+    	$invoiceFilter = FilterFactory::getInstance('DateRange');
+    	$prepare = $invoiceFilter->addFilter($prepare,'invoice_date',function($self, $model){
+    		return $model->whereBetween('txn_sales_order_header.so_date',$self->formatValues($self->getValue()));
+    	});
+    	 
+    	if(!$this->request->has('sort'))
+    	{
+    		$prepare->orderBy('txn_sales_order_header.so_date','desc');    		
+    	}
+    	 
+    	 
+//     	if(!$this->hasAdminRole() && auth()->user())
+//     	{
+//     		$reportsPresenter = PresenterFactory::getInstance('Reports');
+//     		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
+//     		$prepare->whereIn('salesman_area.area_code',$codes);
+//     	}
+    
+    	return $prepare;
+    }
     
     /**
      * Get prepared statement for stock audit
@@ -342,6 +548,31 @@ class VanInventoryPresenter extends PresenterCore
     	return $prepare;
     }
     
+    
+    /**
+     * Get Flexi deal filter data
+     * @return string[]|unknown[]
+     */
+    public function getFlexiDealFilterData()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$salesman = $this->request->get('salesman_code') ? $salesman = $reportsPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    	$area = $this->request->get('area_code') ? $reportsPresenter->getArea()[$this->request->get('area_code')] : 'All';
+    	$company_code = $this->request->get('company_code') ? $reportsPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    	$customer = $this->request->get('customer_code') ? $reportsPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
+    	$invoice_date = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
+    	$item = $this->request->get('regular_item_code') ? $reportsPresenter->getItems()[$this->request->get('regular_item_code')] : 'All';
+    
+    	$filters = [
+    			'Salesman' => $salesman,
+    			'Company Code' => $company_code,
+    			'Area' => $area,    			
+    			'Customer' => $customer,
+    			'Invoice Date' => $invoice_date,
+    			'Regular Item Code' => $item,    			
+    	];
+    	return $filters;
+    }
     
     /**
      * Get stock transfer filter data

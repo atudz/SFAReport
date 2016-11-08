@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StatementOfShortagesSeeder::class);
         $this->call(RdsSalesmanSeeder::class);
         $this->call(StockAuditReportSeeder::class);
+        $this->call(FlexiDealReportSeeder::class);
 
         Model::reguard();
     }

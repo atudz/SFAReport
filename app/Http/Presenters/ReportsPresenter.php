@@ -282,6 +282,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
 			case 'stockaudit':
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
+			case 'flexideal':
+				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
     	}
     }
     
@@ -4991,6 +4993,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
 			case 'stockaudit':
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditColumns();
+			case 'flexideal':
+				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
     	}	
     }
     
@@ -5553,6 +5557,17 @@ class ReportsPresenter extends PresenterCore
     }
     
     /**
+     * Get Item Lists
+     */
+    public function getItemCodes()
+    {
+    	return \DB::table('app_item_master')
+			    	->where('status','=','A')
+			    	->orderBy('item_code')
+			    	->lists('item_code','item_code');
+    }
+    
+    /**
      * Get Item Segment Codes
      */
     public function getItemSegmentCode()
@@ -5936,6 +5951,17 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Stock Audit Report';
 				$filters = $vanInventoryPresenter->getStockAuditFilterData();
 				$filename = 'Stock Audit Report';
+				break;
+				
+			case 'flexideal':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedFlexiDeal();
+				$summary = $vanInventoryPresenter->getPreparedFlexiDeal(true)->first();
+				$rows = $vanInventoryPresenter->getFlexiDealReportSelectColumns();
+				$header = 'Flexi Deal Report';
+				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
+				$filename = 'Flexi Deal Report';
 				break;
     		default:
     			return;
@@ -6554,6 +6580,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'stockaudit':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockAudit();
+				$total = $prepare->count();
+				break;
+			case 'flexideal':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
 				$total = $prepare->count();
 				break;
     		default:

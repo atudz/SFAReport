@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class StockAuditReportSeeder extends Seeder
+class FlexiDealReportSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,14 +12,14 @@ class StockAuditReportSeeder extends Seeder
     public function run()
     {
     	$today = new DateTime();
-    	
+    	 
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Stock Audit','url'=>'vaninventory.stockaudit','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>4,'created_at' => $today,'updated_at'=>$today],
+    			['name'=>'Flexi Deal','url'=>'vaninventory.flexideal','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>5,'created_at' => $today,'updated_at'=>$today],
     	];
-    	
+    	 
     	DB::table('navigation')->insert($navigation_item);
-    	
+    	 
     	$adminID = DB::table('user_group')->where(['name' => 'Admin'])->value('id');
     	$auditorID = DB::table('user_group')->where(['name' => 'Auditor'])->value('id');
     	$accountingID = DB::table('user_group')->where(['name' => 'Accounting in charge'])->value('id');
@@ -27,11 +27,11 @@ class StockAuditReportSeeder extends Seeder
     	$guest1 = DB::table('user_group')->where(['name' => 'Guest1'])->value('id');
     	$guest2 = DB::table('user_group')->where(['name' => 'Guest2'])->value('id');
     	$manager = DB::table('user_group')->where(['name' => 'Manager'])->value('id');
-    	
+    	 
     	if ($adminID) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -45,11 +45,11 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
+    	 
     	if ($auditorID) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -63,11 +63,11 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
+    	 
     	if ($accountingID) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -81,11 +81,11 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
+    	 
     	if ($vanID) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -99,12 +99,12 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
-    	
+    	 
+    	 
     	if ($guest1) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -118,12 +118,12 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
-    	
+    	 
+    	 
     	if ($guest2) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -137,11 +137,11 @@ class StockAuditReportSeeder extends Seeder
     		}
     		DB::table('user_group_to_nav')->insert($mappings);
     	}
-    	
+    	 
     	if ($manager) {
     		//fetch all navigations
     		$navs = [
-    				'Stock Audit Report',
+    				'Flexi Deal',
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {

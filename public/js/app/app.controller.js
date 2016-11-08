@@ -169,6 +169,30 @@
 	
 	
 	/**
+	 * Van Inventory Stock Audit Report
+	 */
+	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix',FlexiDeal]);
+	
+	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman_code',		          
+		          'area_code',
+		          'customer_code',
+		          'company_code',
+		          'invoice_date_from',
+		          'invoice_date_to',		          		          
+		          'item_code'		          
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log, TableFix);
+
+	}
+	
+	
+	/**
 	 * User List controller
 	 */
 	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);

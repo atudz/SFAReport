@@ -150,13 +150,13 @@
 						<th align="left" style="wrap-text:true">
 							@if(is_object($summary) && isset($summary->$row))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary->$row!!}
 									@else
 										({!!number_format($summary->$row,2,'.',',')!!})
 									@endif
 								@else
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary->$row!!}
 									@else
 										{!!number_format($summary->$row,2,'.',',')!!}
@@ -164,13 +164,13 @@
 								@endif
 							@elseif(is_array($summary) && isset($summary[$row]))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary[$row]!!}
 									@else
 										({!!number_format($summary[$row],2,'.',',')!!})
 									@endif
 								@else
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary[$row]!!}
 									@else
 										{!!number_format($summary[$row],2,'.',',')!!}

@@ -58,6 +58,11 @@
 					controller: 'StockAudit',
 					//controllerAs: 'vic'*/
 				})
+				.when('/vaninventory.flexideal',{
+					templateUrl: '/reports/flexideal',
+					controller: 'FlexiDeal',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report
