@@ -1,4 +1,4 @@
-{!!Html::breadcrumb(['Van Inventory','Stock Transfer', 'Add Row'])!!}
+{!!Html::breadcrumb(['Van Inventory','Actual Count Replenishment', 'Add Row'])!!}
 {!!Html::pageheader('Add Row')!!}
 
 <div class="row">
@@ -8,11 +8,11 @@
 			
 				<div class="col-md-12" style="margin-bottom:5px;padding-left:0px;padding-right:0px;">
 					<div class="pull-left">
-						<h4>Stock Transfer</h4>
+						<h4>Actual Count Replenishment</h4>
 					</div>					
 					<div class="pull-right">
-			      		<a href="#vaninventory.stocktransfer" class="btn btn-success btn-sm">Back to Stock Transfer</a>
-			      	</div>						
+			      		<a href="#vaninventory.stocktransfer" class="btn btn-success btn-sm">Back to Actual Count Replenishment</a>
+			      	</div>
 			    </div>
 			
 				<div class="col-md-12 well">															

@@ -193,6 +193,66 @@
 	
 	
 	/**
+	 * Van Inventory Stock Audit Report
+	 */
+	app.controller('Replenishment',['$scope','$resource','$uibModal','$window','$log','TableFix',Replenishment]);
+	
+	function Replenishment($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman_code',		          
+		          'replenishment_date_from',
+		          'reference_number'		          		          
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
+
+	}
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('ReplenishmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', ReplenishmentAdd]);
+
+	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
+
+		$scope.save = function (){
+			$log.info('test1234');
+			var API = $resource('controller/vaninventory/stocktransfer');
+			
+			var params = {
+				'stock_transfer_number': $('#stock_transfer_number').val(),
+			    'transfer_date_from': $('#transfer_date_from').val(),
+				'src_van_code': $('#src_van_code').val(),
+				'dest_van_code': $('#dest_van_code').val(),
+				'device_code': $('#device_code').val(),
+				'item_code': $('#item_code').val(),
+				'salesman_code': $('#salesman_code').val(),
+				'uom_code': $('#uom_code').val(),
+				'quantity': $('#quantity').val(),
+			};
+			
+			API.save(params).$promise.then(function(data){
+				$('.help-block').html('');
+				$location.path('vaninventory.stocktransfer');
+			}, function(error){
+				if(error.data){
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						if(-1 !== index.indexOf('_from')){
+							$('[id='+index+']').parent().next('.help-block').html(val);
+						} else {
+							$('[id='+index+']').next('.help-block').html(val);
+						}						
+					});
+				}
+			});
+		}
+	};
+	
+	/**
 	 * User List controller
 	 */
 	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);
