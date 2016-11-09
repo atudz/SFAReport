@@ -115,15 +115,18 @@
 						<div class="row pull-right indent-right label">
 							<strong>SCR No.:</strong>@if($scr) <span class="value">{{$scr}}</span> @else <span>______________</span> @endif
 						</div>
+						<div class="row pull-right indent-right label-value">
+							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
+						</div>
 					</div>
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
 							<strong>Invoice Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span @if(request()->get('invoice_date_from'))class="underline"@endif>@if(request()->get('invoice_date_from')) {{request()->get('invoice_date_from')}} @else __________ @endif</span>
-						</div>						
+						</div>
 						<div class="row pull-right indent-right label-value">
-							<strong>Salesman:</strong><span class="underline">@if($filters['Salesman']) {{$filters['Salesman']}} @else ______________ @endif</span>
-						</div>		
+							<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
+						</div>
 					</div>
 					
 					
@@ -131,11 +134,10 @@
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
 							&nbsp;TO: <span @if(request()->get('invoice_date_to'))class="underline"@endif>@if(request()->get('invoice_date_to')) {{request()->get('invoice_date_to')}} @else __________ @endif</span>
-						</div>						
+						</div>
 						<div class="row pull-right indent-right label-value">
-							<strong>Salesman Code:</strong><span class="underline">@if(request()->get('salesman')) {{request()->get('salesman')}} @else ______________ @endif</span>
-						</div>		
-						
+							<strong>Jr. Salesman:</strong><span @if($filters['Jr. Salesman']) class="underline" @endif>@if($filters['Jr. Salesman']) {{$filters['Jr. Salesman']}} @else ______________ @endif</span>
+						</div>
 					</div>
 					
 					<div class="clear">

@@ -59,10 +59,10 @@
 					@endif
 				</th>											
 			</tr>
-			<tr>	
-				<th colspan="22"></th>		
-				<th align="right">Area Name:</th>
-				<th align="left" style="text-decoration: underline">@if($area) {{$area}} @else ______________ @endif</th>
+			<tr>
+				<th colspan="22"></th>
+				<th align="right">Jr. Salesman:</th>
+				<th align="left" style="text-decoration: underline">{{$filters['Jr. Salesman']}}</th>
 				<th align="right">Prev. Inv. date</th>
 				<th align="right">From:</th>
 				<th @if(request()->get('posting_date_from')) style="text-decoration: underline" @endif>
@@ -71,12 +71,12 @@
 					@else
 						______________
 					@endif
-				</th>											
+				</th>
 			</tr>
-			<tr>	
-				<th colspan="22"></th>		
-				<th></th>
-				<th></th>
+			<tr>
+				<th colspan="22"></th>
+				<th align="right">Area Name:</th>
+				<th align="left" style="text-decoration: underline">@if($area) {{$area}} @else ______________ @endif</th>
 				<th></th>
 				<th align="right">To:</th>
 				<th @if(request()->get('posting_date_to')) style="text-decoration: underline" @endif>
@@ -85,10 +85,10 @@
 					@else
 						______________
 					@endif
-				</th>											
+				</th>
 			</tr>
-			<tr>	
-				<th colspan="22"></th>	
+			<tr>
+				<th colspan="22"></th>
 				<th align="right">Date Remitted:</th>
 				<th align="left">______________</th>
 				<th align="right">Collection date</th>
