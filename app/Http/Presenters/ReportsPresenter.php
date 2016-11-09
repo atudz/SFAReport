@@ -2304,10 +2304,32 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$tempInvoices['code_'.$item->item_code] = $item->{$col};    			
 	    		}	
-	    			
+	    		
+	    		$deals = \DB::table('txn_sales_order_deal')
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
+				    		->where('reference_num','=',$result->reference_num)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+	    		
+				foreach($deals as $deal)
+				{
+					if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+						$col = 'trade_order_qty';
+					elseif(false !== strpos($result->customer_name, '_Adjustment'))
+						$col = 'trade_order_qty';
+					else
+						$col = 'trade_served_qty';
+					$result->{'code_'.$deal->trade_item_code} = '('.$deal->{$col}.')';
+					if(isset($tempInvoices['code_'.$deal->trade_item_code]))
+						$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
+					else
+						$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col};
+				}
+	    		
 	    		$records[] = $result;
 	    		if($reports)
 	    			$reportRecords[] = (array)$result;
+	    		
 	    	}
     	}
     	
@@ -2580,6 +2602,25 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] += $item->{$col};    			
     		}
     		
+    		$deals = \DB::table('txn_sales_order_deal')
+			    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
+			    		->where('reference_num','=',$result->reference_num)
+			    		->whereIn('item_code',$codes)
+			    		->get();
+    		 
+    		foreach($deals as $deal)
+    		{
+    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+    				$col = 'trade_order_qty';
+    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+    				$col = 'trade_order_qty';
+    			else
+    				$col = 'trade_served_qty';
+    			if(!isset($tempInvoices['code_'.$deal->trade_item_code]))
+    				$tempInvoices['code_'.$deal->trade_item_code] = 0;
+    			$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
+    		}
+    		
     	}
     	
     	// Get returns
@@ -2726,6 +2767,7 @@ class ReportsPresenter extends PresenterCore
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
+    			   txn_sales_order_header.reference_num,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
