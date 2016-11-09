@@ -378,7 +378,7 @@ class UserController extends ControllerCore
 			$message->subject($data['subject']);
 		});
 
-		if (count(Mail::failures()) < 0) {
+		if (empty(Mail::failures())) {
 			return response()->json($contactUs, 200);
 		} else {
 			return response()->json('Email not sent.', 471);
