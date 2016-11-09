@@ -1,9 +1,9 @@
 <html>
-<head>	
+<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-	<table>		
+	<table>
 		<tbody>
 			<tr>
 				@foreach($columns as $column)
@@ -16,7 +16,7 @@
 						<td>{{str_replace(array('%','(',')', ','),'', $record->$row)}}</td>
 					@endforeach
 				</tr>
-			@endforeach				
+			@endforeach
 		</tbody>
 	</table>
 </body>
