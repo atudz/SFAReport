@@ -30,6 +30,47 @@
             $(this).addClass("active");
         });
     });
+
+	function validateQty(el)
+	{
+		var val = $(el).val();
+		if(val.length == 0) {
+			$(el).next('span').html('This field is required.');
+			$(el).parent().parent().addClass('has-error');
+		}
+		else if(val >=0){
+			$(el).next('span').html('');
+			$(el).parent().parent().removeClass('has-error');
+		} else {
+			$(el).next('span').html('Quantity must not be negative.');
+			$(el).parent().parent().addClass('has-error');	
+		}
+	}
+
+	function validate(el)
+	{
+		var id = $(el).attr('id');
+
+		if(-1 !== id.indexOf('_from')){
+			console.log('test');
+			if($(el).val()){
+				$('[id='+id+']').parent().next('.help-block').html('');
+				$('[id='+id+']').parent().parent().parent().removeClass('has-error');
+			} else {
+				$('[id='+id+']').parent().next('.help-block').html('This field is required.');
+				$('[id='+id+']').parent().parent().parent().addClass('has-error');
+			}
+				 
+		} else {		
+			if($(el).val()){
+				$(el).next('span').html('');
+				$(el).parent().parent().removeClass('has-error');
+			} else {
+				$(el).next('span').html('This field is required.');
+				$(el).parent().parent().addClass('has-error');
+			}
+		}
+	}
 </script>
 
 <script>

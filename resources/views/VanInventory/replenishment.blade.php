@@ -7,12 +7,8 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="col-md-6">
+					<div class="col-md-8">	
 						{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman')!!}
-						{!!Html::select('salesman_code','Junior Salesman', $salesman,$isSalesman ? '' : 'All')!!}
-						{!!Html::select('van_code','Van Code', $salesman,$isSalesman ? '' : 'All')!!}												 																															
-					</div>					
-					<div class="col-md-6">	
 						{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>',false)!!}
 						{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>')!!}						
 					</div>			

@@ -12,5 +12,5 @@ class AppVatpostingSetup extends ModelCore
 	 */
 	protected $table = 'app_vatposting_setup';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

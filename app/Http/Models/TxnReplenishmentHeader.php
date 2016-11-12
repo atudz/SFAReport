@@ -12,7 +12,7 @@ class TxnReplenishmentHeader extends ModelCore
 	 */
 	protected $table = 'txn_replenishment_header';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This model's relation to salesman van

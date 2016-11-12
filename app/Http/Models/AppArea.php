@@ -12,7 +12,7 @@ class AppArea extends ModelCore
 	 */
 	protected $table = 'app_area';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

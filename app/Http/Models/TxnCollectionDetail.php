@@ -12,5 +12,5 @@ class TxnCollectionDetail extends ModelCore
 	 */
 	protected $table = 'txn_collection_detail';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

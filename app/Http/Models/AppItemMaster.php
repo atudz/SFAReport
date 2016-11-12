@@ -12,5 +12,5 @@ class AppItemMaster extends ModelCore
 	 */
 	protected $table = 'app_item_master';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

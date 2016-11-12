@@ -12,5 +12,5 @@ class TxnCollectionHeader extends ModelCore
 	 */
 	protected $table = 'txn_collection_header';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

@@ -12,5 +12,5 @@ class AppVan extends ModelCore
 	 */
 	protected $table = 'app_van';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

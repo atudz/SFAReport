@@ -12,5 +12,5 @@ class AppItemMasterUom extends ModelCore
 	 */
 	protected $table = 'app_item_master_uom';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

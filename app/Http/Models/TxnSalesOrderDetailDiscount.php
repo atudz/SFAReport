@@ -12,5 +12,5 @@ class TxnSalesOrderDetailDiscount extends ModelCore
 	 */
 	protected $table = 'txn_sales_order_detail_discount';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

@@ -218,37 +218,67 @@
 
 	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
 
+		$scope.counter = 1;
+		$scope.rows = [$scope.counter];
+		
 		$scope.save = function (){
-			$log.info('test1234');
-			var API = $resource('controller/vaninventory/stocktransfer');
+			var hasError = false;
 			
-			var params = {
-				'stock_transfer_number': $('#stock_transfer_number').val(),
-			    'transfer_date_from': $('#transfer_date_from').val(),
-				'src_van_code': $('#src_van_code').val(),
-				'dest_van_code': $('#dest_van_code').val(),
-				'device_code': $('#device_code').val(),
-				'item_code': $('#item_code').val(),
-				'salesman_code': $('#salesman_code').val(),
-				'uom_code': $('#uom_code').val(),
-				'quantity': $('#quantity').val(),
-			};
-			
-			API.save(params).$promise.then(function(data){
-				$('.help-block').html('');
-				$location.path('vaninventory.stocktransfer');
-			}, function(error){
-				if(error.data){
-					$('.help-block').html('');
-					$.each(error.data, function(index, val){
-						if(-1 !== index.indexOf('_from')){
-							$('[id='+index+']').parent().next('.help-block').html(val);
-						} else {
-							$('[id='+index+']').next('.help-block').html(val);
-						}						
-					});
+			$('input[name^=quantity]').each(function(){
+				if($(this).val()<0){
+					$(this).next('span').html('Quantity must not be negative.');
+					$(this).parent().parent().addClass('has-error');
 				}
 			});
+			
+			if(!hasError){
+				
+				var API = $resource('controller/vaninventory/replenishment');
+				
+				var items = $("select[name^='item_code']").map(function (idx, el) {
+					   			return $(el).val();
+							}).get();
+				var quantities = $("input[name^='quantity']").map(function (idx, el) {
+		   						return $(el).val();
+							}).get();
+				var params = {
+					'salesman_code': $('#salesman_code').val(),
+				    'replenishment_date_from': $('#replenishment_date_from').val(),
+					'reference_num': $('#reference_num').val(),
+					'counted': $('#counted').val(),
+					'confirmed': $('#confirmed').val(),
+					'last_sr': $('#last_sr').val(),
+					'last_rprr': $('#last_rprr').val(),
+					'last_cs': $('#last_cash_slip').val(),
+					'last_dr': $('#last_delivery_receipt').val(),
+					'last_ddr': $('#last_ddr').val(),
+					'item_code': items,
+					'quantity': quantities
+				};
+				
+				API.save(params).$promise.then(function(data){
+					$location.path('vaninventory.replenishment');
+				}, function(error){
+					if(error.data){
+						$('.help-block').html('');
+						$.each(error.data, function(index, val){
+							if(-1 !== index.indexOf('_from')){
+								$('[id='+index+']').parent().next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().parent().addClass('has-error');
+							} else {
+								$('[id='+index+']').next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().addClass('has-error');
+							}						
+						});
+					}
+				});
+			}			
+		}
+		
+		
+		$scope.add = function () {
+			$scope.counter++;
+			$scope.rows.push($scope.counter);
 		}
 	};
 	
@@ -260,7 +290,6 @@
 	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log) {
 
 		$scope.save = function (){
-			$log.info('test1234');
 			var API = $resource('controller/vaninventory/stocktransfer');
 			
 			var params = {
@@ -276,7 +305,6 @@
 			};
 			
 			API.save(params).$promise.then(function(data){
-				$('.help-block').html('');
 				$location.path('vaninventory.stocktransfer');
 			}, function(error){
 				if(error.data){
@@ -284,8 +312,10 @@
 					$.each(error.data, function(index, val){
 						if(-1 !== index.indexOf('_from')){
 							$('[id='+index+']').parent().next('.help-block').html(val);
+							$('[id='+index+']').parent().parent().parent().addClass('has-error');
 						} else {
 							$('[id='+index+']').next('.help-block').html(val);
+							$('[id='+index+']').parent().parent().addClass('has-error');
 						}						
 					});
 				}
@@ -818,9 +848,10 @@
 	function filterSubmit(scope, API, filter, log, report, TableFix)
 	{
 		var params = {};
-
+		
 		scope.filter = function(){
-
+				
+			var exclude = ['salescollectionsummary','stockaudit','replenishment'];
 	    	scope.page = 1;
 
 			params['page'] = scope.page;
@@ -834,12 +865,12 @@
 
 				if(val.indexOf('_from') != -1)
 				{
+					//console.log(-1 == $.inArray(report,exclude));
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
 
 					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) 
-						&& report != 'salescollectionsummary'
-						&& report != 'stockaudit')
+						&& -1 == $.inArray(report,exclude))
 					{
 						hasError = true;
 						$('#'+val.replace('_from','_error')).html('Invalid date range.');

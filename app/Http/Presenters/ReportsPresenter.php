@@ -5592,12 +5592,14 @@ class ReportsPresenter extends PresenterCore
     /**
      * Get Item Lists
      */
-    public function getItems()
+    public function getItems($oderByItemCode=false)
     {
-    	return \DB::table('app_item_master')
-		    			->where('status','=','A')
-		    			->orderBy('description')
-		    			->lists('description','item_code');
+    	$prepare = \DB::table('app_item_master')->where('status','=','A');
+    	if($oderByItemCode)
+    		$prepare->orderBy('item_code');
+    	else
+    		$prepare->orderBy('description');
+    	return $prepare->lists('description','item_code');
     }
     
     /**
@@ -6006,6 +6008,10 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Flexi Deal Report';
 				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
 				$filename = 'Flexi Deal Report';
+				break;
+				
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
 				break;
     		default:
     			return;
@@ -6628,6 +6634,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'flexideal':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
+				$total = $prepare->count();
+				break;
+			case 'replenishment':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
 				$total = $prepare->count();
 				break;
     		default:

@@ -12,7 +12,7 @@ class TxnReturnHeader extends ModelCore
 	 */
 	protected $table = 'txn_return_header';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This model's relation to sales order detail

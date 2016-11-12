@@ -12,7 +12,7 @@ class AppSalesman extends ModelCore
 	 */
 	protected $table = 'app_salesman';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 
 	/**
 	 * AppSalesman relation to AppSalesmanCustomer.

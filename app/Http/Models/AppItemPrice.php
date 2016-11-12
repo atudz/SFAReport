@@ -12,5 +12,5 @@ class AppItemPrice extends ModelCore
 	 */
 	protected $table = 'app_item_price';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

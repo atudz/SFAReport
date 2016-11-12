@@ -12,5 +12,5 @@ class TxnInvoice extends ModelCore
 	 */
 	protected $table = 'txn_invoice';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

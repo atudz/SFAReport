@@ -92,6 +92,7 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/user/contact/mail/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@mail']);
 	
 	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
+	Route::post('/vaninventory/replenishment', ['as'=>'replenishment-save', 'uses'=>'VanInventoryController@saveReplenishment']);
 
 });
 

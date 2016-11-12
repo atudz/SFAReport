@@ -12,7 +12,7 @@ class TxnSalesOrderDetail extends ModelCore
 	 */
 	protected $table = 'txn_sales_order_detail';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This models' relation to sales order header

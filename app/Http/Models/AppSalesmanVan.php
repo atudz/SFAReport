@@ -12,7 +12,7 @@ class AppSalesmanVan extends ModelCore
 	 */
 	protected $table = 'app_salesman_van';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This model's relation to replenishment
