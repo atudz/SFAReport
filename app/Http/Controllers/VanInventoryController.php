@@ -35,7 +35,7 @@ class VanInventoryController extends ControllerCore
 		$stockTransfer->modified_date = new Carbon($request->transfer_date_from);
 		$stockTransfer->sfa_modified_date = new \DateTime();
 		$stockTransfer->status = 'P';
-		$stockTransfer->device_code = $request->device_code;
+		//$stockTransfer->device_code = $request->device_code;
 		$stockTransfer->updated_by  = auth()->user()->id;
 		$stockTransfer->updated_at  = new \DateTime();
 		$stockTransfer->transfer_date = new Carbon($request->transfer_date_from);

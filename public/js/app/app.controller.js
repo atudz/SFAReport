@@ -297,7 +297,7 @@
 			    'transfer_date_from': $('#transfer_date_from').val(),
 				'src_van_code': $('#src_van_code').val(),
 				'dest_van_code': $('#dest_van_code').val(),
-				'device_code': $('#device_code').val(),
+				//'device_code': $('#device_code').val(),
 				'item_code': $('#item_code').val(),
 				'salesman_code': $('#salesman_code').val(),
 				'uom_code': $('#uom_code').val(),

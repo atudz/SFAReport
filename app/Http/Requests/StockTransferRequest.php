@@ -29,7 +29,7 @@ class StockTransferRequest extends Request
         	'src_van_code' => 'required',
         	'dest_van_code' => 'required',        	
         	'item_code' => 'required',
-        	'device_code' => 'required',
+        	//'device_code' => 'required',
         	'salesman_code' => 'required',
         	'uom_code' => 'required',
         	'salesman_code' => 'required',

@@ -21,17 +21,14 @@
 							{!!Html::input('text','stock_transfer_number','Stock Transfer No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
 						</div>
 						<div class="row form-input-field">
-							{!!Html::datepicker('transfer_date','Transaction Date <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+							{!!Html::datepicker('transfer_date','Transaction Date <span class="required">*</span>')!!}
 						</div>
 						<div class="row form-input-field">
 							{!!Html::input('text','src_van_code','Source Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
 						</div>
 						<div class="row form-input-field">
 							{!!Html::input('text','dest_van_code','Dest Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
-						</div>
-						<div class="row form-input-field">
-							{!!Html::input('text','device_code','Device Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
-						</div>
+						</div>						
 						<div class="row form-input-field">
 							{!!Html::select('item_code','Item <span class="required">*</span>', $items, 'Select Item',['onblur'=>'validate(this)'])!!}
 						</div>					
