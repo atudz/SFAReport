@@ -1039,6 +1039,9 @@ class VanInventoryPresenter extends PresenterCore
     {    	
     	$prepare = $this->getPreparedRelenishment();
     	
+    	if($type == 'pdf')
+    		$prepare->where('txn_replenishment_detail.quantity','>',0);
+    	
     	$replenishment = new \stdClass();
     	
     	$replenishment->salesman = sr_salesman($this->request->get('salesman_code'));
