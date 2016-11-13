@@ -278,6 +278,7 @@
 		
 		$scope.add = function () {
 			$scope.counter++;
+			console.log($scope.counter);
 			$scope.rows.push($scope.counter);
 		}
 	};

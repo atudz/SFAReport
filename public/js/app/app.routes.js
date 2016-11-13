@@ -73,6 +73,11 @@
 					controller: 'ReplenishmentAdd',
 					//controllerAs: 'vic'*/
 				})
+				.when('/replenishment.edit/:id',{
+					templateUrl: function(params){ return '/reports/replenishment/edit/'+params.id},
+					controller: 'ReplenishmentAdd',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report

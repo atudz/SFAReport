@@ -18,4 +18,13 @@ class Replenishment extends ModelCore
 			'last_dr',
 			'last_ddr',
 	];
+	
+	/**
+	 * This model's relation to details
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function rep()
+	{
+		return $this->hasOne('App\Http\Models\TxnReplenishmentHeader','reference_number','reference_num');
+	}
 }

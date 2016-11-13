@@ -22,40 +22,40 @@
 					<div class="row">															
 						<div class ="col-md-8">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'])!!}
+								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->rep->van_code))!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1])!!}
+								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->rep->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1])!!}
+								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->rep->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>')!!}
+								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->rep->replenishment_date)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_num,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','counted','Counted <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','counted','Counted <span class="required">*</span>',$replenishment->counted,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','confirmed','Confirmed <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','confirmed','Confirmed <span class="required">*</span>',$replenishment->confirmed,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_sr','Last SR <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_sr','Last SR <span class="required">*</span>',$replenishment->last_sr,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_rprr','Last RPRR <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_rprr','Last RPRR <span class="required">*</span>',$replenishment->last_rprr,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_cash_slip','Last Cash Slip <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_cash_slip','Last Cash Slip <span class="required">*</span>',$replenishment->last_cs,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_delivery_receipt','Last Delivery Receipt <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_delivery_receipt','Last Delivery Receipt <span class="required">*</span>',$replenishment->last_dr,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_ddr','Last DDR <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_ddr','Last DDR <span class="required">*</span>',$replenishment->last_ddr,['onblur'=>'validate(this)'])!!}
 							</div>						
 						</div>
 					</div>
@@ -72,30 +72,60 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="row in rows">
-										<td>
-											<div class="form-group">			 								
-				 								<div class="col-xs-12 col-sm-8">
-				 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
-				 								</div>
-				 							</div>										
-										</td>
-										<td>
-											<div class="form-group">			 								
-				 								<div class="col-xs-12 col-sm-8">
-				 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
-				 								</div>
-				 							</div>		
-										</td>
-										<td>
-											<div class="form-group">			 								
-				 								<div class="col-xs-12 col-sm-8">
-				 									<input class="form-control" id="quantity" name="quantity[]" type="number" min="0"  value="0" onblur="validateQty(this)">
-				 									<span class="help-block"></span>
-				 								</div>
-				 							</div>
-										</td>
-									</tr>
+									
+									@if($replenishment->rep && $replenishment->rep->details)
+										@foreach($replenishment->rep->details as $k=>$item)
+											<tr @if($k+1 == count($replenishment->rep->details)) ng-repeat="row in rows" @endif>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-8">
+						 									{!!Form::select('item_code[]',$itemCodes,$item->item_code,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
+						 								</div>
+						 							</div>										
+												</td>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-8">
+						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','disabled'=>true],$item->item_code)!!}
+						 								</div>
+						 							</div>		
+												</td>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-8">
+						 									<input class="form-control" id="quantity" name="quantity[]" type="number" min="0"  value="{{$item->quantity}}" onblur="validateQty(this)">
+						 									<span class="help-block"></span>
+						 								</div>
+						 							</div>
+												</td>
+											</tr>
+										@endforeach
+									@else
+										<tr ng-repeat="row in rows">
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-8">
+					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
+					 								</div>
+					 							</div>										
+											</td>
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-8">
+					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
+					 								</div>
+					 							</div>		
+											</td>
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-8">
+					 									<input class="form-control" id="quantity" name="quantity[]" type="number" min="0"  value="0" onblur="validateQty(this)">
+					 									<span class="help-block"></span>
+					 								</div>
+					 							</div>
+											</td>
+										</tr>
+									@endif
 								</tbody>
 								<tfoot>
 									<tr>

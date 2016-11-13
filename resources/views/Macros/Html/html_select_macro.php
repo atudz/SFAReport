@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Collection;
-Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[]) {
+Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[],$value=null) {
 
 	$options = [
 		'class' => 'form-control',	
@@ -24,7 +24,7 @@ Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>
 			 	<div class="col-xs-12 col-sm-8	">'.
-			 		Form::select($name, $list, null, $options).
+			 		Form::select($name, $list, $value, $options).
 			 '	
 			 	<span class="error help-block"></span>
 			 	</div>

@@ -43,6 +43,27 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->jrSalesmans = $this->getJrSalesman();
 		$this->view->vanCodes = $this->getVanCodes();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
+		return $this->view('addReplenishment');
+	}
+	
+	/**
+	 * Return van & inventory view
+	 * @param string $type
+	 * @return string The rendered html view
+	 */
+	public function editReplenishment($referenceNum)
+	{
+		$reportsPresenter = PresenterFactory::getInstance('Reports');
+		$this->view->itemCodes = $this->getItemCodes();
+		$this->view->items = $reportsPresenter->getItems(true);
+		$this->view->jrSalesmans = $this->getJrSalesman();
+		$this->view->vanCodes = $this->getVanCodes();
+		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		$replenishment = ModelFactory::getInstance('Replenishment')->with('rep','rep.details')->where('reference_num',$referenceNum)->first();
+		if(!$replenishment)
+			$replenishment = ModelFactory::getInstance('Replenishment');
+		$this->view->replenishment = $replenishment;
 		return $this->view('addReplenishment');
 	}
 	

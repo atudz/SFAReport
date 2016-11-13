@@ -105,6 +105,25 @@ function salesman_van($code)
 }
 
 /**
+ * Get salesman van
+ * @param unknown $code
+ * @return string
+ */
+function van_salesman($code)
+{
+	$prepare = DB::table('app_salesman')
+				->select(['app_salesman.salesman_code'])
+				->leftJoin('app_salesman_van',function($join){
+					$join->on('app_salesman_van.salesman_code','=','app_salesman.salesman_code');
+					$join->where('app_salesman_van.status','=','A');
+				})
+				->where('app_salesman_van.van_code',$code);
+
+	$salesman = $prepare->first();
+	return $salesman ? $salesman->salesman_code: '';
+}
+
+/**
  * Add reference number
  * @param unknown $report
  * @param unknown $from

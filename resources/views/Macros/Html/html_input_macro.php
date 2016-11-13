@@ -1,9 +1,8 @@
 <?php
 
-Html::macro('input', function($type, $name, $label, $placeholder='', $attributes=[]) {
+Html::macro('input', function($type, $name, $label, $value='', $attributes=[]) {
 
-	$options = [
-		'placeholder'=>$placeholder,
+	$options = [		
 		'class' => 'form-control',	
 		'id' => $name
 	];
@@ -16,7 +15,7 @@ Html::macro('input', function($type, $name, $label, $placeholder='', $attributes
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>
 			 	<div class="col-xs-12 col-sm-8">'.
-			 		Form::input($type, $name, null, $options) .
+			 		Form::input($type, $name, $value, $options) .
 			 '	<span class="error help-block"></span>
 			 	</div>
 			 </div>';
