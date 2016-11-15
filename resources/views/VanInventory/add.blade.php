@@ -6,14 +6,17 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 			
-				<div class="col-md-12" style="margin-bottom:5px;padding-left:0px;padding-right:0px;">
-					<div class="pull-left">
-						<h4>Stock Transfer</h4>
-					</div>					
-					<div class="pull-right">
-			      		<a href="#vaninventory.stocktransfer" class="btn btn-success btn-sm">Back to Stock Transfer</a>
-			      	</div>						
-			    </div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="pull-left">
+							<h4>Stock Transfer</h4>
+						</div>					
+						<div class="pull-right">
+				      		<a href="#vaninventory.stocktransfer" class="btn btn-success btn-sm">Back to Stock Transfer</a>
+				      	</div>						
+				    </div>
+				</div>
+				<div class="clearfix">
 			
 				<div class="col-md-12 well">															
 					<div class ="col-md-8">
