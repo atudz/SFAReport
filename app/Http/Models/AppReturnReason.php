@@ -12,5 +12,5 @@ class AppReturnReason extends ModelCore
 	 */
 	protected $table = 'app_return_reason';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

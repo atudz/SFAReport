@@ -12,7 +12,7 @@ class AppCustomer extends ModelCore
 	 */
 	protected $table = 'app_customer';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This model's relation to sales order

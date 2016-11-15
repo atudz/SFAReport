@@ -12,5 +12,5 @@ class AppDiscountGroup extends ModelCore
 	 */
 	protected $table = 'app_discount_group';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

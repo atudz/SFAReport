@@ -28,7 +28,7 @@ function generate_revision($reportType, $prefix='')
 function latest_revision($reportType, $prefix='REV')
 {
 	$max = DB::table('report_revisions')->where('report',$reportType)->max('revision_number');
-	return $max;
+	return $max ? $max : '00000000';
 }
 
 /**
@@ -83,6 +83,44 @@ function jr_salesman($code)
 {
 	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$code)->first();
 	return $salesman ? $salesman->jr_salesman_name : '';
+}
+
+/**
+ * Get salesman van
+ * @param unknown $code
+ * @return string
+ */
+function salesman_van($code)
+{
+	$prepare = DB::table('app_salesman')
+						->select(['app_salesman_van.van_code'])
+						->leftJoin('app_salesman_van',function($join){
+							$join->on('app_salesman_van.salesman_code','=','app_salesman.salesman_code');
+							$join->where('app_salesman_van.status','=','A');
+						})
+						->where('app_salesman.salesman_code',$code);
+	 
+	$salesman = $prepare->first();
+	return $salesman ? $salesman->van_code: '';
+}
+
+/**
+ * Get salesman van
+ * @param unknown $code
+ * @return string
+ */
+function van_salesman($code)
+{
+	$prepare = DB::table('app_salesman')
+				->select(['app_salesman.salesman_code'])
+				->leftJoin('app_salesman_van',function($join){
+					$join->on('app_salesman_van.salesman_code','=','app_salesman.salesman_code');
+					$join->where('app_salesman_van.status','=','A');
+				})
+				->where('app_salesman_van.van_code',$code);
+
+	$salesman = $prepare->first();
+	return $salesman ? $salesman->salesman_code: '';
 }
 
 /**

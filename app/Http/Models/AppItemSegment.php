@@ -12,5 +12,5 @@ class AppItemSegment extends ModelCore
 	 */
 	protected $table = 'app_item_segment';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

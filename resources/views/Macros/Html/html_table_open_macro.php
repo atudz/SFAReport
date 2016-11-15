@@ -27,6 +27,15 @@ Html::macro('topen', function($options=[]) {
 				      	</div>';
 	}
 	
+	if(isset($options['edit_link']))
+	{
+		$hide = isset($options['edit_hide']) ? $options['edit_hide'] : '';
+		$html .= '
+						<div class="pull-left" style="padding:0px 5px 0px 5px">
+							<a href="'.$options['edit_link'].'" class="btn btn-info btn-sm '.$hide.'">Edit</a>
+				      	</div>';
+	}
+	
 	if(isset($options['save_controller']))
 	{
 		$html .= '

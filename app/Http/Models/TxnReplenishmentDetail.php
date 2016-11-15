@@ -12,7 +12,9 @@ class TxnReplenishmentDetail extends ModelCore
 	 */
 	protected $table = 'txn_replenishment_detail';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
+	
+	protected $primaryKey = 'replenishment_detail_id';
 	
 	/**
 	 * This models' relation to replenishment

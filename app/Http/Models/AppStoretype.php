@@ -12,5 +12,5 @@ class AppStoretype extends ModelCore
 	 */
 	protected $table = 'app_storetype';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

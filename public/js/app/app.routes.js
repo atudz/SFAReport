@@ -63,6 +63,21 @@
 					controller: 'FlexiDeal',
 					//controllerAs: 'vic'*/
 				})
+				.when('/vaninventory.replenishment',{
+					templateUrl: '/reports/replenishment',
+					controller: 'Replenishment',
+					//controllerAs: 'vic'*/
+				})
+				.when('/replenishment.add',{
+					templateUrl: '/reports/replenishment/add',
+					controller: 'ReplenishmentAdd',
+					//controllerAs: 'vic'*/
+				})
+				.when('/replenishment.edit/:id',{
+					templateUrl: function(params){ return '/reports/replenishment/edit/'+params.id},
+					controller: 'ReplenishmentAdd',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report

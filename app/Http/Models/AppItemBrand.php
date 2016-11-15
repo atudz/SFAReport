@@ -12,5 +12,5 @@ class AppItemBrand extends ModelCore
 	 */
 	protected $table = 'app_item_brand';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 }

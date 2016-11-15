@@ -284,6 +284,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
 			case 'flexideal':
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
     	}
     }
     
@@ -361,6 +363,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
+    	
     	$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
@@ -801,8 +804,7 @@ class ReportsPresenter extends PresenterCore
     			collection.collection_header_id,
 				collection.collection_detail_id,
     			collection.return_header_id,
-    			collection.updated,
-    			collection.salesman_code
+    			collection.updated
     
     			';
     	
@@ -5590,12 +5592,14 @@ class ReportsPresenter extends PresenterCore
     /**
      * Get Item Lists
      */
-    public function getItems()
+    public function getItems($oderByItemCode=false)
     {
-    	return \DB::table('app_item_master')
-		    			->where('status','=','A')
-		    			->orderBy('description')
-		    			->lists('description','item_code');
+    	$prepare = \DB::table('app_item_master')->where('status','=','A');
+    	if($oderByItemCode)
+    		$prepare->orderBy('item_code');
+    	else
+    		$prepare->orderBy('description');
+    	return $prepare->lists('description','item_code');
     }
     
     /**
@@ -6004,6 +6008,10 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Flexi Deal Report';
 				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
 				$filename = 'Flexi Deal Report';
+				break;
+				
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
 				break;
     		default:
     			return;
@@ -6628,6 +6636,10 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
 				$total = $prepare->count();
 				break;
+			case 'replenishment':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
+				$total = $prepare->count();
+				break;
     		default:
     			return;
     	}
@@ -6939,9 +6951,8 @@ class ReportsPresenter extends PresenterCore
     	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
     	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
     	$name = $this->request->get('customer_name') ? $this->request->get('customer_name') : 'All';
-		$jrSalesman = ModelFactory::getInstance('User');
-		$jrSalesman = $jrSalesman->where('salesman_code', 'Like', '%' . $this->request->get('salesman') . '-%')->where('status', 'A')->first();
-		$filters = [
+    	
+    	$filters = [
     			'Invoice Date' => $invoiceDate,
     			'Collection Date' => $collectiontDate,
     			'Invoice #' => $invoice,
@@ -6949,7 +6960,6 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Customer Name' => $name,
     			'Salesman' => $salesman,
-				'Jr. Salesman' => ($jrSalesman) ? $jrSalesman->full_name . ' - ' . $jrSalesman->salesman_code: null,
     			'Posting Date' => $postingDate,
     	];
     	
@@ -6958,7 +6968,7 @@ class ReportsPresenter extends PresenterCore
     		unset($filters['Posting Date']);
     		$filters['Previous Invoice Date'] = $postingDate;
     	}
-
+    	 
     
     	return $filters;
     }
