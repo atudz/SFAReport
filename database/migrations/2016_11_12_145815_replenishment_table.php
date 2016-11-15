@@ -23,6 +23,8 @@ class ReplenishmentTable extends Migration
     		$table->string('last_cs')->nullable();
     		$table->string('last_dr')->nullable();
     		$table->string('last_ddr')->nullable();
+    		$table->text('remarks')->nullable();
+    		$table->softDeletes();    		
     	});
     }
 

@@ -21,17 +21,18 @@
 				<div class="col-md-12 well">
 					<div class="row">															
 						<div class ="col-md-8">
+							<input id="id" type="hidden" name="id" value="{{(int)$replenishment->id}}">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->rep->van_code))!!}
+								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->rep ? $replenishment->rep->van_code : null))!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->rep->van_code))!!}
+								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->rep ? $replenishment->rep->van_code : null))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->rep->van_code))!!}
+								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->rep ? $replenishment->rep->van_code: null))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->rep->replenishment_date)!!}
+								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->rep ? $replenishment->rep->replenishment_date : null)!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_num,['onblur'=>'validate(this)'])!!}
@@ -49,10 +50,10 @@
 								{!!Html::input('text','last_rprr','Last RPRR <span class="required">*</span>',$replenishment->last_rprr,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_cash_slip','Last Cash Slip <span class="required">*</span>',$replenishment->last_cs,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_cs','Last Cash Slip <span class="required">*</span>',$replenishment->last_cs,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','last_delivery_receipt','Last Delivery Receipt <span class="required">*</span>',$replenishment->last_dr,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','last_dr','Last Delivery Receipt <span class="required">*</span>',$replenishment->last_dr,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','last_ddr','Last DDR <span class="required">*</span>',$replenishment->last_ddr,['onblur'=>'validate(this)'])!!}
@@ -69,13 +70,14 @@
 										<th>Material Code</th>
 										<th>Material Description</th>
 										<th>Material Quantity</th>
+										<th>&nbsp;</th>
 									</tr>
 								</thead>
 								<tbody>
 									
 									@if($replenishment->rep && $replenishment->rep->details)
 										@foreach($replenishment->rep->details as $k=>$item)
-											<tr @if($k+1 == count($replenishment->rep->details)) ng-repeat="row in rows" @endif>
+											<tr>
 												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-8">
@@ -98,10 +100,13 @@
 						 								</div>
 						 							</div>
 												</td>
+												<td>
+													<button class="btn btn-primary" uib-tooltip="Delete" onclick="removeTd(this)"><i class="fa fa-trash"></i></button>	
+												</td>
 											</tr>
 										@endforeach
 									@else
-										<tr ng-repeat="row in rows">
+										<tr>
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-8">
@@ -124,14 +129,17 @@
 					 								</div>
 					 							</div>
 											</td>
+											<td>
+												<button class="btn btn-primary" uib-tooltip="Delete" onclick="removeTd(this)"><i class="fa fa-trash"></i></button>
+											</td>
 										</tr>
 									@endif
 								</tbody>
 								<tfoot>
 									<tr>
-										<td colspan="3">
+										<td colspan="4">
 											<div class="text-center">
-												<button class="btn btn-info" ng-click="add()">Add More</button>&nbsp;&nbsp;
+												<button class="btn btn-info" onclick="addTd()">Add More</button>&nbsp;&nbsp;
 											</div>
 										</td>
 									</tr>
@@ -140,9 +148,12 @@
 						</div>
 					</div>
 					
-					<div class="col-md-4 col-md-offset-3" style="padding-top:10px;">
-						<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;
-						<a href="#vaninventory.replenishment" class="btn btn-warning">Cancel</a>
+					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
+						<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
+						<a href="#vaninventory.replenishment" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
+						@if($replenishment->id)
+							<button class="btn btn-danger" ng-click="remove()">Delete</button>&nbsp;&nbsp;
+						@endif
 					</div>															
 			</div>		
 		</div>
@@ -150,16 +161,48 @@
 </div>
 
 
+<script type="text/ng-template" id="DeleteActualcount">
+ 	<div class="modal-body">
+		<form class="form-horizontal">	 
+			<h4>Deleting Acount Count Replenishment - [[params.reference_num]]</h4>       		 
+			<div class="form-group">
+				<label class="col-sm-3">Remarks:</label>
+				<div class="col-sm-9">
+					<textarea class="form-control inner-addon fxresize" maxlength="150" name="comment" rows="5" id="comment" onblur="validate(this)"></textarea>
+					<span class="help-block"></span>
+				</div>
+			</div>						  
+			<div class="form-group">
+				<div class="col-sm-12">
+					<div class="pull-right">	
+						<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+						<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+					</div>
+				</div>
+			</div>
+		</form>										 					
+	</div>			    			
+</script>
+    		
 <script>
 	$(document).ready(function(){
 		$('select[name^="item_code"]').each(function(){
 			setItem($(this));
 		});
-
-		$('input[name^=quantity]').keyup(function(){
-			console.log($(this).val());
-		});		
 	});
+
+
+	function addTd() {
+		var tr = $('#table_items > tbody > tr:last').clone();
+		$('#table_items > tbody > tr:last').after(tr);
+		
+	}
+	
+	function removeTd(item) {
+		var length = $('#table_items > tbody > tr').length;
+		if(length > 1)
+			$(item).parent().parent().detach();
+	}
 	
 	function setItem(el)
 	{

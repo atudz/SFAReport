@@ -305,13 +305,18 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function getReplenishmentReport()
     {    	    	
-    	if(!$this->request->get('salesman_code') && !$this->request->get('replenishment_date_from') && !$this->request->get('reference_number'))
-    		return response()->json(['records'=>0,'total'=>0]);
-    	
     	$prepare = $this->getPreparedRelenishment();
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
+    	
+    	$reference = '';
+    	if($data['total'])
+    	{
+    		foreach($data['records'] as $row)
+    			$reference = $row->reference_num;
+    	}
+    	$data['reference_num'] = $reference;
     	return response()->json($data);
     }
     
@@ -639,6 +644,7 @@ class VanInventoryPresenter extends PresenterCore
     public function getPreparedRelenishment()
     {
     	$select = '
+    			replenishment.reference_num,
     			txn_replenishment_detail.item_code,
     			app_item_master.description,
     			txn_replenishment_detail.quantity,
@@ -688,6 +694,9 @@ class VanInventoryPresenter extends PresenterCore
 //     		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
 //     		$prepare->whereIn('salesman_area.area_code',$codes);
 //     	}
+
+		if(!$this->request->get('salesman_code') && !$this->request->get('replenishment_date_from') && !$this->request->get('reference_number'))
+			return $prepare->where('replenishment.id',0);
     		
     	return $prepare;
     }

@@ -14,6 +14,8 @@ class TxnReplenishmentDetail extends ModelCore
 	
 	public $timestamps = false;
 	
+	protected $primaryKey = 'replenishment_detail_id';
+	
 	/**
 	 * This models' relation to replenishment
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

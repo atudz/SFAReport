@@ -15,7 +15,7 @@
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
 				
-				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>$isGuest1,'add_link'=>'replenishment.add','edit_link'=>'replenishment.edit/A1'])!!}
+				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>$isGuest1,'add_link'=>'replenishment.add','edit_link'=>'[[editUrl]]','edit_hide'=>'[[editHide]]'])!!}
 					{!!Html::theader($tableHeaders)!!}
 					<tbody>
 						<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>							

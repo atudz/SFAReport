@@ -94,6 +94,7 @@ Route::group(['prefix' => 'controller'],function(){
 	
 	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
 	Route::post('/vaninventory/replenishment', ['as'=>'replenishment-save', 'uses'=>'VanInventoryController@saveReplenishment']);
+	Route::post('/vaninventory/replenishment/delete/{id}', ['as'=>'replenishment-delete', 'uses'=>'VanInventoryController@deleteReplenishment']);
 
 });
 

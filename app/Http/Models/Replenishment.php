@@ -3,9 +3,13 @@
 namespace App\Http\Models;
 
 use App\Core\ModelCore;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Replenishment extends ModelCore
 {
+	
+	use SoftDeletes;
+	
 	protected $table = 'replenishment';
 	
 	protected $fillable = [

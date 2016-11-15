@@ -14,6 +14,8 @@ class TxnReplenishmentHeader extends ModelCore
 	
 	public $timestamps = false;
 	
+	protected $primaryKey = 'replenishment_header_id';
+	
 	/**
 	 * This model's relation to salesman van
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

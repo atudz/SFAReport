@@ -199,6 +199,11 @@
 	
 	function Replenishment($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
+		
+		$scope.editHide = 'hidden'
+		$scope.url = '#replenishment.edit/';
+		$scope.editUrl = '';
+		
 	    var params = [
 	    		  'salesman_code',		          
 		          'replenishment_date_from',
@@ -217,9 +222,6 @@
 	app.controller('ReplenishmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', ReplenishmentAdd]);
 
 	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
-
-		$scope.counter = 1;
-		$scope.rows = [$scope.counter];
 		
 		$scope.save = function (){
 			var hasError = false;
@@ -249,11 +251,12 @@
 					'confirmed': $('#confirmed').val(),
 					'last_sr': $('#last_sr').val(),
 					'last_rprr': $('#last_rprr').val(),
-					'last_cs': $('#last_cash_slip').val(),
-					'last_dr': $('#last_delivery_receipt').val(),
+					'last_cs': $('#last_cs').val(),
+					'last_dr': $('#last_dr').val(),
 					'last_ddr': $('#last_ddr').val(),
 					'item_code': items,
-					'quantity': quantities
+					'quantity': quantities,
+					'id': $('#id').val()
 				};
 				
 				API.save(params).$promise.then(function(data){
@@ -276,12 +279,59 @@
 		}
 		
 		
-		$scope.add = function () {
-			$scope.counter++;
-			console.log($scope.counter);
-			$scope.rows.push($scope.counter);
+		$scope.remove = function () {			
+			var params = { id:$('#id').val(), reference_num: $('#reference_num').val() };
+			var modalInstance = $uibModal.open({
+			 	animation: true,
+			 	scope: $scope,
+				templateUrl: 'DeleteActualcount',
+				controller: 'ReplenishmentDelete',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
 		}
 	};
+	
+
+	/**
+	 * Van Inventory Replenishment Delete
+	 */
+	app.controller('ReplenishmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',ReplenishmentDelete]);
+	
+	function ReplenishmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+		$scope.params = params;
+		
+		$scope.save = function (){			
+			var API = $resource('controller/vaninventory/replenishment/delete/'+$scope.params.id);
+			var params = {
+				    'remarks': $('#comment').val()					
+				};
+			
+			API.save(params).$promise.then(function(data){
+				$location.path('vaninventory.replenishment');
+			}, function(error){
+				if(error.data){
+					$log.info(error);
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						$('[id='+index+']').next('.help-block').html(val);
+						$('[id='+index+']').parent().parent().addClass('has-error');												
+					});
+				}
+			});
+			
+		}
+		
+		$scope.cancel = function (){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
+
 	
 	/**
 	 * User List controller
@@ -893,6 +943,22 @@
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
 			    }
+				else if(report == 'replenishment' && !$.trim(params[val]))
+				{
+					if(val.indexOf('_from') != -1){
+						$('#'+val).parent().next('span').html('This field is required.');
+					} else {
+						$('#'+val).next('span').html('This field is required.');
+					}					
+					hasError = true;
+				} else {
+					if(val.indexOf('_from') != -1){
+						$('#'+val).parent().next('span').html('');
+					} else {
+						$('#'+val).next('span').html('');
+					}
+				}
+				
 
 			});
 			//log.info(params);
@@ -913,6 +979,11 @@
 			    		TableFix.tableload();
 			    	}
 			    	togglePagination(data.total);
+			    	
+			    	if(report == 'replenishment' && data.reference_num){
+			    		scope.editHide = '';
+			    		scope.editUrl = scope.url + data.reference_num;
+			    	}
 			    });
 			}
 
@@ -935,6 +1006,12 @@
 					angular.element($('#'+val)).scope().setTo(new Date());
 				}
 				params[val] = '';
+				
+				if(val.indexOf('_from') != -1){
+					$('#'+val).parent().next('span').html('');
+				} else {
+					$('#'+val).next('span').html('');
+				}
 			});
 			//log.info(filter);
 			$('p[id$="_error"]').addClass('hide');
