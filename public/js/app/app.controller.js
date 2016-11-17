@@ -2298,6 +2298,192 @@
 		// Download report
 		downloadReport($scope, $uibModal, $resource, $window, 'summaryofincidentsreport', params, $log);
 	}
+
+	/**
+	 * Admin User Guide.
+	 */
+	app.controller('AdminUserGuide', ['$scope', '$resource', '$window', '$http', AdminUserGuide]);
+
+	function AdminUserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/adminUserGuide');
+		$scope.error = false;
+		$scope.success = false;
+		changeState($scope);
+		Userguide('Admin', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Auditor User Guide.
+	 */
+	app.controller('AuditorUserGuide', ['$scope', '$resource', '$window', '$http', AuditorUserGuide]);
+
+	function AuditorUserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/auditorUserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Auditor', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Accounting in Charge User Guide.
+	 */
+	app.controller('AccountingInChargeUserGuide', ['$scope', '$resource', '$window', '$http', AccountingInChargeUserGuide]);
+
+	function AccountingInChargeUserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/accountingInChargeUserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Accounting in charge', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Van Salesman User Guide.
+	 */
+	app.controller('VanSalesmanUserGuide', ['$scope', '$resource', '$window', '$http', VanSalesmanUserGuide]);
+
+	function VanSalesmanUserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/vanSalesmanUserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Van Salesman', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Manager User Guide.
+	 */
+	app.controller('ManagerUserGuide', ['$scope', '$resource', '$window', '$http', ManagerUserGuide]);
+
+	function ManagerUserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/managerUserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Manager', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Guest1 User Guide.
+	 */
+	app.controller('Guest1UserGuide', ['$scope', '$resource', '$window', '$http', Guest1UserGuide]);
+
+	function Guest1UserGuide($scope, $resource, $window, $http) {
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/guest1UserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Guest1', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * Guest2 User Guide.
+	 */
+	app.controller('Guest2UserGuide', ['$scope', '$resource', '$window', '$http', Guest2UserGuide]);
+
+	function Guest2UserGuide($scope, $resource, $window, $http) {
+
+		$scope.user = $window.user;
+		$scope.API = $resource('/reports/getdata/guest2UserGuide');
+		$scope.error = false;
+		$scope.success = false;
+
+		changeState($scope);
+		Userguide('Guest2', $scope, $http);
+		setTimeoutUserGuide();
+	};
+
+	/**
+	 * This function will handle the file upload in User Guide.
+	 */
+	function uploadFile(type, file, scope, http) {
+		scope.error = false;
+		scope.success = false;
+		http.post('/controller/user/userguide/file/' + type, file, {
+			withCredentials: true,
+			headers: {'Content-Type': undefined},
+			transformRequest: angular.identity
+		}).success(function (data) {
+			window.location.href = window.location.href + "?reload";
+			window.location.reload();
+		}).error(function (data) {
+			var userGuideErrorList = '<ul class="text-left"><li>Error in uploading file.</li></ul>';
+			$('#error_user_guide').html(userGuideErrorList);
+			scope.error = true;
+		});
+	};
+
+	/**
+	 * Remove the string in url of User Guide.
+	 */
+	function changeState(scope) {
+		if (window.location.href.indexOf("?reload") !== -1) {
+			var url = window.location.href;
+			setTimeout(function () {
+				if (typeof (history.pushState) !== "undefined") {
+					history.pushState({}, '', url.substr(0, url.length - 7));
+				}
+			}, 0);
+			scope.success = true;
+		}
+	}
+
+	/**
+	 * This function will handle the fading out in User Guide success message.
+	 */
+	function Userguide(type, scope, http) {
+		scope.readFile = function (files) {
+			$('#divSuccess').addClass('ng-hide');
+			var fd = new FormData();
+			//Take the first selected file
+			fd.append("file", files[0]);
+			scope.file = fd;
+			$('#downloadFile, #lblUpload').addClass('hidden');
+			$('#userGuideFile, #submitFile').removeClass('hidden');
+
+		};
+
+		scope.resetFile = function () {
+			scope.file = '';
+			$('#userGuideFile').val('');
+			$('#downloadFile, #lblUpload').removeClass('hidden');
+			$('#userGuideFile, #submitFile').addClass('hidden');
+
+		};
+
+		scope.submit = function () {
+			uploadFile(type, scope.file, scope, http);
+		}
+	}
+
+
+	function setTimeoutUserGuide() {
+		setTimeout(function () {
+			$('#divSuccess').addClass('fade');
+		}, 2000)
+		setTimeout(function () {
+			$('#divSuccess').addClass('ng-hide');
+		}, 2200)
+	}
+
 	/**
 	 * Save user profile
 	 */
@@ -2691,6 +2877,9 @@
 							$("#table_success").slideUp(500);
 						});
 				    });
+					break;
+				case 'guide':
+					console.log('test');
 					break;
 			}
 
