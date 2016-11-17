@@ -5673,7 +5673,7 @@ class ReportsPresenter extends PresenterCore
     			}
     			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned');
-	    		$header = 'Van Inventory and History Report';
+	    		$header = 'Canned & Mixes Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
@@ -5693,7 +5693,7 @@ class ReportsPresenter extends PresenterCore
     			}
     			
 	    		$rows = $this->getVanInventorySelectColumns('frozen');
-	    		$header = 'Van Inventory and History Report';
+	    		$header = 'Frozen & Kassel Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
     			break; 
