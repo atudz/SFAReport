@@ -48,6 +48,95 @@ class UserPresenter extends PresenterCore
 	}
 
 	/**
+	 * This function will query a role og a user with file as a relationship.
+	 * @param $role
+	 * @return mixed
+     */
+	public function getRoleWithFile($role)
+	{
+		$userRole = ModelFactory::getInstance('UserGroup');
+
+		return $userRole->whereName($role)->with('file')->first();
+	}
+
+	/**
+	 * This function will view the admin user guide.
+	 * @return mixed
+     */
+	public function adminUserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Admin');
+
+		return $this->view('adminUserGuide');
+	}
+
+	/**
+	 * This function will view the auditor user guide.
+	 * @return mixed
+     */
+	public function auditorUserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Auditor');
+
+		return $this->view('auditorUserGuide');
+	}
+
+	/**
+	 * This function will view the accounting in charge user guide.
+	 * @return mixed
+     */
+	public function accountingInChargeUserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Accounting in charge');
+
+		return $this->view('accountingInChargeUserGuide');
+	}
+
+	/**
+	 * This function will view the van salesman user guide.
+	 * @return mixed
+     */
+	public function vanSalesmanUserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Van Salesman');
+
+		return $this->view('vanSalesmanUserGuide');
+	}
+
+	/**
+	 * This function will view the guest1 user guide.
+	 * @return mixed
+	 */
+	public function managerUserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Manager');
+
+		return $this->view('managerUserGuide');
+	}
+
+	/**
+	 * This function will view the guest1 user guide.
+	 * @return mixed
+     */
+	public function guest1UserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Guest1');
+
+		return $this->view('guest1UserGuide');
+	}
+
+	/**
+	 * This function will view the guest2 user guide.
+	 * @return mixed
+     */
+	public function guest2UserGuide()
+	{
+		$this->view->role = $this->getRoleWithFile('Guest2');
+
+		return $this->view('guest2UserGuide');
+	}
+
+	/**
 	 * Return User Group Rights view
 	 * @param string $type
 	 * @return string The rendered html view

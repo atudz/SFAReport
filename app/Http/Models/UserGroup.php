@@ -60,5 +60,13 @@ class UserGroup extends ModelCore
 	{
 		return $query->where('name','=','user');
 	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+	 */
+	public function file()
+	{
+		return $this->morphOne('App\Http\Models\File', 'fileable');
+	}
 	
 }

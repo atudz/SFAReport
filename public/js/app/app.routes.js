@@ -163,6 +163,41 @@
 					controller: 'SummaryOfIncidentReport'
 					/*controllerAs: 'sync'*/
 				})
+				.when('/adminuser.guide', {
+					templateUrl: '/user/adminUserGuide',
+					controller: 'AdminUserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/auditoruser.guide', {
+					templateUrl: '/user/auditorUserGuide',
+					controller: 'AuditorUserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/accountinginchargeuser.guide', {
+					templateUrl: '/user/accountingInChargeUserGuide',
+					controller: 'AccountingInChargeUserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/vansalesmanuser.guide', {
+					templateUrl: '/user/vanSalesmanUserGuide',
+					controller: 'VanSalesmanUserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/manageruser.guide', {
+					templateUrl: '/user/managerUserGuide',
+					controller: 'ManagerUserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/guest1user.guide', {
+					templateUrl: '/user/guest1UserGuide',
+					controller: 'Guest1UserGuide'
+					/*controllerAs: 'sync'*/
+				})
+				.when('/guest2user.guide', {
+					templateUrl: '/user/guest2UserGuide',
+					controller: 'Guest2UserGuide'
+					/*controllerAs: 'sync'*/
+				})
 				.when('/profile.changepassword',{
 					templateUrl: '/changepass',
 					controller: 'ChangePassword',
