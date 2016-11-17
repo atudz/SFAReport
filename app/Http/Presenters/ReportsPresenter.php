@@ -6665,7 +6665,7 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Salesman' => $salesman,
     			'Area' => $area,
-    			'Month' => $invoice,
+    			'Month Description' => $invoice,
     	];
     
     	return $filters;
