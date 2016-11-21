@@ -5820,6 +5820,21 @@ class ReportsPresenter extends PresenterCore
 	    					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
 	    				}
 	    			}
+	    			elseif ($report == 'salescollectionreport') {
+	    				$sheet->setColumnFormat([
+	    						'X' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'V' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'R' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'D' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+	    				]);
+	    			}
+	    			elseif ($report == 'salescollectionposting') {
+	    				$sheet->setColumnFormat([	    						
+	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'F' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+	    				]);
+	    			}
 	    				
 	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
