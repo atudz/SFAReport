@@ -6074,36 +6074,32 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-
+    	  
     	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
-	    			if ($report == 'bir') {
-	    				foreach ($records as &$record) {
-	    					$sheet->setColumnFormat([
-	    							'A' => 'MM/DD/YYYY'
-	    					]);
-	    					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
-	    				}
-	    			}
-	    			elseif ($report == 'salescollectionreport') {
-	    				$sheet->setColumnFormat([
-	    						'X' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-	    						'V' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-	    						'R' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-	    						'D' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-	    				]);
-	    			}
-	    			elseif ($report == 'salescollectionposting') {
-	    				$sheet->setColumnFormat([	    						
-	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-	    						'F' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-	    				]);
-	    			}
-	    				
-	    			$params['columns'] = $columns;
+
+					$datas = ($records) ? $records : $current;
+					if ($report == 'vaninventorycanned' || $report == 'vaninventoryfrozen') {
+						$records = $this->formatExcelColumn($report, $datas, $sheet);
+					} else {
+						$this->formatExcelColumn($report, $datas, $sheet);
+					}
+					if ($report == 'salescollectionreport') {
+						$sheet->setColumnFormat([
+							'X' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+							'V' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+							'D' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+						]);
+					} elseif ($report == 'salescollectionposting') {
+						$sheet->setColumnFormat([
+							'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+							'F' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+						]);
+					}
+
+					$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
 	    			$params['records'] = $records;
