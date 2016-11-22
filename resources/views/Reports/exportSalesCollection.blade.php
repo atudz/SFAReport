@@ -135,7 +135,7 @@
 						<td align="left" style="wrap-text:true">
 							@if(is_object($record) && isset($record->$row))
 								@if(false !== strpos($row,'date') && $record->$row)
-									{{ date('m/d/Y', strtotime($record->$row)) }}
+									{{ $record->$row }}
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@else
@@ -143,7 +143,7 @@
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
-									{{ date('m/d/Y', strtotime($record[$row])) }}
+									{{ $record[$row] }}
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@else
