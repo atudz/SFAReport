@@ -40,12 +40,10 @@
 								@if($row == 'from' && $report == 'stockaudit')
 									{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }} 
 								@elseif(false !== strpos($row,'date') && $record->$row)
-									@if($report == 'bir')
-										{{ $record->$row }}
-									@elseif($report == 'stocktransfer')
+									@if($report == 'stocktransfer')
 										{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
 									@else
-										{{ date('m/d/Y', strtotime($record->$row)) }}
+										{{ $record->$row }}
 									@endif
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
@@ -58,12 +56,10 @@
 								@if($row == 'from' && $report == 'stockaudit')
 									{{ format_date($record['from'], 'M d') }} - {{ format_date($record['to'], 'M d Y') }}
 								@elseif(false !== strpos($row,'date') && $record[$row])
-									@if($report == 'bir')
-										{{ $record[$row] }}
-									@elseif($report == 'stocktransfer')
+									@if($report == 'stocktransfer')
 										{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
 									@else	
-										{{ date('m/d/Y', strtotime($record[$row])) }}
+										{{ $record[$row] }}
 									@endif
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	

@@ -6064,13 +6064,11 @@ class ReportsPresenter extends PresenterCore
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
-					if ($report == 'bir') {
-						foreach ($records as &$record) {
-							$sheet->setColumnFormat([
-								'A' => 'MM/DD/YYYY'
-							]);
-							$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
-						}
+					$datas = ($records) ? $records : $current;
+					if ($report == 'vaninventorycanned' || $report == 'vaninventoryfrozen') {
+						$records = $this->formatExcelColumn($report, $datas, $sheet);
+					} else {
+						$this->formatExcelColumn($report, $datas, $sheet);
 					}
 					$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
@@ -6951,7 +6949,9 @@ class ReportsPresenter extends PresenterCore
     	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
     	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
     	$name = $this->request->get('customer_name') ? $this->request->get('customer_name') : 'All';
-    	
+		$jrSalesman = ModelFactory::getInstance('User');
+		$jrSalesman = $jrSalesman->where('salesman_code', 'Like', '%' . $this->request->get('salesman') . '-%')->where('status', 'A')->first();
+
     	$filters = [
     			'Invoice Date' => $invoiceDate,
     			'Collection Date' => $collectiontDate,
@@ -6960,7 +6960,8 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Customer Name' => $name,
     			'Salesman' => $salesman,
-    			'Posting Date' => $postingDate,
+				'Jr. Salesman' => ($jrSalesman) ? $jrSalesman->full_name . ' - ' . $jrSalesman->salesman_code: null,
+				'Posting Date' => $postingDate,
     	];
     	
     	if($collection)
@@ -7352,4 +7353,210 @@ class ReportsPresenter extends PresenterCore
 		return response()->json(['sync_data' => $value]);
 	}
 
+	/**
+	 * This function will format the value to excel form.
+	 * @param $report
+	 * @param $records
+	 * @param $sheet
+	 * @return mixed
+     */
+	private function formatExcelColumn($report, $records, $sheet)
+	{
+		switch ($report) {
+			case 'materialpricelist':
+				$sheet->setColumnFormat([
+					'G:H' => 'MM/DD/YYYY',
+					'J'   => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'salesmanlist':
+				$sheet->setColumnFormat([
+					'F' => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'customerlist':
+				$sheet->setColumnFormat([
+					'N' => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'returnperpeso':
+				$sheet->setColumnFormat([
+					'N:O' => 'MM/DD/YYYY',
+					'P:Q' => '0,0.00',
+					'R'   => '0%',
+					'S'   => '0,0.00',
+					'T'   => '0%',
+					'U'   => '0,0.00',
+					'X'   => '0,0.00',
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'returnpermaterial':
+				$sheet->setColumnFormat([
+					'N:O' => 'MM/DD/YYYY',
+					'V:W' => '0,0.00',
+					'X'   => '0%',
+					'Y'   => '0,0.00',
+					'Z'   => '0%',
+					'AA'  => '0,0.00',
+					'AD'  => '0,0.00',
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'unpaidinvoice':
+				$sheet->setColumnFormat([
+					'H'   => 'MM/DD/YYYY',
+					'I:J' => '0,0.00',
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'salescollectionsummary':
+				$sheet->setColumnFormat([
+					'D'   => 'MM/DD/YYYY',
+					'E:G' => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'salescollectionposting':
+				$sheet->setColumnFormat([
+					'G'   => '0,0.00',
+					'H:I' => 'MM/DD/YYYY',
+					'K'   => '0,0.00',
+					'L:M' => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'salescollectionreport':
+				$sheet->setColumnFormat([
+					'F'     => 'MM/DD/YYYY',
+					'G:J'   => '0,0.00',
+					'L'     => '0,0.00',
+					'N:Q'   => '0,0.00',
+					'R'     => 'MM/DD/YYYY',
+					'T:U'   => '0,0.00',
+					'X'     => 'MM/DD/YYYY',
+					'AA:AB' => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'bir':
+				$sheet->setColumnFormat([
+					'A'   => 'MM/DD/YYYY',
+					'H'   => '0,0.00',
+					'J:O' => '0,0.00',
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'salesreportperpeso':
+				$sheet->setColumnFormat([
+					'R'   => '0%',
+					'T'   => '0%',
+					'P:Q' => '0,0.00',
+					'S'   => '0,0.00',
+					'U'   => '0,0.00',
+					'X'   => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'vaninventoryfrozen':
+			case 'vaninventorycanned':
+				$sheet->setColumnFormat([
+					'B' => 'MM/DD/YYYY',
+					'E' => 'MM/DD/YYYY',
+					'G' => 'MM/DD/YYYY',
+				]);
+				$records = $this->formatValueExcelVanInventory($records);
+				break;
+		}
+
+		return $records;
+	}
+
+	/**
+	 * This function will format the value for excel data.
+	 * @param $report
+	 * @param $records
+	 */
+	private function formatValueForExcel($report, $records)
+	{
+		foreach ($records as &$record) {
+			switch ($report) {
+				case 'bir':
+					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
+					break;
+				case 'salescollectionreport':
+					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
+					break;
+				case 'salescollectionposting':
+					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
+					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
+					break;
+				case 'returnpermaterial':
+				case 'returnperpeso':
+					$record->return_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_date));
+					$record->return_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_posting_date));
+					break;
+				case 'materialpricelist':
+					$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_to));
+					$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_from));
+					break;
+			}
+			switch ($report) {
+				case 'salesreportperpeso':
+				case 'returnperpeso':
+				case 'returnpermaterial':
+					$record->discount_rate = ($record->discount_rate) ? $record->discount_rate / 100 : 0;
+					$record->collective_discount_rate = ($record->collective_discount_rate) ? $record->collective_discount_rate / 100 : 0;
+					break;
+				case 'materialpricelist':
+				case 'customerlist':
+				case 'salesmanlist':
+					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->sfa_modified_date));
+					break;
+				case 'salescollectionreport':
+				case 'salescollectionposting':
+				case 'salescollectionsummary':
+				case 'unpaidinvoice':
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+					break;
+			}
+			switch ($report) {
+				case 'salescollectionreport':
+				case 'salescollectionposting':
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					break;
+			}
+		}
+	}
+
+	/**
+	 * This function will format the value for excel data in van inventory report.
+	 * @param $records
+	 * @return mixed
+	 */
+	private function formatValueExcelVanInventory($records)
+	{
+		foreach ($records as &$record) {
+			if (is_array($record) && array_key_exists('invoice_date', $record)) {
+				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['invoice_date']));
+			} elseif (isset($record->invoice_date)) {
+				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+			}
+			if (is_array($record) && array_key_exists('transaction_date', $record)) {
+				$record['transaction_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['transaction_date']));
+			} elseif (isset($record->transaction_date)) {
+				$record->transaction_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->transaction_date));
+			}
+			if (is_array($record) && array_key_exists('replenishment_date', $record)) {
+				$record['replenishment_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['replenishment_date']));
+			} elseif (isset($record->replenishment_date)) {
+				$record->replenishment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->replenishment_date));
+			}
+		}
+
+		return $records;
+	}
 }
