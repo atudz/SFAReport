@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
 use Mockery\Exception;
 use PHPExcel_Shared_Date;
-use PHPExcel_Style_NumberFormat;
 
 class ReportsPresenter extends PresenterCore
 {
