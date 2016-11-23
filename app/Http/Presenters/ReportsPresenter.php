@@ -10,6 +10,7 @@ use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
+use Mockery\Exception;
 use PHPExcel_Shared_Date;
 
 class ReportsPresenter extends PresenterCore
@@ -173,6 +174,7 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->title = 'Canned & Mixes';
     			$this->view->salesman = $this->getSalesman(true);
+				$this->view->auditor = $this->getAuditor();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
@@ -180,6 +182,7 @@ class ReportsPresenter extends PresenterCore
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
+    			$this->view->auditor = $this->getAuditor();
     			$this->view->salesman = $this->getSalesman(true);
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
@@ -272,7 +275,17 @@ class ReportsPresenter extends PresenterCore
     		case 'userlist':
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
-                return PresenterFactory::getInstance('User')->getUserGroup();	
+                return PresenterFactory::getInstance('User')->getUserGroup();
+			case 'summaryofincidentreport':
+				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
+			case 'stockaudit':
+				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
+			case 'flexideal':
+				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
     	}
     }
     
@@ -350,7 +363,8 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
-		$data['records'] = $this->validateInvoiceNumber($result);
+    	
+    	$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
     	if($summary1)
@@ -525,6 +539,18 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
+	    		   IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    			) customer_address,
 				   remarks.remarks,    			   
 				   sotbl.invoice_number,
 				   sotbl.so_date invoice_date,
@@ -721,7 +747,7 @@ class ReportsPresenter extends PresenterCore
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
-					) coltbl on coltbl.invoice_number = sotbl.invoice_number and coltbl.salesman_code = tas.salesman_code
+					) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
@@ -742,6 +768,7 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
+    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -881,6 +908,18 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
+	    		   IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    			) customer_address,
 				   remarks.remarks,    			   
 				   ti.invoice_number,
     			   ti.invoice_date,
@@ -1078,7 +1117,7 @@ class ReportsPresenter extends PresenterCore
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
-					) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+					) coltbl on coltbl.reference_num = tas.reference_num
 			
 					join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 	    			left join
@@ -1099,6 +1138,7 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
+    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -1259,7 +1299,8 @@ class ReportsPresenter extends PresenterCore
     			}
     		}
     	}
-		$data['records'] = $this->validateInvoiceNumber($records);
+    	    	
+    	$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
@@ -1423,7 +1464,7 @@ class ReportsPresenter extends PresenterCore
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     			group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code 
-			) coltbl on coltbl.invoice_number = sotbl.invoice_number and coltbl.salesman_code = sotbl.salesman_code
+			) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -1563,7 +1604,7 @@ class ReportsPresenter extends PresenterCore
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     			group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code
-			) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
+			) coltbl on coltbl.reference_num = tas.reference_num
     		join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 			left join
 			(
@@ -1710,8 +1751,6 @@ class ReportsPresenter extends PresenterCore
     	
     	if($this->request->get('company_code'))
     		$except .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
-    	
-    	$except .= " AND tsoh.served_status='Y'";
     	
     	foreach($items as $k=>$item)
     	{
@@ -2276,7 +2315,28 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$tempInvoices['code_'.$item->item_code] = $item->{$col};    			
 	    		}	
-	    			
+	    		
+	    		$deals = \DB::table('txn_sales_order_deal')
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
+				    		->where('reference_num','=',$result->reference_num)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+	    		
+				foreach($deals as $deal)
+				{
+					if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+						$col = 'trade_order_qty';
+					elseif(false !== strpos($result->customer_name, '_Adjustment'))
+						$col = 'trade_order_qty';
+					else
+						$col = 'trade_served_qty';
+					$result->{'code_'.$deal->trade_item_code} = '('.$deal->{$col}.')';
+					if(isset($tempInvoices['code_'.$deal->trade_item_code]))
+						$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
+					else
+						$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col};
+				}
+	    		
 	    		$records[] = $result;
 	    		if($reports)
 	    			$reportRecords[] = (array)$result;
@@ -2556,6 +2616,25 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] += $item->{$col};    			
     		}
     		
+    		$deals = \DB::table('txn_sales_order_deal')
+			    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
+			    		->where('reference_num','=',$result->reference_num)
+			    		->whereIn('item_code',$codes)
+			    		->get();
+    		 
+    		foreach($deals as $deal)
+    		{
+    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+    				$col = 'trade_order_qty';
+    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+    				$col = 'trade_order_qty';
+    			else
+    				$col = 'trade_served_qty';
+    			if(!isset($tempInvoices['code_'.$deal->trade_item_code]))
+    				$tempInvoices['code_'.$deal->trade_item_code] = 0;
+    			$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
+    		}
+    		
     	}
     	
     	// Get returns
@@ -2702,6 +2781,7 @@ class ReportsPresenter extends PresenterCore
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
+    			   txn_sales_order_header.reference_num,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
@@ -2917,6 +2997,18 @@ class ReportsPresenter extends PresenterCore
 			      app_area.area_name,
 			      app_customer.customer_code,
 			      app_customer.customer_name,
+    			  IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 			      f.remarks,
     			  vw_inv.invoice_number,
 			      coalesce(txn_sales_order_header.so_date,txn_invoice.invoice_date) invoice_date,
@@ -3377,6 +3469,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 				trh.van_code,
@@ -3460,6 +3564,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 			    all_so.van_code,
@@ -3600,6 +3716,7 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
+    			sales.customer_address,
     			sales.remarks,
                 sales.evaluated_objective_id,
 			    sales.van_code,
@@ -3767,6 +3884,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
 			    all_so.van_code,
 				all_so.device_code,
@@ -3899,6 +4028,18 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
+    			IF(ac.address_1=\'\',
+	    				IF(ac.address_2=\'\',ac.address_3,
+	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
+	    					),
+	    				IF(ac.address_2=\'\',
+	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
+	    					  IF(ac.address_3=\'\',
+	    							CONCAT(ac.address_1,\', \',ac.address_2),
+	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
     			remarks.remarks,
 				trh.van_code,
 				trh.device_code,
@@ -3962,6 +4103,7 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
+    			sales.customer_address,
     			sales.remarks,
 			    sales.van_code,
 				sales.device_code,
@@ -4134,6 +4276,18 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
+        		IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4326,6 +4480,18 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
+    			IF(app_customer.address_1=\'\',
+	    				IF(app_customer.address_2=\'\',app_customer.address_3,
+	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
+	    					),
+	    				IF(app_customer.address_2=\'\',
+	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
+	    					  IF(app_customer.address_3=\'\',
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
+	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
+	    						)
+	    					)
+	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4631,6 +4797,16 @@ class ReportsPresenter extends PresenterCore
     	return $prepare->lists('area_code');	
     }
     
+    
+    /**
+     * Get salesman area codes
+     * @param unknown $salesmanCode
+     */
+    public function getRdsSalesmanArea()
+    {    	
+    	return ModelFactory::getInstance('RdsSalesman')->orderBy('area_name')->lists('area_name','area_name');
+    }
+    
     /**
      * Return Salesman List prepared statement
      * @return unknown
@@ -4868,6 +5044,14 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
+			case 'summaryofincidentsreport':
+				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
+			case 'stockaudit':
+				return PresenterFactory::getInstance('VanInventory')->getStockAuditColumns();
+			case 'flexideal':
+				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
     	}	
     }
     
@@ -4880,7 +5064,8 @@ class ReportsPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
-    			['name'=>'Remarks'],
+    			['name'=>'Customer Address'],
+                ['name'=>'Remarks'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Gross Amount'],
@@ -4951,6 +5136,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Area Name','sort'=>'area_name'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
@@ -5014,17 +5200,13 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'Customer'],
-    			//['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice No.'],    			 
-    			//['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Slip No.'],
     			['name'=>'Transaction Date'],
     			['name'=>'Stock Transfer No.'],
-    			//['name'=>'Replenishment Date','sort'=>'replenishment_date'],
     			['name'=>'Replenishment Date'],
     			['name'=>'Replenishment Number']
-    			//['name'=>'Replenishment Number','sort'=>'replenishment_number']
     	];
     	
     	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name',$status);
@@ -5077,7 +5259,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],    			
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5119,6 +5302,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5154,6 +5338,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5195,6 +5380,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5324,6 +5510,16 @@ class ReportsPresenter extends PresenterCore
     	return $salesman;
     }
 
+	/**
+	 * @return array of auditor's name.
+	 */
+	public function getAuditor()
+	{
+		$response = ModelFactory::getInstance('user')->auditor()->get();
+
+		return $response->lists('full_name', 'id');
+	}
+
 
 	/**
 	 * Get Customers
@@ -5409,12 +5605,25 @@ class ReportsPresenter extends PresenterCore
     /**
      * Get Item Lists
      */
-    public function getItems()
+    public function getItems($oderByItemCode=false)
+    {
+    	$prepare = \DB::table('app_item_master')->where('status','=','A');
+    	if($oderByItemCode)
+    		$prepare->orderBy('item_code');
+    	else
+    		$prepare->orderBy('description');
+    	return $prepare->lists('description','item_code');
+    }
+    
+    /**
+     * Get Item Lists
+     */
+    public function getItemCodes()
     {
     	return \DB::table('app_item_master')
-		    			->where('status','=','A')
-		    			->orderBy('description')
-		    			->lists('description','item_code');
+			    	->where('status','=','A')
+			    	->orderBy('item_code')
+			    	->lists('item_code','item_code');
     }
     
     /**
@@ -5490,6 +5699,7 @@ class ReportsPresenter extends PresenterCore
     	$textSize = '12px';
     	$vaninventory = false;
     	$salesSummary = false;
+		$summaryOfIncident = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
@@ -5658,6 +5868,9 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '15px';
     			break;
     		case 'vaninventorycanned';
+    			if($type == 'pdf')
+    				return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('canned');
+    		
     			$vaninventory = true; 				    			
     			$columns = $this->getVanInventoryColumns('canned');
     			
@@ -5678,6 +5891,10 @@ class ReportsPresenter extends PresenterCore
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
     		case 'vaninventoryfrozen';
+    		
+    			if($type == 'pdf')
+    			return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('frozen');
+    		
     			$vaninventory = true;    			
     			$columns = $this->getVanInventoryColumns('frozen');
 
@@ -5765,6 +5982,50 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
     			break;
+			case 'summaryofincidentsreport':
+				$columns = $this->getTableColumns($report);
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$rows = $this->getSummaryOfIncidentReportSelectColumns();
+				$header = 'Summary Of Incident Report';
+				$filters = $this->getSummaryOfIncidentReportFilterData();
+				$filename = 'Summary Of Incident Report';
+				$summaryOfIncident = true;
+				break;
+				
+			case 'stocktransfer':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);				
+				$prepare = $vanInventoryPresenter->getPreparedStockTransfer();
+				$rows = $vanInventoryPresenter->getStockTransferReportSelectColumns();
+				$header = 'Stock Transfer Report';
+				$filters = $vanInventoryPresenter->getStockTransferFilterData();
+				$filename = 'Stock Transfer Report';
+				break;
+				
+			case 'stockaudit':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedStockAudit();
+				$rows = $vanInventoryPresenter->getStockAuditReportSelectColumns();
+				$header = 'Stock Audit Report';
+				$filters = $vanInventoryPresenter->getStockAuditFilterData();
+				$filename = 'Stock Audit Report';
+				break;
+				
+			case 'flexideal':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedFlexiDeal();
+				$summary = $vanInventoryPresenter->getPreparedFlexiDeal(true)->first();
+				$rows = $vanInventoryPresenter->getFlexiDealReportSelectColumns();
+				$header = 'Flexi Deal Report';
+				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
+				$filename = 'Flexi Deal Report';
+				break;
+				
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
+				break;
     		default:
     			return;
     	}	
@@ -5782,6 +6043,11 @@ class ReportsPresenter extends PresenterCore
 	    	{
 	    		$records = $this->populateScrInvoice($records);
 	    	}
+			if($summaryOfIncident){
+				foreach($records as $record){
+					$record->location_assignment_code = $record->areas[0]->area_name;
+				}
+			}
     	}
     	//dd($rows);
     	//dd($filters);
@@ -5801,7 +6067,6 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
-
 		if (empty($current)) {
 			$records = $this->validateInvoiceNumber($records);
 		} else {
@@ -5875,10 +6140,12 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if($report == 'salescollectionsummary')
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
-    		else
-    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
+    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit']))
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
+    		elseif($report == 'salescollectionreport')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
+			else
+				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
@@ -5896,6 +6163,7 @@ class ReportsPresenter extends PresenterCore
     		'activity_code',
     		'customer_code',
     		'customer_name',
+    		'customer_address',
     		'remarks',
     		'van_code',
     		'device_code',
@@ -5962,6 +6230,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6001,6 +6270,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6034,6 +6304,7 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6111,6 +6382,7 @@ class ReportsPresenter extends PresenterCore
 			    'area_name',
 			    'customer_code',
 			    'customer_name',
+    			'customer_address',
 			    'remarks',
 			    'invoice_number',
 			    'invoice_date',
@@ -6168,6 +6440,24 @@ class ReportsPresenter extends PresenterCore
     			'status',
     	];
     }
+
+	/**
+	 * Return summary of incident report select columns
+	 * @return multitype:string
+	 */
+	public function getSummaryOfIncidentReportSelectColumns()
+	{
+		return [
+			'id',
+			'subject',	
+			'message',
+			'action',
+			'status',
+			'full_name',
+			'location_assignment_code',
+			'created_at'
+		];
+	}
     
     /**
      * Return sales collection select columns
@@ -6178,6 +6468,7 @@ class ReportsPresenter extends PresenterCore
     	$columns = [    	
     			'customer_code',
     			'customer_name',
+    			'customer_address',
     			'remarks',
     			'invoice_number',
     			'invoice_date',
@@ -6357,6 +6648,27 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
+			case 'summaryofincidentsreport':
+				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
+				$total = count($prepare->get());
+				$special = true;
+				break;
+			case 'stocktransfer':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
+				$total = $prepare->count();
+				break;
+			case 'stockaudit':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockAudit();
+				$total = $prepare->count();
+				break;
+			case 'flexideal':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
+				$total = $prepare->count();
+				break;
+			case 'replenishment':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
+				$total = $prepare->count();
+				break;
     		default:
     			return;
     	}
@@ -6624,6 +6936,34 @@ class ReportsPresenter extends PresenterCore
     
     	return $filters;
     }
+
+	/**
+	 * Get Summary of incidents report filters.
+	 */
+	public function getSummaryOfIncidentReportFilterData()
+	{
+		$name = ModelFactory::getInstance('ContactUs')->where('full_name',
+			$this->request->get('name'))->distinct()->first();
+		$name = ($name) ? $name->full_name : 'All';
+		$branch = ModelFactory::getInstance('AppArea')->where('area_code', $this->request->get('branch'))->first();
+		$branch = ($branch) ? $branch->area_name : 'All';
+		$incident_no = ($this->request->get('incident_no')) ?: 'All';
+		$subject = ($this->request->get('subject')) ?: 'All';
+		$action = ($this->request->get('action')) ?: 'All';
+		$status = ($this->request->get('status')) ?: 'All';
+		$date = ($this->request->get('date_range_from') && $this->request->get('date_range_to')) ? $this->request->get('date_range_from') . ' - ' . $this->request->get('date_range_to') : 'All';
+		$filters = [
+			'Reporter'   => $name,
+			'Branch'     => $branch,
+			'Incident #' => $incident_no,
+			'Subject'    => $subject,
+			'Action'     => $action,
+			'Status'     => $status,
+			'Date'       => $date
+		];
+
+		return $filters;
+	}
     
     
     /**
@@ -7019,13 +7359,19 @@ class ReportsPresenter extends PresenterCore
     
     
     /**
-     * Check if synching
-     * @return number
-     */
-    public function isSynching()
-    {
-    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
-    	$value = $data ? $data->value : 0;
-    	return response()->json(['sync'=>$value]);
-    }
+	 * Check if synching
+	 * @return number
+	 */
+	public function isSynching($id, $column)
+	{
+		$data = \DB::table('settings')->where('name', 'synching_sfi')->first();
+		$resultdata = ModelFactory::getInstance('TableLog');
+		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('created_at',
+			'asc')->get();
+		$value['sync'] = ($data && $data->value) ? 1 : 0;
+		$value['com'] = $resultdata;
+
+		return response()->json(['sync_data' => $value]);
+	}
+
 }
