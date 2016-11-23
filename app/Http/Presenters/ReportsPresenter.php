@@ -7363,6 +7363,18 @@ class ReportsPresenter extends PresenterCore
 	private function formatExcelColumn($report, $records, $sheet)
 	{
 		switch ($report) {
+			case 'salesreportpermaterial':
+				$sheet->setColumnFormat([
+					'N:O' => 'MM/DD/YYYY',
+					'V:W' => '0,0.00',
+					'X'   => '0%',
+					'Y'   => '0,0.00',
+					'Z'   => '0%',
+					'AA'  => '0,0.00',
+					'AD'  => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
 			case 'materialpricelist':
 				$sheet->setColumnFormat([
 					'G:H' => 'MM/DD/YYYY',
@@ -7491,7 +7503,6 @@ class ReportsPresenter extends PresenterCore
 					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
 					break;
 				case 'salescollectionposting':
-					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
 					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
 					break;
 				case 'returnpermaterial':
@@ -7505,6 +7516,7 @@ class ReportsPresenter extends PresenterCore
 					break;
 			}
 			switch ($report) {
+				case 'salesreportpermaterial':
 				case 'salesreportperpeso':
 				case 'returnperpeso':
 				case 'returnpermaterial':
@@ -7516,17 +7528,26 @@ class ReportsPresenter extends PresenterCore
 				case 'salesmanlist':
 					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->sfa_modified_date));
 					break;
-				case 'salescollectionreport':
-				case 'salescollectionposting':
-				case 'salescollectionsummary':
-				case 'unpaidinvoice':
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-					break;
 			}
 			switch ($report) {
 				case 'salescollectionreport':
 				case 'salescollectionposting':
 					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					break;
+			}
+			switch ($report) {
+				case 'salescollectionposting':
+				case 'salesreportpermaterial':
+					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
+					break;
+			}
+			switch ($report) {
+				case 'salesreportpermaterial':
+				case 'salescollectionreport':
+				case 'salescollectionposting':
+				case 'salescollectionsummary':
+				case 'unpaidinvoice':
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
 					break;
 			}
 		}
