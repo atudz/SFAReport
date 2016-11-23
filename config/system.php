@@ -13,7 +13,7 @@ return [
 	'error_email' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com',
 
 	// System default email from
-	'from' => ['nstech.adm1n@gmail.com','nstech.us3r@gmail.com','nstech.t3st@gmail.com'],
+	'from' => 'Sunpride Admin',
 		
 	// System default email
 	'from_email' => 'noreply@sunpride.com',
@@ -86,12 +86,9 @@ return [
 	// Maximum admin users
 	'max_admin_users' => 6,	
 
-	// Reset password admin recipients
+	// Reset password admin recipients	
 	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com,markgeraldcabatingan@gmail.com,chriswhiz01@gmail.com,jurado.andybon@gmail.com',
 
 	// Invoice Key Code for auto generating invoice code.
-	'invoice_key' => [ 1000 => 'C', 2000 => 'D'],
-		
-	// Custom data starting pk ID
-	'custom_pk_start' => 2000000000
+	'invoice_key' => [ 1000 => 'C', 2000 => 'D']
 ];

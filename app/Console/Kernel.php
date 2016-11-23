@@ -45,7 +45,7 @@ class Kernel extends ConsoleKernel
         			->appendOutputTo(storage_path('logs/cron').'/cron.log');
         
         $schedule->command('sync:sfa')
-			        ->dailyAt('9:00')
+			        ->dailyAt('8:45')
 			        ->withoutOverlapping()
 			        ->appendOutputTo(storage_path('logs/cron').'/cron.log');
         

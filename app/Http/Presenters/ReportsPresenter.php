@@ -10,7 +10,6 @@ use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
-use Mockery\Exception;
 use PHPExcel_Shared_Date;
 
 class ReportsPresenter extends PresenterCore
@@ -174,7 +173,6 @@ class ReportsPresenter extends PresenterCore
     		case 'canned':
     			$this->view->title = 'Canned & Mixes';
     			$this->view->salesman = $this->getSalesman(true);
-				$this->view->auditor = $this->getAuditor();
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
@@ -182,7 +180,6 @@ class ReportsPresenter extends PresenterCore
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
-    			$this->view->auditor = $this->getAuditor();
     			$this->view->salesman = $this->getSalesman(true);
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
@@ -275,17 +272,7 @@ class ReportsPresenter extends PresenterCore
     		case 'userlist':
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
-                return PresenterFactory::getInstance('User')->getUserGroup();
-			case 'summaryofincidentreport':
-				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
-			case 'stocktransfer':
-				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
-			case 'stockaudit':
-				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
-			case 'flexideal':
-				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
-			case 'replenishment':
-				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
+                return PresenterFactory::getInstance('User')->getUserGroup();	
     	}
     }
     
@@ -363,8 +350,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
-    	
-    	$data['records'] = $this->validateInvoiceNumber($result);
+		$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
     	if($summary1)
@@ -470,7 +456,7 @@ class ReportsPresenter extends PresenterCore
     	$max = count($data) - 1;
     	foreach($data as $k=>$rec)
     	{
-    		if($prevInvoiceNum !== $rec->or_number)
+    		if($prevInvoiceNum !== $rec->or_number && $customerCode !== $rec->customer_code)
     		{
     			if($k)
     			{
@@ -539,18 +525,6 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
-	    		   IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    			) customer_address,
 				   remarks.remarks,    			   
 				   sotbl.invoice_number,
 				   sotbl.so_date invoice_date,
@@ -747,7 +721,7 @@ class ReportsPresenter extends PresenterCore
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
-					) coltbl on coltbl.invoice_number = sotbl.invoice_number
+					) coltbl on coltbl.invoice_number = sotbl.invoice_number and coltbl.salesman_code = tas.salesman_code
 			
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
@@ -768,7 +742,6 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
-    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -908,18 +881,6 @@ class ReportsPresenter extends PresenterCore
 				   tas.customer_code,
     			   ac.area_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
-	    		   IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    			) customer_address,
 				   remarks.remarks,    			   
 				   ti.invoice_number,
     			   ti.invoice_date,
@@ -1117,7 +1078,7 @@ class ReportsPresenter extends PresenterCore
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
-					) coltbl on coltbl.reference_num = tas.reference_num
+					) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
 			
 					join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 	    			left join
@@ -1138,7 +1099,6 @@ class ReportsPresenter extends PresenterCore
     			collection.reference_num,
     			collection.customer_code,
 				collection.customer_name,
-    			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
 				collection.invoice_date,
@@ -1299,8 +1259,7 @@ class ReportsPresenter extends PresenterCore
     			}
     		}
     	}
-    	    	
-    	$data['records'] = $this->validateInvoiceNumber($records);
+		$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
@@ -1464,7 +1423,7 @@ class ReportsPresenter extends PresenterCore
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     			group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code 
-			) coltbl on coltbl.invoice_number = sotbl.invoice_number
+			) coltbl on coltbl.invoice_number = sotbl.invoice_number and coltbl.salesman_code = sotbl.salesman_code
 			left join
 			(
 				select remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
@@ -1604,7 +1563,7 @@ class ReportsPresenter extends PresenterCore
 				inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 				left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     			group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code
-			) coltbl on coltbl.reference_num = tas.reference_num
+			) coltbl on coltbl.reference_num = tas.reference_num and coltbl.salesman_code = tas.salesman_code
     		join txn_invoice ti on coltbl.invoice_number=ti.invoice_number and coltbl.salesman_code=ti.salesman_code
 			left join
 			(
@@ -1728,6 +1687,11 @@ class ReportsPresenter extends PresenterCore
     	return response()->json($data);  
     }
     
+    /**
+     * Populate scr invoice
+     * @param array $items
+     * @return unknown
+     */
     public function populateScrInvoice($items = [])
     {
     	
@@ -1747,6 +1711,8 @@ class ReportsPresenter extends PresenterCore
     	if($this->request->get('company_code'))
     		$except .= " AND tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
     	
+    	$except .= " AND tsoh.served_status='Y'";
+    	
     	foreach($items as $k=>$item)
     	{
     		$date = (new Carbon($item->invoice_date))->format('Y-m-d');
@@ -1762,7 +1728,11 @@ class ReportsPresenter extends PresenterCore
     	return $items;
     }
     
-    
+    /**
+     * Get Sales order
+     * @param string $select
+     * @param string $where
+     */
     public function getSO($select='*',$where=' 1 ')
     {
     	$query = '
@@ -2306,32 +2276,10 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$tempInvoices['code_'.$item->item_code] = $item->{$col};    			
 	    		}	
-	    		
-	    		$deals = \DB::table('txn_sales_order_deal')
-				    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
-				    		->where('reference_num','=',$result->reference_num)
-				    		->whereIn('item_code',$codes)
-				    		->get();
-	    		
-				foreach($deals as $deal)
-				{
-					if(false !== strpos($result->customer_name, '_Van to Warehouse'))
-						$col = 'trade_order_qty';
-					elseif(false !== strpos($result->customer_name, '_Adjustment'))
-						$col = 'trade_order_qty';
-					else
-						$col = 'trade_served_qty';
-					$result->{'code_'.$deal->trade_item_code} = '('.$deal->{$col}.')';
-					if(isset($tempInvoices['code_'.$deal->trade_item_code]))
-						$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
-					else
-						$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col};
-				}
-	    		
+	    			
 	    		$records[] = $result;
 	    		if($reports)
 	    			$reportRecords[] = (array)$result;
-	    		
 	    	}
     	}
     	
@@ -2455,6 +2403,7 @@ class ReportsPresenter extends PresenterCore
 
     	unset($replenishment->replenishment_date);
     	unset($replenishment->reference_number);
+
 		if (!$reports && !empty($data['records'])) {
 			$this->validateInvoiceNumber($data['records']);
 		}
@@ -2494,7 +2443,10 @@ class ReportsPresenter extends PresenterCore
     	// Get Replenishment data
     	$prepare = \DB::table('txn_replenishment_header')
     					->select(['replenishment_date','reference_number'])
-    					->leftJoin('app_salesman_van','app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+    					->leftJoin('app_salesman_van',function($join){
+    						$join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+    						$join->where('app_salesman_van.status','=','A');
+    					});
 
     	if($this->request->has('salesman_code'))
     	{
@@ -2602,25 +2554,6 @@ class ReportsPresenter extends PresenterCore
     			if(!isset($tempInvoices['code_'.$item->item_code]))
     				$tempInvoices['code_'.$item->item_code] = 0;
     			$tempInvoices['code_'.$item->item_code] += $item->{$col};    			
-    		}
-    		
-    		$deals = \DB::table('txn_sales_order_deal')
-			    		->select(['trade_item_code','trade_order_qty','trade_served_qty'])
-			    		->where('reference_num','=',$result->reference_num)
-			    		->whereIn('item_code',$codes)
-			    		->get();
-    		 
-    		foreach($deals as $deal)
-    		{
-    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
-    				$col = 'trade_order_qty';
-    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
-    				$col = 'trade_order_qty';
-    			else
-    				$col = 'trade_served_qty';
-    			if(!isset($tempInvoices['code_'.$deal->trade_item_code]))
-    				$tempInvoices['code_'.$deal->trade_item_code] = 0;
-    			$tempInvoices['code_'.$deal->trade_item_code] += $deal->{$col};
     		}
     		
     	}
@@ -2769,7 +2702,6 @@ class ReportsPresenter extends PresenterCore
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
-    			   txn_sales_order_header.reference_num,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
@@ -2875,7 +2807,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $this->getPreparedUnpaidInvoice();
     	
     	$result = $this->paginate($prepare);
-    	$data['records'] = $this->validateInvoiceNumber($result->items());
+		$data['records'] = $this->validateInvoiceNumber($result->items());
     	
     	$data['summary'] = '';
     	if($result->total())
@@ -2985,18 +2917,6 @@ class ReportsPresenter extends PresenterCore
 			      app_area.area_name,
 			      app_customer.customer_code,
 			      app_customer.customer_name,
-    			  IF(app_customer.address_1=\'\',
-	    				IF(app_customer.address_2=\'\',app_customer.address_3,
-	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
-	    					),
-	    				IF(app_customer.address_2=\'\',
-	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
-	    					  IF(app_customer.address_3=\'\',
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
 			      f.remarks,
     			  vw_inv.invoice_number,
 			      coalesce(txn_sales_order_header.so_date,txn_invoice.invoice_date) invoice_date,
@@ -3426,8 +3346,8 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $this->getPreparedSalesReportMaterial(); 
     		
     	$result = $this->paginate($prepare);
-    	$data['records'] = $this->validateInvoiceNumber($result->items());
-
+		$data['records'] = $this->validateInvoiceNumber($result->items());
+    	
     	$data['summary'] = '';
     	if($result->total())
     	{
@@ -3457,18 +3377,6 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
-    			IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 				trh.van_code,
@@ -3552,18 +3460,6 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
-    			IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
     			remarks.remarks,
                 remarks.evaluated_objective_id,
 			    all_so.van_code,
@@ -3704,7 +3600,6 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
-    			sales.customer_address,
     			sales.remarks,
                 sales.evaluated_objective_id,
 			    sales.van_code,
@@ -3831,7 +3726,7 @@ class ReportsPresenter extends PresenterCore
     		$prepare->orderBy('sales.invoice_number');
     	}
     	
-    	return $prepare;
+    	return $prepare;	
     }
     
     
@@ -3844,8 +3739,9 @@ class ReportsPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSalesReportPeso();
     	 
-    	$result = $this->paginate($prepare);    	
-    	$data['records'] = $this->validateInvoiceNumber($result->items());
+    	$result = $this->paginate($prepare);
+		$data['records'] = $this->validateInvoiceNumber($result->items());
+    	
     	$data['summary'] = '';
     	if($result->total())
     	{
@@ -3871,18 +3767,6 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				all_so.customer_code,
 				ac.customer_name,
-    			IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
     			remarks.remarks,
 			    all_so.van_code,
 				all_so.device_code,
@@ -4015,18 +3899,6 @@ class ReportsPresenter extends PresenterCore
 				tas.activity_code,
 				trh.customer_code,
 				ac.customer_name,
-    			IF(ac.address_1=\'\',
-	    				IF(ac.address_2=\'\',ac.address_3,
-	    					IF(ac.address_3=\'\',ac.address_2,CONCAT(ac.address_2,\', \',ac.address_3))
-	    					),
-	    				IF(ac.address_2=\'\',
-	    					IF(ac.address_3=\'\',ac.address_1,CONCAT(ac.address_1,\', \',ac.address_3)),
-	    					  IF(ac.address_3=\'\',
-	    							CONCAT(ac.address_1,\', \',ac.address_2),
-	    							CONCAT(ac.address_1,\', \',ac.address_2,\', \',ac.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
     			remarks.remarks,
 				trh.van_code,
 				trh.device_code,
@@ -4090,7 +3962,6 @@ class ReportsPresenter extends PresenterCore
 				sales.activity_code,
 				sales.customer_code,
 				sales.customer_name,
-    			sales.customer_address,
     			sales.remarks,
 			    sales.van_code,
 				sales.device_code,
@@ -4263,18 +4134,6 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
-        		IF(app_customer.address_1=\'\',
-	    				IF(app_customer.address_2=\'\',app_customer.address_3,
-	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
-	    					),
-	    				IF(app_customer.address_2=\'\',
-	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
-	    					  IF(app_customer.address_3=\'\',
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4467,18 +4326,6 @@ class ReportsPresenter extends PresenterCore
 				txn_activity_salesman.activity_code,
 				txn_return_header.customer_code,
 				app_customer.customer_name,
-    			IF(app_customer.address_1=\'\',
-	    				IF(app_customer.address_2=\'\',app_customer.address_3,
-	    					IF(app_customer.address_3=\'\',app_customer.address_2,CONCAT(app_customer.address_2,\', \',app_customer.address_3))
-	    					),
-	    				IF(app_customer.address_2=\'\',
-	    					IF(app_customer.address_3=\'\',app_customer.address_1,CONCAT(app_customer.address_1,\', \',app_customer.address_3)),
-	    					  IF(app_customer.address_3=\'\',
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2),
-	    							CONCAT(app_customer.address_1,\', \',app_customer.address_2,\', \',app_customer.address_3)
-	    						)
-	    					)
-	    		  ) customer_address,
 				remarks.remarks,
 			    txn_return_header.van_code,
 			    txn_return_header.device_code,
@@ -4784,16 +4631,6 @@ class ReportsPresenter extends PresenterCore
     	return $prepare->lists('area_code');	
     }
     
-    
-    /**
-     * Get salesman area codes
-     * @param unknown $salesmanCode
-     */
-    public function getRdsSalesmanArea()
-    {    	
-    	return ModelFactory::getInstance('RdsSalesman')->orderBy('area_name')->lists('area_name','area_name');
-    }
-    
     /**
      * Return Salesman List prepared statement
      * @return unknown
@@ -5031,14 +4868,6 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
-			case 'summaryofincidentsreport':
-				return PresenterFactory::getInstance('User')->getIncidentReportTableColumns();
-			case 'stocktransfer':
-				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
-			case 'stockaudit':
-				return PresenterFactory::getInstance('VanInventory')->getStockAuditColumns();
-			case 'flexideal':
-				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
     	}	
     }
     
@@ -5051,8 +4880,7 @@ class ReportsPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Customer Code'],
     			['name'=>'Customer Name'],
-    			['name'=>'Customer Address'],
-                ['name'=>'Remarks'],
+    			['name'=>'Remarks'],
     			['name'=>'Invoice Number'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice Gross Amount'],
@@ -5123,7 +4951,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Area Name','sort'=>'area_name'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
@@ -5187,13 +5014,17 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'Customer'],
+    			//['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Invoice Date'],
     			['name'=>'Invoice No.'],    			 
+    			//['name'=>'Return Slip No.','sort'=>'return_slip_num'],
     			['name'=>'Return Slip No.'],
     			['name'=>'Transaction Date'],
     			['name'=>'Stock Transfer No.'],
+    			//['name'=>'Replenishment Date','sort'=>'replenishment_date'],
     			['name'=>'Replenishment Date'],
     			['name'=>'Replenishment Number']
+    			//['name'=>'Replenishment Number','sort'=>'replenishment_number']
     	];
     	
     	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name',$status);
@@ -5246,8 +5077,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference number'],
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],    			
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5289,7 +5119,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5325,7 +5154,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5367,7 +5195,6 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Activity Code','sort'=>'activity_code'],
     			['name'=>'Customer Code','sort'=>'customer_code'],
     			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address'],
     			['name'=>'Remarks','sort'=>'remarks'],
     			['name'=>'Van Code','sort'=>'van_code'],
     			['name'=>'Device Code','sort'=>'device_code'],
@@ -5497,16 +5324,6 @@ class ReportsPresenter extends PresenterCore
     	return $salesman;
     }
 
-	/**
-	 * @return array of auditor's name.
-	 */
-	public function getAuditor()
-	{
-		$response = ModelFactory::getInstance('user')->auditor()->get();
-
-		return $response->lists('full_name', 'id');
-	}
-
 
 	/**
 	 * Get Customers
@@ -5592,25 +5409,12 @@ class ReportsPresenter extends PresenterCore
     /**
      * Get Item Lists
      */
-    public function getItems($oderByItemCode=false)
-    {
-    	$prepare = \DB::table('app_item_master')->where('status','=','A');
-    	if($oderByItemCode)
-    		$prepare->orderBy('item_code');
-    	else
-    		$prepare->orderBy('description');
-    	return $prepare->lists('description','item_code');
-    }
-    
-    /**
-     * Get Item Lists
-     */
-    public function getItemCodes()
+    public function getItems()
     {
     	return \DB::table('app_item_master')
-			    	->where('status','=','A')
-			    	->orderBy('item_code')
-			    	->lists('item_code','item_code');
+		    			->where('status','=','A')
+		    			->orderBy('description')
+		    			->lists('description','item_code');
     }
     
     /**
@@ -5658,7 +5462,7 @@ class ReportsPresenter extends PresenterCore
      * @param unknown $report
      */
     public function exportReport($type, $report, $offset=0)
-    {
+    {    	
     	if(!in_array($type, $this->validExportTypes))
     	{
     		return;
@@ -5686,7 +5490,6 @@ class ReportsPresenter extends PresenterCore
     	$textSize = '12px';
     	$vaninventory = false;
     	$salesSummary = false;
-		$summaryOfIncident = false;
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
@@ -5855,9 +5658,6 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '15px';
     			break;
     		case 'vaninventorycanned';
-    			if($type == 'pdf')
-    				return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('canned');
-    		
     			$vaninventory = true; 				    			
     			$columns = $this->getVanInventoryColumns('canned');
     			
@@ -5873,15 +5673,11 @@ class ReportsPresenter extends PresenterCore
     			}
     			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned');
-	    		$header = 'Van Inventory and History Report';
+	    		$header = 'Canned & Mixes Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
 	    		break;
     		case 'vaninventoryfrozen';
-    		
-    			if($type == 'pdf')
-    			return PresenterFactory::getInstance('VanInventory')->exportShortageOverages('frozen');
-    		
     			$vaninventory = true;    			
     			$columns = $this->getVanInventoryColumns('frozen');
 
@@ -5897,7 +5693,7 @@ class ReportsPresenter extends PresenterCore
     			}
     			
 	    		$rows = $this->getVanInventorySelectColumns('frozen');
-	    		$header = 'Van Inventory and History Report';
+	    		$header = 'Frozen & Kassel Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
     			break; 
@@ -5969,50 +5765,6 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
     			break;
-			case 'summaryofincidentsreport':
-				$columns = $this->getTableColumns($report);
-				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
-				$rows = $this->getSummaryOfIncidentReportSelectColumns();
-				$header = 'Summary Of Incident Report';
-				$filters = $this->getSummaryOfIncidentReportFilterData();
-				$filename = 'Summary Of Incident Report';
-				$summaryOfIncident = true;
-				break;
-				
-			case 'stocktransfer':
-				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
-				$columns = $this->getTableColumns($report);				
-				$prepare = $vanInventoryPresenter->getPreparedStockTransfer();
-				$rows = $vanInventoryPresenter->getStockTransferReportSelectColumns();
-				$header = 'Stock Transfer Report';
-				$filters = $vanInventoryPresenter->getStockTransferFilterData();
-				$filename = 'Stock Transfer Report';
-				break;
-				
-			case 'stockaudit':
-				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
-				$columns = $this->getTableColumns($report);
-				$prepare = $vanInventoryPresenter->getPreparedStockAudit();
-				$rows = $vanInventoryPresenter->getStockAuditReportSelectColumns();
-				$header = 'Stock Audit Report';
-				$filters = $vanInventoryPresenter->getStockAuditFilterData();
-				$filename = 'Stock Audit Report';
-				break;
-				
-			case 'flexideal':
-				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
-				$columns = $this->getTableColumns($report);
-				$prepare = $vanInventoryPresenter->getPreparedFlexiDeal();
-				$summary = $vanInventoryPresenter->getPreparedFlexiDeal(true)->first();
-				$rows = $vanInventoryPresenter->getFlexiDealReportSelectColumns();
-				$header = 'Flexi Deal Report';
-				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
-				$filename = 'Flexi Deal Report';
-				break;
-				
-			case 'replenishment':
-				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
-				break;
     		default:
     			return;
     	}	
@@ -6030,11 +5782,6 @@ class ReportsPresenter extends PresenterCore
 	    	{
 	    		$records = $this->populateScrInvoice($records);
 	    	}
-			if($summaryOfIncident){
-				foreach($records as $record){
-					$record->location_assignment_code = $record->areas[0]->area_name;
-				}
-			}
     	}
     	//dd($rows);
     	//dd($filters);
@@ -6054,23 +5801,42 @@ class ReportsPresenter extends PresenterCore
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
     	return $this->view('exportSalesCollectionPdf'); */
+
 		if (empty($current)) {
 			$records = $this->validateInvoiceNumber($records);
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-		
-		if(in_array($type,['xls','xlsx']))
+    	  
+    	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
 	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
-					$datas = ($records) ? $records : $current;
-					if ($report == 'vaninventorycanned' || $report == 'vaninventoryfrozen') {
-						$records = $this->formatExcelColumn($report, $datas, $sheet);
-					} else {
-						$this->formatExcelColumn($report, $datas, $sheet);
-					}
-					$params['columns'] = $columns;
+	    			if ($report == 'bir') {
+	    				foreach ($records as &$record) {
+	    					$sheet->setColumnFormat([
+	    							'A' => 'MM/DD/YYYY'
+	    					]);
+	    					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
+	    				}
+	    			}
+	    			elseif ($report == 'salescollectionreport') {
+	    				$sheet->setColumnFormat([
+	    						'X' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'V' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'R' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'D' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+	    				]);
+	    			}
+	    			elseif ($report == 'salescollectionposting') {
+	    				$sheet->setColumnFormat([	    						
+	    						'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+	    						'F' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+	    				]);
+	    			}
+	    				
+	    			$params['columns'] = $columns;
 	    			$params['theadRaw'] = $theadRaw;
 	    			$params['rows'] = $rows;
 	    			$params['records'] = $records;
@@ -6109,12 +5875,10 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit']))
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
-    		elseif($report == 'salescollectionreport')
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
-			else
-				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
+    		if($report == 'salescollectionsummary')
+    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
+    		else
+    			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
     		unset($params,$records,$prepare);	    		
     		return $pdf->download($filename.'.pdf');
     	}    		
@@ -6132,7 +5896,6 @@ class ReportsPresenter extends PresenterCore
     		'activity_code',
     		'customer_code',
     		'customer_name',
-    		'customer_address',
     		'remarks',
     		'van_code',
     		'device_code',
@@ -6199,7 +5962,6 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
-    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6239,7 +6001,6 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
-    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6273,7 +6034,6 @@ class ReportsPresenter extends PresenterCore
     			'activity_code',
     			'customer_code',
     			'customer_name',
-    			'customer_address',
     			'remarks',
     			'van_code',
     			'device_code',
@@ -6351,7 +6111,6 @@ class ReportsPresenter extends PresenterCore
 			    'area_name',
 			    'customer_code',
 			    'customer_name',
-    			'customer_address',
 			    'remarks',
 			    'invoice_number',
 			    'invoice_date',
@@ -6409,24 +6168,6 @@ class ReportsPresenter extends PresenterCore
     			'status',
     	];
     }
-
-	/**
-	 * Return summary of incident report select columns
-	 * @return multitype:string
-	 */
-	public function getSummaryOfIncidentReportSelectColumns()
-	{
-		return [
-			'id',
-			'subject',	
-			'message',
-			'action',
-			'status',
-			'full_name',
-			'location_assignment_code',
-			'created_at'
-		];
-	}
     
     /**
      * Return sales collection select columns
@@ -6437,7 +6178,6 @@ class ReportsPresenter extends PresenterCore
     	$columns = [    	
     			'customer_code',
     			'customer_name',
-    			'customer_address',
     			'remarks',
     			'invoice_number',
     			'invoice_date',
@@ -6617,27 +6357,6 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
-			case 'summaryofincidentsreport':
-				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
-				$total = count($prepare->get());
-				$special = true;
-				break;
-			case 'stocktransfer':
-				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
-				$total = $prepare->count();
-				break;
-			case 'stockaudit':
-				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockAudit();
-				$total = $prepare->count();
-				break;
-			case 'flexideal':
-				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
-				$total = $prepare->count();
-				break;
-			case 'replenishment':
-				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
-				$total = $prepare->count();
-				break;
     		default:
     			return;
     	}
@@ -6677,6 +6396,7 @@ class ReportsPresenter extends PresenterCore
     		$data['max_limit'] = false;
     		$data['staggered'] = [];
     	}
+    	
     	return response()->json($data);
     }
     
@@ -6873,7 +6593,7 @@ class ReportsPresenter extends PresenterCore
     	
     	$filters = [
     			'Salesman' => $salesman,
-    			'Company Code' => $company,
+    			'Company' => $company,
     			'Customer' => $customer,
     			'Invoice Date' => $invoiceDate,
     			'Invoice #' => $invoiceNum,
@@ -6894,7 +6614,7 @@ class ReportsPresenter extends PresenterCore
     	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
     	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
     	$reference = $this->request->get('reference');
-
+    
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
@@ -6904,34 +6624,6 @@ class ReportsPresenter extends PresenterCore
     
     	return $filters;
     }
-
-	/**
-	 * Get Summary of incidents report filters.
-	 */
-	public function getSummaryOfIncidentReportFilterData()
-	{
-		$name = ModelFactory::getInstance('ContactUs')->where('full_name',
-			$this->request->get('name'))->distinct()->first();
-		$name = ($name) ? $name->full_name : 'All';
-		$branch = ModelFactory::getInstance('AppArea')->where('area_code', $this->request->get('branch'))->first();
-		$branch = ($branch) ? $branch->area_name : 'All';
-		$incident_no = ($this->request->get('incident_no')) ?: 'All';
-		$subject = ($this->request->get('subject')) ?: 'All';
-		$action = ($this->request->get('action')) ?: 'All';
-		$status = ($this->request->get('status')) ?: 'All';
-		$date = ($this->request->get('date_range_from') && $this->request->get('date_range_to')) ? $this->request->get('date_range_from') . ' - ' . $this->request->get('date_range_to') : 'All';
-		$filters = [
-			'Reporter'   => $name,
-			'Branch'     => $branch,
-			'Incident #' => $incident_no,
-			'Subject'    => $subject,
-			'Action'     => $action,
-			'Status'     => $status,
-			'Date'       => $date
-		];
-
-		return $filters;
-	}
     
     
     /**
@@ -6949,9 +6641,7 @@ class ReportsPresenter extends PresenterCore
     	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
     	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
     	$name = $this->request->get('customer_name') ? $this->request->get('customer_name') : 'All';
-		$jrSalesman = ModelFactory::getInstance('User');
-		$jrSalesman = $jrSalesman->where('salesman_code', 'Like', '%' . $this->request->get('salesman') . '-%')->where('status', 'A')->first();
-
+    	
     	$filters = [
     			'Invoice Date' => $invoiceDate,
     			'Collection Date' => $collectiontDate,
@@ -6960,8 +6650,7 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Customer Name' => $name,
     			'Salesman' => $salesman,
-				'Jr. Salesman' => ($jrSalesman) ? $jrSalesman->full_name . ' - ' . $jrSalesman->salesman_code: null,
-				'Posting Date' => $postingDate,
+    			'Posting Date' => $postingDate,
     	];
     	
     	if($collection)
@@ -6991,7 +6680,7 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Salesman' => $salesman,
     			'Area' => $area,
-    			'Month' => $invoice,
+    			'Month Description' => $invoice,
     	];
     
     	return $filters;
@@ -7221,7 +6910,6 @@ class ReportsPresenter extends PresenterCore
     	}      	
     }
 
-
 	/**
 	 * This function will check if the invoice number has an
 	 * invoice code it append an invoice code for the invoice number
@@ -7256,10 +6944,8 @@ class ReportsPresenter extends PresenterCore
 				}
 			}
 		}
-
 		return $currents;
 	}
-
 	/**
 	 * This will return an Area code of a specific customer.
 	 * @param $customer
@@ -7275,10 +6961,8 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$code = $code->where('customer_code', $customer)->select('area_code')->first();
 		}
-
 		return $code;
 	}
-
 	/**
 	 * Array list of Area codes.
 	 * @return array
@@ -7315,10 +6999,8 @@ class ReportsPresenter extends PresenterCore
 			'3300' => 'ZA',
 			'3400' => 'OR'
 		];
-
 		return $areaCodes;
 	}
-
 	/**
 	 * This will generate an invoice code for an invoice number.
 	 * @param $customer
@@ -7332,252 +7014,18 @@ class ReportsPresenter extends PresenterCore
 		$code = (int)explode('_', $customer)[0];
 		$invoice_key = config('system.invoice_key');
 		$invoiceCode = $invoice_key[$code] . $areaCodes[$customerCode];
-
 		return $invoiceCode;
 	}
-
-
-	/**
-	 * Check if synching
-	 * @return number
-	 */
-	public function isSynching($id, $column)
-	{
-		$data = \DB::table('settings')->where('name', 'synching_sfi')->first();
-		$resultdata = ModelFactory::getInstance('TableLog');
-		$resultdata = $resultdata->where('pk_id', $id)->where('column', $column)->with('users')->orderBy('created_at',
-			'asc')->get();
-		$value['sync'] = ($data && $data->value) ? 1 : 0;
-		$value['com'] = $resultdata;
-
-		return response()->json(['sync_data' => $value]);
-	}
-
-	/**
-	 * This function will format the value to excel form.
-	 * @param $report
-	 * @param $records
-	 * @param $sheet
-	 * @return mixed
+    
+    
+    /**
+     * Check if synching
+     * @return number
      */
-	private function formatExcelColumn($report, $records, $sheet)
-	{
-		switch ($report) {
-			case 'salesreportpermaterial':
-				$sheet->setColumnFormat([
-					'N:O' => 'MM/DD/YYYY',
-					'V:W' => '0,0.00',
-					'X'   => '0%',
-					'Y'   => '0,0.00',
-					'Z'   => '0%',
-					'AA'  => '0,0.00',
-					'AD'  => '0,0.00'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'materialpricelist':
-				$sheet->setColumnFormat([
-					'G:H' => 'MM/DD/YYYY',
-					'J'   => 'MM/DD/YYYY'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'salesmanlist':
-				$sheet->setColumnFormat([
-					'F' => 'MM/DD/YYYY'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'customerlist':
-				$sheet->setColumnFormat([
-					'N' => 'MM/DD/YYYY'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'returnperpeso':
-				$sheet->setColumnFormat([
-					'N:O' => 'MM/DD/YYYY',
-					'P:Q' => '0,0.00',
-					'R'   => '0%',
-					'S'   => '0,0.00',
-					'T'   => '0%',
-					'U'   => '0,0.00',
-					'X'   => '0,0.00',
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'returnpermaterial':
-				$sheet->setColumnFormat([
-					'N:O' => 'MM/DD/YYYY',
-					'V:W' => '0,0.00',
-					'X'   => '0%',
-					'Y'   => '0,0.00',
-					'Z'   => '0%',
-					'AA'  => '0,0.00',
-					'AD'  => '0,0.00',
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'unpaidinvoice':
-				$sheet->setColumnFormat([
-					'H'   => 'MM/DD/YYYY',
-					'I:J' => '0,0.00',
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'salescollectionsummary':
-				$sheet->setColumnFormat([
-					'D'   => 'MM/DD/YYYY',
-					'E:G' => '0,0.00'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'salescollectionposting':
-				$sheet->setColumnFormat([
-					'G'   => '0,0.00',
-					'H:I' => 'MM/DD/YYYY',
-					'K'   => '0,0.00',
-					'L:M' => 'MM/DD/YYYY'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'salescollectionreport':
-				$sheet->setColumnFormat([
-					'F'     => 'MM/DD/YYYY',
-					'G:J'   => '0,0.00',
-					'L'     => '0,0.00',
-					'N:Q'   => '0,0.00',
-					'R'     => 'MM/DD/YYYY',
-					'T:U'   => '0,0.00',
-					'X'     => 'MM/DD/YYYY',
-					'AA:AB' => '0,0.00'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'bir':
-				$sheet->setColumnFormat([
-					'A'   => 'MM/DD/YYYY',
-					'H'   => '0,0.00',
-					'J:O' => '0,0.00',
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'salesreportperpeso':
-				$sheet->setColumnFormat([
-					'R'   => '0%',
-					'T'   => '0%',
-					'P:Q' => '0,0.00',
-					'S'   => '0,0.00',
-					'U'   => '0,0.00',
-					'X'   => '0,0.00'
-				]);
-				$this->formatValueForExcel($report, $records);
-				break;
-			case 'vaninventoryfrozen':
-			case 'vaninventorycanned':
-				$sheet->setColumnFormat([
-					'B' => 'MM/DD/YYYY',
-					'E' => 'MM/DD/YYYY',
-					'G' => 'MM/DD/YYYY',
-				]);
-				$records = $this->formatValueExcelVanInventory($records);
-				break;
-		}
-
-		return $records;
-	}
-
-	/**
-	 * This function will format the value for excel data.
-	 * @param $report
-	 * @param $records
-	 */
-	private function formatValueForExcel($report, $records)
-	{
-		foreach ($records as &$record) {
-			switch ($report) {
-				case 'bir':
-					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
-					break;
-				case 'salescollectionreport':
-					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
-					break;
-				case 'salescollectionposting':
-					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
-					break;
-				case 'returnpermaterial':
-				case 'returnperpeso':
-					$record->return_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_date));
-					$record->return_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_posting_date));
-					break;
-				case 'materialpricelist':
-					$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_to));
-					$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_from));
-					break;
-			}
-			switch ($report) {
-				case 'salesreportpermaterial':
-				case 'salesreportperpeso':
-				case 'returnperpeso':
-				case 'returnpermaterial':
-					$record->discount_rate = ($record->discount_rate) ? $record->discount_rate / 100 : 0;
-					$record->collective_discount_rate = ($record->collective_discount_rate) ? $record->collective_discount_rate / 100 : 0;
-					break;
-				case 'materialpricelist':
-				case 'customerlist':
-				case 'salesmanlist':
-					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->sfa_modified_date));
-					break;
-			}
-			switch ($report) {
-				case 'salescollectionreport':
-				case 'salescollectionposting':
-					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
-					break;
-			}
-			switch ($report) {
-				case 'salescollectionposting':
-				case 'salesreportpermaterial':
-					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
-					break;
-			}
-			switch ($report) {
-				case 'salesreportpermaterial':
-				case 'salescollectionreport':
-				case 'salescollectionposting':
-				case 'salescollectionsummary':
-				case 'unpaidinvoice':
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-					break;
-			}
-		}
-	}
-
-	/**
-	 * This function will format the value for excel data in van inventory report.
-	 * @param $records
-	 * @return mixed
-	 */
-	private function formatValueExcelVanInventory($records)
-	{
-		foreach ($records as &$record) {
-			if (is_array($record) && array_key_exists('invoice_date', $record)) {
-				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['invoice_date']));
-			} elseif (isset($record->invoice_date)) {
-				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-			}
-			if (is_array($record) && array_key_exists('transaction_date', $record)) {
-				$record['transaction_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['transaction_date']));
-			} elseif (isset($record->transaction_date)) {
-				$record->transaction_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->transaction_date));
-			}
-			if (is_array($record) && array_key_exists('replenishment_date', $record)) {
-				$record['replenishment_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['replenishment_date']));
-			} elseif (isset($record->replenishment_date)) {
-				$record->replenishment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->replenishment_date));
-			}
-		}
-
-		return $records;
-	}
+    public function isSynching()
+    {
+    	$data = \DB::table('settings')->where('name','synching_sfi')->first();
+    	$value = $data ? $data->value : 0;
+    	return response()->json(['sync'=>$value]);
+    }
 }
