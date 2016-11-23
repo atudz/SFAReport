@@ -377,7 +377,7 @@ class VanInventoryPresenter extends PresenterCore
     			deal.description as deal_item_desc,
     			txn_sales_order_deal.trade_order_qty,
     			txn_sales_order_deal.gross_order_amount,
-    			IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
+    			IF(txn_sales_order_header.updated_by,\'modified\',IF(txn_sales_order_deal.updated_by,\'modified\',\'\')) updated
     			';
     	
     	if($summary)
