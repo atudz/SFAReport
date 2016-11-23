@@ -714,7 +714,7 @@ class VanInventoryPresenter extends PresenterCore
     	$company_code = $this->request->get('company_code') ? $reportsPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
     	$customer = $this->request->get('customer_code') ? $reportsPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
     	$invoice_date = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
-    	$item = $this->request->get('regular_item_code') ? $reportsPresenter->getItems()[$this->request->get('regular_item_code')] : 'All';
+    	$item = $this->request->get('item_code') ? $this->request->get('item_code') : 'All';
     
     	$filters = [
     			'Salesman' => $salesman,
