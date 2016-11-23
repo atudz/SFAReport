@@ -14,7 +14,7 @@
 						{!!Html::select('customer_code','Customer', $customers)!!}												 																															
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::datepicker('invoice_date','Invoice Dae',true)!!}
+						{!!Html::datepicker('invoice_date','Invoice Date',true)!!}
 						{!!Html::select('item_code','Regular Item Code', $items)!!}						
 					</div>			
 				{!!Html::fclose()!!}
