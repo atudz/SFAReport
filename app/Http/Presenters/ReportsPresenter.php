@@ -365,6 +365,7 @@ class ReportsPresenter extends PresenterCore
     	{
     		$summary1 = $this->getSalesCollectionTotal($result);    		
     	}
+
     	$data['records'] = $this->validateInvoiceNumber($result);
     	
     	$data['summary'] = '';
@@ -396,7 +397,7 @@ class ReportsPresenter extends PresenterCore
     	$row = 1;
     	$max = count($data) - 1;
     	foreach($data as $k=>$rec)
-    	{    	    		
+    	{
     		if($prevInvoiceNum !== $rec->invoice_number || !$rec->invoice_number)
     		{
     			if($k)
@@ -417,7 +418,7 @@ class ReportsPresenter extends PresenterCore
     		}
     		else
     		{
-    			
+
     			$rec->customer_code = null;
     			$rec->customer_name = null;
     			$rec->remarks = null;
@@ -449,7 +450,7 @@ class ReportsPresenter extends PresenterCore
     			 
     		}
     	}
-    	//dd($formatted);
+
     	return $formatted;
     }
     
@@ -460,8 +461,6 @@ class ReportsPresenter extends PresenterCore
      */
     public function formatSalesCollection2($data)
     {
-    
-    	//dd($data);
     	$formatted = [];
     	$prevInvoiceNum = 0;
     	$customerCode = '';
@@ -523,7 +522,7 @@ class ReportsPresenter extends PresenterCore
     
     		}
     	}
-    	//dd($formatted);
+
     	return $formatted;
     }
     
@@ -1300,7 +1299,8 @@ class ReportsPresenter extends PresenterCore
     			}
     		}
     	}
-		$data['records'] = $this->validateInvoiceNumber($records);
+    	    	
+    	$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
     	return response()->json($data);    	
