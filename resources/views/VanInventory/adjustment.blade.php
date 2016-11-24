@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Van Inventory','Ajustment Replenishment'])!!}
-{!!Html::pageheader('Ajustment Replenishment')!!}
+{!!Html::breadcrumb(['Van Inventory','Adjustment Replenishment'])!!}
+{!!Html::pageheader('Adjustment Replenishment')!!}
 
 <div class="row">
 	<div class="col-lg-12">

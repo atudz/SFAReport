@@ -9,7 +9,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="pull-left">
-							<h4>Ajustment Replenishment</h4>
+							<h4>Adjustment Replenishment</h4>
 						</div>					
 						<div class="pull-right">
 				      		<a href="#vaninventory.adjustment" class="btn btn-success btn-sm">Back to Adjustment Replenishment</a>
