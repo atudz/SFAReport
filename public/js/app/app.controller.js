@@ -246,7 +246,7 @@
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 				    'replenishment_date_from': $('#replenishment_date_from').val(),
-					'reference_num': $('#reference_num').val(),
+					'reference_number': $('#reference_num').val(),
 					'counted': $('#counted').val(),
 					'confirmed': $('#confirmed').val(),
 					'last_sr': $('#last_sr').val(),

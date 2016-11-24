@@ -12,6 +12,7 @@ use App\Factories\ModelFactory;
 
 class VanInventoryPresenter extends PresenterCore
 {
+	
 	/**
 	 * Return van & inventory view
 	 * @param string $type
@@ -60,7 +61,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->jrSalesmans = $this->getJrSalesman();
 		$this->view->vanCodes = $this->getVanCodes();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);
-		$replenishment = ModelFactory::getInstance('Replenishment')->with('rep','rep.details')->where('reference_num',$referenceNum)->first();
+		$replenishment = ModelFactory::getInstance('Replenishment')->with('items')->where('reference_number',$referenceNum)->first();
 		if(!$replenishment)
 			$replenishment = ModelFactory::getInstance('Replenishment');
 		$this->view->replenishment = $replenishment;
@@ -314,7 +315,7 @@ class VanInventoryPresenter extends PresenterCore
     	if($data['total'])
     	{
     		foreach($data['records'] as $row)
-    			$reference = $row->reference_num;
+    			$reference = $row->reference_number;
     	}
     	$data['reference_num'] = $reference;
     	return response()->json($data);
@@ -644,49 +645,48 @@ class VanInventoryPresenter extends PresenterCore
     public function getPreparedRelenishment()
     {
     	$select = '
-    			replenishment.reference_num,
-    			txn_replenishment_detail.item_code,
+    			replenishment.reference_number,
+    			replenishment_item.item_code,
     			app_item_master.description,
-    			txn_replenishment_detail.quantity,
-    			IF(txn_replenishment_header.updated_by,\'modified\',
-	    			IF(txn_replenishment_detail.updated_by,\'modified\',\'\')
-	    		) updated
+    			replenishment_item.quantity,
+    			\'\' updated
     			';
     	 
     	$prepare = \DB::table('replenishment')
     					->selectRaw($select)
-    					->leftJoin('txn_replenishment_header','txn_replenishment_header.reference_number','=','replenishment.reference_num')
-				    	->leftJoin('txn_replenishment_detail','txn_replenishment_detail.reference_number','=','replenishment.reference_num')
-				    	->leftJoin('app_item_master','app_item_master.item_code','=','txn_replenishment_detail.item_code');				    	
+    					->leftJoin('replenishment_item','replenishment_item.reference_number','=','replenishment.reference_number')				    	
+				    	->leftJoin('app_item_master','app_item_master.item_code','=','replenishment_item.item_code');				    	
     	
     	 
     	if($this->isSalesman())
     	{
     		$vanCode = $this->getSalesmanVan(auth()->user()->salesman_code);
-    		$prepare->whereIn('txn_replenishment_header.van_code',$vanCode);
+    		$prepare->whereIn('replenishment.van_code',$vanCode);
     	}
     	else
     	{
     		if($this->request->get('salesman_code'))
     		{
 	    		$vanCode = $this->getSalesmanVan($this->request->get('salesman_code'));
-	    		$prepare->whereIn('txn_replenishment_header.van_code',$vanCode);
+	    		$prepare->whereIn('replenishment.van_code',$vanCode);
     		}
     	}
     	
     	$replenishmentDateFilter = FilterFactory::getInstance('Date');
     	$prepare = $replenishmentDateFilter->addFilter($prepare,'replenishment_date_from',
     			function($self, $model){
-    				return $model->where(DB::raw('DATE(txn_replenishment_header.replenishment_date)'),format_date($self->getValue(), 'Y-m-d'));
+    				return $model->where(DB::raw('DATE(replenishment.replenishment_date)'),format_date($self->getValue(), 'Y-m-d'));
     			});
     	 
     	$referenceFilter = FilterFactory::getInstance('Text');
-    	$prepare = $referenceFilter->addFilter($prepare,'reference_num');
+    	$prepare = $referenceFilter->addFilter($prepare,'reference_number');
     	 
     	if(!$this->request->has('sort'))
     	{
-    		$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');    		
+    		$prepare->orderBy('replenishment.replenishment_date','desc');    		
     	}    	
+    	
+    	$prepare->whereNull('replenishment.deleted_at');
     	
 //     	if(!$this->hasAdminRole() && auth()->user())
 //     	{
@@ -1057,7 +1057,7 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function getReplenishment($referenceNum)
     {
-    	return DB::table('replenishment')->where('reference_num',$referenceNum)->first();	
+    	return DB::table('replenishment')->where('reference_number',$referenceNum)->first();	
     }
     
     /**
@@ -1070,7 +1070,7 @@ class VanInventoryPresenter extends PresenterCore
     	$prepare = $this->getPreparedRelenishment();
     	
     	if($type == 'pdf')
-    		$prepare->where('txn_replenishment_detail.quantity','>',0);
+    		$prepare->where('replenishment_item.quantity','>',0);
     	
     	$replenishment = new \stdClass();
     	

@@ -10,6 +10,7 @@ use App\Http\Requests\ReplenishmentRequest;
 use App\Factories\PresenterFactory;
 use DB;
 use App\Http\Requests\ReplenishmentDelete;
+use App\Http\Models\Replenishment;
 
 class VanInventoryController extends ControllerCore
 {
@@ -78,17 +79,21 @@ class VanInventoryController extends ControllerCore
 	{		
 		DB::beginTransaction();
 		
-		$nextPkId = ModelFactory::getInstance('TxnReplenishmentHeader')->max('replenishment_header_id');
-		if($nextPkId >= config('system.custom_pk_start'))
-			$nextPkId++;
-		else
-			$nextPkId = config('system.custom_pk_start');
+		$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
 		
-		if($request->id)
-			$replenish = ModelFactory::getInstance('Replenishment')->find($request->id);
-		else 
-			$replenish = ModelFactory::getInstance('Replenishment');
+		$vans = $vanInventoryPresenter->getSalesmanVan($request->salesman_code);
+		$replenish = ModelFactory::getInstance('Replenishment')->findOrNew((int)$request->id);		
+		$replenish->van_code = $vans ? array_shift($vans) : '';
+		$replenish->replenishment_date = new Carbon($request->replenishment_date_from);
+		
+		$today = new Carbon();
+		$replenish->modified_date = $today;
+		$replenish->sfa_modified_date = $today;
+		$replenish->modified_by = $request->salesman_code;
+		$replenish->type = Replenishment::ACTUAL_COUNT_TYPE;
+		
 		$replenish->fill($request->all());
+		
 		if($replenish->save())
 		{
 			$items = $request->get('item_code');
@@ -96,64 +101,25 @@ class VanInventoryController extends ControllerCore
 			
 			if($items && $qty)
 			{
-				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');				
-				if($request->id)
-				{
-					$replenishment = ModelFactory::getInstance('TxnReplenishmentHeader')->where('reference_number',$replenish->reference_num)->first();
-					if(!$replenish)
+				ModelFactory::getInstance('ReplenishmentItem')
+					->where('reference_number',$replenish->reference_number)
+					->delete();
+					
+				foreach($items as $k=>$item)
+				{						
+					$detail = ModelFactory::getInstance('ReplenishmentItem');					
+					$detail->reference_number = $replenish->reference_number;			
+					$detail->item_code = $item;
+					$detail->quantity = isset($qty[$k]) ? $qty[$k] : 0;
+					$detail->uom_code = 'PCS';			
+					$detail->status = 'A';			
+					$detail->modified_by = $request->salesman_code;
+					$detail->modified_date = new Carbon();
+					$detail->sfa_modified_date = new Carbon();
+					if(!$detail->save())
 					{
 						DB::rollback();
-						return response()->json(['success'=>false]);
-					}
-				}
-				else 
-				{
-					$replenishment = ModelFactory::getInstance('TxnReplenishmentHeader');
-					$replenishment->replenishment_header_id = $nextPkId;
-				}				
-				$replenishment->reference_number = $request->reference_num;
-				$vans = $vanInventoryPresenter->getSalesmanVan($request->salesman_code);
-				$replenishment->van_code = array_shift($vans);
-				$replenishment->replenishment_date = new Carbon($request->replenishment_date_from);
-				$replenishment->modified_by = $request->salesman_code;
-				$replenishment->modified_date = new Carbon();
-				$replenishment->sfa_modified_date = new \DateTime();
-				$replenishment->status = 'A';
-				$replenishment->updated_by  = auth()->user()->id;
-				$replenishment->updated_at  = new \DateTime();
-				
-				if($replenishment->save())
-				{
-					ModelFactory::getInstance('TxnReplenishmentDetail')
-								->where('reference_number',$replenishment->reference_number)
-								->delete();
-					
-					foreach($items as $k=>$item)
-					{
-						
-						$nextPkId = ModelFactory::getInstance('TxnReplenishmentDetail')->max('replenishment_detail_id');
-						if($nextPkId >= config('system.custom_pk_start'))
-							$nextPkId++;
-						else
-							$nextPkId = config('system.custom_pk_start');
-												
-						$detail = ModelFactory::getInstance('TxnReplenishmentDetail');
-						$detail->replenishment_detail_id = $nextPkId;
-						$detail->reference_number = $replenishment->reference_number;			
-						$detail->item_code = $item;
-						$detail->quantity = isset($qty[$k]) ? $qty[$k] : 0;
-						$detail->uom_code = 'PCS';			
-						$detail->status = 'A';			
-						$detail->updated_by  = auth()->user()->id;
-						$detail->updated_at  = new \DateTime();
-						$detail->modified_by = $request->salesman_code;
-						$detail->modified_date = new Carbon();
-						$detail->sfa_modified_date = new Carbon();
-						if(!$detail->save())
-						{
-							DB::rollback();
-							return response()->json(['success'=>false]);						
-						}
+						return response()->json(['success'=>false]);						
 					}
 				}
 			}
@@ -183,12 +149,8 @@ class VanInventoryController extends ControllerCore
 			
 			if($replenish->delete())
 			{
-				ModelFactory::getInstance('TxnReplenishmentHeader')
-							->where('reference_number',$replenish->reference_num)
-							->delete();
-				
-				ModelFactory::getInstance('TxnReplenishmentDetail')
-							->where('reference_number',$replenish->reference_num)
+				ModelFactory::getInstance('ReplenishmentItem')
+							->where('reference_number',$replenish->reference_number)
 							->delete();
 			}
 		}

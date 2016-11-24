@@ -132,7 +132,7 @@
 				</div>
 				<div class="filter-row">
 					<div class="filter-name">Count Sheet No:</div>
-					<div class="filter-value">@if($replenishment->replenish){{$replenishment->replenish->reference_num}} @endif</div>					
+					<div class="filter-value">@if($replenishment->replenish){{$replenishment->replenish->reference_number}} @endif</div>					
 				</div>
 			</div>	
 			

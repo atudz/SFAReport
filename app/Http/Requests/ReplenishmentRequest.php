@@ -26,7 +26,7 @@ class ReplenishmentRequest extends Request
         return [
             'salesman_code' => 'required',
         	'replenishment_date_from' => 'required',
-        	'reference_num' => $this->get('id') ? 'required' : 'required|unique:replenishment',
+        	'reference_number' => $this->get('id') ? 'required' : 'required|unique:replenishment',
         	'counted' => 'required',
         	'confirmed' => 'required',
         	'last_sr' => 'required',

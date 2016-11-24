@@ -23,19 +23,19 @@
 						<div class ="col-md-8">
 							<input id="id" type="hidden" name="id" value="{{(int)$replenishment->id}}">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->rep ? $replenishment->rep->van_code : null))!!}
+								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->van_code))!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->rep ? $replenishment->rep->van_code : null))!!}
+								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->rep ? $replenishment->rep->van_code: null))!!}
+								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->rep ? $replenishment->rep->replenishment_date : null)!!}
+								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_num,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','counted','Counted <span class="required">*</span>',$replenishment->counted,['onblur'=>'validate(this)'])!!}
@@ -75,8 +75,8 @@
 								</thead>
 								<tbody>
 									
-									@if($replenishment->rep && $replenishment->rep->details)
-										@foreach($replenishment->rep->details as $k=>$item)
+									@if(count($replenishment->items) > 0)
+										@foreach($replenishment->items as $k=>$item)
 											<tr>
 												<td>
 													<div class="form-group">			 								

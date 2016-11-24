@@ -30,7 +30,7 @@
 			</tr>
 			<tr>
 				<th>Count Sheet No:</th>
-				<th>@if($replenishment->replenish){{$replenishment->replenish->reference_num}} @endif</th>
+				<th>@if($replenishment->replenish){{$replenishment->replenish->reference_number}} @endif</th>
 				<th align="right">REV#{{latest_revision('vaninventory')}}</th>											
 			</tr>								
 		</tbody>

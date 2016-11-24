@@ -24,19 +24,7 @@ class ModelCore extends Model
 	 * @return bool
 	 */
 	public function save(array $options = [])
-	{
-		
-		// Auto populate modified at
-		if($this->__isset('updated_at') && !$this->__isset('created_at'))
-		{
-			$this->setAttribute('updated_at', new \DateTime());
-		}
-		
-		if($this->__isset('updated_by') && \Auth::user())
-		{
-			$this->setAttribute('modified_by', \Auth::user()->id);
-		}
-		
+	{		
 		return parent::save($options);
 	}
 	

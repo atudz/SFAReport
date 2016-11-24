@@ -13,7 +13,10 @@ class Replenishment extends ModelCore
 	protected $table = 'replenishment';
 	
 	protected $fillable = [
-			'reference_num',
+			'reference_number',
+			'van_code',
+			'replenishment_date',
+			'replenishment_date',
 			'counted',
 			'confirmed',
 			'last_sr',
@@ -23,12 +26,16 @@ class Replenishment extends ModelCore
 			'last_ddr',
 	];
 	
+	const ACTUAL_COUNT_TYPE = 'actual_count';
+	const REPLENISHMENT_TYPE = 'replenishment';
+	
+	
 	/**
 	 * This model's relation to details
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function rep()
+	public function items()
 	{
-		return $this->hasOne('App\Http\Models\TxnReplenishmentHeader','reference_number','reference_num');
+		return $this->hasMany('App\Http\Models\ReplenishmentItem','reference_number','reference_number');
 	}
 }
