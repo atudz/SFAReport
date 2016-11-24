@@ -286,6 +286,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
 			case 'replenishment':
 				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
+			case 'adjustment':
+				return PresenterFactory::getInstance('VanInventory')->getAdjustmentReport();
     	}
     }
     
@@ -6026,6 +6028,10 @@ class ReportsPresenter extends PresenterCore
 			case 'replenishment':
 				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
 				break;
+				
+			case 'adjustment':
+				return PresenterFactory::getInstance('VanInventory')->exportAdjustment($type);
+				break;
     		default:
     			return;
     	}	
@@ -6667,6 +6673,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'replenishment':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
+				$total = $prepare->count();
+				break;
+			case 'adjustment':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedAdjustment();
 				$total = $prepare->count();
 				break;
     		default:

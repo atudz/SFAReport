@@ -1,4 +1,4 @@
-{!!Html::breadcrumb(['Van Inventory','Actual Count Replenishment', 'Add Row'])!!}
+{!!Html::breadcrumb(['Van Inventory','Adjustment Replenishment', 'Add Row'])!!}
 {!!Html::pageheader('Add Row')!!}
 
 <div class="row">
@@ -9,10 +9,10 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="pull-left">
-							<h4>Actual Count Replenishment</h4>
+							<h4>Ajustment Replenishment</h4>
 						</div>					
 						<div class="pull-right">
-				      		<a href="#vaninventory.replenishment" class="btn btn-success btn-sm">Back to Actual Count Replenishment</a>
+				      		<a href="#vaninventory.adjustment" class="btn btn-success btn-sm">Back to Adjustment Replenishment</a>
 				      	</div>
 					</div>
 				</div>
@@ -32,36 +32,19 @@
 								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
+								{!!Html::datepicker('replenishment_date','Adjustment date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','reference_number','Adjustment No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
 							</div>
+							
 							<div class="row form-input-field">
-								{!!Html::input('text','counted','Counted <span class="required">*</span>',$replenishment->counted,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','confirmed','Confirmed <span class="required">*</span>',$replenishment->confirmed,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','last_sr','Last SR <span class="required">*</span>',$replenishment->last_sr,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','last_rprr','Last RPRR <span class="required">*</span>',$replenishment->last_rprr,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','last_cs','Last Cash Slip <span class="required">*</span>',$replenishment->last_cs,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','last_dr','Last Delivery Receipt <span class="required">*</span>',$replenishment->last_dr,['onblur'=>'validate(this)'])!!}
-							</div>
-							<div class="row form-input-field">
-								{!!Html::input('text','last_ddr','Last DDR <span class="required">*</span>',$replenishment->last_ddr,['onblur'=>'validate(this)'])!!}
-							</div>						
+								{!!Html::input('text','adjustment_reason','Adjsustment Reason <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
+							</div>										
 						</div>
 					</div>
 					
-					<h4>Replenishment Items</h4>					
+					<h4>Adjustment Items</h4>					
 					<div class="row">
 						<div class="col-md-12">
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
@@ -69,6 +52,8 @@
 									<tr>
 										<th>Material Code</th>
 										<th>Material Description</th>
+										<th>Segment Code</th>
+										<th>Brand Name</th>										
 										<th>Material Quantity</th>
 										<th>&nbsp;</th>
 									</tr>
@@ -95,7 +80,21 @@
 												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
-						 									<input class="form-control" id="quantity" name="quantity[]" type="number" min="0"  value="{{$item->quantity}}" onblur="validateQty(this)">
+						 									{!!Form::select('item[]',$segmentCodes,$item->item_code,['class'=>'form-control','disabled'=>true])!!}
+						 								</div>
+						 							</div>		
+												</td>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-12">
+						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
+						 								</div>
+						 							</div>		
+												</td>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-12">
+						 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="{{$item->quantity}}">
 						 									<span class="help-block"></span>
 						 								</div>
 						 							</div>
@@ -124,7 +123,21 @@
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12">
-					 									<input class="form-control" id="quantity" name="quantity[]" type="number" min="0"  value="0" onblur="validateQty(this)">
+					 									{!!Form::select('segment_code[]',$segmentCodes,null,['class'=>'form-control','disabled'=>true])!!}
+					 								</div>
+					 							</div>		
+											</td>
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-12">
+					 									{!!Form::select('brands[]',$brandCodes,null,['class'=>'form-control'])!!}
+					 								</div>
+					 							</div>		
+											</td>
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-12">
+					 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="0">
 					 									<span class="help-block"></span>
 					 								</div>
 					 							</div>
@@ -137,7 +150,7 @@
 								</tbody>
 								<tfoot>
 									<tr>
-										<td colspan="4">
+										<td colspan="6">
 											<div class="text-center">
 												<button class="btn btn-info" onclick="addTd()">Add More</button>&nbsp;&nbsp;
 											</div>
@@ -150,7 +163,7 @@
 					
 					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
 						<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
-						<a href="#vaninventory.replenishment" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
+						<a href="#vaninventory.adjustment" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
 						@if($replenishment->id)
 							<button class="btn btn-danger" ng-click="remove()">Delete</button>&nbsp;&nbsp;
 						@endif
@@ -161,10 +174,10 @@
 </div>
 
 
-<script type="text/ng-template" id="DeleteActualcount">
+<script type="text/ng-template" id="DeleteAdjustment">
  	<div class="modal-body">
 		<form class="form-horizontal">	 
-			<h4>Deleting Acount Count Replenishment - [[params.reference_num]]</h4>       		 
+			<h4>Deleting Adjustment Replenishment - [[params.reference_num]]</h4>       		 
 			<div class="form-group">
 				<label class="col-sm-3">Remarks:</label>
 				<div class="col-sm-9">

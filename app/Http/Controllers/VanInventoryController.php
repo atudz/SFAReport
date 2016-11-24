@@ -11,6 +11,8 @@ use App\Factories\PresenterFactory;
 use DB;
 use App\Http\Requests\ReplenishmentDelete;
 use App\Http\Models\Replenishment;
+use App\Http\Requests\AdjustmentRequest;
+use App\Http\Requests\AdjustmentDelete;
 
 class VanInventoryController extends ControllerCore
 {
@@ -155,6 +157,98 @@ class VanInventoryController extends ControllerCore
 			}
 		}
 		
+		return response()->json(['success'=>true]);
+	}
+	
+	
+	/**
+	 * Save replenishment adjustment
+	 * @param ReplenishmentRequest $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function saveAdjustment(AdjustmentRequest $request)
+	{
+		DB::beginTransaction();
+	
+		$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+	
+		$vans = $vanInventoryPresenter->getSalesmanVan($request->salesman_code);
+		$replenish = ModelFactory::getInstance('Replenishment')->findOrNew((int)$request->id);
+		$replenish->van_code = $vans ? array_shift($vans) : '';
+		$replenish->replenishment_date = new Carbon($request->replenishment_date_from);
+		$replenish->adjustment_reason = $request->adjustment_reason;
+	
+		$today = new Carbon();
+		$replenish->modified_date = $today;
+		$replenish->sfa_modified_date = $today;
+		$replenish->modified_by = $request->salesman_code;
+		$replenish->type = Replenishment::REPLENISHMENT_TYPE;
+	
+		$replenish->fill($request->all());
+	
+		if($replenish->save())
+		{
+			$items = $request->get('item_code');
+			$qty = $request->get('quantity');
+			$brands = $request->get('brands');
+				
+			if($items && $qty)
+			{
+				ModelFactory::getInstance('ReplenishmentItem')
+						->where('reference_number',$replenish->reference_number)
+						->delete();
+					
+				foreach($items as $k=>$item)
+				{
+					$detail = ModelFactory::getInstance('ReplenishmentItem');
+					$detail->reference_number = $replenish->reference_number;
+					$detail->item_code = $item;
+					$detail->brand_code = isset($brands[$k]) ? $brands[$k] : null;
+					$detail->quantity = isset($qty[$k]) ? $qty[$k] : 0;
+					$detail->uom_code = 'PCS';
+					$detail->status = 'A';
+					$detail->modified_by = $request->salesman_code;
+					$detail->modified_date = new Carbon();
+					$detail->sfa_modified_date = new Carbon();
+					if(!$detail->save())
+					{
+						DB::rollback();
+						return response()->json(['success'=>false]);
+					}
+				}
+			}
+		}
+	
+		DB::commit();
+	
+		return response()->json(['success'=>true]);
+	
+	
+	}
+	
+	/**
+	 * Delete replishment
+	 * @param ReplenishmentDelete $request
+	 * @param unknown $id
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function deleteAdjustment(AdjustmentDelete $request, $id)
+	{
+	
+		$replenish = ModelFactory::getInstance('Replenishment')->find($id);
+		if($replenish)
+		{
+			$replenish->remarks = $request->remarks;
+			$replenish->save();
+				
+			if($replenish->delete())
+			{
+				ModelFactory::getInstance('ReplenishmentItem')
+				->where('reference_number',$replenish->reference_number)
+				->delete();
+			}
+		}
+	
 		return response()->json(['success'=>true]);
 	}
 }

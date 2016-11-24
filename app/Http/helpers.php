@@ -75,6 +75,24 @@ function sr_salesman_area($code)
 }
 
 /**
+ * Get item segment code 
+ * @param unknown $code
+ */
+function item_segment()
+{
+	return DB::table('app_item_master')->where('status','A')->lists('segment_code','item_code');
+}
+
+/**
+ * Get item segment code
+ * @param unknown $code
+ */
+function brands()
+{
+	return DB::table('app_item_brand')->where('status','A')->orderBy('description')->lists('description','brand_code');
+}
+
+/**
  * Get salesman
  * @param unknown $code
  * @return string

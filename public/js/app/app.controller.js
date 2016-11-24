@@ -334,6 +334,139 @@
 
 	
 	/**
+	 * Van Inventory Replenishment Adjustment
+	 */
+	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix',Adjustment]);
+	
+	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+		
+		$scope.editHide = 'hidden'
+		$scope.url = '#adjustment.edit/';
+		$scope.editUrl = '';
+		
+	    var params = [
+	    		  'salesman_code',		          
+		          'replenishment_date_from',
+		          'reference_number',
+		          'adjustment_reason'
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log, TableFix);
+
+	}
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', AdjustmentAdd]);
+
+	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
+		
+		$scope.save = function (){
+			var hasError = false;			
+			
+			if(!hasError){
+				
+				var API = $resource('controller/vaninventory/adjustment');
+				
+				var items = $("select[name^='item_code']").map(function (idx, el) {
+					   			return $(el).val();
+							}).get();
+				var quantities = $("input[name^='quantity']").map(function (idx, el) {
+		   						return $(el).val();
+							}).get();
+				var brands = $("select[name^='brands']").map(function (idx, el) {
+									return $(el).val();
+							}).get();
+				
+				var params = {
+					'salesman_code': $('#salesman_code').val(),
+				    'replenishment_date_from': $('#replenishment_date_from').val(),
+					'reference_number': $('#reference_number').val(),
+					'adjustment_reason': $('#adjustment_reason').val(),					
+					'item_code': items,
+					'quantity': quantities,
+					'brands': brands,
+					'id': $('#id').val()
+				};
+				
+				API.save(params).$promise.then(function(data){
+					$location.path('vaninventory.adjustment');
+				}, function(error){
+					if(error.data){
+						$('.help-block').html('');
+						$.each(error.data, function(index, val){
+							if(-1 !== index.indexOf('_from')){
+								$('[id='+index+']').parent().next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().parent().addClass('has-error');
+							} else {
+								$('[id='+index+']').next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().addClass('has-error');
+							}						
+						});
+					}
+				});
+			}			
+		}
+		
+		
+		$scope.remove = function () {			
+			var params = { id:$('#id').val(), reference_num: $('#reference_num').val() };
+			var modalInstance = $uibModal.open({
+			 	animation: true,
+			 	scope: $scope,
+				templateUrl: 'DeleteAdjustment',
+				controller: 'AdjustmentDelete',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+		}
+	};
+	
+
+	/**
+	 * Van Inventory Replenishment Delete
+	 */
+	app.controller('AdjustmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',AdjustmentDelete]);
+	
+	function AdjustmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+		$scope.params = params;
+		
+		$scope.save = function (){			
+			var API = $resource('controller/vaninventory/adjustment/delete/'+$scope.params.id);
+			var params = {
+				    'remarks': $('#comment').val()					
+				};
+			
+			API.save(params).$promise.then(function(data){
+				$location.path('vaninventory.adjustment');
+			}, function(error){
+				if(error.data){
+					$log.info(error);
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						$('[id='+index+']').next('.help-block').html(val);
+						$('[id='+index+']').parent().parent().addClass('has-error');												
+					});
+				}
+			});
+			
+		}
+		
+		$scope.cancel = function (){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
+	
+	/**
 	 * User List controller
 	 */
 	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);
@@ -902,7 +1035,7 @@
 		
 		scope.filter = function(){
 				
-			var exclude = ['salescollectionsummary','stockaudit','replenishment'];
+			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment'];
 	    	scope.page = 1;
 
 			params['page'] = scope.page;
@@ -980,7 +1113,7 @@
 			    	}
 			    	togglePagination(data.total);
 			    	
-			    	if(report == 'replenishment' && data.reference_num){
+			    	if(-1 !== $.inArray(report,exclude) && data.reference_num){
 			    		scope.editHide = '';
 			    		scope.editUrl = scope.url + data.reference_num;
 			    	}

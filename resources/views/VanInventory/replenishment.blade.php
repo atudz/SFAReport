@@ -8,9 +8,9 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-8">	
-						{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman')!!}
+						{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)'])!!}
 						{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>',false)!!}
-						{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>')!!}						
+						{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}						
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

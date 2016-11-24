@@ -6,9 +6,9 @@ use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
 use App\Factories\FilterFactory;
 use DB;
-use App\Http\Requests\StockTransferRequest;
 use Carbon\Carbon;
 use App\Factories\ModelFactory;
+use App\Http\Models\Replenishment;
 
 class VanInventoryPresenter extends PresenterCore
 {
@@ -48,6 +48,26 @@ class VanInventoryPresenter extends PresenterCore
 		return $this->view('addReplenishment');
 	}
 	
+	
+	/**
+	 * Return van & inventory view
+	 * @param string $type
+	 * @return string The rendered html view
+	 */
+	public function createAdjustment()
+	{
+		$reportsPresenter = PresenterFactory::getInstance('Reports');
+		$this->view->itemCodes = $this->getItemCodes();
+		$this->view->items = $reportsPresenter->getItems(true);
+		$this->view->jrSalesmans = $this->getJrSalesman();
+		$this->view->vanCodes = $this->getVanCodes();
+		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		$this->view->segmentCodes = item_segment();
+		$this->view->brandCodes = brands();
+		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
+		return $this->view('addAdjustment');
+	}
+	
 	/**
 	 * Return van & inventory view
 	 * @param string $type
@@ -66,6 +86,28 @@ class VanInventoryPresenter extends PresenterCore
 			$replenishment = ModelFactory::getInstance('Replenishment');
 		$this->view->replenishment = $replenishment;
 		return $this->view('addReplenishment');
+	}
+	
+	/**
+	 * Return van & inventory view
+	 * @param string $type
+	 * @return string The rendered html view
+	 */
+	public function editAdjustment($referenceNum)
+	{
+		$reportsPresenter = PresenterFactory::getInstance('Reports');
+		$this->view->itemCodes = $this->getItemCodes();
+		$this->view->items = $reportsPresenter->getItems(true);
+		$this->view->jrSalesmans = $this->getJrSalesman();
+		$this->view->vanCodes = $this->getVanCodes();
+		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		$this->view->segmentCodes = item_segment();
+		$this->view->brandCodes = brands();
+		$replenishment = ModelFactory::getInstance('Replenishment')->with('items')->where('reference_number',$referenceNum)->first();
+		if(!$replenishment)
+			$replenishment = ModelFactory::getInstance('Replenishment');
+		$this->view->replenishment = $replenishment;
+		return $this->view('addAdjustment');
 	}
 	
     /**
@@ -111,6 +153,19 @@ class VanInventoryPresenter extends PresenterCore
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getReplenishmentColumns();
     	return $this->view('replenishment');
+    }
+    
+    /**
+     * Return van inventory replenishment adjustment view
+     * @param string $type
+     * @return string The rendered html view
+     */
+    public function adjustment()
+    {
+    	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$this->view->salesman = $reportsPresenter->getSalesman(true);    	
+    	$this->view->tableHeaders = $this->getAdjustmentColumns();
+    	return $this->view('adjustment');
     }
     
     /**
@@ -219,6 +274,24 @@ class VanInventoryPresenter extends PresenterCore
     	return $headers;
     }
     
+    
+    /**
+     * Get replenishment adjustment table headers
+     * @return string[][]
+     */
+    public function getAdjustmentColumns()
+    {
+    	$headers = [
+    			['name'=>'Segment Code','sort'=>'segment_code'],
+    			['name'=>'Brand Name','sort'=>'brand_name'],
+    			['name'=>'Material Code','sort'=>'item_code'],
+    			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Total Quantity','sort'=>'quantity'],
+    	];
+    	 
+    	return $headers;
+    }
+    
     /**
      * Get Stock transfer column headers
      * @return string[][]
@@ -311,6 +384,28 @@ class VanInventoryPresenter extends PresenterCore
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
     	
+    	$reference = '';
+    	if($data['total'])
+    	{
+    		foreach($data['records'] as $row)
+    			$reference = $row->reference_number;
+    	}
+    	$data['reference_num'] = $reference;
+    	return response()->json($data);
+    }
+    
+    
+    /**
+     * Get replenishment adjustment report report
+     * @return \App\Core\PaginatorCore
+     */
+    public function getAdjustmentReport()
+    {
+    	$prepare = $this->getPreparedAdjustment();
+    	$result = $this->paginate($prepare);
+    	$data['records'] = $result->items();
+    	$data['total'] = $result->total();
+    	 
     	$reference = '';
     	if($data['total'])
     	{
@@ -687,6 +782,7 @@ class VanInventoryPresenter extends PresenterCore
     	}    	
     	
     	$prepare->whereNull('replenishment.deleted_at');
+    	$prepare->where('replenishment.type',Replenishment::ACTUAL_COUNT_TYPE);
     	
 //     	if(!$this->hasAdminRole() && auth()->user())
 //     	{
@@ -698,6 +794,76 @@ class VanInventoryPresenter extends PresenterCore
 		if(!$this->request->get('salesman_code') && !$this->request->get('replenishment_date_from') && !$this->request->get('reference_number'))
 			return $prepare->where('replenishment.id',0);
     		
+    	return $prepare;
+    }
+    
+    
+    /**
+     * Get Prepared statement for stock transfer
+     */
+    public function getPreparedAdjustment()
+    {
+    	$select = '
+    			replenishment.reference_number,
+    			replenishment_item.item_code,
+    			app_item_master.segment_code,
+    			app_item_master.description,
+    			replenishment_item.quantity,
+    			app_item_brand.description as brand_name,
+    			\'\' updated
+    			';
+    
+    	$prepare = \DB::table('replenishment')
+				    	->selectRaw($select)
+				    	->leftJoin('replenishment_item','replenishment_item.reference_number','=','replenishment.reference_number')
+				    	->leftJoin('app_item_brand','replenishment_item.brand_code','=','app_item_brand.brand_code')
+				    	->leftJoin('app_item_master','app_item_master.item_code','=','replenishment_item.item_code');
+    	 
+    
+    	if($this->isSalesman())
+    	{
+    		$vanCode = $this->getSalesmanVan(auth()->user()->salesman_code);
+    		$prepare->whereIn('replenishment.van_code',$vanCode);
+    	}
+    	else
+    	{
+    		if($this->request->get('salesman_code'))
+    		{
+    			$vanCode = $this->getSalesmanVan($this->request->get('salesman_code'));
+    			$prepare->whereIn('replenishment.van_code',$vanCode);
+    		}
+    	}
+    	 
+    	$replenishmentDateFilter = FilterFactory::getInstance('Date');
+    	$prepare = $replenishmentDateFilter->addFilter($prepare,'replenishment_date_from',
+    			function($self, $model){
+    				return $model->where(DB::raw('DATE(replenishment.replenishment_date)'),format_date($self->getValue(), 'Y-m-d'));
+    			});
+    
+    	$referenceFilter = FilterFactory::getInstance('Text');
+    	$prepare = $referenceFilter->addFilter($prepare,'reference_number');
+    
+    	$reasonFilter = FilterFactory::getInstance('Text');
+    	$prepare = $reasonFilter->addFilter($prepare,'adjustment_reason');
+    	
+    	if(!$this->request->has('sort'))
+    	{
+    		$prepare->orderBy('replenishment.replenishment_date','desc');
+    	}
+    	 
+    	$prepare->whereNull('replenishment.deleted_at');
+    	$prepare->where('replenishment.type',Replenishment::REPLENISHMENT_TYPE);
+    	 
+    	//     	if(!$this->hasAdminRole() && auth()->user())
+    		//     	{
+    		//     		$reportsPresenter = PresenterFactory::getInstance('Reports');
+    		//     		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		//     		$prepare->whereIn('salesman_area.area_code',$codes);
+    		//     	}
+    
+    	if(!$this->request->get('salesman_code') && !$this->request->get('replenishment_date_from') && !$this->request->get('reference_number'))
+    		return $prepare->where('replenishment.id',0);
+    
     	return $prepare;
     }
     
@@ -1098,6 +1264,47 @@ class VanInventoryPresenter extends PresenterCore
     		$pdf = \PDF::loadView('VanInventory.replenishmentPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;    		
     		return $pdf->download('Actual Count Replenishment Report.pdf');
     	}
+    }
+    
+    
+    /**
+     * Export replenishment adjustment data
+     * @param unknown $type
+     * @return unknown
+     */
+    public function exportAdjustment($type)
+    {
+    	$prepare = $this->getPreparedAdjustment();
+    	 
+    	if($type == 'pdf')
+    		$prepare->where('replenishment_item.quantity','>',0);
+    		 
+    		$replenishment = new \stdClass();
+    		 
+    		$replenishment->salesman = sr_salesman($this->request->get('salesman_code'));
+    		$replenishment->jr_salesman = jr_salesman($this->request->get('salesman_code'));
+    		$replenishment->van_code = salesman_van($this->request->get('salesman_code'));
+    		$replenishment->items = $prepare->get();
+    		$replenishment->replenish_date = (new Carbon($this->request->get('replenishment_date_from')))->toDateTimeString();
+    		$replenishment->replenish = $this->getReplenishment($this->request->get('reference_number'));
+    		 
+    		//     	$this->view->replenishment = $replenishment;
+    		//     	return $this->view('replenishmentExport');
+    		 
+    		if(in_array($type,['xls','xlsx']))
+    		{
+    			\Excel::create('Adjustment Replenishment Report', function($excel) use ($replenishment){
+    				$excel->sheet('Sheet1', function($sheet) use ($replenishment){
+    					$sheet->loadView('VanInventory.adjustmentXlsExport',compact('replenishment'));
+    				});
+    					 
+    			})->export($type);
+    		}
+    		elseif($type == 'pdf')
+    		{
+    			$pdf = \PDF::loadView('VanInventory.adjustmentPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;
+    			return $pdf->download('Adjustment Replenishment Report.pdf');
+    		}
     }
     
 }

@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StockAuditReportSeeder::class);
         $this->call(FlexiDealReportSeeder::class);
         $this->call(ActualCountReplenishmentSeeder::class);
+        $this->call(ReplenishmentAdjustmentSeeder::class);
 
         Model::reguard();
     }

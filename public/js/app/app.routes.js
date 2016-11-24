@@ -78,6 +78,21 @@
 					controller: 'ReplenishmentAdd',
 					//controllerAs: 'vic'*/
 				})
+				.when('/vaninventory.adjustment',{
+					templateUrl: '/reports/adjustment',
+					controller: 'Adjustment',
+					//controllerAs: 'vic'*/
+				})
+				.when('/adjustment.add',{
+					templateUrl: '/reports/adjustment/add',
+					controller: 'AdjustmentAdd',
+					//controllerAs: 'vic'*/
+				})
+				.when('/adjustment.edit/:id',{
+					templateUrl: function(params){ return '/reports/adjustment/edit/'+params.id},
+					controller: 'AdjustmentAdd',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report
