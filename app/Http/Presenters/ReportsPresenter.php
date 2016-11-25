@@ -6971,8 +6971,11 @@ class ReportsPresenter extends PresenterCore
     	$invoice = $this->request->get('invoice_number') ? $this->request->get('invoice_number') : 'All';
     	$or = $this->request->get('or_number') ? $this->request->get('or_number') : 'All';
     	$name = $this->request->get('customer_name') ? $this->request->get('customer_name') : 'All';
-    	
-    	$filters = [
+		$jrSalesman = ModelFactory::getInstance('User');
+		$jrSalesman = $jrSalesman->where('salesman_code', 'Like', '%' . $this->request->get('salesman') . '-%')->where('status', 'A')->first();
+
+
+		$filters = [
     			'Invoice Date' => $invoiceDate,
     			'Collection Date' => $collectiontDate,
     			'Invoice #' => $invoice,
@@ -6980,7 +6983,8 @@ class ReportsPresenter extends PresenterCore
     			'Company Code' => $customer,
     			'Customer Name' => $name,
     			'Salesman' => $salesman,
-    			'Posting Date' => $postingDate,
+				'Jr. Salesman' => ($jrSalesman) ? $jrSalesman->full_name . ' - ' . $jrSalesman->salesman_code: null,
+				'Posting Date' => $postingDate,
     	];
     	
     	if($collection)

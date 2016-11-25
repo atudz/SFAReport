@@ -62,7 +62,12 @@
 			<tr>
 				<th colspan="22"></th>
 				<th align="right">Jr. Salesman:</th>
-				<th align="left" style="text-decoration: underline">{{$filters['Jr. Salesman']}}</th>
+				<th align="left" @if($filters['Jr. Salesman']) style="text-decoration: underline" @endif>
+					@if($filters['Jr. Salesman'])
+						{{$filters['Jr. Salesman']}}
+					@else
+						______________
+					@endif</th>
 				<th align="right">Prev. Inv. date</th>
 				<th align="right">From:</th>
 				<th @if(request()->get('posting_date_from')) style="text-decoration: underline" @endif>
