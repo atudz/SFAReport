@@ -11,7 +11,7 @@
 	var app = angular.module('app');
 	var defaultDate = '';
 	var fetch = true;
-
+	
 	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
 	
 	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
@@ -219,9 +219,12 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('ReplenishmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', ReplenishmentAdd]);
+	app.controller('ReplenishmentAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', ReplenishmentAdd]);
 
-	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
+	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache) {
+		
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
 		
 		$scope.save = function (){
 			var hasError = false;
@@ -246,7 +249,7 @@
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 				    'replenishment_date_from': $('#replenishment_date_from').val(),
-					'reference_number': $('#reference_num').val(),
+					'reference_number': $('#reference_number').val(),
 					'counted': $('#counted').val(),
 					'confirmed': $('#confirmed').val(),
 					'last_sr': $('#last_sr').val(),
@@ -361,9 +364,12 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', AdjustmentAdd]);
+	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', '$route', '$templateCache', AdjustmentAdd]);
 
-	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log) {
+	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
+		
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
 		
 		$scope.save = function (){
 			var hasError = false;			
@@ -469,10 +475,13 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log', StockTransferAdd]);
+	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', StockTransferAdd]);
 
-	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log) {
+	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
 
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
+		
 		$scope.save = function (){
 			var API = $resource('controller/vaninventory/stocktransfer');
 			
@@ -507,6 +516,122 @@
 		}
 	};
 	
+	
+	/**
+	 * Van Inventory Replenishment Adjustment
+	 */
+	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix',InvoiceSeries]);
+	
+	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+		var params = [
+	    		  'salesman_code',		          
+		          'invoice_start',
+		          'invoice_end',
+		          'status'
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log, TableFix);
+
+	}
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('InvoiceSeriesAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', InvoiceSeriesAdd]);
+
+	function InvoiceSeriesAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
+		
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
+
+		$scope.save = function (){
+			var hasError = false;						
+			if(!hasError){
+				
+				var API = $resource('controller/invoiceseries/save');				
+				var params = {
+					'salesman_code': $('#salesman_code').val(),
+				    'invoice_start': $('#invoice_start').val(),
+					'invoice_end': $('#invoice_end').val(),
+					'status': $('#status').val(),
+					'id' : $('#id').val()
+				};
+				
+				API.save(params).$promise.then(function(data){
+					$location.path('invoiceseries.mapping');
+				}, function(error){
+					if(error.data){
+						$('.help-block').html('');
+						$.each(error.data, function(index, val){
+							if(-1 !== index.indexOf('_from')){
+								$('[id='+index+']').parent().next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().parent().addClass('has-error');
+							} else {
+								$('[id='+index+']').next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().addClass('has-error');
+							}						
+						});
+					}
+				});
+			}			
+		}
+		
+		
+		$scope.remove = function () {			
+			var params = { id:$('#id').val(), id: $('#id').val() };
+			var modalInstance = $uibModal.open({
+			 	animation: true,
+			 	scope: $scope,
+				templateUrl: 'DeleteInvoiceSeries',
+				controller: 'InvoiceSeriesDelete',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+		}
+	};
+	
+
+	/**
+	 * Van Inventory Replenishment Delete
+	 */
+	app.controller('InvoiceSeriesDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',InvoiceSeriesDelete]);
+	
+	function InvoiceSeriesDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+		$scope.params = params;
+		
+		$scope.save = function (){			
+			var API = $resource('controller/invoiceseries/delete/'+$scope.params.id);
+			var params = {
+				    'remarks': $('#comment').val()					
+				};
+			
+			API.save(params).$promise.then(function(data){
+				$location.path('invoiceseries.mapping');
+			}, function(error){
+				if(error.data){
+					$log.info(error);
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						$('[id='+index+']').next('.help-block').html(val);
+						$('[id='+index+']').parent().parent().addClass('has-error');												
+					});
+				}
+			});
+			
+		}
+		
+		$scope.cancel = function (){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
 	
 	/**
 	 * Van Inventory Controller

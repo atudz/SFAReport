@@ -288,6 +288,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
 			case 'adjustment':
 				return PresenterFactory::getInstance('VanInventory')->getAdjustmentReport();
+			case 'invoiceseries':
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesReport();
     	}
     }
     
@@ -5050,6 +5052,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditColumns();
 			case 'flexideal':
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
+			case 'invoiceseries':
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns(true);
     	}	
     }
     
@@ -6023,10 +6027,18 @@ class ReportsPresenter extends PresenterCore
 				
 			case 'replenishment':
 				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
-				break;
-				
+				break;				
 			case 'adjustment':
 				return PresenterFactory::getInstance('VanInventory')->exportAdjustment($type);
+				break;
+			case 'invoiceseries':
+				$invoicePresenter = PresenterFactory::getInstance('Invoice');				
+				$columns = $this->getTableColumns($report);
+				$prepare = $invoicePresenter->getPreparedInvoiceSeries();
+				$rows = $invoicePresenter->getInvoiceSeriesSelectColumns();
+				$header = 'Invoice Series Mapping';
+				$filters = $invoicePresenter->getInvoiceSeriesFilterData();
+				$filename = 'Invoice Series Mapping';
 				break;
     		default:
     			return;
@@ -6126,7 +6138,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit']))
+    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit','invoiceseries']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
@@ -6657,6 +6669,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'adjustment':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedAdjustment();
+				$total = $prepare->count();
+				break;
+			case 'invoiceseries':
+				$prepare = PresenterFactory::getInstance('Invoice')->getPreparedInvoiceSeries();
 				$total = $prepare->count();
 				break;
     		default:

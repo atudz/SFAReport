@@ -209,3 +209,20 @@ function get_rev($report)
 {
 	return DB::table('report_revisions')->where('report',$report)->max('revision_number');
 }
+
+/**
+ * Get statuses
+ * @param string $default
+ * @return \Illuminate\Support\Collection
+ */
+function statuses($default='Select Status')
+{
+	$status = collect([
+			'A' => 'Active',
+			'I' => 'Inactive',
+	]);
+	
+	if($default)
+		$status->prepend($default,'');
+	return $status;
+}

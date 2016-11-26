@@ -47,6 +47,10 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/adjustment/add', ['as'=>'adjustment-add', 'uses'=>'VanInventoryPresenter@createAdjustment']);
 	Route::get('/adjustment/edit/{id}', ['as'=>'adjustment-edit', 'uses'=>'VanInventoryPresenter@editAdjustment']);
 	
+	Route::get('/invoiceseries', ['as'=>'invoice-series', 'uses'=>'InvoicePresenter@index']);
+	Route::get('/invoiceseries/add', ['as'=>'invoice-series-add', 'uses'=>'InvoicePresenter@create']);
+	Route::get('/invoiceseries/edit/{id}', ['as'=>'invoice-series-edit', 'uses'=>'InvoicePresenter@edit']);
+	
 	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
@@ -114,6 +118,9 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/vaninventory/replenishment/delete/{id}', ['as'=>'replenishment-delete', 'uses'=>'VanInventoryController@deleteReplenishment']);
 	Route::post('/vaninventory/adjustment', ['as'=>'adjustment-save', 'uses'=>'VanInventoryController@saveAdjustment']);
 	Route::post('/vaninventory/adjustment/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'VanInventoryController@deleteAdjustment']);
+	
+	Route::post('/invoiceseries/save', ['as'=>'invoiceseries-save', 'uses'=>'InvoiceController@save']);
+	Route::post('/invoiceseries/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'InvoiceController@destroy']);
 
 });
 

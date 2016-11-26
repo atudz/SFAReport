@@ -388,7 +388,10 @@ class VanInventoryPresenter extends PresenterCore
     	if($data['total'])
     	{
     		foreach($data['records'] as $row)
+    		{
     			$reference = $row->reference_number;
+    			break;
+    		}
     	}
     	$data['reference_num'] = $reference;
     	return response()->json($data);
@@ -410,7 +413,10 @@ class VanInventoryPresenter extends PresenterCore
     	if($data['total'])
     	{
     		foreach($data['records'] as $row)
+    		{
     			$reference = $row->reference_number;
+    			break;
+    		}
     	}
     	$data['reference_num'] = $reference;
     	return response()->json($data);

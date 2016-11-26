@@ -35,7 +35,7 @@
 								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','reference_num','Count Sheet No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','counted','Counted <span class="required">*</span>',$replenishment->counted,['onblur'=>'validate(this)'])!!}

@@ -138,6 +138,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
     	App\Providers\MacroServiceProvider::class,
+    	App\Providers\CustomValidations::class,
     	Maatwebsite\Excel\ExcelServiceProvider::class,
     	Barryvdh\DomPDF\ServiceProvider::class,
 

@@ -19,7 +19,7 @@
 		}
 		
 		table.table-data {
-			width: auto;
+			width: 100%;
     		border-collapse: collapse;
     		font-size: {{$fontSize}};
 		}		
