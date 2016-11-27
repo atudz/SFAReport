@@ -11,7 +11,7 @@
 						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'Select Salesman')!!}
 						{!!Html::select('area_code','Area', $salesman,$isSalesman ? '' : 'Select Area')!!}
 						{!!Html::datepicker('replenishment_date','Date Assigned',false)!!}
-						{!!Html::select('status','Status', $salesman,'Select Status')!!}						
+						{!!Html::select('status','Status', statuses(),'Select Status')!!}						
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

@@ -633,6 +633,139 @@
 		}
 	}
 	
+	
+	/**
+	 * Bounce Check Controller
+	 */
+	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix',BounceCheck]);
+	
+	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+		var params = [
+	    		  'salesman_code',		          
+		          'area_code',
+		          'customer_code',
+		          'txn_number',
+		          'invoice_date_from',
+		          'dm_date_from',
+		          'reason'
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log, TableFix);
+
+	}
+	
+	/**
+	 * BounceCheck Add Controller
+	 */
+	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', BounceCheckAdd]);
+
+	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
+		
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
+
+		$scope.save = function (){
+			var hasError = false;						
+			if(!hasError){
+				
+				var API = $resource('controller/bouncecheck/save');				
+				var params = {
+					'salesman_code': $('#salesman_code').val(),
+					'customer_code': $('#customer_code').val(),
+				    'dm_number': $('#dm_number').val(),
+					'dm_date_from': $('#dm_date_from').val(),
+					'invoice_number': $('#invoice_number').val(),
+					'invoice_date_from': $('#invoice_date_from').val(),
+					'bank_name': $('#bank_name').val(),
+					'cheque_number': $('#cheque_number').val(),
+					'cheque_date_from': $('#cheque_date_from').val(),
+					'account_number': $('#account_number').val(),
+					'reason': $('#reason').val(),
+					'original_amount': $('#original_amount').val(),
+					'payment_amount': $('#payment_amount').val(),
+					'payment_date_from': $('#payment_date_from').val(),
+					'remarks': $('#remarks').val(),
+					'balance_amount': $('#balance_amount').val(),
+					'txn_number': $('#txn_number').val(),
+					'id' : $('#id').val()
+				};
+				
+				API.save(params).$promise.then(function(data){
+					$location.path('bounce.check');
+				}, function(error){
+					if(error.data){
+						$('.help-block').html('');
+						$.each(error.data, function(index, val){
+							if(-1 !== index.indexOf('_from')){
+								$('[id='+index+']').parent().next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().parent().addClass('has-error');
+							} else {
+								$('[id='+index+']').next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().addClass('has-error');
+							}						
+						});
+					}
+				});
+			}			
+		}
+		
+		
+		$scope.remove = function () {			
+			var params = { txn_number: $('#txn_number').val() };
+			var modalInstance = $uibModal.open({
+			 	animation: true,
+			 	scope: $scope,
+				templateUrl: 'DeleteBounceCheck',
+				controller: 'BounceCheckDelete',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return params;
+				    }
+				}
+			});
+		}
+	};
+	
+
+	/**
+	 * Bounce Check Delete
+	 */
+	app.controller('BounceCheckDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',BounceCheckDelete]);
+	
+	function BounceCheckDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+		$scope.params = params;
+		
+		$scope.save = function (){			
+			var API = $resource('controller/bouncecheck/delete/'+$scope.params.txn_number);
+			var params = {
+				    'remarks': $('#comment').val()					
+				};
+			
+			API.save(params).$promise.then(function(data){
+				$location.path('bounce.check');
+			}, function(error){
+				if(error.data){
+					$log.info(error);
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						$('[id='+index+']').next('.help-block').html(val);
+						$('[id='+index+']').parent().parent().addClass('has-error');												
+					});
+				}
+			});
+			
+		}
+		
+		$scope.cancel = function (){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
+	
 	/**
 	 * Van Inventory Controller
 	 */
@@ -1160,7 +1293,7 @@
 		
 		scope.filter = function(){
 				
-			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment'];
+			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment','bouncecheck'];
 	    	scope.page = 1;
 
 			params['page'] = scope.page;

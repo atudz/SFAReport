@@ -290,6 +290,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getAdjustmentReport();
 			case 'invoiceseries':
 				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesReport();
+			case 'bouncecheck':
+				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckReport();
     	}
     }
     
@@ -5054,6 +5056,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
 			case 'invoiceseries':
 				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns(true);
+			case 'bouncecheck':
+				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns(true);
     	}	
     }
     
@@ -6040,6 +6044,15 @@ class ReportsPresenter extends PresenterCore
 				$filters = $invoicePresenter->getInvoiceSeriesFilterData();
 				$filename = 'Invoice Series Mapping';
 				break;
+			case 'bouncecheck':
+				$bounceCheckPresenter = PresenterFactory::getInstance('BounceCheck');
+				$columns = $this->getTableColumns($report);
+				$prepare = $bounceCheckPresenter->getPreparedBounceCheck();
+				$rows = $bounceCheckPresenter->getBounceCheckSelectColumns();
+				$header = 'Bounce Check Report';
+				$filters = $bounceCheckPresenter->getBounceCheckFilterData();
+				$filename = 'Bounce Check Report';
+				break;
     		default:
     			return;
     	}	
@@ -6673,6 +6686,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'invoiceseries':
 				$prepare = PresenterFactory::getInstance('Invoice')->getPreparedInvoiceSeries();
+				$total = $prepare->count();
+				break;
+			case 'bouncecheck':
+				$prepare = PresenterFactory::getInstance('BounceCheck')->getPreparedBounceCheck();
 				$total = $prepare->count();
 				break;
     		default:

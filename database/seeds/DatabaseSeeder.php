@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ActualCountReplenishmentSeeder::class);
         $this->call(ReplenishmentAdjustmentSeeder::class);
         $this->call(InvoiceSeriesMappingSeeder::class);
+        $this->call(BounceCheckSeeder::class);
 
         Model::reguard();
     }

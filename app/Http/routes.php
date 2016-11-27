@@ -51,6 +51,10 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/invoiceseries/add', ['as'=>'invoice-series-add', 'uses'=>'InvoicePresenter@create']);
 	Route::get('/invoiceseries/edit/{id}', ['as'=>'invoice-series-edit', 'uses'=>'InvoicePresenter@edit']);
 	
+	Route::get('/bouncecheck', ['as'=>'bounce-check', 'uses'=>'BounceCheckPresenter@index']);
+	Route::get('/bouncecheck/add', ['as'=>'bounce-check-add', 'uses'=>'BounceCheckPresenter@create']);
+	Route::get('/bouncecheck/edit/{id}', ['as'=>'bounce-check-edit', 'uses'=>'BounceCheckPresenter@edit']);
+	
 	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
 	Route::get('/bir', ['as'=>'bir', 'uses'=>'ReportsPresenter@bir']);
@@ -62,6 +66,18 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/getcount/{report}/{type?}', ['as'=>'report-count', 'uses'=>'ReportsPresenter@getDataCount']);
 	
 	Route::get('/synching/{id}/{column}', ['as'=>'synch', 'uses'=>'ReportsPresenter@isSynching']);
+	
+	Route::get('/salesman/customer/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_customer($salesmanCode));
+	});
+	
+	Route::get('/salesman/jr/{salesman_code}', function($salesmanCode){
+		return response()->json(sfa_jr_salesman($salesmanCode));
+	});
+	
+	Route::get('/customer/area/{customer_code}', function($customerCode){
+		return response()->json(customer_area($customerCode));
+	});
 });
 
 
@@ -121,6 +137,9 @@ Route::group(['prefix' => 'controller'],function(){
 	
 	Route::post('/invoiceseries/save', ['as'=>'invoiceseries-save', 'uses'=>'InvoiceController@save']);
 	Route::post('/invoiceseries/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'InvoiceController@destroy']);
+	
+	Route::post('/bouncecheck/save', ['as'=>'bouncecheck-save', 'uses'=>'BounceCheckController@save']);
+	Route::post('/bouncecheck/delete/{id}', ['as'=>'bouncecheck-delete', 'uses'=>'BounceCheckController@destroy']);
 
 });
 

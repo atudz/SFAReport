@@ -18,6 +18,17 @@ function generate_revision($reportType, $prefix='')
 	return $revision;
 }
 
+/**
+ * Generate transaction code
+ * @param string $prefix
+ */
+function generate_txn_code($prefix='TXN')
+{
+	$code = $prefix.microtime(true).sprintf("%02d", mt_rand(2, 3));
+	$code = str_replace('.', '', $code);;
+	return $code;
+}
+
 
 /**
  * Get latest revision number,
@@ -225,4 +236,59 @@ function statuses($default='Select Status')
 	if($default)
 		$status->prepend($default,'');
 	return $status;
+}
+
+
+/**
+ * Get salesman customer
+ * @param unknown $salesman_code
+ * @return unknown
+ */
+function salesman_customer($salesman_code)
+{
+	$prepare = DB::table('app_salesman_customer')
+					->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+					->where('app_salesman_customer.status','A')
+					->where('app_customer.status','A')
+					->where('app_salesman_customer.salesman_code',$salesman_code)
+					->orderBy('app_customer.customer_name');
+	
+	return $prepare->lists('app_customer.customer_name','app_customer.customer_code');
+}
+
+
+/**
+ * Get salesman customer
+ * @param unknown $salesman_code
+ * @return unknown
+ */
+function sfa_jr_salesman($salesman_code,$id=false)
+{
+	$salesman = ModelFactory::getInstance('User')	
+					->select('user.id','user.firstname','user.lastname')
+					->where('salesman_code','like',$salesman_code.'-%')
+					->first();				
+	
+	if($id && $salesman)
+		return $salesman->id;
+					
+	return $salesman ? $salesman->fullname : '';
+}
+
+/**
+ * Customer area
+ * @param unknown $customer_code
+ */
+function customer_area($customer_code,$code=false)
+{
+	$area = DB::table('app_customer')
+					->select('app_area.area_code','app_area.area_name')
+					->leftJoin('app_area','app_customer.area_code','=','app_area.area_code')
+					->where('app_customer.customer_code',$customer_code)
+					->where('app_area.status','A')
+					->first();
+	
+	if($area && $code)
+		return $area->area_code;
+	return $area ? $area->area_name : '';
 }

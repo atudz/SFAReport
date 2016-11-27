@@ -46,7 +46,7 @@
 					
 					<h4>Adjustment Items</h4>					
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-12 table-responsive">
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
 								<thead>
 									<tr>

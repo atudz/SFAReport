@@ -248,6 +248,24 @@
 					/*controllerAs: 'sync'*/
 				})
 				
+				
+				.when('/bounce.check',{
+					templateUrl: '/reports/bouncecheck',
+					controller: 'BounceCheck',
+					/*controllerAs: 'sync'*/
+				})
+				.when('/bouncecheck.add',{
+					templateUrl: '/reports/bouncecheck/add',
+					controller: 'BounceCheckAdd',
+					/*controllerAs: 'sync'*/
+				})
+				
+				.when('/bouncecheck.edit/:id',{
+					templateUrl: function(params){ return '/reports/bouncecheck/edit/'+params.id},
+					controller: 'BounceCheckAdd',
+					/*controllerAs: 'sync'*/
+				})
+				
 
 				.otherwise({
 			        redirectTo: '/home'
