@@ -7486,8 +7486,8 @@ class ReportsPresenter extends PresenterCore
 					'H:I' => 'MM/DD/YYYY',
 					'K'   => '0,0.00',
 					'L:M' => 'MM/DD/YYYY',
-					'J' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-					'F' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+					'J'   => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+					'F'   => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
 
 				]);
 				$this->formatValueForExcel($report, $records);
@@ -7502,8 +7502,8 @@ class ReportsPresenter extends PresenterCore
 					'T:U'   => '0,0.00',
 					'X'     => 'MM/DD/YYYY',
 					'AA:AB' => '0,0.00',
-					'V' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-					'D' => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+					'V'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+					'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
 
 				]);
 				$this->formatValueForExcel($report, $records);
@@ -7535,6 +7535,34 @@ class ReportsPresenter extends PresenterCore
 					'G' => 'MM/DD/YYYY',
 				]);
 				$records = $this->formatValueExcelVanInventory($records);
+				break;
+			case 'flexideal':
+				$sheet->setColumnFormat([
+					'F' => 'MM/DD/YYYY',
+					'N' => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'stockaudit':
+				$sheet->setColumnFormat([
+					'C:D' => '0,0.00'
+				]);
+				break;
+			case 'bouncecheck':
+				$sheet->setColumnFormat([
+					'F:H' => '0,0.00',
+					'I'   => 'MM/DD/YYYY',
+					'L'   => 'MM/DD/YYYY',
+					'N'   => 'MM/DD/YYYY',
+					'Q'   => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'invoiceseries':
+				$sheet->setColumnFormat([
+					'F' => 'MM/DD/YYYY'
+				]);
+				$this->formatValueForExcel($report, $records);
 				break;
 		}
 
@@ -7594,6 +7622,14 @@ class ReportsPresenter extends PresenterCore
 				case 'salesreportpermaterial':
 					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
 					break;
+				case 'bouncecheck':
+					$record->cheque_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cheque_date));
+					$record->dm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->dm_date));
+					$record->payment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->payment_date));
+					break;
+				case 'invoiceseries';
+					$record->created_at = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->created_at));
+					break;
 			}
 			switch ($report) {
 				case 'salesreportpermaterial':
@@ -7601,6 +7637,8 @@ class ReportsPresenter extends PresenterCore
 				case 'salescollectionposting':
 				case 'salescollectionsummary':
 				case 'unpaidinvoice':
+				case 'flexideal':
+				case 'bouncecheck':
 					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
 					break;
 			}
