@@ -396,6 +396,20 @@ class UserController extends ControllerCore
 		$contactUs = ModelFactory::getInstance('ContactUs')->find($request->get('id'));
 		$request->get('type') == 'action' ? $contactUs->action = $request->get('action') : $contactUs->status = $request->get('action');
 		$contactUs->save();
+		$data = [
+			'reference_no'  => $contactUs->id,
+			'full_name'     => $contactUs->full_name,
+			'email'         => $contactUs->email,
+			'time_received' => strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y'))),
+			'status'        => $contactUs->status,
+			'action'        => $contactUs->action,
+		];
+
+		Mail::send('emails.auto_reply_status.blade', $data, function ($message) use (&$data) {
+			$message->from(config('system.from_email'), 'Incident Report Update - ' . $data['subject']);
+			$message->to($data['email']);
+			$message->subject('Incident Report Update - ' . $data['subject']);
+		});
 
 		return redirect('/#/summaryofincident.report');
 	}
