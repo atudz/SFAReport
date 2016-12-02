@@ -403,9 +403,10 @@ class UserController extends ControllerCore
 			'time_received' => strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y'))),
 			'status'        => $contactUs->status,
 			'action'        => $contactUs->action,
+			'subject'       => $contactUs->subject
 		];
 
-		Mail::send('emails.auto_reply_status.blade', $data, function ($message) use (&$data) {
+		Mail::send('emails.auto_reply_status', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), 'Incident Report Update - ' . $data['subject']);
 			$message->to($data['email']);
 			$message->subject('Incident Report Update - ' . $data['subject']);
