@@ -93,13 +93,7 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/edit', ['as'=>'user-edit', 'uses'=>'UserPresenter@edit']);
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 	Route::get('/myprofile', ['as'=>'user-profile', 'uses'=>'UserPresenter@myProfile']);
-	Route::get('/adminUserGuide', ['as'=>'admin-user-guide', 'uses'=>'UserPresenter@adminUserGuide']);
-	Route::get('/auditorUserGuide', ['as'=>'auditor-user-guide', 'uses'=>'UserPresenter@auditorUserGuide']);
-	Route::get('/accountingInChargeUserGuide', ['as'=>'accounting-in-charge-user-guide', 'uses'=>'UserPresenter@accountingInChargeUserGuide']);
-	Route::get('/vanSalesmanUserGuide', ['as'=>'van-salesman-user-guide', 'uses'=>'UserPresenter@vanSalesmanUserGuide']);
-	Route::get('/managerUserGuide', ['as'=>'manager-user-guide', 'uses'=>'UserPresenter@managerUserGuide']);
-	Route::get('/guest1UserGuide', ['as'=>'guest1-user-guide', 'uses'=>'UserPresenter@guest1UserGuide']);
-	Route::get('/guest2UserGuide', ['as'=>'guest2-user-guide', 'uses'=>'UserPresenter@guest2UserGuide']);
+	Route::get('/userGuide', ['as'=>'user-guide', 'uses'=>'UserGuidePresenter@userGuide']);
 });
 
 	Route::get('contact-us', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);
@@ -126,8 +120,8 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 	Route::post('/user/contact', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUs']);
 	Route::post('/user/contact/file/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@userContactUsFileUpload']);
-	Route::post('/user/userguide/file/{user_type}', ['as' => 'user-guide', 'uses' => 'UserController@userGuideFileUpload']);
-	Route::get('/user/userguide/download/{id}', ['as' => 'user-guide-download', 'uses' => 'UserController@download']);
+	Route::post('/user/userguide/file/{user_type}', ['as' => 'user-guide', 'uses' => 'UserGuideController@userGuideFileUpload']);
+	Route::get('/user/userguide/download/{id}', ['as' => 'user-guide-download', 'uses' => 'UserGuideController@download']);
 	Route::get('/user/contact/mail/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@mail']);
 	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
 	Route::post('/vaninventory/replenishment', ['as'=>'replenishment-save', 'uses'=>'VanInventoryController@saveReplenishment']);
