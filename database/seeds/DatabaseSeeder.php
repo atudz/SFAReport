@@ -19,12 +19,11 @@ class DatabaseSeeder extends Seeder
         $this->call(NavigationSeeder::class);
         $this->call(UserGroupToNavSeeder::class);
         $this->call(StockTransferReportSeeder::class);
-        $this->call(UpdateSettingsSeeder::class);
         $this->call(UpdateNavigationAndUserGroupNavSeeder::class);
         $this->call(SettingSeeder::class);
         $this->call(UpdateSettingsSeeder::class);
         $this->call(AddManagerSeeder::class);
-        $this->call(StatementOfShortagesSeeder::class);
+//        $this->call(StatementOfShortagesSeeder::class);
         $this->call(RdsSalesmanSeeder::class);
         $this->call(StockAuditReportSeeder::class);
         $this->call(FlexiDealReportSeeder::class);
@@ -32,7 +31,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ReplenishmentAdjustmentSeeder::class);
         $this->call(InvoiceSeriesMappingSeeder::class);
         $this->call(BounceCheckSeeder::class);
-
+        $this->call(UserGuideNavigationSeeder::class);
+//        $this->call(UpdateUserGuideSeeder::class);
         Model::reguard();
     }
 }
