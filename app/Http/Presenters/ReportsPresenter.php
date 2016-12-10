@@ -590,7 +590,7 @@ class ReportsPresenter extends PresenterCore
     			   coltbl.collection_detail_id,
     			   coltbl.collection_invoice_id,
     			   rtntbl.return_header_id,    			   
-    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
+    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,IF(tsohd2.updated_by,\'modified\',\'\')))) updated				
     	
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
@@ -960,7 +960,7 @@ class ReportsPresenter extends PresenterCore
     			   coltbl.collection_invoice_id,
     			   ti.invoice_id,
     			   rtntbl.return_header_id,    			   
-    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,\'\'))) updated				
+    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,IF(tsohd2.updated_by,\'modified\',\'\')))) updated				
     	
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
