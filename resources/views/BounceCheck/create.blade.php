@@ -79,7 +79,7 @@
 								{!!Html::input('number','balance_amount','Balance Amount',(int)$bounceCheck->balance_amount,['onblur'=>'validate(this)','disabled'=>true])!!}								
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','txn_number','Tranasction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}								
+								{!!Html::input('text','txn_number','Transaction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}								
 							</div>	
 							<div class="row form-input-field">
 								<div class="col-md-4 col-md-offset-4">
