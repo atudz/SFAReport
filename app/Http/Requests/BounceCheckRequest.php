@@ -57,7 +57,7 @@ class BounceCheckRequest extends Request
     			'dm_date_from' => 'DM Date',
     			'invoice_date_from' => 'Invoice Date',
     			'cheque_date_from' => 'Check Date',
-    			'payment_date_from' => 'Check Date',
+    			'payment_date_from' => 'Payment Date',
     			'txn_number' => 'Transaction No.',
     			'cheque_number' => 'Check No.'
     	];
