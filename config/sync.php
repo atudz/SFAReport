@@ -55,6 +55,8 @@ return [
 		'txn_replenishment_header' => ['replenishment_header_id'],
 		'txn_stock_transfer_in_detail' => ['stock_transfer_in_detail_id'],
 		'txn_stock_transfer_in_header' => ['stock_transfer_in_header_id'],
+		
+		'txn_item_flexi_deal' => ['deal_id'],
 	],
 		
 	// synchronization log storage directory
