@@ -57,7 +57,7 @@
 			<div class="form-group">
 				<label class="col-sm-3">Remarks:</label>
 				<div class="col-sm-9">
-					<textarea class="form-control inner-addon fxresize" maxlength="150" name="comment" rows="5" id="comment" onblur="validate(this)"></textarea>
+					<textarea class="form-control inner-addon fxresize" maxlength="150" name="remarks" rows="5" id="remarks" onblur="validate(this)"></textarea>
 					<span class="help-block"></span>
 				</div>
 			</div>						  

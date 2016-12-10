@@ -283,7 +283,7 @@
 		
 		
 		$scope.remove = function () {			
-			var params = { id:$('#id').val(), reference_num: $('#reference_num').val() };
+			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
 			 	animation: true,
 			 	scope: $scope,
@@ -312,7 +312,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/vaninventory/replenishment/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#comment').val()					
+				    'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -420,7 +420,7 @@
 		
 		
 		$scope.remove = function () {			
-			var params = { id:$('#id').val(), reference_num: $('#reference_num').val() };
+			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
 			 	animation: true,
 			 	scope: $scope,
@@ -449,7 +449,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/vaninventory/adjustment/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#comment').val()					
+				    'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -610,7 +610,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/invoiceseries/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#comment').val()					
+				    'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -743,7 +743,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/bouncecheck/delete/'+$scope.params.txn_number);
 			var params = {
-				    'remarks': $('#comment').val()					
+				    'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){

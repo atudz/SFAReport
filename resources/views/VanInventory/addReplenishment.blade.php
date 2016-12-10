@@ -164,11 +164,11 @@
 <script type="text/ng-template" id="DeleteActualcount">
  	<div class="modal-body">
 		<form class="form-horizontal">	 
-			<h4>Deleting Acount Count Replenishment - [[params.reference_num]]</h4>       		 
+			<h4>Deleting Actual Count Replenishment - [[params.reference_num]]</h4>       		 
 			<div class="form-group">
 				<label class="col-sm-3">Remarks:</label>
 				<div class="col-sm-9">
-					<textarea class="form-control inner-addon fxresize" maxlength="150" name="comment" rows="5" id="comment" onblur="validate(this)"></textarea>
+					<textarea class="form-control inner-addon fxresize" maxlength="150" name="remarks" rows="5" id="remarks" onblur="validate(this)"></textarea>
 					<span class="help-block"></span>
 				</div>
 			</div>						  

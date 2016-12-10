@@ -29,4 +29,12 @@ class Replenishment extends ModelCore
 	const ACTUAL_COUNT_TYPE = 'actual_count';
 	const REPLENISHMENT_TYPE = 'replenishment';
 	
+	/**
+	 * This models't relation to replenishment items
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function items()
+	{
+		return $this->hasMany(ReplenishmentItem::class,'reference_number','reference_number');
+	}
 }
