@@ -33,6 +33,7 @@ class BounceCheckRequest extends Request
         	'bank_name' => 'required',
         	'cheque_date_from' => 'required|date',
         	'cheque_number' => 'required',
+        	'account_number' => 'required',
         	'original_amount' => 'required|numeric',
         	'payment_amount' => 'required|numeric',        	
         	'payment_date_from' => 'required|date',
