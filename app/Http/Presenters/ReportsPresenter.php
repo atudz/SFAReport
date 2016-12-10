@@ -2792,7 +2792,7 @@ class ReportsPresenter extends PresenterCore
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
-    				->join(\DB::raw(
+    				->leftJoin(\DB::raw(
     						'(select reference_num from txn_sales_order_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY reference_num) tsod'
     						), function ($join){
 					    		$join->on('txn_sales_order_header.reference_num','=','tsod.reference_num');
