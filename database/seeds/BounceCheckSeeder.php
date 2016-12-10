@@ -15,7 +15,7 @@ class BounceCheckSeeder extends Seeder
     	
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Bounce Check','url'=>'bounce.check','class'=>'glyphicon glyphicon-check','parent_id'=>0,'order'=>12,'created_at' => $today,'updated_at'=>$today],
+    			['name'=>'Bounce Check Report','url'=>'bounce.check','class'=>'glyphicon glyphicon-check','parent_id'=>0,'order'=>12,'created_at' => $today,'updated_at'=>$today],
     	];
     	
     	DB::table('navigation')->insert($navigation_item);
@@ -31,7 +31,7 @@ class BounceCheckSeeder extends Seeder
     	if ($adminID) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -49,7 +49,7 @@ class BounceCheckSeeder extends Seeder
     	if ($auditorID) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -67,7 +67,7 @@ class BounceCheckSeeder extends Seeder
     	if ($accountingID) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -85,7 +85,7 @@ class BounceCheckSeeder extends Seeder
     	if ($vanID) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -104,7 +104,7 @@ class BounceCheckSeeder extends Seeder
     	if ($guest1) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -123,7 +123,7 @@ class BounceCheckSeeder extends Seeder
     	if ($guest2) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
@@ -141,7 +141,7 @@ class BounceCheckSeeder extends Seeder
     	if ($manager) {
     		//fetch all navigations
     		$navs = [
-    				'Bounce Check'
+    				'Bounce Check Report'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {

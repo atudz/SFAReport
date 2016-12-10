@@ -1,4 +1,4 @@
-{!!Html::breadcrumb(['Bounce Check'])!!}
+{!!Html::breadcrumb(['Bounce Check Report'])!!}
 {!!Html::pageheader('Add Row')!!}
 
 <div class="row">
@@ -12,7 +12,7 @@
 							<h4>Bounce Check</h4>
 						</div>					
 						<div class="pull-right">
-				      		<a href="#bounce.check" class="btn btn-success btn-sm">Back to Bounce Check</a>
+				      		<a href="#bounce.check" class="btn btn-success btn-sm">Back to Bounce Check Report</a>
 				      	</div>
 					</div>
 				</div>

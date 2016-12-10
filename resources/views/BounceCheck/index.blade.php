@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Bounce Check'])!!}
-{!!Html::pageheader('Bounce Check')!!}
+{!!Html::breadcrumb(['Bounce Check Report'])!!}
+{!!Html::pageheader('Bounce Check Report')!!}
 
 <div class="row">
 	<div class="col-lg-12">
