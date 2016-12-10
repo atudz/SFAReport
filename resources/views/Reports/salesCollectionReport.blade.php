@@ -70,7 +70,7 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
 	    						[[ record.ref_no | uppercase ]]
 	  						</a>
 	  					@else
