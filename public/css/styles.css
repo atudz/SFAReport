@@ -1156,3 +1156,8 @@ textarea.fxresize{
 .modal-open .modal {
 	overflow: hidden;
 }
+
+.no-side-padding {
+	padding-left: 0px;
+	padding-right:0px;
+}

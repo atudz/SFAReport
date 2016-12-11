@@ -50,11 +50,11 @@
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
 								<thead>
 									<tr>
-										<th>Material Code</th>
+										<th width="12%">Material Code</th>
 										<th>Material Description</th>
 										<th>Segment Code</th>
-										<th>Brand Name</th>										
-										<th>Material Quantity</th>
+										<th width="25%">Brand Name</th>										
+										<th width="10%">Material Quantity</th>
 										<th>&nbsp;</th>
 									</tr>
 								</thead>
@@ -63,7 +63,7 @@
 									@if(count($replenishment->items) > 0)
 										@foreach($replenishment->items as $k=>$item)
 											<tr>
-												<td>
+												<td width="12%">
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
 						 									{!!Form::select('item_code[]',$itemCodes,$item->item_code,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
@@ -84,14 +84,14 @@
 						 								</div>
 						 							</div>		
 												</td>
-												<td>
+												<td width="25%">
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
 						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
 						 								</div>
 						 							</div>		
 												</td>
-												<td>
+												<td width="10%">
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
 						 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="{{$item->quantity}}">
@@ -106,37 +106,37 @@
 										@endforeach
 									@else
 										<tr>
-											<td>
+											<td width="12%">
 												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12">
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 					 								</div>
 					 							</div>										
 											</td>
 											<td>
 												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12">
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
 					 								</div>
 					 							</div>		
 											</td>
 											<td>
 												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12">
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('segment_code[]',$segmentCodes,null,['class'=>'form-control','disabled'=>true])!!}
 					 								</div>
 					 							</div>		
 											</td>
-											<td>
+											<td width="25%">
 												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12">
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('brands[]',$brandCodes,null,['class'=>'form-control'])!!}
 					 								</div>
 					 							</div>		
 											</td>
-											<td>
+											<td width="10%">
 												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12">
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="0">
 					 									<span class="help-block"></span>
 					 								</div>
