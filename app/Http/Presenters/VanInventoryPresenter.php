@@ -26,6 +26,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->segments = $reportsPresenter->getItemSegmentCode();
 		$this->view->brands = $this->getBrands();
 		$this->view->uom = $this->getUom();
+		$this->view->stockTransfers = stock_transfer();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);
 		return $this->view('add');
 	}

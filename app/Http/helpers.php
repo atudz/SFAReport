@@ -292,3 +292,16 @@ function customer_area($customer_code,$code=false)
 		return $area->area_code;
 	return $area ? $area->area_name : '';
 }
+
+/**
+ * Stock Transfer details
+ * @param string $default
+ * @return unknown
+ */
+function stock_transfer($default='Select Stock Transfer No.')
+{
+	$list =  ModelFactory::getInstance('TxnStockTransferInHeader')->orderBy('stock_transfer_number')->lists('stock_transfer_number','stock_transfer_in_header_id');
+	if($default)
+		$list->prepend($default,'');
+	return $list;
+}

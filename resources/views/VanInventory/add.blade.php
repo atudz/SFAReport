@@ -20,18 +20,35 @@
 			
 				<div class="col-md-12 well">															
 					<div class ="col-md-8">
-						<div class="row form-input-field">
-							{!!Html::input('text','stock_transfer_number','Stock Transfer No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
-						</div>
-						<div class="row form-input-field">
-							{!!Html::datepicker('transfer_date','Transaction Date <span class="required">*</span>')!!}
-						</div>
-						<div class="row form-input-field">
-							{!!Html::input('text','src_van_code','Source Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
-						</div>
-						<div class="row form-input-field">
-							{!!Html::input('text','dest_van_code','Dest Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
-						</div>						
+						<input type="hidden" name="type" id="type" value="1">
+						<div id="new-details" class="hidden">
+							<div class="row form-input-field">
+								{!!Html::input('text','stock_transfer_number','Stock Transfer No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+							</div>
+							<div class="row form-input-field">
+								{!!Html::datepicker('transfer_date','Transaction Date <span class="required">*</span>')!!}
+							</div>
+							<div class="row form-input-field">
+								{!!Html::input('text','src_van_code','Source Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+							</div>
+							<div class="row form-input-field">
+								{!!Html::input('text','dest_van_code','Dest Van Code <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}
+							</div>	
+						</div>	
+						<div id="existing-details">
+							<div class="row form-input-field">
+								<div class="form-group">
+				 					<div class="col-xs-12 col-md-4 col-sm-3 control-label">
+				 						<label for="stock_transfer_id" class="">Stock Transfer No. <span class="required">*</span></label>			 						
+				 					</div>
+				 					<div class="col-xs-12 col-sm-8	">
+				 						{!!Form::select('stock_transfer_id',$stockTransfers,null,['id'=>'stock_transfer_id','class'=>'form-control'])!!}
+				 						<span class="error help-block"></span>
+				 						<a href="javascript:void(0);" style="color:#337ab7;" onclick="add()">Add New Stock Transfer</a>
+				 					</div>
+				 				</div>														
+				 			</div>
+						</div>				
 						<div class="row form-input-field">
 							{!!Html::select('item_code','Item <span class="required">*</span>', $items, 'Select Item',['onblur'=>'validate(this)'])!!}
 						</div>					
@@ -54,3 +71,12 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	function add()
+	{
+		$('#new-details').removeClass('hidden');
+		$('#existing-details').addClass('hidden');
+		$('#type').val(0);		
+	}
+</script>
