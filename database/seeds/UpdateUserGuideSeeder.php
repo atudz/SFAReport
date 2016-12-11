@@ -146,7 +146,6 @@ class UpdateUserGuideSeeder extends Seeder
             'summary'    => 1
         ];
         DB::table('navigation')->whereName($navigation_item['name'])->update($navigation_item);
-        DB::table('user_group')->whereName('Manager')->take(1)->delete();
         DB::table('user')->insert([
             'created_at' => new DateTime(),
             'user_group_id' => $supperAdminID,
