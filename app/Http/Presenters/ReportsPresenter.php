@@ -2670,7 +2670,7 @@ class ReportsPresenter extends PresenterCore
     								txn_stock_transfer_in_header.transfer_date transaction_date,
     								UPPER(txn_stock_transfer_in_header.stock_transfer_number) as stock_transfer_number,
     								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
-    					->leftJoin(\DB::raw(
+    					->join(\DB::raw(
     						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
     						), function ($join){
 					    		$join->on('txn_stock_transfer_in_header.stock_transfer_number','=','tsin.stock_transfer_number');
@@ -2751,7 +2751,7 @@ class ReportsPresenter extends PresenterCore
     	 
     	$prepare = \DB::table('txn_sales_order_header')
     				->selectRaw($select)
-    				->join(\DB::raw(
+    				->leftJoin(\DB::raw(
     						'(select reference_num from txn_sales_order_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY reference_num) tsod'
     						), function ($join){
 					    		$join->on('txn_sales_order_header.reference_num','=','tsod.reference_num');
