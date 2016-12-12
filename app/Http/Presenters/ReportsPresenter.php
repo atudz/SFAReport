@@ -2277,6 +2277,28 @@ class ReportsPresenter extends PresenterCore
 	    				$tempInvoices['code_'.$item->item_code] = $item->{$col};    			
 	    		}	
 	    			
+	    		
+	    		$deals = \DB::table('txn_sales_order_deal')
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty'])
+				    		->where('reference_num','=',$result->reference_num)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+	    		 
+	    		foreach($deals as $deal)
+	    		{
+	    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+	    				$col = 'trade_order_qty';
+	    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+	    				$col = 'trade_order_qty';
+	    			else
+	    				$col = 'trade_served_qty';
+	    			$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->regular_order_qty).')';
+	    			if(isset($tempInvoices['code_'.$deal->trade_item_code]))
+	    				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->regular_order_qty);
+	    			else
+	    				$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col} + $deal->regular_order_qty;
+	    		}
+	    		
 	    		$records[] = $result;
 	    		if($reports)
 	    			$reportRecords[] = (array)$result;
@@ -2556,6 +2578,25 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] += $item->{$col};    			
     		}
     		
+    		$deals = \DB::table('txn_sales_order_deal')
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty'])
+				    		->where('reference_num','=',$result->reference_num)
+				    		->whereIn('item_code',$codes)
+				    		->get();
+    		 
+    		foreach($deals as $deal)
+    		{
+    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
+    				$col = 'trade_order_qty';
+    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
+    				$col = 'trade_order_qty';
+    			else
+    				$col = 'trade_served_qty';
+    			if(!isset($tempInvoices['code_'.$deal->trade_item_code]))
+    				$tempInvoices['code_'.$deal->trade_item_code] = 0;
+    			$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->regular_order_qty) ;
+    		}
+    		
     	}
     	
     	// Get returns
@@ -2629,7 +2670,7 @@ class ReportsPresenter extends PresenterCore
     								txn_stock_transfer_in_header.transfer_date transaction_date,
     								UPPER(txn_stock_transfer_in_header.stock_transfer_number) as stock_transfer_number,
     								IF(txn_stock_transfer_in_header.updated_by,\'modified\',\'\') updated')
-    					->join(\DB::raw(
+    					->leftJoin(\DB::raw(
     						'(select stock_transfer_number from txn_stock_transfer_in_detail WHERE item_code LIKE \''.$type.'%\' GROUP BY stock_transfer_number) tsin'
     						), function ($join){
 					    		$join->on('txn_stock_transfer_in_header.stock_transfer_number','=','tsin.stock_transfer_number');
@@ -2702,6 +2743,7 @@ class ReportsPresenter extends PresenterCore
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
     			   txn_sales_order_header.so_number,
+    			   txn_sales_order_header.reference_num,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
     			';				 
     	 
