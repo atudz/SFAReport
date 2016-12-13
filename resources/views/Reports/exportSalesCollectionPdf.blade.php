@@ -87,7 +87,7 @@
 		}
 		
 		.push-left {
-			padding-right: 5p;x
+			padding-right: 5px;
 		}
 		.title {
 			 text-align: right;
