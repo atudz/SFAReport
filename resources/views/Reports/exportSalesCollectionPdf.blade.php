@@ -172,7 +172,6 @@
 			</tr>
 		</table>
 	</div>
-	<br class="clear">	
 	<br class="clear">
 	<table class="table-data">
 		<thead>
