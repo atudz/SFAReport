@@ -2781,7 +2781,7 @@ class ReportsPresenter extends PresenterCore
     		$codes[] = $item->item_code;
     	}
     	$prepare = $prepare->whereIn('txn_sales_order_detail.item_code',$codes); */    	
-    	
+    	$prepare->where('app_customer.customer_name','LIKE','%'.$type.'%');
     	$prepare->orderBy('txn_sales_order_header.invoice_number');
     	return $prepare;
     }
