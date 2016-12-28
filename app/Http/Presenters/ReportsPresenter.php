@@ -3282,7 +3282,7 @@ class ReportsPresenter extends PresenterCore
     					)
     			) customer_address,
 				app_area.area_name depot,
-				bir.reference,
+				UPPER(bir.reference) reference,
 				bir.tax_amount,
 				bir.total_sales,
     			bir.total_sales sales,
