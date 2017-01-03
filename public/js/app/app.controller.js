@@ -1924,18 +1924,27 @@
 	function Sync($scope, $resource, $log)
 	{			    
 		$scope.showError = false;
+		$scope.showWarning = false;
 		$scope.showSuccess = false;
 	    $scope.showLoading = false;
 	    $scope.syncLogs = '';
 	    
 	    $scope.sync = function(){
 	    	
+	    	$scope.showWarning = false;
 	    	$scope.showError = false;
 	    	$scope.showSuccess = false;
 			$scope.showLoading = true;
 	    	var API = $resource('controller/reports/sync');				
-			API.get({}, function(data){
-				if(data.logs)
+			API.get({}, function(data){				
+				if(data.synching)
+				{		
+					$scope.showWarning = true;
+					$scope.showLoading = false;
+					$scope.showError = false;
+					$scope.showSuccess = false;
+				}
+				else if(data.logs)
 				{
 					$scope.syncLogs = data.logs;
 					$scope.showSuccess = true;	
