@@ -46,7 +46,7 @@ class SyncLibrary extends LibraryCore
 	{		
 		$this->log('Synchronization started '.date('Y-m-d H:m:s')."\n");
 		
-		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>1]);
+		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>1,'updated_at'=>new \DateTime()]);
 		
 		try 
 		{
@@ -125,7 +125,7 @@ class SyncLibrary extends LibraryCore
 			return false;
 		}
 		
-		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>0]);
+		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>0,'updated_at'=>new \DateTime()]);
 		
 		$this->log('Synchronization ended '.date('Y-m-d H:m:s')."\n");		
 		
