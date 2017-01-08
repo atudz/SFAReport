@@ -46,6 +46,9 @@ class SyncLibrary extends LibraryCore
 	{		
 		$this->log('Synchronization started '.date('Y-m-d H:m:s')."\n");
 		
+		ini_set('memory_limit', '-1');
+		set_time_limit (0);
+		
 		\DB::table('settings')->where('name','synching_sfi')->update(['value'=>1,'updated_at'=>new \DateTime()]);
 		
 		try 
