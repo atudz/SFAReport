@@ -172,19 +172,19 @@ class ReportsController extends ControllerCore
 	 */
 	public function sync()
 	{
-// 		$setting = \DB::table('settings')->where('name','synching_sfi')->first();
-// 		if($setting->value)
-// 		{
-// 			$data['synching'] = true;
-// 		}
-// 		else
-// 		{
-// 			$result = LibraryFactory::getInstance('Sync')->sync();
-// 			$data['synching'] = false;
-// 			$data['logs'] = $result ? true : '';
-// 		}	
-		$data['synching'] = false;
-		$data['logs'] = true;
+		$setting = \DB::table('settings')->where('name','synching_sfi')->first();
+		if($setting->value)
+		{
+			$data['synching'] = true;
+		}
+		else
+		{
+			$result = LibraryFactory::getInstance('Sync')->sync();
+			$data['synching'] = false;
+			$data['logs'] = $result ? true : '';
+		}	
+		//$data['synching'] = false;
+		//$data['logs'] = true;
 		return response()->json($data);
 	}
 }

@@ -1,3 +1,5 @@
+{!!Html::breadcrumb(['Sync Data'])!!}
+{!!Html::pageheader('Sync Data')!!}
 
 <div class="row">
 	<div class="col-lg-12">
