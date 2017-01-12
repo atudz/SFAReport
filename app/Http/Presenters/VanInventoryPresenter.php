@@ -473,27 +473,28 @@ class VanInventoryPresenter extends PresenterCore
 	    					)
 	    		) customer_address,
     			
-				txn_sales_order_deal.item_code,
+				txn_item_flexi_deal.item_code,
     			regular.description as item_desc,
-    			txn_sales_order_deal.regular_order_qty,
-    			txn_sales_order_deal.trade_item_code,
+    			txn_item_flexi_deal.item_qty regular_order_qty,
+    			txn_item_flexi_deal.trade_item_code,
     			deal.description as deal_item_desc,
-    			txn_sales_order_deal.trade_order_qty,
-    			txn_sales_order_deal.gross_order_amount,
+    			txn_item_flexi_deal.trade_item_qty trade_order_qty,
+    			txn_item_flexi_deal.price gross_order_amount,
     			IF(txn_sales_order_header.updated_by,\'modified\',IF(txn_sales_order_deal.updated_by,\'modified\',\'\')) updated
     			';
     	
     	if($summary)
     	{
     		$select = '
-    			  SUM(txn_sales_order_deal.regular_order_qty) regular_order_qty,
-    			  SUM(txn_sales_order_deal.trade_order_qty) trade_order_qty,
-			      SUM(txn_sales_order_deal.gross_order_amount) gross_order_amount			      
+    			  SUM(txn_item_flexi_deal.item_qty) regular_order_qty,
+    			  SUM(txn_item_flexi_deal.trade_item_qty) trade_order_qty,
+			      SUM(txn_item_flexi_deal.price) gross_order_amount			      
     			';
     	}
     	 
     	$prepare = \DB::table('txn_sales_order_deal')
 				    	->selectRaw($select)
+				    	->leftJoin('txn_item_flexi_deal','txn_item_flexi_deal.deal_code','=','txn_sales_order_deal.deal_code')
 				    	->leftJoin('txn_sales_order_header','txn_sales_order_header.reference_num','=','txn_sales_order_deal.reference_num')
 				    	->leftJoin('app_salesman', function($join){
 				    		$join->on('txn_sales_order_header.salesman_code','=','app_salesman.salesman_code');
