@@ -431,8 +431,8 @@ class VanInventoryPresenter extends PresenterCore
     public function getFlexiDealReport()
     {
     	$prepare = $this->getPreparedFlexiDeal();
-    	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
+    	$result = $this->paginate($prepare);    	
+    	$data['records'] = PresenterFactory::getInstance('Reports')->validateInvoiceNumber($result->items());
     	$data['total'] = $result->total();
     	
     	$data['summary'] = '';
