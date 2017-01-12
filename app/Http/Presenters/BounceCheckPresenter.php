@@ -54,7 +54,7 @@ class BounceCheckPresenter extends PresenterCore
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getBounceCheckColumns(true);
-    	$bounceCheck = ModelFactory::getInstance('BounceCheck')->find($id);
+    	$bounceCheck = ModelFactory::getInstance('BounceCheck')->find($id);    	
     	$this->view->bounceCheck = $bounceCheck;
     	$txnNumber = $bounceCheck->txn_number;
     	if(false !== strpos($txnNumber,'-'))
@@ -93,7 +93,7 @@ class BounceCheckPresenter extends PresenterCore
     			bounce_check.id,
     			bounce_check.txn_number,
     			app_salesman.salesman_name,
-    			CONCAT(user.lastname,\', \',user.firstname) jr_salesman,
+    			CONCAT(jr.lastname,\', \',jr.firstname) jr_salesman,
     			app_area.area_name,
     			app_customer.customer_name,
     			bounce_check.original_amount,
@@ -109,7 +109,8 @@ class BounceCheckPresenter extends PresenterCore
     			bounce_check.cheque_number,
     			bounce_check.cheque_date,
     			bounce_check.account_number,
-    			bounce_check.reason
+    			bounce_check.reason,
+    			CONCAT(creator.firstname,\' \',creator.lastname) username
     			';
     	 
     	$prepare = \DB::table('bounce_check')
@@ -117,7 +118,8 @@ class BounceCheckPresenter extends PresenterCore
 				    	->leftJoin('app_salesman','app_salesman.salesman_code','=','bounce_check.salesman_code')
 				    	->leftJoin('app_customer','app_customer.customer_code','=','bounce_check.customer_code')
 				    	->leftJoin('app_area','app_area.area_code','=','bounce_check.area_code')
-				    	->leftJoin('user','user.id','=','bounce_check.jr_salesman_id');
+				    	->leftJoin('user as jr','jr.id','=','bounce_check.jr_salesman_id')
+				    	->leftJoin('user as creator','creator.id','=','bounce_check.created_by');
     	 
     	if($this->isSalesman())
     	{
@@ -191,6 +193,7 @@ class BounceCheckPresenter extends PresenterCore
     			['name'=>'Date of Check','sort'=>'cheque_date'],
     			['name'=>'Account No.','sort'=>'account_number'],
     			['name'=>'Reason','sort'=>'reason'],
+    			['name'=>'Username','sort'=>'username'],
     			['name'=>'Action'],
     	];
     	
@@ -227,6 +230,7 @@ class BounceCheckPresenter extends PresenterCore
     			'cheque_date',
     			'account_number',
     			'reason',
+    			'username'
     	];
     }
     

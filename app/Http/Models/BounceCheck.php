@@ -49,4 +49,13 @@ class BounceCheck extends ModelCore
 	{
 		return $this->belongsTo('App\Http\Models\Area','area_code','area_code');
 	}
+	
+	/**
+	 * This model's relation to user
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function creator()
+	{
+		return $this->belongsTo('App\Http\Models\User','created_by');
+	}
 }

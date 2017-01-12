@@ -53,6 +53,7 @@
 							
 							<td>[[record.account_number]]</td>														
 							<td>[[record.reason]]</td>							
+							<td>[[record.username]]</td>
 							<td align="center">
 								<a href="#bouncecheck.edit/[[record.id]]"><i class="fa fa-pencil-square-o fa-lg"></i></a>								
 							</td>

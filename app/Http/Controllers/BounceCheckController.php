@@ -39,6 +39,7 @@ class BounceCheckController extends ControllerCore
         $total1 = bcsub($bounceCheck->original_amount, $bounceCheck->payment_amount, 2);
         $bounceCheck->balance_amount = bcsub($total1, $payments, 2);
         
+        $bounceCheck->created_by = auth()->user()->id;
         if(!$bounceCheck->save())
         {
         	return response()->json(['success'=>0,'msg'=>'Server error']);

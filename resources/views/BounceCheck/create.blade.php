@@ -88,7 +88,8 @@
 										<button class="btn btn-info" onclick="add_payment()">Add Payment</button>
 									@endif
 								</div>
-							</div>						
+							</div>	
+							<input type="hidden" id="username" value="@if($bounceCheck->id) {{ $bounceCheck->creator ? $bounceCheck->creator->fullname: '' }} @else {{auth()->user()->fullname }} @endif">					
 						</div>
 					</div>
 					
@@ -106,7 +107,7 @@
 								</thead>
 								<tbody>
 									
-									@if(false)
+									@if(isset($replenishment) && $replenishment->items)
 										@foreach($replenishment->items as $k=>$item)
 											<tr>
 												<td class="txn_number"></td>
@@ -128,6 +129,7 @@
 												<td class="cheque_number"></td>												
 												<td class="account_number"></td>
 												<td class="reason"></td>
+												<td class="username"></td>												
 											</tr>
 										@endforeach
 									@else
@@ -151,6 +153,7 @@
 												<td class="cheque_number"></td>												
 												<td class="account_number"></td>
 												<td class="reason"></td>
+												<td class="username"></td>
 										</tr>
 									@endif
 								</tbody>								
