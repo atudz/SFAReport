@@ -109,8 +109,6 @@
 		var start = $('#invoice_start').val();
 		var end = $('#invoice_end').val();
 
-		$('#preview').removeClass('hidden');
-
 		if(start.length > 0){
 			if(isNaN(parseFloat(start)) || !isFinite(start)) {
 				$('#invoice_start').next('span').html('Must be numeric characters only.');
@@ -175,6 +173,7 @@
 			
 
 			if(valid) {
+				$('#preview').removeClass('hidden');
 				var rowCount = $('#myTable tr').length;
 				$('#table_preview').find("tr:gt(0)").remove();
 				while(i <= e)
