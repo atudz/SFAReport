@@ -15,8 +15,17 @@ class CustomValidations extends ServiceProvider
      */
     public function boot()
     {
-    	Validator::extend('valid_invoice', function ($attribute, $value, $parameters, $validator) {
+    	Validator::extend('numeric', function ($attribute, $value, $parameters, $validator) {
     		return preg_match('/\d/', $value);
+    	});
+    	
+    	Validator::extend('positive', function ($attribute, $value, $parameters, $validator) {
+    		return ((int)$value) >= 0;
+    	});
+    	
+    	Validator::extend('available', function ($attribute, $value, $parameters, $validator) {
+    		$condition = $value.' between invoice_start and invoice_end and deleted_at is null and status=\'A\'';
+    		return !(\DB::table('invoice')->whereRaw($condition)->count() > 0);
     	});
     }
 

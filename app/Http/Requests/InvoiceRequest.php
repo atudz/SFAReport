@@ -25,8 +25,8 @@ class InvoiceRequest extends Request
     {
         return [
             'salesman_code' => 'required',
-        	'invoice_start' => 'required|alpha_num|valid_invoice',
-        	'invoice_end' => 'required|alpha_num|valid_invoice',
+        	'invoice_start' => 'required|numeric|positive|available',
+        	'invoice_end' => 'required|numeric|positive|available',
         	'status' => 'required',
         ];
     }
@@ -39,7 +39,9 @@ class InvoiceRequest extends Request
     public function messages()
     {
     	return [
-    			'valid_invoice' => 'Invoice number must contain numeric characters',
+    			'numeric' => 'Invoice number must be numeric characters',
+    			'positive' => 'Invoice number must not be negative',
+    			'available' => 'Invoice number has been taken already',
     	];
     }
     

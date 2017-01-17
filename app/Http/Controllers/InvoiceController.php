@@ -62,11 +62,14 @@ class InvoiceController extends ControllerCore
     {
     	$id = (int)$request->id;
     	
-    	if($messages = $this->validateInvoice($request->invoice_start, $request->invoice_end, $request->id))
-    		return response()->json($messages,422);
+//     	if($messages = $this->validateInvoice($request->invoice_start, $request->invoice_end, $request->id))
+//     		return response()->json($messages,422);
     	
         $invoice = ModelFactory::getInstance('Invoice')->findOrNew($id);        
         $invoice->fill($request->all());
+        
+        $invoice->invoice_start = str_pad((int)$invoice->invoice_start,8,'0',STR_PAD_LEFT);
+        $invoice->invoice_end = str_pad((int)$invoice->invoice_end,8,'0',STR_PAD_LEFT);
         
         $reportPresenter = PresenterFactory::getInstance('Reports');
         $areas = $reportPresenter->getSalesmanArea($request->salesman_code);
