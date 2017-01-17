@@ -40,11 +40,11 @@ class InvoiceRequest extends Request
     public function messages()
     {
     	return [
-    			'numeric' => 'Invoice number must be numeric characters',
-    			'positive' => 'Invoice number must not be negative',
-    			'available' => 'Invoice number has been taken already',
-    			'gte' => 'Invoice start must greater than or equal end series',
-    			'lte' => 'Invoice end must less than or equal start series',
+    			'numeric' => 'Invoice number must be numeric characters.',
+    			'positive' => 'Invoice number must not be negative.',
+    			'available' => 'Invoice number has been taken already.',
+    			'gte' => 'Invoice start must greater than or equal end series.',
+    			'lte' => 'Invoice end must less than or equal start series.',
     	];
     }
     
