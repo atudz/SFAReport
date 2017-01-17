@@ -110,22 +110,28 @@
 		var end = $('#invoice_end').val();
 
 		$('#preview').removeClass('hidden');
-		
-		if(isNaN(parseFloat(start)) || !isFinite(start)) {
-			$('#invoice_start').next('span').html('Must be numeric characters only.');
-			$('#invoice_start').parent().parent().addClass('has-error');
-		} else {
-			$('#invoice_start').next('span').html('');
-			$('#invoice_start').parent().parent().removeClass('has-error');
+
+		if(start.length > 0){
+			if(isNaN(parseFloat(start)) || !isFinite(start)) {
+				$('#invoice_start').next('span').html('Must be numeric characters only.');
+				$('#invoice_start').parent().parent().addClass('has-error');
+			} else {
+				$('#invoice_start').next('span').html('');
+				$('#invoice_start').parent().parent().removeClass('has-error');
+			}
+			
+		}
+
+		if(end.length > 0){
+			if(isNaN(parseFloat(end)) || !isFinite(end)){
+				$('#invoice_end').next('span').html('Must be numeric characters only.');
+				$('#invoice_end').parent().parent().addClass('has-error');
+			} else {
+				$('#invoice_end').next('span').html('');
+				$('#invoice_end').parent().parent().removeClass('has-error');
+			}
 		}
 		
-		if(isNaN(parseFloat(end)) || !isFinite(end)){
-			$('#invoice_end').next('span').html('Must be numeric characters only.');
-			$('#invoice_end').parent().parent().addClass('has-error');
-		} else {
-			$('#invoice_end').next('span').html('');
-			$('#invoice_end').parent().parent().removeClass('has-error');
-		}
 				
 		if(start.length > 0 && end.length > 0)
 		{
