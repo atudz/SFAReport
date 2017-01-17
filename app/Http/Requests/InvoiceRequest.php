@@ -23,10 +23,11 @@ class InvoiceRequest extends Request
      */
     public function rules()
     {
+    	$extra = $this->id ? ':'.$this->id : '';
         return [
             'salesman_code' => 'required',
-        	'invoice_start' => 'required|numeric|positive|available',
-        	'invoice_end' => 'required|numeric|positive|available',
+        	'invoice_start' => 'required|numeric|positive|lte:invoice_end|available'.$extra,
+        	'invoice_end' => 'required|numeric|positive|gte:invoice_start|available'.$extra,
         	'status' => 'required',
         ];
     }
@@ -42,6 +43,8 @@ class InvoiceRequest extends Request
     			'numeric' => 'Invoice number must be numeric characters',
     			'positive' => 'Invoice number must not be negative',
     			'available' => 'Invoice number has been taken already',
+    			'gte' => 'Invoice start must greater than or equal end series',
+    			'lte' => 'Invoice end must less than or equal start series',
     	];
     }
     
