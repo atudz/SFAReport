@@ -186,6 +186,7 @@
 					<td></td>
 					<td></td>
 					<td></td>
+					<td></td>
 					<td class="bold">
 						<span ng-bind="summary.so_total_served = negate(summary.so_total_served)"></span>					
 					</td>
