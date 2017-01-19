@@ -405,6 +405,7 @@ class ReportsPresenter extends PresenterCore
     			
     			$rec->customer_code = null;
     			$rec->customer_name = null;
+    			$rec->customer_address = null;
     			$rec->remarks = null;
     			$rec->invoice_number = null;
     			$rec->invoice_date = null;
