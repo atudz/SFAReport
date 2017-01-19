@@ -860,7 +860,10 @@ class ReportsPresenter extends PresenterCore
     		$collectionDateFilter = FilterFactory::getInstance('DateRange');
     		$query = $collectionDateFilter->addFilter($query,'collection_date',
     				function($self, $model){
-    					return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
+    					return  $model->where(function($model2) use ($self) {
+    						$model2->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
+    						$model2->whereNotNull('collection.return_slip_num','or');
+    					});
     				});
     		 
     		$postingDateFilter = FilterFactory::getInstance('DateRange');
