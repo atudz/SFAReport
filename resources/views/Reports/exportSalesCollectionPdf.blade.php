@@ -188,7 +188,7 @@
 			@foreach($current as $record)
 			<tr>
 				@foreach($rows as $k=>$row)
-					@if($record->show || (!$record->show && $k > 15 && $k < 26 ))
+					@if($record->show ||true)
 					<td align="left" style="wrap-text:true">
 						@if(is_object($record) && isset($record->$row))
 							@if(false !== strpos($row,'date') && $record->$row)
