@@ -293,6 +293,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckReport();
 			case 'userguide':
 				return PresenterFactory::getInstance('UserGuide')->getUserGuideReports();
+			case 'cashpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
     	}
     }
     
@@ -5059,6 +5061,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns(true);
 			case 'bouncecheck':
 				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns(true);
+			case 'cashpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
     	}	
     }
     
@@ -6054,6 +6058,28 @@ class ReportsPresenter extends PresenterCore
 				$filters = $bounceCheckPresenter->getBounceCheckFilterData();
 				$filename = 'Bounce Check Report';
 				break;
+				
+			case 'cashpayment':
+				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
+				$columns = $this->getTableColumns($report);
+				$prepare = $salesCollectionPresenter->getPreparedCashPayment();
+				$collection = $prepare->get();
+				 
+				$result = $this->formatSalesCollection($collection);
+				 
+				$summary = '';
+				if($result)
+				{					
+					$summary = $salesCollectionPresenter->getCashPaymentTotal($result);
+				}
+				$records = $this->validateInvoiceNumber($result);				
+				$vaninventory = true;
+				 
+				$rows = $salesCollectionPresenter->getCashPaymentSelectColumns();
+				$header = 'List of Cash Payment';
+				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
+				$filename = 'List of Cash Payment';
+				break;
     		default:
     			return;
     	}	
@@ -6692,6 +6718,10 @@ class ReportsPresenter extends PresenterCore
 			case 'bouncecheck':
 				$prepare = PresenterFactory::getInstance('BounceCheck')->getPreparedBounceCheck();
 				$total = $prepare->count();
+				break;
+			case 'cashpayment':
+				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
+				$total = count($prepare->get());
 				break;
     		default:
     			return;

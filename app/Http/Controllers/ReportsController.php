@@ -27,8 +27,8 @@ class ReportsController extends ControllerCore
 			$value = new \DateTime($request->get('value'));
 		$id = $request->get('id');
 		$comment = $request->get('comment');
-		$report_type = $request->has('report_type') ? $request->get('report_type') : null;
-		$report = $request->has('report') ? $request->get('report') : null;
+		$report_type = $request->has('report_type') ? $request->get('report_type') : '';
+		$report = $request->has('report') ? $request->get('report') : '';
 		
 		$stockTransNum = '';
 		$prevInvoiceNum = '';

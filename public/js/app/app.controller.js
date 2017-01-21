@@ -87,6 +87,30 @@
 	    // main controller
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
 	}
+	
+	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
+	
+	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+		          'company_code',
+		          'customer_code',
+		          'area_code',
+		          'invoice_date_from',
+		          'invoice_date_to',		          
+		          'or_date_from',
+		          'or_date_to',
+		          'salesman',
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
 
 	/**
 	 * Van & Inventory (Canned) controller
@@ -1664,7 +1688,11 @@
 					case "vaninventory.stocktransfer":
 						reportType = "Van Inventory - Stock Transfer";
 						report = 'stocktransfer';
-						break;					
+						break;			
+					case 'cashpayments':
+						reportType = "Cash Payments";
+						report = 'cashpayments';
+						break;
 				}
 
 				var stepInterval = 1;
@@ -1859,7 +1887,6 @@
 	    if(report == 'salescollectionreport')
 	    {
 	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    	$('#total_summary').hide();
 	    }
 	    else if(report == 'salescollectionposting')
 	    {
@@ -1868,6 +1895,10 @@
 	    else if(report == 'salescollectionsummary')
 	    {
 	    	params = {salesman:$('#salesman').val()};
+	    }
+	    else if(report == 'cashpayment')
+	    {
+	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 	    }
 
 	    toggleLoading(true);
