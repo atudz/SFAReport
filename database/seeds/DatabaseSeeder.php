@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGroupToNavSeeder::class);       
         $this->call(UserGroupToNavSeeder::class);
         $this->call(AddManagerSeeder::class);
+		$this->call(CashPaymentsSeeder::class);
 
         Model::reguard();
     }

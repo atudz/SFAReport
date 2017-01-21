@@ -34,7 +34,7 @@ Route::group(['prefix' => 'reports'],function(){
 
 	
 	Route::get('/reversal/summary', ['as'=>'reversal-summary', 'uses'=>'ReversalPresenter@index']);
-	
+	Route::get('/cashpayments', ['as'=>'sales-collection', 'uses'=>'SalesCollectionPresenter@cashpayments']);
 	
 	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);

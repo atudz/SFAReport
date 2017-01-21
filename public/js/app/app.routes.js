@@ -32,6 +32,12 @@
 					controller: 'SalesCollectionSummary',
 					//controllerAs: 'scp'*/
 				})
+				// Sales & Collection
+				.when('/cashpayments',{
+					templateUrl: '/reports/cashpayments',
+					controller: 'SalesCollectionReport'
+					//controllerAs: 'scr'*/
+				})
 				// Van Inventory
 				.when('/vaninventory.canned',{
 					templateUrl: '/reports/vaninventory/canned',

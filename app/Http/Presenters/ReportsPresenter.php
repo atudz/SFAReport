@@ -273,8 +273,8 @@ class ReportsPresenter extends PresenterCore
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
                 return PresenterFactory::getInstance('User')->getUserGroup();
-			case 'reversalsummary':
-				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
+			case 'cashpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
     	}
     }
     
@@ -5061,8 +5061,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
-			case 'reversalsummary':
-				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
+			case 'cashpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
     	}	
     }
     
@@ -5979,6 +5979,28 @@ class ReportsPresenter extends PresenterCore
 				$filters = $reversalPresenter->getSummaryReversalFilterData();
 				$filename = 'Summary of Reversal';				
 				break;
+				
+			case 'cashpayment':
+				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
+				$columns = $this->getTableColumns($report);
+				$prepare = $salesCollectionPresenter->getPreparedCashPayment();
+				$collection = $prepare->get();
+				 
+				$result = $this->formatSalesCollection($collection);
+				 
+				$summary = '';
+				if($result)
+				{					
+					$summary = $salesCollectionPresenter->getCashPaymentTotal($result);
+				}
+				$records = $this->validateInvoiceNumber($result);				
+				$vaninventory = true;
+				 
+				$rows = $salesCollectionPresenter->getCashPaymentSelectColumns();
+				$header = 'List of Cash Payment';
+				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
+				$filename = 'List of Cash Payment';
+				break;
     		default:
     			return;
     	}	
@@ -6581,6 +6603,10 @@ class ReportsPresenter extends PresenterCore
 			case 'reversalsummary':
 				$prepare = PresenterFactory::getInstance('Reversal')->getPreparedSummaryReversal();
 				$total = $prepare->count();
+				break;
+			case 'cashpayment':
+				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
+				$total = count($prepare->get());
 				break;
     		default:
     			return;
