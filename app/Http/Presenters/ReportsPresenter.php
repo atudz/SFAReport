@@ -863,7 +863,7 @@ class ReportsPresenter extends PresenterCore
     				function($self, $model){
     					return  $model->where(function($model2) use ($self) {
     						$model2->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
-    						$model2->whereNotNull('collection.return_slip_num','or');
+    						$model2->whereBetween('collection.total_invoice_net_amount',[0.01,0.99],'or');
     					});
     				});
     		 
