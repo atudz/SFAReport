@@ -191,6 +191,12 @@
 					@if($record->show ||true)
 					<td align="left" style="wrap-text:true">
 						@if(is_object($record) && isset($record->$row))
+							 <?php
+								if($row == 'remarks')
+                                {
+                                	$record->$row = wordwrap($record->$row, 8, "<br>",true);
+                                }
+                            ?>
 							@if(false !== strpos($row,'date') && $record->$row)
 								{{ date('m/d/Y', strtotime($record->$row)) }}
 							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
