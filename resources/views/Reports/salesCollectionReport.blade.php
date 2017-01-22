@@ -237,7 +237,7 @@
 					</td>									
 				</tr>
 				</tbody>
-				{!!Html::tfooter(true,27)!!}
+				{!!Html::tfooter(true,28)!!}
 			{!!Html::tclose(false)!!}
 	
 		</div>		

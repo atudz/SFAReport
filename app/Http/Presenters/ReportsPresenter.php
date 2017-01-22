@@ -5067,7 +5067,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($export == 'pdf')
-    		unset($headers[5],$headers[6],$headers[7],$headers[12],$headers[13]);
+    		unset($headers[5],$headers[6],$headers[7],$headers[13]);
     	
     	return $headers;
     }
@@ -5949,7 +5949,7 @@ class ReportsPresenter extends PresenterCore
     	}
     	//dd($rows);
     	//dd($filters);
-    	/* $this->view->columns = $columns;    	    
+    	/*$this->view->columns = $columns;    	    
     	$this->view->rows = $rows;
     	$this->view->header = $header;
     	$this->view->theadRaw = $theadRaw;
@@ -5964,7 +5964,7 @@ class ReportsPresenter extends PresenterCore
     	$this->view->area = $area;
     	$this->view->currentSummary = $currentSummary;    	
     	$this->view->fontSize = '7px';
-    	return $this->view('exportSalesCollectionPdf'); */
+    	return $this->view('exportSalesCollectionPdf');*/ 
 
 		if (empty($current)) {
 			$records = $this->validateInvoiceNumber($records);
@@ -6376,7 +6376,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($pdf)
-    		unset($columns[5],$columns[6],$columns[7],$columns[12],$columns[13]);
+    		unset($columns[5],$columns[6],$columns[7],$columns[13]);
     		 
 		return $columns;
     		 
