@@ -632,6 +632,7 @@ class SalesCollectionPresenter extends PresenterCore
 				collection.or_date,
 	            collection.or_number,
 				collection.payment_amount,
+    			collection.cm_date,
     			collection.bank,
     			collection.check_number,
     			collection.check_date,

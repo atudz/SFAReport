@@ -40,7 +40,7 @@
 					</td>
 					<td>[[record.or_number | uppercase]]</td>
 					<td>
-						<span ng-bind="record.check_date_formatted = (formatDate(record.cm_date) | date:'MM/dd/yyyy')"></span>
+						<span ng-bind="record.cm_date_formatted = (formatDate(record.cm_date) | date:'MM/dd/yyyy')"></span>
 					</td>
 					<td>[[record.bank | uppercase]]</td>
 					<td>[[record.check_number | uppercase]]</td>
