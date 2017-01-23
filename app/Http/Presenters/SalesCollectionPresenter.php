@@ -270,6 +270,7 @@ class SalesCollectionPresenter extends PresenterCore
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
+    					where tcd.payment_method_code=\'CASH\'
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.invoice_number = sotbl.invoice_number
 			
