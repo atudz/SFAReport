@@ -5067,7 +5067,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($export == 'pdf')
-    		unset($headers[5],$headers[6],$headers[7],$headers[13]);
+    		unset($headers[6],$headers[7],$headers[8],$headers[14]);
     	
     	return $headers;
     }
@@ -6376,7 +6376,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($pdf)
-    		unset($columns[5],$columns[6],$columns[7],$columns[13]);
+    		unset($columns[6],$columns[7],$columns[8],$columns[14]);
     		 
 		return $columns;
     		 
