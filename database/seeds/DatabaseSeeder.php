@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGuideNavigationSeeder::class);
 //        $this->call(UpdateUserGuideSeeder::class);
 		$this->call(CashPaymentsSeeder::class);
+		$this->call(CheckPaymentSeeder::class);
         Model::reguard();
     }
 }

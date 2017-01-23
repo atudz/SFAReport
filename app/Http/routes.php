@@ -39,7 +39,8 @@ Route::group(['prefix' => 'reports'],function(){
 	
 	Route::get('/flexideal', ['as'=>'flexi-deal', 'uses'=>'VanInventoryPresenter@flexiDeal']);
 	
-	Route::get('/cashpayments', ['as'=>'sales-collection', 'uses'=>'SalesCollectionPresenter@cashpayments']);
+	Route::get('/cashpayments', ['as'=>'cash-payments', 'uses'=>'SalesCollectionPresenter@cashpayments']);
+	Route::get('/checkpayments', ['as'=>'check-payments', 'uses'=>'SalesCollectionPresenter@checkpayments']);
 	
 	Route::get('/replenishment', ['as'=>'replenishment', 'uses'=>'VanInventoryPresenter@replenishment']);
 	Route::get('/replenishment/add', ['as'=>'replenishment-add', 'uses'=>'VanInventoryPresenter@createReplenishment']);

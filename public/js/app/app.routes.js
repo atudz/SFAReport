@@ -35,7 +35,13 @@
 				// Sales & Collection
 				.when('/cashpayments',{
 					templateUrl: '/reports/cashpayments',
-					controller: 'SalesCollectionReport'
+					controller: 'CashPaymentsReport'
+					//controllerAs: 'scr'*/
+				})
+								// Sales & Collection
+				.when('/checkpayments',{
+					templateUrl: '/reports/checkpayments',
+					controller: 'CheckPaymentsReport'
 					//controllerAs: 'scr'*/
 				})
 				// Van Inventory

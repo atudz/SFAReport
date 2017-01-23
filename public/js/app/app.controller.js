@@ -88,9 +88,12 @@
 	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
 	}
 	
-	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
+	/**
+	 * Cash payments controller
+	 */
+	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CashPaymentsReport]);
 	
-	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 	    var params = [
 		          'company_code',
@@ -106,6 +109,33 @@
 
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
+	
+	/**
+	 * Check payments controller
+	 */
+	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CheckPaymentsReport]);
+	
+	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+		          'company_code',
+		          'customer_code',
+		          'area_code',
+		          'invoice_date_from',
+		          'invoice_date_to',		          
+		          'or_date_from',
+		          'or_date_to',
+		          'salesman',
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log, TableFix);
 
 	    //editable rows
 	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
@@ -1884,21 +1914,12 @@
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
 
-	    if(report == 'salescollectionreport')
+	    if(report == 'salescollectionreport' || report == 'salescollectionposting' || report == 'cashpayment' || report == 'checkpayment')
 	    {
 	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
-	    else if(report == 'salescollectionposting')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
-	    else if(report == 'salescollectionsummary')
+	    }else if(report == 'salescollectionsummary')
 	    {
 	    	params = {salesman:$('#salesman').val()};
-	    }
-	    else if(report == 'cashpayment')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 	    }
 
 	    toggleLoading(true);

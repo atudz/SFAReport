@@ -295,6 +295,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('UserGuide')->getUserGuideReports();
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
+			case 'checkpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentReport();
     	}
     }
     
@@ -421,7 +423,8 @@ class ReportsPresenter extends PresenterCore
     			$rec->show = true;
     			$formatted[] = $rec;    			    			    			
     			$index = $k;  
-    			$total = $rec->total_collected_amount;
+    			if(isset($rec->total_collected_amount))
+    				$total = $rec->total_collected_amount;
     		}
     		else
     		{
@@ -441,7 +444,10 @@ class ReportsPresenter extends PresenterCore
     			$rec->RTN_total_collective_discount = null;
     			$rec->RTN_net_amount = null;
     			$rec->total_invoice_net_amount = null;
-    			$total += $rec->total_collected_amount;
+    			
+    			if(isset($rec->total_collected_amount))
+    				$total += $rec->total_collected_amount;
+    			
     			$rec->total_collected_amount = null;
     			$rec->rowspan = 1;
     			$rec->show = false;
@@ -5058,11 +5064,13 @@ class ReportsPresenter extends PresenterCore
 			case 'flexideal':
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
 			case 'invoiceseries':
-				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns(true);
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns();
 			case 'bouncecheck':
-				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns(true);
+				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns();
 			case 'cashpayment':
-				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns();
+			case 'checkpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns();
     	}	
     }
     
@@ -6070,7 +6078,7 @@ class ReportsPresenter extends PresenterCore
 				$summary = '';
 				if($result)
 				{					
-					$summary = $salesCollectionPresenter->getCashPaymentTotal($result);
+					$summary = $salesCollectionPresenter->getCashPaymentTotal($result,false);
 				}
 				$records = $this->validateInvoiceNumber($result);				
 				$vaninventory = true;
@@ -6080,6 +6088,31 @@ class ReportsPresenter extends PresenterCore
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
 				break;
+				
+			case 'checkpayment':
+				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
+				$columns = $this->getTableColumns($report);
+				
+				$prepare = $salesCollectionPresenter->getPreparedCheckPayment();
+				$collection = $prepare->get();
+						
+				$result = $this->formatSalesCollection($collection);
+						
+				$summary = '';
+				if($result)
+				{
+					$summary = $salesCollectionPresenter->getCashPaymentTotal($result,false);
+				}
+				$records = $this->validateInvoiceNumber($result);
+				$vaninventory = true;
+						
+				$rows = $salesCollectionPresenter->getCheckPaymentSelectColumns();
+				$header = 'List of Check Payment';
+				$filters = $salesCollectionPresenter->getCheckPaymentFilterData();
+				$filename = 'List of Check Payment';
+
+				break;
+				
     		default:
     			return;
     	}	
@@ -6721,6 +6754,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'cashpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
+				$total = count($prepare->get());
+				break;
+			case 'checkpayment':
+				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCheckPayment();
 				$total = count($prepare->get());
 				break;
     		default:
