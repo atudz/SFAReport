@@ -18,6 +18,7 @@ Html::macro('tclose', function($paginate=true) {
 					<form class="form-inline">
 				         <div class="form-group">
 							<input type="[[params.type]]" ng-model="params.value" min="0" class="form-control input-sm" step="[[params.step]]">
+							<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
 						 </div>
 						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
 						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
@@ -33,6 +34,7 @@ Html::macro('tclose', function($paginate=true) {
 							<select class="form-control" ng-model="params.value">
 							  <option ng-repeat="option in params.selectOptions">[[option]]</option>							  
 							</select>
+							<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
 						 </div>
 						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
 						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		
@@ -52,6 +54,7 @@ Html::macro('tclose', function($paginate=true) {
 							 			<button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
 							 		</span>
 							 	</p>
+								<span ng-show="showError" class="error help-block">[[errorMsg]]</span>
 						 	</div>
 						 <button class="btn btn-success" type="button btn-sm" ng-click="save()"><i class="glyphicon glyphicon-ok"></i></button>
 						 <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i></button>					 		

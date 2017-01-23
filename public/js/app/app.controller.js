@@ -1280,7 +1280,9 @@
 	
 	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
-		$scope.params = params;		
+		$scope.params = params;
+		$scope.showError = false;
+		$scope.errorMsg = '';
 		//$log.info(params);
 		
 		$scope.save = function () {
@@ -1291,6 +1293,8 @@
 				if(!$('#date_value').val())
 				{
 					error = true;
+					$scope.showError = true;
+					$scope.errorMsg = 'This field is required.';
 				}
 				else
 				{
@@ -1303,7 +1307,17 @@
 			else if($scope.params.type == 'number' && ($scope.params.value < 0 || $scope.params.value == undefined || ($scope.params.value % 1 != 0)))
 			{
 				error = true;
+				$scope.showError = true;
+				$scope.errorMsg = 'Invalid input.';
 			}
+			else if($scope.params.value.length == 0)
+			{
+				error = true;
+				$scope.showError = true;
+				$scope.errorMsg = 'This field is required.';
+			}
+
+			
 			//$log.info($scope.params);
 			if(!error)
 			{
