@@ -305,3 +305,35 @@ function stock_transfer($default='Select Stock Transfer No.')
 		$list->prepend($default,'');
 	return $list;
 }
+
+/**
+ * Get system user list
+ * @param string $default
+ * @return \Illuminate\Support\Collection
+ */
+function get_users($default='Select')
+{
+	$users = ModelFactory::getInstance('User')->orderBy('firstname')->orderBy('lastname')->get();
+	$lists = [];
+	foreach($users as $user)
+	{
+		$lists[$user->id] = $user->fullname;	
+	}
+	return collect($lists);
+}
+
+/**
+ * Get reports list
+ * @return string[]
+ */
+function get_reports()
+{
+	return [
+			'salescollectionreport'=>'Sales & Collection - Report',
+			'vaninventorycanned'=>'Van Inventory - Canned & Mixes',
+			'salesreportpermaterial'=>'Sales Report - Per Material',
+			'salesreportperpeso'=>'Sales Report - Peso Value',
+			'stocktransfer'=>'Van Inventory - Stock Transfer',
+			'vaninventoryfrozen'=>'Van Inventory - Frozen & Kassel',
+	];
+}

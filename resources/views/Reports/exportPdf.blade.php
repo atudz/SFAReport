@@ -104,6 +104,12 @@
 			<tr>
 				@foreach($rows as $row)
 					<td align="left" style="wrap-text:true">
+						<?php
+							if(in_array($row,['value','before','comment']) && strlen($record->$row) > 25)
+							{
+								$record->$row = wordwrap($record->$row,25,'<br>',true);								
+							}
+						?>
 						@if(is_object($record) && isset($record->$row))
 							@if($row == 'from' && $report == 'stockaudit')
 								{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }}							
@@ -147,7 +153,7 @@
 				<th>Total</th>
 				@foreach($rows as $key=>$row)
 					@if($key > 0)
-						<th align="left" style="wrap-text:true">
+						<th align="left" style="wrap-text:true">							
 							@if(is_object($summary) && isset($summary->$row))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
 									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))

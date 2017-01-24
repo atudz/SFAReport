@@ -297,6 +297,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
 			case 'checkpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentReport();
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
     	}
     }
     
@@ -5073,6 +5075,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns();
 			case 'checkpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns();
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
     	}	
     }
     
@@ -6115,6 +6119,16 @@ class ReportsPresenter extends PresenterCore
 
 				break;
 				
+			case 'reversalsummary':
+				$reversalPresenter = PresenterFactory::getInstance('Reversal');
+				$columns = $this->getTableColumns($report);
+				$prepare = $reversalPresenter->getPreparedSummaryReversal();
+				$rows = $reversalPresenter->getSummaryReversalSelectColumns();
+				$header = 'Summary of Revision';
+				$filters = $reversalPresenter->getSummaryReversalFilterData();
+				$filename = 'Summary of Revision';				
+				break;
+				
     		default:
     			return;
     	}	
@@ -6213,7 +6227,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit','invoiceseries']))
+    		if(in_array($report,['salescollectionsummary','stocktransfer','stockaudit','invoiceseries','reversalsummary']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
@@ -6761,6 +6775,10 @@ class ReportsPresenter extends PresenterCore
 			case 'checkpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCheckPayment();
 				$total = count($prepare->get());
+				break;
+			case 'reversalsummary':
+				$prepare = PresenterFactory::getInstance('Reversal')->getPreparedSummaryReversal();
+				$total = $prepare->count();
 				break;
     		default:
     			return;
