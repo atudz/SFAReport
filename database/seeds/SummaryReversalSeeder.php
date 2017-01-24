@@ -15,7 +15,7 @@ class SummaryReversalSeeder extends Seeder
     	 
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Summary Reversal','url'=>'reversal.summary','class'=>'glyphicon glyphicon-edit','parent_id'=>0,'order'=>13,'created_at' => $today,'updated_at'=>$today],
+    			['name'=>'Summary of Reversal','url'=>'reversal.summary','class'=>'glyphicon glyphicon-edit','parent_id'=>0,'order'=>13,'created_at' => $today,'updated_at'=>$today],
     	];
     	
     	DB::table('navigation')->insert($navigation_item);
@@ -25,7 +25,7 @@ class SummaryReversalSeeder extends Seeder
     	if ($adminID) {
     		//fetch all navigations
     		$navs = [
-    				'Summary Reversal'
+    				'Summary of Reversal'
     		];
     		$mappings = [];
     		foreach ($navs as $nav) {
