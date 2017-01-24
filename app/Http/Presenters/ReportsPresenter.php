@@ -272,7 +272,9 @@ class ReportsPresenter extends PresenterCore
     		case 'userlist':
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
-                return PresenterFactory::getInstance('User')->getUserGroup();	
+                return PresenterFactory::getInstance('User')->getUserGroup();
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
     	}
     }
     
@@ -5056,6 +5058,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getSalesmanListColumns();
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
     	}	
     }
     
@@ -5960,6 +5964,15 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
     			break;
+			case 'reversalsummary':
+				$reversalPresenter = PresenterFactory::getInstance('Reversal');
+				$columns = $this->getTableColumns($report);
+				$prepare = $reversalPresenter->getPreparedSummaryReversal();
+				$rows = $reversalPresenter->getSummaryReversalSelectColumns();
+				$header = 'Summary of Revision';
+				$filters = $reversalPresenter->getSummaryReversalFilterData();
+				$filename = 'Summary of Revision';				
+				break;
     		default:
     			return;
     	}	
@@ -6559,6 +6572,10 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
     			break;
+			case 'reversalsummary':
+				$prepare = PresenterFactory::getInstance('Reversal')->getPreparedSummaryReversal();
+				$total = $prepare->count();
+				break;
     		default:
     			return;
     	}

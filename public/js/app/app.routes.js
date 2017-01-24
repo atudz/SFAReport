@@ -136,6 +136,12 @@
 				})
 				
 
+				.when('/reversal.summary',{
+					templateUrl: '/reports/reversal/summary',
+					controller: 'ReversalSummary',
+					/*controllerAs: 'sync'*/
+				})
+
 				.otherwise({
 			        redirectTo: '/home'
 			    });

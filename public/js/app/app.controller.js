@@ -2210,5 +2210,26 @@
 	app.controller('MainCtrl', function($scope) {
 		  $scope.var1 = '07-2013';
 		});
+	
+	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix',ReversalSummary]);
+	
+	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+		          'report',
+		          'branch',
+		          'updated_by',		          
+		          'created_at_from',
+		          'created_ate_to',
+		          'revision'		          
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'reversalsummary',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
 
 })();
