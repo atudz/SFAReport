@@ -2134,7 +2134,7 @@
 				API.save($scope.params, function (data) {
 
 					// Van Inventory customization
-					if ($scope.params.table == 'txn_stock_transfer_in_header') {
+					if ($scope.params.table == 'txn_stock_transfer_in_header' && $scope.params.report != 'stocktransfer') {
 						var stocks = 'stocks';
 						if ($scope.params.alias) {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.alias] = $scope.params.value;

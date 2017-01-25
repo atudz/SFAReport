@@ -7652,6 +7652,26 @@ class ReportsPresenter extends PresenterCore
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
+			case 'cashpayment':
+				$sheet->setColumnFormat([
+					'G' => '0,0.00',
+					'F' => 'MM/DD/YYYY',
+					'H' => 'MM/DD/YYYY',
+					'J' => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
+			case 'checkpayment':
+				$sheet->setColumnFormat([
+					'G' => '0,0.00',
+					'F' => 'MM/DD/YYYY',
+					'H' => 'MM/DD/YYYY',
+					'J' => 'MM/DD/YYYY',
+					'M' => 'MM/DD/YYYY',
+					'N' => '0,0.00'
+				]);
+				$this->formatValueForExcel($report, $records);
+				break;
 		}
 
 		return $records;
@@ -7674,6 +7694,9 @@ class ReportsPresenter extends PresenterCore
 					break;
 				case 'salescollectionposting':
 					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
 					break;
 				case 'returnpermaterial':
 				case 'returnperpeso':
@@ -7684,8 +7707,7 @@ class ReportsPresenter extends PresenterCore
 					$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_to));
 					$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_from));
 					break;
-			}
-			switch ($report) {
+
 				case 'salesreportpermaterial':
 				case 'salesreportperpeso':
 				case 'returnperpeso':
@@ -7698,14 +7720,10 @@ class ReportsPresenter extends PresenterCore
 				case 'salesmanlist':
 					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->sfa_modified_date));
 					break;
-			}
-			switch ($report) {
 				case 'salescollectionreport':
 				case 'salescollectionposting':
 					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
 					break;
-			}
-			switch ($report) {
 				case 'salescollectionposting':
 				case 'salesreportpermaterial':
 					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
@@ -7718,8 +7736,7 @@ class ReportsPresenter extends PresenterCore
 				case 'invoiceseries';
 					$record->created_at = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->created_at));
 					break;
-			}
-			switch ($report) {
+					
 				case 'salesreportpermaterial':
 				case 'salescollectionreport':
 				case 'salescollectionposting':
@@ -7729,7 +7746,20 @@ class ReportsPresenter extends PresenterCore
 				case 'bouncecheck':
 					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
 					break;
+					
+				case 'cashpayment';
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					break;
+				case 'checkpayment';
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cm_date));
+					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
+					break;
+							
 			}
+			
 		}
 	}
 
