@@ -7092,14 +7092,14 @@ class ReportsPresenter extends PresenterCore
 		foreach ($currents as &$current) {
 			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
 			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
-				if ($current->invoice_number_from != " " && is_numeric($current->invoice_number_from)) {
+				if (trim($current->invoice_number_from)) {
 					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
 				}
-				if ($current->invoice_number_to != " " && is_numeric($current->invoice_number_to)) {
+				if (trim($current->invoice_number_to)) {
 					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
 				}
 			} elseif (isset($current->invoice_number)) {
-				if ($current->invoice_number != " " && is_numeric($current->invoice_number)) {
+				if (trim($current->invoice_number)) {
 					if (isset($current->customer_code)) {
 						$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
 					} else {
