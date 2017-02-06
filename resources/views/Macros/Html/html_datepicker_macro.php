@@ -10,6 +10,8 @@ Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=fals
 	
 	$html = '<div class="form-group">
 			 	<div class="col-xs-12 col-md-4 col-sm-4 control-label">
+				<input id="monthOnly" type="hidden" value="'.$monthOnly.'">
+			 	<div class="col-xs-12 col-md-5 col-sm-5 control-label">
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>
 			 	<div class="col-xs-12  col-sm-8" data-ng-controller="'.$controller.'">

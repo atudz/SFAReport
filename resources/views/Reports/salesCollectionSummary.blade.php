@@ -14,7 +14,7 @@
 						{!!Html::select('area','Area', $area)!!}						
 					</div>					
 					<div class="col-md-6">														 			
-						{!!Html::datepicker('invoice_date','Month Description',false,true)!!}
+						{!!Html::datepicker('invoice_date','Month',false,true)!!}
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
