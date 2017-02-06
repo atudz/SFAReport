@@ -1128,7 +1128,7 @@
 		    startingDay: 0
 		};
 
-		if($('#monthOnly').val()){
+		if($('#monthOnly').val() == 1){
 			$scope.format = 'MMM/yyyy';
 		} else {
 			$scope.format = 'MM/dd/yyyy';
