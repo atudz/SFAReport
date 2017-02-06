@@ -7,6 +7,7 @@ Html::macro('datepicker', function($name, $label, $fromTo=false, $monthOnly=fals
 	$options = $monthOnly ? '{minMode: \'month\'}' : 'dateOptions'; 
 	
 	$html = '<div class="form-group">
+				<input id="monthOnly" type="hidden" value="'.$monthOnly.'">
 			 	<div class="col-xs-12 col-md-5 col-sm-5 control-label">
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>

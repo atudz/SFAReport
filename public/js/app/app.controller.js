@@ -424,8 +424,11 @@
 		    startingDay: 0
 		};
 
-		//$scope.format = 'yyyy/MM/dd';
-		$scope.format = 'MM/dd/yyyy';
+		if($('#monthOnly').val()){
+			$scope.format = 'MMM/yyyy';
+		} else {
+			$scope.format = 'MM/dd/yyyy';
+		}		
 			  
 	}
 	
@@ -682,6 +685,15 @@
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}						
 			    }
+				
+				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+					var date = new Date($('#'+val).val());
+					if(date){
+						params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+					} else {
+						params[val] = '';
+					}
+				}
 
 			});
 			//log.info(params);
@@ -1140,7 +1152,7 @@
 	    }
 	    else if(report == 'salescollectionsummary')
 	    {
-	    	params = {salesman:$('#salesman').val()};
+	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 	    }
 	    
 	    toggleLoading(true);
