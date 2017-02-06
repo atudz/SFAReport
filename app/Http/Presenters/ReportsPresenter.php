@@ -7089,17 +7089,19 @@ class ReportsPresenter extends PresenterCore
 	 */
 	public function validateInvoiceNumber($currents)
 	{
+		// must be numeric only or numeric that starts with numeric and ends with character
+		$pattern = '/^\d+$|^\d+[A-z]+$/';
 		foreach ($currents as &$current) {
 			//check if the current variable has a property of invoice_number,has a numeric value and not equal to white space.
 			if (isset($current->invoice_number_from) && isset($current->invoice_number_to)) {
-				if (trim($current->invoice_number_from)) {
+				if ($current->invoice_number_from != " " && preg_match($pattern,$current->invoice_number_from)) {				
 					$current->invoice_number_from = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_from;
 				}
-				if (trim($current->invoice_number_to)) {
+				if ($current->invoice_number_to != " " && preg_match($pattern,$current->invoice_number_to)) {				
 					$current->invoice_number_to = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number_to;
 				}
 			} elseif (isset($current->invoice_number)) {
-				if (trim($current->invoice_number)) {
+				if ($current->invoice_number != " " && preg_match($pattern,$current->invoice_number)) {				
 					if (isset($current->customer_code)) {
 						$current->invoice_number = $this->generateInvoiceNumber($current->customer_code) . $current->invoice_number;
 					} else {
@@ -7108,7 +7110,7 @@ class ReportsPresenter extends PresenterCore
 					}
 				}
 			} elseif (is_array($current) && array_key_exists('invoice_number', $current)) {
-				if ($current['invoice_number'] != " " && is_numeric($current['invoice_number'])) {
+				if ($current['invoice_number'] != " " && preg_match($pattern,$current['invoice_number'])) {
 					$current['invoice_number'] = $this->generateInvoiceNumber($current['customer_name'],
 							true) . $current['invoice_number'];
 				}
