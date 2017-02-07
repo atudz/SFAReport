@@ -2023,7 +2023,7 @@ class ReportsPresenter extends PresenterCore
     			    	
 			WHERE ((tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\'))'.$area.
+    					   OR (tas.activity_code not like \'%C%\')) and ac.customer_name not like \'%Adjustment%\' and ac.customer_name not like \'%Van to Warehouse%\''.$area.
     		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
@@ -2078,10 +2078,7 @@ class ReportsPresenter extends PresenterCore
     	$prepare = $areaFilter->addFilter($prepare,'area',
     			function($self, $model){
     					return $model->where('collection.area_code','=',$self->getValue());
-    				});
-    	
-    	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse%');    	
+    				});    		
 
     	return $prepare;
     }
