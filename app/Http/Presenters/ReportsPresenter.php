@@ -1807,16 +1807,33 @@ class ReportsPresenter extends PresenterCore
     public function getPreparedSalesCollectionSummary($summary = false)
     {
     	$area = $this->request->get('area') ? ' AND ac.area_code=\''.$this->request->get('area').'\'' : '';
-    	$salesman = $this->request->get('salesman') ? ' AND tas.salesman_code=\''.$this->request->get('salesman').'\'' : '';
-    	$company = $this->request->get('company_code') ? ' AND tas.customer_code LIKE \''.$this->request->get('company_code').'%\'' : '';
     	
-    	$invoice = '';
-    	if($from = $this->request->get('invoice_date_from'))
+    	$where1 = '';    	
+    	if($this->request->get('salesman') || $this->request->get('company_code') || $this->request->get('invoice_date_from'))
     	{
-    		$dateFrom = (new Carbon($from))->startOfDay();
-    		$dateTo = (new Carbon($from))->endOfMonth()->endOfDay();
-    		$invoice = ' AND (sotbl.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
+    		$where1 = ' where ';    		
+    		if($this->request->get('salesman')){
+    			$where1 .= " tsoh.salesman_code='".$this->request->get('salesman')."'";    			
+    		}
+    		
+    		if($this->request->get('company_code'))
+    		{
+    			if($this->request->get('salesman'))
+    				$where1 .= ' AND ';
+    			$where1 .= " tsoh.customer_code LIKE '".$this->request->get('company_code')."%'";
+    		}
+    		
+    		$invoice = '';
+    		if($from = $this->request->get('invoice_date_from'))
+    		{
+    			$dateFrom = (new Carbon($from))->startOfDay();
+    			$dateTo = (new Carbon($from))->endOfMonth()->endOfDay();
+    			if($this->request->get('salesman') || $this->request->get('company_code'))
+    				$where1 .= ' AND ';
+    			$invoice = ' (tsoh.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
+    		}
     	}
+    	    	
     	
         //scr_number in the select query below is only used for sorting
     	$query = '
@@ -1873,6 +1890,7 @@ class ReportsPresenter extends PresenterCore
     								IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_detail tsod on tsoh.reference_num = tsod.reference_num and tsoh.salesman_code = tsod.modified_by -- added to bypass duplicate refnums
+    							'.$where1.'
 								group by tsoh.so_number,
 									tsoh.reference_num,
 									tsoh.salesman_code,
@@ -1901,6 +1919,7 @@ class ReportsPresenter extends PresenterCore
     								IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
 								from txn_sales_order_header tsoh
 								inner join txn_sales_order_deal tsodeal on tsoh.reference_num = tsodeal.reference_num
+    							'.$where1.'
 								group by tsoh.so_number,
 									tsoh.reference_num,
 									tsoh.salesman_code,
@@ -2002,7 +2021,7 @@ class ReportsPresenter extends PresenterCore
     			    	
 			WHERE ((tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
-    					   OR (tas.activity_code not like \'%C%\'))'.$area.$salesman.$company.$invoice.
+    					   OR (tas.activity_code not like \'%C%\'))'.$area.
     		' GROUP BY DATE(sotbl.so_date)
 			ORDER BY tas.reference_num ASC,
 			 		 tas.salesman_code ASC,
