@@ -1830,9 +1830,11 @@ class ReportsPresenter extends PresenterCore
     			$dateTo = (new Carbon($from))->endOfMonth()->endOfDay();
     			if($this->request->get('salesman') || $this->request->get('company_code'))
     				$where1 .= ' AND ';
-    			$invoice = ' (tsoh.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
+    			$where1 .= ' (tsoh.so_date BETWEEN \''.$dateFrom.'\' AND \''.$dateTo.'\')';
     		}
     	}
+    	if($where1)
+    		$where1 .= ' ';
     	    	
     	
         //scr_number in the select query below is only used for sorting
