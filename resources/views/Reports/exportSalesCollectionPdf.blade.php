@@ -192,7 +192,7 @@
 					<td align="left" style="wrap-text:true">
 						@if(is_object($record) && isset($record->$row))
 							 <?php
-								if($row == 'remarks')
+								if(in_array($row,['remarks','customer_address','bank_name','check_number']))
                                 {
                                 	$record->$row = wordwrap($record->$row, 8, "<br>",true);
                                 }
