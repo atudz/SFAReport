@@ -72,7 +72,3 @@
 		}
 	}
 </script>
-
-<script>
-	var user = @if(Auth::user()) {!! Auth::user()->load('group') !!} @endif 
-</script>

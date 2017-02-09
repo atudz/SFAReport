@@ -1690,21 +1690,13 @@
 				var reportType = "";
 				var report = "";
 				var updated = false;
-				var date = new Date();
-				// append 0 if character of the month is less than 2.
-				var month = date.getMonth();
-				month = month < 10 ? "0" + month : month;
-				// get the current date with format of YYYY-MM-DD H:m:s.
-				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-				// initialize a default value for comments.
-				var comment = '';
+				
 				var commentLists = [];
 				if (typeof data.sync_data.com[0] !== "undefined") {
 					angular.forEach(data.sync_data.com, function (comment) {
-						commentLists.push(comment.comment);
+						commentLists.push(comment);
 					});
 				}
-				comment += date + "@" + window.user.username + ":";
 
 				switch (url[4]) {
 					case "salescollection.report":
@@ -1784,7 +1776,6 @@
 						id: id,
 						value: value,
 						oldval: value,
-						comment: comment,
 						commentLists: commentLists,
 						selectOptions: selectOptions,
 						index: index,
@@ -2098,24 +2089,6 @@
 			}
 		};
 
-		var date = new Date();
-		var month = date.getMonth();
-		month = month < 10 ? "0" + month : month;
-		// get the current date with format of YYYY-MM-DD H:m:s.
-		date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-		var comments = date + "@" + window.user.username + ":";
-		// this will control the default value of text area not to be deleted or change.
-		$scope.commentChange = function () {
-			$("#comment").keydown(function () {
-				var field = this;
-				setTimeout(function () {
-					if (field.value.indexOf(comments) !== 0) {
-						$(field).val(comments);
-					}
-				}, 1);
-			});
-		};
-
 		$scope.params = params;
 
 		$scope.save = function () {
@@ -2125,7 +2098,7 @@
 				if (!$('#date_value').val()) {
 					error = true;
 				}
-				else if ($('#comment').val() == comments || $('#comment').val() == '') {
+				else if ($('#comment').val() == '') {
 					document.getElementById("editError").style.display = "block";
 					error = true;
 				}
@@ -2138,7 +2111,7 @@
 			} else if (typeof $('#regExpr').val() != "undefined" && $scope.params.column == "invoice_number" && $.isNumeric($('#regExpr').val().substring(0, 2))) {
 				document.getElementById("editErrorInvoice").style.display = "block";
 				error = true;
-			} else if ($('#comment').val() == comments || $('#comment').val() == '') {
+			} else if ($('#comment').val() == '') {
 				document.getElementById("editError").style.display = "block";
 				error = true;
 			}
