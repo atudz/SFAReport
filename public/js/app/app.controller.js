@@ -960,11 +960,7 @@
 				var report = "";
 				var updated = false;
 				var date = new Date();
-				// append 0 if character of the month is less than 2.
-				var month = date.getMonth();
-				month = month < 10 ? "0" + month : month;
-				// get the current date with format of YYYY-MM-DD H:m:s.
-				date = date.getFullYear() + "-" + month + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+				
 				// initialize a default value for comments.
 				var commentLists = [];
 				if (typeof data.sync_data.com[0] !== "undefined") {
