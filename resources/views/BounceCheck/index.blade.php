@@ -8,7 +8,7 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">	
-						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All')!!}
+						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All',['onchange'=>'set_customer(this)'])!!}
 						{!!Html::select('area_code','Area', $areas)!!}
 						{!!Html::select('customer_code','Customer Name', $customers)!!}
 						{!!Html::input('text','txn_number','Transaction No.')!!}																					
@@ -65,3 +65,45 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	function set_customer(el)
+	{
+		var sel = $(el).val();
+		if(!sel){
+			$('#customer_code').empty();
+			$('#customer_code')
+				.append($("<option></option>")
+				.attr("value", '').text('Select Salesman'));
+			$('#customer_code').attr('disabled',true);
+			$('#jr_salesman_code').val('No Jr. Salesman');
+			$('#area').val('');			
+		}
+		else{
+			var url = 'reports/salesman/customer/'+sel;
+			$.get(url,function(data){
+				if(data){
+					$('#customer_code').empty();
+					$.each(data, function(k,v){
+						$('#customer_code')
+							.append($("<option></option>")
+							.attr("value", k).text(v));
+					});
+					$('#customer_code').removeAttr('disabled');
+				}			
+			});
+	
+			var url2 = 'reports/salesman/jr/'+sel;
+			$.get(url2,function(data){				
+				if(data){
+					$('#jr_salesman_code').val(data);
+				} else {
+					$('#jr_salesman_code').val('No Jr. Salesman');
+				}			
+			});
+	
+			$('#customer_code').trigger('change');
+		}
+	}	
+
+</script>
