@@ -6124,9 +6124,9 @@ class ReportsPresenter extends PresenterCore
 				$columns = $this->getTableColumns($report);
 				$prepare = $reversalPresenter->getPreparedSummaryReversal();
 				$rows = $reversalPresenter->getSummaryReversalSelectColumns();
-				$header = 'Summary of Revision';
+				$header = 'Summary of Reversal';
 				$filters = $reversalPresenter->getSummaryReversalFilterData();
-				$filename = 'Summary of Revision';				
+				$filename = 'Summary of Reversal';				
 				break;
 				
     		default:
