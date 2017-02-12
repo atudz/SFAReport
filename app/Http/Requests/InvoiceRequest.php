@@ -26,8 +26,8 @@ class InvoiceRequest extends Request
     	$extra = $this->id ? ':'.$this->id : '';
         return [
             'salesman_code' => 'required',
-        	'invoice_start' => 'required|numeric|positive|lte:invoice_end|available'.$extra,
-        	'invoice_end' => 'required|numeric|positive|gte:invoice_start|available'.$extra,
+        	'invoice_start' => 'required|numeric|max:9999999|positive|lte:invoice_end|available'.$extra,
+        	'invoice_end' => 'required|numeric|max:9999999|positive|gte:invoice_start|available'.$extra,
         	'status' => 'required',
         ];
     }

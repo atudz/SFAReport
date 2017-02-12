@@ -26,10 +26,10 @@
 								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)'],$invoice->salesman_code)!!}
 							</div>							
 							<div class="row form-input-field">
-								{!!Html::input('text','invoice_start','Start Series <span class="required">*</span>',$invoice->invoice_start,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','invoice_start','Start Series <span class="required">*</span>',$invoice->invoice_start,['onblur'=>'validate(this)','hint'=>'Please input 0-9999999 only.'])!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::input('text','invoice_end','End Series <span class="required">*</span>',$invoice->invoice_end,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','invoice_end','End Series <span class="required">*</span>',$invoice->invoice_end,['onblur'=>'validate(this)','hint'=>'Please input 0-9999999 only.'])!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::select('status','Status <span class="required">*</span>', statuses(), 'Select Status',['onblur'=>'validate(this)'],$invoice->status)!!}

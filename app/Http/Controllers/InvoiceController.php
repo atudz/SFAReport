@@ -68,8 +68,8 @@ class InvoiceController extends ControllerCore
         $invoice = ModelFactory::getInstance('Invoice')->findOrNew($id);        
         $invoice->fill($request->all());
         
-        $invoice->invoice_start = str_pad((int)$invoice->invoice_start,8,'0',STR_PAD_LEFT);
-        $invoice->invoice_end = str_pad((int)$invoice->invoice_end,8,'0',STR_PAD_LEFT);
+        $invoice->invoice_start = str_pad((int)$invoice->invoice_start,7,'0',STR_PAD_LEFT);
+        $invoice->invoice_end = str_pad((int)$invoice->invoice_end,7,'0',STR_PAD_LEFT);
         
         $reportPresenter = PresenterFactory::getInstance('Reports');
         $areas = $reportPresenter->getSalesmanArea($request->salesman_code);
