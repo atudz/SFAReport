@@ -915,8 +915,8 @@ class VanInventoryPresenter extends PresenterCore
     	$filters = [
     			'Salesman' => $salesman,    			
     			'Area' => $area,
-    			'Monthly' => $month,
-    			'Yearly' => $year,
+    			'Month' => $month,
+    			'Year' => $year,
     			'Period Covered' => $period,
     			'Statement No.' => $reference,
     	];

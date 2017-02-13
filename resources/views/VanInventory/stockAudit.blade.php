@@ -10,8 +10,8 @@
 					<div class="col-md-6">
 						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All')!!}						
 						{!!Html::select('area','Area', $areas)!!}												
-						{!!Html::datepicker('month','Monthly',false,true)!!}
-						{!!Html::datepicker('year','Yearly',false,true,'','','Calendar',true)!!}												 																															
+						{!!Html::datepicker('month','Month',false,true)!!}
+						{!!Html::datepicker('year','Year',false,false,'','','Calendar',true)!!}												 																															
 					</div>					
 					<div class="col-md-6">	
 						{!!Html::datepicker('period','Period Covered',true)!!}
