@@ -830,15 +830,13 @@ class VanInventoryPresenter extends PresenterCore
     
     	if($this->isSalesman())
     	{
-    		$vanCode = $this->getSalesmanVan(auth()->user()->salesman_code);
-    		$prepare->whereIn('replenishment.van_code',$vanCode);
+    		$prepare->where('replenishment.modified_by',auth()->user()->salesman_code);
     	}
     	else
     	{
-    		if($this->request->get('salesman_code'))
+    		if($salesman = $this->request->get('salesman_code'))
     		{
-    			$vanCode = $this->getSalesmanVan($this->request->get('salesman_code'));
-    			$prepare->whereIn('replenishment.van_code',$vanCode);
+    			$prepare->where('replenishment.modified_by', $salesman);
     		}
     	}
     	 

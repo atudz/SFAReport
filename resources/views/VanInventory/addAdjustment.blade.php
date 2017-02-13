@@ -23,7 +23,7 @@
 						<div class ="col-md-8">
 							<input id="id" type="hidden" name="id" value="{{(int)$replenishment->id}}">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->van_code))!!}
+								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],$replenishment->modified_by)!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->van_code))!!}
@@ -50,11 +50,11 @@
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
 								<thead>
 									<tr>
-										<th width="12%">Material Code</th>
-										<th>Material Description</th>
 										<th>Segment Code</th>
-										<th width="25%">Brand Name</th>										
-										<th width="10%">Material Quantity</th>
+										<th width="25%">Brand Name</th>
+										<th width="12%">Material Code</th>
+										<th>Material Description</th>																														
+										<th width="10%">Total Quantity</th>
 										<th>&nbsp;</th>
 									</tr>
 								</thead>
@@ -63,6 +63,20 @@
 									@if(count($replenishment->items) > 0)
 										@foreach($replenishment->items as $k=>$item)
 											<tr>
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-12">
+						 									{!!Form::select('item[]',$segmentCodes,$item->item_code,['class'=>'form-control','disabled'=>true])!!}
+						 								</div>
+						 							</div>		
+												</td>	
+												<td width="25%">
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-12">
+						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
+						 								</div>
+						 							</div>		
+												</td>
 												<td width="12%">
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
@@ -76,25 +90,11 @@
 						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','disabled'=>true],$item->item_code)!!}
 						 								</div>
 						 							</div>		
-												</td>
-												<td>
-													<div class="form-group">			 								
-						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('item[]',$segmentCodes,$item->item_code,['class'=>'form-control','disabled'=>true])!!}
-						 								</div>
-						 							</div>		
-												</td>
-												<td width="25%">
-													<div class="form-group">			 								
-						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
-						 								</div>
-						 							</div>		
-												</td>
+												</td>																						
 												<td width="10%">
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
-						 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="{{$item->quantity}}">
+						 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="{{$item->quantity}}" min="0" onblur="validateQty(this)">
 						 									<span class="help-block"></span>
 						 								</div>
 						 							</div>
@@ -106,20 +106,6 @@
 										@endforeach
 									@else
 										<tr>
-											<td width="12%">
-												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
-					 								</div>
-					 							</div>										
-											</td>
-											<td>
-												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
-					 								</div>
-					 							</div>		
-											</td>
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
@@ -134,10 +120,24 @@
 					 								</div>
 					 							</div>		
 											</td>
+											<td width="12%">
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
+					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
+					 								</div>
+					 							</div>										
+											</td>
+											<td>
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
+					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
+					 								</div>
+					 							</div>		
+											</td>											
 											<td width="10%">
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="0">
+					 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="0" min="0" onblur="validateQty(this)">
 					 									<span class="help-block"></span>
 					 								</div>
 					 							</div>
@@ -221,6 +221,7 @@
 	{
 		var sel = $(el).val();
 		$(el).parent().parent().parent().next().find('select').val($(el).val())
+		$('select[name^=segment_code').val(sel);
 	}
 
 	function setSalesmanDetails(el)

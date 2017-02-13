@@ -109,6 +109,8 @@ class VanInventoryController extends ControllerCore
 		$vans = $vanInventoryPresenter->getSalesmanVan($request->salesman_code);
 		$replenish = ModelFactory::getInstance('Replenishment')->findOrNew((int)$request->id);		
 		$replenish->van_code = $vans ? array_shift($vans) : '';
+		if(is_null($replenish->van_code))
+			$replenish->van_code = '';
 		$replenish->replenishment_date = new Carbon($request->replenishment_date_from);
 		
 		$today = new Carbon();
@@ -198,6 +200,8 @@ class VanInventoryController extends ControllerCore
 		$vans = $vanInventoryPresenter->getSalesmanVan($request->salesman_code);
 		$replenish = ModelFactory::getInstance('Replenishment')->findOrNew((int)$request->id);
 		$replenish->van_code = $vans ? array_shift($vans) : '';
+		if(is_null($replenish->van_code))
+			$replenish->van_code = '';
 		$replenish->replenishment_date = new Carbon($request->replenishment_date_from);
 		$replenish->adjustment_reason = $request->adjustment_reason;
 	
