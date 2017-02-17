@@ -6394,7 +6394,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($pdf)
-    		unset($columns[6],$columns[7],$columns[8],$columns[14]);
+    		unset($columns[2],$columns[6],$columns[7],$columns[8],$columns[14]);
     		 
 		return $columns;
     		 
