@@ -5085,7 +5085,7 @@ class ReportsPresenter extends PresenterCore
     	];
     	
     	if($export == 'pdf')
-    		unset($headers[6],$headers[7],$headers[8],$headers[14]);
+    		unset($headers[2],$headers[6],$headers[7],$headers[8],$headers[14]);
     	
     	return $headers;
     }
