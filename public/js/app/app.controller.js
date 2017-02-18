@@ -1115,7 +1115,8 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 
-			$("input[class*='valid-date']").each(function() {
+		    $("ul[class*='ng-valid-date']").hide();
+			$("input[class*='ng-valid-date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
 				elemScope[elemId] = false;
@@ -1128,12 +1129,91 @@
 		    startingDay: 0
 		};
 
-		if($('#monthOnly').val() == 1){
-			$scope.format = 'MMM/yyyy';
-		} else {
-			$scope.format = 'MM/dd/yyyy';
-		}		
-			  
+		$scope.format = 'MM/dd/yyyy';		  
+	}
+	
+	/**
+	 * Date Input Controller
+	 */
+	app.controller('CalendarMonth',['$scope','$http','$log', CalendarMonth]);
+
+	function CalendarMonth($scope, $http, $log)
+	{
+		$scope.dateFrom = null;
+	    $scope.dateTo = null;
+	    $scope.setFrom = function(from){
+	    	if(from)
+	    		$scope.dateFrom = new Date(from);
+	    }
+
+	    $scope.setTo = function(to){
+	    	if(to)
+	    		$scope.dateTo = new Date(to);
+	    }
+
+	    $scope.maxDate = new Date(2020, 5, 22);
+
+		$scope.open = function($event, elementId) {
+			$event.preventDefault();
+		    $event.stopPropagation();
+
+		    $("ul[class*='ng-valid-date']").hide();
+			$("input[id*='ng-valid-date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
+		};
+
+		$scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 0
+		};
+
+		$scope.format = 'MMM/yyyy';			  
+	}
+	
+	/**
+	 * Date Input Controller
+	 */
+	app.controller('CalendarYear',['$scope','$http','$log', CalendarYear]);
+
+	function CalendarYear($scope, $http, $log)
+	{
+		$scope.dateFrom = null;
+	    $scope.dateTo = null;
+	    $scope.setFrom = function(from){
+	    	if(from)
+	    		$scope.dateFrom = new Date(from);
+	    }
+
+	    $scope.setTo = function(to){
+	    	if(to)
+	    		$scope.dateTo = new Date(to);
+	    }
+
+	    $scope.maxDate = new Date(2020, 5, 22);
+
+		$scope.open = function($event, elementId) {
+			$event.preventDefault();
+		    $event.stopPropagation();
+
+		    $("ul[class*='ng-valid-date']").hide();
+			$("input[id*='ng-valid-date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
+		};
+
+		$scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 0
+		};
+
+		$scope.format = 'yyyy';			  
 	}
 
 	/**
@@ -1352,6 +1432,8 @@
 		scope.filter = function(){
 				
 			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment','bouncecheck'];
+			var formatReport = ['salescollectionsummary','stockaudit'];
+			var formatField = ['invoice_date_from','month_from','year_from'];
 	    	scope.page = 1;
 
 			params['page'] = scope.page;
@@ -1409,7 +1491,7 @@
 				}
 				
 				
-				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+				if(-1 !== $.inArray(report,formatReport) && -1 !== $.inArray(val,formatField)){
 					var date = new Date($('#'+val).val());
 					if(date){
 						params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
