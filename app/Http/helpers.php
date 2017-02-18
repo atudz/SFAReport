@@ -47,9 +47,15 @@ function latest_revision($reportType, $prefix='REV')
  * @param unknown $number
  * @return string|unknown
  */
-function negate($number)
+function negate($number,$format=false)
 {
-	return $number < 0 ? '('.abs($number).')' : $number;
+	$tmp = $number;
+	if($format)
+		$number = number_format(abs($number),2);
+	else
+		$number = abs($number);
+	
+	return $tmp < 0 ? '('.$number.')' : $number;
 }
 
 /**

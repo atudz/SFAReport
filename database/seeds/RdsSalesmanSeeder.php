@@ -14,10 +14,10 @@ class RdsSalesmanSeeder extends Seeder
     	DB::table('rds_salesman')->truncate();
     	$today = new DateTime();
     	$salesman = [
-    			['area_name'=>'SOUTHERN CEBU','area_code'=>'','salesman_name'=>'TERO, RENATO','salesman_code'=>'A09','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
-    			['area_name'=>'NORTHERN CEBU','area_code'=>'','salesman_name'=>'TANGYAN, CALIXTO','salesman_code'=>'A08','jr_salesman_name'=>'LUNISA, GELLYN','created_at'=>$today,'updated_at'=>$today],
-    			['area_name'=>'SOUTHERN CEBU','area_code'=>'','salesman_name'=>'VARELA, MANUEL','salesman_code'=>'A13','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
-    			['area_name'=>'NORTHERN CEBU','area_code'=>'','salesman_name'=>'VICTORILLO, MARIANO JR.','salesman_code'=>'A15','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
+    			['area_name'=>'SOUTHERN CEBU','area_code'=>'100','salesman_name'=>'TERO, RENATO','salesman_code'=>'A09','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
+    			['area_name'=>'NORTHERN CEBU','area_code'=>'100','salesman_name'=>'TANGYAN, CALIXTO','salesman_code'=>'A08','jr_salesman_name'=>'LUNISA, GELLYN','created_at'=>$today,'updated_at'=>$today],
+    			['area_name'=>'SOUTHERN CEBU','area_code'=>'100','salesman_name'=>'VARELA, MANUEL','salesman_code'=>'A13','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
+    			['area_name'=>'NORTHERN CEBU','area_code'=>'100','salesman_name'=>'VICTORILLO, MARIANO JR.','salesman_code'=>'A15','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
     			['area_name'=>'SFI BACOLOD','area_code'=>'300','salesman_name'=>'ERILLO, RODOLFO','salesman_code'=>'C02','jr_salesman_name'=>null,'created_at'=>$today,'updated_at'=>$today],
     			['area_name'=>'SFI DUMAGUETE','area_code'=>'700','salesman_name'=>'GRACIA, ELMER','salesman_code'=>'G02','jr_salesman_name'=>'','created_at'=>$today,'updated_at'=>$today],
     			['area_name'=>'ILOILO','area_code'=>'2900','salesman_name'=>'ARGUELLES, CARLO','salesman_code'=>'I02','jr_salesman_name'=>'','created_at'=>$today,'updated_at'=>$today],

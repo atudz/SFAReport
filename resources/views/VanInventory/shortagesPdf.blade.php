@@ -183,7 +183,7 @@
 				<div class="report-revision">
 					<div class="report">
 						<div>REPORT# @if($ref){{$ref->reference_number}}@endif</div>
-						<div>REV# @if($ref){{$ref->revision_number}}@endif</div>
+						{{-- <div>REV# @if($ref){{$ref->revision_number}}@endif</div> --}}
 					</div>
 				</div>		
 			@endif
@@ -218,7 +218,7 @@
 							<td></td>
 							<td rowspan="{{count($overages)+1}}" class="total">
 								@if($overages)
-									{{negate(number_format($overages->sum('total_amount'),2))}}
+									{{negate($overages->sum('total_amount'),true)}}
 								@else
 									0.00
 								@endif
@@ -232,9 +232,9 @@
 								<td>{{negate($over['actual_count'])}}</td>
 								<td>{{negate($over['short_over'])}}</td>
 								<td>x</td>
-								<td>{{negate($over['price'])}}</td>
+								<td>{{number_format($over['price'],2)}}</td>
 								<td>=</td>
-								<td>{{negate($over['total_amount'])}}</td>												
+								<td>{{negate($over['total_amount'],true)}}</td>												
 							</tr>
 						@endforeach
 						
@@ -249,7 +249,7 @@
 							<td></td>
 							<td class="total" rowspan="{{count($shortages)+1}}">
 								@if($shortages)
-									{{negate(number_format($shortages->sum('total_amount'),2))}}
+									{{negate($shortages->sum('total_amount'),true)}}
 								@else
 									0.00
 								@endif
@@ -263,22 +263,24 @@
 								<td>{{negate($short['actual_count'])}}</td>
 								<td>{{negate($short['short_over'])}}</td>
 								<td>x</td>
-								<td>{{negate($short['price'])}}</td>
+								<td>{{number_format($short['price'],2)}}</td>
 								<td>=</td>
-								<td>{{negate($short['total_amount'])}}</td>											
+								<td>{{negate($short['total_amount'],true)}}</td>											
 							</tr>
 						@endforeach
 						<tr class="footer">
-							<td colspan="6">TOTAL STOCK OVERAGE IN PESO VALUE</td>
+							<?php
+								$sumShortages = $shortages ? $shortages->sum('total_amount') : 0;								
+								$sumOverages = $overages ? $overages->sum('total_amount') : 0;
+							?>
+							<td colspan="6">TOTAL STOCK @if(abs($sumShortages) > abs($sumOverages)) SHORTAGES @else OVERAGE @endif IN PESO VALUE</td>
 							<td>Php</td>
 							<td></td>
 							<td class="bold">
-								<?php
-									$sumShortages = $shortages ? $shortages->sum('total_amount') : 0;								
-									$sumOverages = $overages ? $overages->sum('total_amount') : 0;
-									$totalStockOverage = bcadd($sumOverages,$sumShortages,2);
-									echo negate($totalStockOverage);
-								?>
+							<?php
+								$totalStockOverage = bcadd($sumOverages,$sumShortages,2);
+								echo negate($totalStockOverage,true);
+							?>
 							</td>
 						</tr>				
 					</tbody>				
@@ -289,16 +291,16 @@
 				<div class="charge">
 					<div class="row">
 						<div class="label">
-							<label><i>Stock Shortage Charge to Varela (60%)</i></label>
+							<label><i>Stock Shortage Charge to {{$salesman}} (60%)</i></label>
 						</div>
-						<div class="value">{{bcmul(abs($totalStockOverage),0.6,2)}}</div>
+						<div class="value">{{number_format(bcmul(abs($totalStockOverage),0.6,2),2)}}</div>
 					</div>
 					
 					<div class="row">
 						<div class="label">
-							<label><i>Stock Shortage Charge to Varela (40%)</i></label>
+							<label><i>Stock Shortage Charge to {{$jrSalesman}} (40%)</i></label>
 						</div>
-						<div class="value">{{bcmul(abs($totalStockOverage),0.4,2)}}</div>
+						<div class="value">{{number_format(bcmul(abs($totalStockOverage),0.4,2),2)}}</div>
 					</div>
 				</div>
 			@endif

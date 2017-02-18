@@ -1022,6 +1022,7 @@ class VanInventoryPresenter extends PresenterCore
     	
     	$replenishment = $prepare->first();
     	
+    	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$this->request->get('salesman_code'))->first();
     	
     	$records = [];
     	$overages = [];
@@ -1059,7 +1060,7 @@ class VanInventoryPresenter extends PresenterCore
 						}
 						if($shortItemCodes)
 						{
-							$items = $this->getItemDetails($shortItemCodes);
+							$items = $this->getItemDetails($shortItemCodes, $salesman->area_code);
 							if($items)
 							{
 								foreach($items as $item)
@@ -1090,7 +1091,7 @@ class VanInventoryPresenter extends PresenterCore
 						}
 						if($overItemCodes)
 						{
-							$items = $this->getItemDetails($overItemCodes);
+							$items = $this->getItemDetails($overItemCodes,$salesman->area_code);
 							if($items)
 							{
 								foreach($items as $item)
@@ -1143,19 +1144,21 @@ class VanInventoryPresenter extends PresenterCore
 //     	$this->view->auditor = $auditor ? $auditor->formal_name : '';
 //     	$this->view->auditorArea = $auditor->area ? trim(str_replace('SFI','',$auditor->area->area_name)) : '';    	
 //     	return $this->view('shortagesPdf');
-    	
-    	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$this->request->get('salesman_code'))->first();
+    	    	
     	$auditor = ModelFactory::getInstance('User')->find($this->request->get('audited_by'));
     	$params['type'] = ($type == 'canned') ? 'CANNED & MIXES' : 'FROZEN & KASSEL';
     	$params['auditor'] = $auditor ? $auditor->formal_name : '';
-    	$params['salesman'] = $salesman ? $salesman->salesman_name : '';
+    	if($salesman)
+    	{
+    		$params['salesman'] = $salesman->salesman ? $salesman->salesman->salesman_name : $salesman->salesman_name;
+    	}
     	$params['jrSalesman'] = $salesman ? $salesman->jr_salesman_name : '';
     	$params['area'] = $salesman ? $salesman->area_name : '';
     	$params['auditorArea'] = $auditor->area ? trim(str_replace('SFI','',$auditor->area->area_name)) : '';
     	$params['shortages'] = $shortages;
     	$params['overages'] = $overages;
     	$params['ref'] = $ref;
-    	
+
     	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('folio')->setOrientation('portrait');   
     	return $pdf->download('Van Inventory and History Report Statement of Shortages and Overages.pdf');
     }
@@ -1165,17 +1168,21 @@ class VanInventoryPresenter extends PresenterCore
      * @param unknown $itemCodes
      * @return unknown
      */
-    public function getItemDetails($itemCodes)
+    public function getItemDetails($itemCodes,$areaCode)
     {
     	return DB::table('app_item_master')
-			    	->select(['app_item_master.description','app_item_master.item_code','app_item_price.unit_price'])
+			    	->select(['app_item_master.description','app_item_master.item_code',DB::raw('coalesce(app_item_price.unit_price,0) unit_price')])
 			    	->leftJoin('app_item_price',function($join){
 			    		$join->on('app_item_price.item_code','=','app_item_master.item_code');
 			    		$join->where('app_item_price.uom_code','=','PCS');
 			    		$join->where('app_item_price.status','=','A');
-			    		$join->where('app_item_price.customer_price_group','=','PR01401120');
 			    	})
-			    	->whereIn('app_item_master.item_code',$itemCodes)
+			    	->leftJoin('app_customer',function($join) use ($areaCode){
+			    		$join->on('app_customer.customer_price_group','=','app_item_price.customer_price_group');
+			    		$join->where('app_customer.area_code','=',$areaCode);
+			    	})
+			    	///->leftJoin('app_customer','app_customer.customer_price_group','=','app_item_price.customer_price_group')
+			    	->whereIn('app_item_master.item_code',$itemCodes)			    	
 			    	->get();
     }
     
