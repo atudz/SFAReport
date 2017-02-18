@@ -1115,7 +1115,7 @@
 			$event.preventDefault();
 		    $event.stopPropagation();
 
-			$("input[id*='date']").each(function() {
+			$("input[class*='valid-date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
 				elemScope[elemId] = false;
