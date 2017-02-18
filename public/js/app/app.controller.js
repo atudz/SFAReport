@@ -1404,7 +1404,7 @@
 					if(val.indexOf('_from') != -1){
 						$('#'+val).parent().next('span').html('');
 					} else {
-						$('#'+val).next('span').html('');
+						//$('#'+val).next('span').html('');
 					}
 				}
 				
