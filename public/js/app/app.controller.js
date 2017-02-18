@@ -1493,7 +1493,7 @@
 				
 				if(-1 !== $.inArray(report,formatReport) && -1 !== $.inArray(val,formatField)){
 					var date = new Date($('#'+val).val());
-					if(date){
+					if(date && $('#'+val).val().trim()){
 						params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
 					} else {
 						params[val] = '';
