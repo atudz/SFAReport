@@ -55,6 +55,7 @@
 							<td></td>
 							<td>[[record.sales_group]]</td>
 							<td>[[record.assignment]]</td>
+							<td>[[record.remarks]]</td>
 						</tr>
 						
 						<!-- Summary total -->
@@ -89,10 +90,11 @@
 							<td></td>
 							<td></td>
 							<td></td>
+							<td></td>
 						</tr>
 						
 					</tbody>
-					{!!Html::tfooter(true,18)!!}
+					{!!Html::tfooter(true,19)!!}
 				{!!Html::tclose()!!}				
 			</div>			
 		</div>

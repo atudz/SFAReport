@@ -3167,7 +3167,8 @@ class ReportsPresenter extends PresenterCore
 					$truncate1. '((coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12)'.$truncate2.' total_sales,'.
 					$truncate1. '(coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))'.$truncate2.' total_invoice_amount,
     				SOtbl.updated,
-    				app_customer.area_code					
+    				app_customer.area_code,
+					SOtbl.reference_num
 
 					from txn_activity_salesman ACT 
 
@@ -3276,7 +3277,8 @@ class ReportsPresenter extends PresenterCore
 					$truncate1 . '(-1*((coalesce(RTNtbl.RTN_total_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))/1.12))'.$truncate2 .' total_sales,'.
 					$truncate1 . '(-1*(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))) '.$truncate2.' total_invoice_amount,
     			    RTNtbl.updated,
-					app_customer.area_code					
+					app_customer.area_code,
+					RTNtbl.reference_num
 
 					from txn_activity_salesman ACT 
 
@@ -3374,7 +3376,12 @@ class ReportsPresenter extends PresenterCore
     				->selectRaw($select)
     				->leftJoin('app_customer','app_customer.customer_code','=','bir.customer_code')
     				->leftJoin('app_area','app_area.area_code','=','app_customer.area_code')
-    				->leftJoin('app_salesman','app_salesman.salesman_code','=','bir.sales_group');
+    				->leftJoin('app_salesman','app_salesman.salesman_code','=','bir.sales_group')
+    				->leftJoin(\DB::raw('(select remarks,reference_num from txn_evaluated_objective group by reference_num) remarks'), 
+    									function($join){
+    							    			 $join->on('bir.reference_num','=','remarks.reference_num');
+    							}
+					);    				
     	
     	$areaFilter = FilterFactory::getInstance('Select','Area',SelectFilter::SINGLE_SELECT);
     	$prepare = $areaFilter->addFilter($prepare,'area', function($self, $model){
@@ -5239,6 +5246,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Term-on-Account'],
     			['name'=>'Sales Group','sort'=>'sales_group'],
     			['name'=>'Assignment','sort'=>'assignment'],
+    			['name'=>'Remarks','sort'=>'remarks'],
     	];
     
     	return $headers;
@@ -6331,6 +6339,7 @@ class ReportsPresenter extends PresenterCore
     			'term_on_acount',
     			'sales_group',
     			'assignment',
+    			'remarks',
     	];
     }
     
