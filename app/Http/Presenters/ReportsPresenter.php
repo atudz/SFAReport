@@ -3354,7 +3354,8 @@ class ReportsPresenter extends PresenterCore
 				bir.sales_group,
     			bir.updated,
 				app_salesman.salesman_name assignment,
-    			bir.area_code
+    			bir.area_code,
+    			remarks.remarks
     			';
     	
     	if($summary)
