@@ -2943,7 +2943,7 @@ class ReportsPresenter extends PresenterCore
             from (
                     select ti.salesman_code, ti.customer_code, ti.invoice_number, ti.original_amount as invoice_amount, \'\' updated
                   	from txn_invoice ti
-    				left join txn_sales_order_header tih
+    				join txn_sales_order_header tih
 					on ti.salesman_code = tih.salesman_code
 					and ti.customer_code = tih.customer_code
 					and ti.invoice_number = tih.invoice_number 
