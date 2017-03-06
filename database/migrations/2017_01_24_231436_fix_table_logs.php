@@ -42,7 +42,7 @@ class FixTableLogs extends Migration
 	        	if($log->save())
 	        	{
 		        	\DB::table('report_revisions')->insert([
-		        			'revision_number' => generate_revision('salescollectionreport'),
+		        			'revision_number' => $this->generate_revision('salescollectionreport'),
 		        			'report' => 'salescollectionreport',
 		        			'updated_at' => $log->created_at,
 		        			'created_at' => $log->updated_at,
