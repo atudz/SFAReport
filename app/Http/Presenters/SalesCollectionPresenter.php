@@ -397,11 +397,16 @@ class SalesCollectionPresenter extends PresenterCore
     	
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    		 
+    		
+    	if($sort = $this->request->get('sort'))
+    	{
+    		$prepare->orderBy('collection.'.$sort,$this->request->get('order'));
+    	}
+    	
     	$prepare->orderBy('collection.invoice_number','asc');
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
-    	$prepare->orderBy('collection.so_number','asc');
+    	$prepare->orderBy('collection.so_number','asc');    	
     		 
     	return $prepare;
     }
@@ -683,12 +688,18 @@ class SalesCollectionPresenter extends PresenterCore
     	 
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	 
+    	
+    	if($sort = $this->request->get('sort'))
+    	{
+    		$prepare->orderBy('collection.'.$sort,$this->request->get('order'));
+    	}
+    	
     	$prepare->orderBy('collection.invoice_number','asc');
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
-    	 
+    	
+    	
     	return $prepare;
     }
     
