@@ -32,8 +32,8 @@ class ReversalPresenter extends PresenterCore
     public function getSummaryReversalColumns()
     {
     	$headers = [
-    			['name'=>'Revision No.','sort'=>'revision_number'],
-    			['name'=>'Revision Date','sort'=>'created_at'],
+    			['name'=>'Reversal No.','sort'=>'revision_number'],
+    			['name'=>'Reversal Date','sort'=>'created_at'],
     			['name'=>'Type of Report','sort'=>'report_type'],
     			['name'=>'Username','sort'=>'username'],
     			['name'=>'Original','sort'=>'before'],
@@ -143,7 +143,7 @@ class ReversalPresenter extends PresenterCore
     	$revNumFilter = FilterFactory::getInstance('Date');
     	$prepare = $revNumFilter->addFilter($prepare,'revision',
     			function($self, $model){
-    				return $model->where('report_revision.revision','LIKE','%'.$self->getValue().'%');
+    				return $model->where('report_revisions.revision_number','LIKE','%'.$self->getValue().'%');
     			});
     	 
     	if(!$this->request->has('sort'))

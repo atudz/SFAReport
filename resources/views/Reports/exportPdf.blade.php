@@ -66,7 +66,7 @@
 			@endif
 		</div>
 	@endif
-	@if($revision = latest_revision($report))
+	@if($revision = latest_revision($report) && false)
 		<div class="revision" align="right">
 			<div class="rev-label">
 				<span><strong>Revision No.</strong> {{$revision}}</span>
