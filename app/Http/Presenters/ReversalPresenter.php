@@ -116,9 +116,9 @@ class ReversalPresenter extends PresenterCore
     		 	   table_logs.comment
     			';
     	
-    	$prepare = \DB::table('table_logs')
+    	$prepare = \DB::table('report_revisions')
     					->selectRaw($select)
-    					->leftJoin('report_revisions','table_logs.id','=','report_revisions.table_log_id')
+    					->leftJoin('table_logs','table_logs.id','=','report_revisions.table_log_id')
 				    	->leftJoin('user','user.id','=','table_logs.updated_by');				    	
     	    	
     	

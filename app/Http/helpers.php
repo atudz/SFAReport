@@ -14,7 +14,7 @@ function generate_revision($reportType, $prefix='')
 {
 	$max = DB::table('report_revisions')->where('report',$reportType)->max('revision_number');
 	$lastCount = str_replace($prefix, '', $max);
-	$revision = $prefix . str_pad($lastCount+1, 7, '0', STR_PAD_LEFT);
+	$revision = $prefix . str_pad($lastCount+1, 10, '0', STR_PAD_LEFT);
 	return $revision;
 }
 
