@@ -5727,6 +5727,7 @@ class ReportsPresenter extends PresenterCore
     				$currentSummary = $this->getSalesCollectionTotal($current);
     			}    			
     			
+    			$offset += 1;
     			$current = array_splice($current, $offset, $limit);    			  		
     			
     			$hasDateFilter = false;
@@ -5800,6 +5801,7 @@ class ReportsPresenter extends PresenterCore
     				}
     			}
     			
+    			$offset += 1;
     			$records = array_splice($records, $offset, $limit);
     			
     			$rows = $this->getSalesCollectionPostingSelectColumns();
