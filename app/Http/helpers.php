@@ -319,7 +319,7 @@ function get_users($default='Select')
 	{
 		$lists[$user->id] = $user->fullname;	
 	}
-	return collect($lists);
+	return $lists;
 }
 
 /**
