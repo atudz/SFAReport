@@ -6083,7 +6083,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if($report == 'salescollectionsummary')
+    		if(in_array($report,['salescollectionsummary','reversalsummary']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
     		else
     			$pdf = \PDF::loadView('Reports.'.$view, $params);    	
