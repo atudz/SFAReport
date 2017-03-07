@@ -733,7 +733,9 @@
 				}
 				else if(val.endsWith('_to'))
 				{
-					angular.element($('#'+val)).scope().setTo(new Date());
+					var to = angular.element($('#'+val)).scope();
+					if(to)
+						to.setTo(new Date());
 				}
 				params[val] = '';
 			});
