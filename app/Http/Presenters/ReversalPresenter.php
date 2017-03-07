@@ -137,7 +137,7 @@ class ReversalPresenter extends PresenterCore
     	$userFilter = FilterFactory::getInstance('Select');
     	$prepare = $userFilter->addFilter($prepare,'updated_by', 
     			function($self, $model){
-    				return $model->where('report_revisions.report',$self->getValue());
+    				return $model->where('report_revisions.user_id',$self->getValue());
     			});
     	 
     	$mDateFilter = FilterFactory::getInstance('DateRange');
