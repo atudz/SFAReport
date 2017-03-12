@@ -345,6 +345,9 @@ class ReportsPresenter extends PresenterCore
     	$collection2 = $prepare->get();
     	
     	$collection = array_merge((array)$collection1,(array)$collection2);
+    	$tmp = collect($collection)->sortBy('invoice_number')->toArray();
+    	$collection = array_merge($tmp,[]);
+    	
     	$result = $this->formatSalesCollection($collection);
         
     	$summary1 = [];
@@ -5719,6 +5722,9 @@ class ReportsPresenter extends PresenterCore
     			$collection2 = $prepare->get();
     			
     			$collection = array_merge((array)$collection1,(array)$collection2);
+    			$tmp = collect($collection)->sortBy('invoice_number')->toArray();
+    			$collection = array_merge($tmp,[]);
+    			
     			$current = $this->formatSalesCollection($collection);    			
     			
     			$currentSummary = [];
