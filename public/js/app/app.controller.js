@@ -687,10 +687,15 @@
 			    }
 				
 				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
-					var date = new Date($('#'+val).val());
-					if(date){
-						params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
-					} else {
+					if($('#'+val).val()) {
+						var date = new Date($('#'+val).val());
+						if(date){
+							params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+						} else {
+							params[val] = '';
+						}
+					}		
+					else {
 						params[val] = '';
 					}
 				}
