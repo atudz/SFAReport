@@ -777,7 +777,7 @@
 	/**
 	 * Centralized method for sorting
 	 */
-	function sortColumn(scope, API, filter, log, TableFix)
+	function sortColumn(scope, API, filter, log, report, TableFix)
 	{
 		var params = {};
 
@@ -810,6 +810,48 @@
 			
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
+				
+				if(val.indexOf('_from') != -1)
+				{
+					var from = $('#'+val).val();
+					var to = $('#'+val.replace('_from','_to')).val();
+						
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).html('Invalid date range.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}
+				}
+				
+				if(report == 'salescollectionreport' && val.indexOf('posting_date') != -1)
+			    {		
+					var invoiceFrom = new Date($('#invoice_date_from').val());
+					var invoiceTo = new Date($('#invoice_date_to').val());
+					var prevFrom = new Date(from);
+					var prevTo = new Date(to);
+					
+					if(prevFrom >= invoiceFrom || prevFrom >= invoiceTo || prevTo >= invoiceFrom || prevTo >= invoiceTo )
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).html('Date range must be less than Invoice Date.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}						
+			    }
+				
+				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+					if($('#'+val).val()) {
+						var date = new Date($('#'+val).val());
+						if(date){
+							params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+						} else {
+							params[val] = '';
+						}
+					}		
+					else {
+						params[val] = '';
+					}
+				}
 			});
 			//log.info(params);
 
@@ -841,7 +883,7 @@
 	/**
 	 * Centralized pagination function
 	 */
-	function pagination(scope, API, filter, log, vaninventory, TableFix)
+	function pagination(scope, API, filter, log, report, vaninventory, TableFix)
 	{
 		var params  = {};
 		
@@ -864,6 +906,48 @@
 			
 			$.each(filter, function(key,val){
 				params[val] = $('#'+val).val();
+				
+				if(val.indexOf('_from') != -1)
+				{
+					var from = $('#'+val).val();
+					var to = $('#'+val.replace('_from','_to')).val();
+						
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) && report != 'salescollectionsummary')
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).html('Invalid date range.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}
+				}
+				
+				if(report == 'salescollectionreport' && val.indexOf('posting_date') != -1)
+			    {		
+					var invoiceFrom = new Date($('#invoice_date_from').val());
+					var invoiceTo = new Date($('#invoice_date_to').val());
+					var prevFrom = new Date(from);
+					var prevTo = new Date(to);
+					
+					if(prevFrom >= invoiceFrom || prevFrom >= invoiceTo || prevTo >= invoiceFrom || prevTo >= invoiceTo )
+					{
+						hasError = true;
+						$('#'+val.replace('_from','_error')).html('Date range must be less than Invoice Date.');
+						$('#'+val.replace('_from','_error')).removeClass('hide');
+					}						
+			    }
+				
+				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+					if($('#'+val).val()) {
+						var date = new Date($('#'+val).val());
+						if(date){
+							params[val] = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+						} else {
+							params[val] = '';
+						}
+					}		
+					else {
+						params[val] = '';
+					}
+				}
 			});
 			//log.info(params);
 			
@@ -1234,13 +1318,13 @@
 	    //Sort table records
 	    scope.sortColumn = '';
 		scope.sortDirection = 'asc';
-		sortColumn(scope,API,params,log, TableFix);
+		sortColumn(scope,API,params,log, report, TableFix);
 	    
 	    // Filter table records	    
 	    filterSubmit(scope,API,params,log, report, TableFix);
 		
 	    // Paginate table records	    
-	    pagination(scope,API,params,log, TableFix);
+	    pagination(scope,API,params,log, report, TableFix);
 	    
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, filter, log);	    
