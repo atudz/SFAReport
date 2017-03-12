@@ -1202,8 +1202,23 @@
 			$.each(filter, function(index,val){
 				if(index > 0)
 					delimeter = '&';
-				query += delimeter + val + '=' + $('#'+val).val();				
+				var value = $('#'+val).val();
+				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+					if(value) {
+						var date = new Date(value);
+						if(date){
+							value = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+						} else {
+							value = '';
+						}
+					}		
+					else {
+						value = '';
+					}
+				}
+				query += delimeter + val + '=' + value;				
 			});
+			
 			url += query;
 			//log.info(url);
 			
