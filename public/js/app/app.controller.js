@@ -424,12 +424,89 @@
 		    startingDay: 0
 		};
 
-		if($('#monthOnly').val() == 1){
-			$scope.format = 'MMM/yyyy';
-		} else {
-			$scope.format = 'MM/dd/yyyy';
-		}		
-			  
+		$scope.format = 'MM/dd/yyyy';		  
+	}
+	
+	/**
+	 * Date Input Controller
+	 */
+	app.controller('CalendarMonth',['$scope','$http','$log', CalendarMonth]);
+
+	function CalendarMonth($scope, $http, $log)
+	{
+		$scope.dateFrom = null;
+	    $scope.dateTo = null;
+	    $scope.setFrom = function(from){
+	    	if(from)
+	    		$scope.dateFrom = new Date(from);
+	    }
+
+	    $scope.setTo = function(to){
+	    	if(to)
+	    		$scope.dateTo = new Date(to);
+	    }
+
+	    $scope.maxDate = new Date(2020, 5, 22);
+
+		$scope.open = function($event, elementId) {
+			$event.preventDefault();
+		    $event.stopPropagation();
+
+			$("input[id*='date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
+		};
+
+		$scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 0
+		};
+
+		$scope.format = 'MMM/yyyy';			  
+	}
+	
+	/**
+	 * Date Input Controller
+	 */
+	app.controller('CalendarYear',['$scope','$http','$log', CalendarYear]);
+
+	function CalendarYear($scope, $http, $log)
+	{
+		$scope.dateFrom = null;
+	    $scope.dateTo = null;
+	    $scope.setFrom = function(from){
+	    	if(from)
+	    		$scope.dateFrom = new Date(from);
+	    }
+
+	    $scope.setTo = function(to){
+	    	if(to)
+	    		$scope.dateTo = new Date(to);
+	    }
+
+	    $scope.maxDate = new Date(2020, 5, 22);
+
+		$scope.open = function($event, elementId) {
+			$event.preventDefault();
+		    $event.stopPropagation();
+
+			$("input[id*='date']").each(function() {
+				var elemScope = angular.element(this).scope();
+				var elemId = $(this).attr("id");
+				elemScope[elemId] = false;
+			});
+			$scope[elementId] = true;
+		};
+
+		$scope.dateOptions = {
+		    formatYear: 'yy',
+		    startingDay: 0
+		};
+
+		$scope.format = 'yyyy';			  
 	}
 	
 	/**
