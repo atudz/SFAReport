@@ -42,9 +42,9 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 			'salesCollectionPosting' => 'salescollection.posting',
 			'salesCollectionSummary' => 'salescollection.summary',
 		],
-		2 => [
-			'sync' => 'sync',
-		],
+// 		2 => [
+// 			'sync' => 'sync',
+// 		],
 		3 => [
 			'sync' => 'sync',
 		],
