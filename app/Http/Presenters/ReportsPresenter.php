@@ -2022,7 +2022,7 @@ class ReportsPresenter extends PresenterCore
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
-				) coltbl on coltbl.invoice_number = sotbl.invoice_number
+				) coltbl on coltbl.invoice_number = sotbl.invoice_number and coltbl.salesman_code = tas.salesman_code
 			
 				left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    		left join
