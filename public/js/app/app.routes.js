@@ -24,12 +24,28 @@
 				})
 				.when('/salescollection.posting',{
 					templateUrl: '/reports/salescollection/posting',
-					controller: 'SalesCollectionPosting'
+					controller: 'SalesCollectionPosting',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id == 4 || $window.user.user_group_id == 5 || $window.user.user_group_id == 6) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					//controllerAs: 'scp'*/
 				})
 				.when('/salescollection.summary',{
 					templateUrl: '/reports/salescollection/summary',
 					controller: 'SalesCollectionSummary',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1 && $window.user.user_group_id != 2) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					//controllerAs: 'scp'*/
 				})
 				// Sales & Collection
@@ -136,6 +152,14 @@
 				.when('/salesreport.salesmanlist',{
 					templateUrl: '/reports/salesreport/salesmanlist',
 					controller: 'SalesmanList',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id == 4 || $window.user.user_group_id == 6) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					//controllerAs: 'srrpv'*/
 				})
 				.when('/salesreport.materialpricelist',{
@@ -155,29 +179,69 @@
 				.when('/bir',{
 					templateUrl: '/reports/bir',
 					controller: 'Bir',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id == 4 || $window.user.user_group_id == 6) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					//controllerAs: 'bir'*/
 				})
 				// Sync 
 				.when('/sync',{
 					templateUrl: '/reports/sync',
 					controller: 'Sync',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id == 5 || $window.user.user_group_id == 6) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				
 				// Users 
 				.when('/user.list',{
 					templateUrl: '/user/list',
-					controller: 'UserList'
+					controller: 'UserList',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				.when('/user.add',{
 					templateUrl: '/user/addEdit',
-					controller: 'UserAdd'
+					controller: 'UserAdd',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				.when('/user.edit/:id',{
 					templateUrl: '/user/edit',
-					controller: 'UserEdit'
+					controller: 'UserEdit',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				.when('/contact.us', {
@@ -187,7 +251,15 @@
 				})
 				.when('/summaryofincident.report', {
 					templateUrl: '/user/summaryofincidentreport',
-					controller: 'SummaryOfIncidentReport'
+					controller: 'SummaryOfIncidentReport',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				.when('/user.guide', {
@@ -210,6 +282,14 @@
 				.when('/usergroup.rights',{
 					templateUrl: '/user/group/rights',
 					controller: 'UserGroupList',
+					resolve: {
+						security: ['$q', '$window', function ($q, $window) {
+							if ($window.user.user_group_id != 1) {
+								$q.reject("Not Authorized");
+								return window.location.href = '/403';
+							}
+						}]
+					}
 					/*controllerAs: 'sync'*/
 				})
 				

@@ -27,6 +27,7 @@ Route::get('/home', ['as'=>'home', 'uses'=>'ReportsPresenter@index']);
 Route::get('/profile', ['as'=>'profile', 'uses'=>'UserPresenter@profile']);
 Route::get('/changepass', ['as'=>'change-pass', 'uses'=>'UserPresenter@changePassword']);
 Route::get('/logout', ['as'=>'userlogout', 'uses'=>'AuthController@logout']);
+Route::get('403', ['as' => '403', 'uses' => 'ErrorsPresenter@showForbiddenPage']);
 
 Route::group(['prefix' => 'reports'],function(){
 	Route::get('/salescollection/{type?}', ['as'=>'sales-collection', 'uses'=>'ReportsPresenter@salesCollection']);
