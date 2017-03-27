@@ -36,7 +36,7 @@
 				
 				</thead>
 					<tbody>
-						<tr ng-repeat="record in records|filter:query">
+						<tr ng-repeat="record in records|filter:query | orderBy:propertyName:reverse">
 							<td>[[record.scr_number]]</td>
 							<td>[[record.invoice_number_from | uppercase]]</td>
 							<td>[[record.invoice_number_to | uppercase]]</td>
