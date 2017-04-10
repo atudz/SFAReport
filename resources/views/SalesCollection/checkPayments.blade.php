@@ -34,18 +34,37 @@
 					</td>					
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="record.total_invoice_net_amount_formatted = negate(record.total_invoice_net_amount)"></span>
-					</td>					
-					<td>
-						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>	  					
-					</td>
+					</td>										
 					<td>[[record.or_number | uppercase]]</td>
 					<td>
 						<span ng-bind="record.cm_date_formatted = (formatDate(record.cm_date) | date:'MM/dd/yyyy')"></span>
 					</td>
-					<td>[[record.bank | uppercase]]</td>
-					<td>[[record.check_number | uppercase]]</td>
 					<td>
-						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
+						@if($isAdmin || $isAuditor)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
+	    						[[record.bank | uppercase]]
+	  						</a>
+	  					@else
+	  						[[record.bank | uppercase]]
+	  					@endif
+					</td>
+					<td>
+						@if($isAdmin || $isAuditor)
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')">
+	    						[[record.check_number]]
+	  						</a>
+	  					@else
+	  						[[record.check_number]]
+	  					@endif
+					</td>
+					<td>
+						@if($isAdmin || $isAuditor)
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
+	    						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
+	  						</a>						
+	  					@else
+	  						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
+	  					@endif	
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
@@ -66,8 +85,7 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>					
+					<td></td>									
 					<td></td>
 					<td></td>
 					<td></td>
@@ -79,7 +97,7 @@
 					</td>									
 				</tr>
 				</tbody>
-				{!!Html::tfooter(true,14)!!}
+				{!!Html::tfooter(true,13)!!}
 			{!!Html::tclose(false)!!}
 						
 			</div>			
