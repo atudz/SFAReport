@@ -37,29 +37,37 @@
 					@foreach($rows as $row)
 						<td align="left" style="wrap-text:true">
 							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date') && $record->$row)
-									@if($report == 'bir')
-										{{ $record->$row }}
+								@if($row == 'from' && $report == 'stockaudit')
+									{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }} 
+								@elseif(false !== strpos($row,'date') && $record->$row)
+									@if($report == 'stocktransfer')
+										{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
 									@else
-										{{ date('m/d/Y', strtotime($record->$row)) }}
+										{{ $record->$row }}
 									@endif
 								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
+									{!!number_format($record->$row,2,'.',',')!!}		
+								@elseif(ctype_alnum($record->$row))
+									{!!strtoupper($record->$row)!!}
 								@else
 									{!!$record->$row!!}
 								@endif
 							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date') && $record[$row])
-									@if($report == 'bir')
+								@if($row == 'from' && $report == 'stockaudit')
+									{{ format_date($record['from'], 'M d') }} - {{ format_date($record['to'], 'M d Y') }}
+								@elseif(false !== strpos($row,'date') && $record[$row])
+									@if($report == 'stocktransfer')
+										{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+									@else	
 										{{ $record[$row] }}
-									@else
-										{{ date('m/d/Y', strtotime($record[$row])) }}
 									@endif
 								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!number_format($record[$row],2,'.',',')!!}	
+									{!!number_format($record[$row],2,'.',',')!!}		
+								@elseif(ctype_alnum($record[$row]))
+									{!!strtoupper($record[$row])!!}
 								@else
 									{!!$record[$row]!!}
-								@endif									
+								@endif								
 							@endif
 						</td>
 					@endforeach
@@ -89,9 +97,9 @@
 								@elseif(is_array($summary) && isset($summary[$row]))
 									@if(in_array($row,['discount_amount','collective_discount_amount']))
 										@if($row == 'quantity')
-											{!!$summary[$row]!!}
+											{!!$summary->$row!!}
 										@else
-											({!!number_format($summary[$row],2,'.',',')!!})
+											{!!number_format($summary->$row,2,'.',',')!!}
 										@endif
 									@else
 										@if($row == 'quantity')

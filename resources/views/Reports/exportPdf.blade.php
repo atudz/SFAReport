@@ -19,7 +19,7 @@
 		}
 		
 		table.table-data {
-			width: auto;
+			width: 100%;
     		border-collapse: collapse;
     		font-size: {{$fontSize}};
 		}		
@@ -38,6 +38,18 @@
 			 margin: auto;
     		 width: 65%;
 		}
+		
+		.revision {
+			font-size: {{$fontSize}};
+		}
+		
+		.rev-label {
+			padding: 3px 3px;
+		}
+		.clear {
+			clear: both;
+		}
+		
 	</style>
 </head>
 <body>
@@ -54,8 +66,15 @@
 			@endif
 		</div>
 	@endif
-	<table class="no-border">
-			<tbody>				
+	@if($revision = latest_revision($report) && false)
+		<div class="revision" align="right">
+			<div class="rev-label">
+				<span><strong>Revision No.</strong> {{$revision}}</span>
+			</div>								
+		</div>
+	@endif
+	<table class="no-border clear">
+			<tbody>												
 				@if(isset($filters))
 					@foreach($filters as $label=>$val)
 						<tr>
@@ -92,16 +111,32 @@
 							}
 						?>
 						@if(is_object($record) && isset($record->$row))
-							@if(false !== strpos($row,'date') && $record->$row)
-								{{ date('m/d/Y', strtotime($record->$row)) }}
+							@if($row == 'from' && $report == 'stockaudit')
+								{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }}							
+							@elseif(false !== strpos($row,'date') && $record->$row)
+								@if($report == 'bir')
+									{{ $record->$row }}
+								@elseif($report == 'stocktransfer')
+									{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
+								@else
+									{{ date('m/d/Y', strtotime($record->$row)) }}
+								@endif								
 							@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))
 								{!!number_format($record->$row,2,'.',',')!!}
 							@else
 								{!!$record->$row!!}
 							@endif
 						@elseif(is_array($record) && isset($record[$row]))
-							@if(false !== strpos($row,'date') && $record[$row])
-								{{ date('m/d/Y', strtotime($record[$row])) }}
+							@if($row == 'from' && $report == 'stockaudit')
+									{{ format_date($record['from'], 'M d') }} - {{ format_date($record['to'], 'M d Y') }}
+							@elseif(false !== strpos($row,'date') && $record[$row])
+								@if($report == 'bir')
+									{{ $record[$row] }}
+								@elseif($report == 'stocktransfer')
+									{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+								@else	
+									{{ date('m/d/Y', strtotime($record[$row])) }}
+								@endif
 							@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))
 								{!!number_format($record[$row],2,'.',',')!!}
 							@else
@@ -121,13 +156,13 @@
 						<th align="left" style="wrap-text:true">							
 							@if(is_object($summary) && isset($summary->$row))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary->$row!!}
 									@else
 										({!!number_format($summary->$row,2,'.',',')!!})
 									@endif
 								@else
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary->$row!!}
 									@else
 										{!!number_format($summary->$row,2,'.',',')!!}
@@ -135,13 +170,13 @@
 								@endif
 							@elseif(is_array($summary) && isset($summary[$row]))
 								@if(in_array($row,['discount_amount','collective_discount_amount']))
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary[$row]!!}
 									@else
 										({!!number_format($summary[$row],2,'.',',')!!})
 									@endif
 								@else
-									@if($row == 'quantity')
+									@if(in_array($row,['quantity','regular_order_qty','trade_order_qty']))
 										{!!$summary[$row]!!}
 									@else
 										{!!number_format($summary[$row],2,'.',',')!!}
