@@ -483,7 +483,7 @@ class VanInventoryPresenter extends PresenterCore
     			txn_item_flexi_deal.trade_item_code,
     			deal.description as deal_item_desc,
     			txn_item_flexi_deal.trade_item_qty trade_order_qty,
-    			txn_item_flexi_deal.price gross_order_amount,
+    			TRUNCATE(txn_item_flexi_deal.price*1.12,2) gross_order_amount,
     			IF(txn_sales_order_header.updated_by,\'modified\',IF(txn_sales_order_deal.updated_by,\'modified\',\'\')) updated
     			';
     	
