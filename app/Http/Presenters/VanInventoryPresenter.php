@@ -196,6 +196,8 @@ class VanInventoryPresenter extends PresenterCore
     	$headers = [    			
     			['name'=>'Stock Transfer No.','sort'=>'stock_transfer_number'],
     			['name'=>'Transaction Date','sort'=>'transfer_date'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
+    			['name'=>'Area','sort'=>'area'],
     			['name'=>'From Loc/Van Salesman','sort'=>'dest_van_code'],    			
     			['name'=>'Segment','sort'=>'segment_code'],
     			['name'=>'Brand','sort'=>'brand'],
@@ -336,6 +338,8 @@ class VanInventoryPresenter extends PresenterCore
     	return [
     			'stock_transfer_number',
     			'transfer_date',
+    			'salesman_name',
+    			'area_name',
     			'dest_van_code',
     			'segment_code',
     			'brand',
@@ -664,6 +668,8 @@ class VanInventoryPresenter extends PresenterCore
     			txn_stock_transfer_in_detail.item_code,
 				app_item_master.description,
     			app_item_uom.description as uom_code,
+    			salesman_area.area_name,
+    			salesman_area.salesman_name,
     			txn_stock_transfer_in_detail.quantity,
     			IF(txn_stock_transfer_in_header.updated_by,\'modified\',
 	    			IF(txn_stock_transfer_in_detail.updated_by,\'modified\',\'\')
@@ -677,8 +683,11 @@ class VanInventoryPresenter extends PresenterCore
 					    ->leftJoin('app_item_brand','app_item_master.brand_code','=','app_item_brand.brand_code')
 					    ->leftJoin('app_item_uom','txn_stock_transfer_in_detail.uom_code','=','app_item_uom.uom_code')
 					    ->leftJoin(\DB::raw('
-			    			(select apsc.salesman_code,ac.area_code from app_salesman_customer apsc
+			    			(select apsc.salesman_code,aps.salesman_name,ac.area_code, aa.area_name from app_salesman_customer apsc
 					    	 join app_customer ac on ac.customer_code = apsc.customer_code
+					    	 join app_salesman aps on apsc.salesman_code=aps.salesman_code
+					    	 join app_area aa on aa.area_code = ac.area_code
+					    	 where aps.status = \'A\'
 							group by apsc.salesman_code) salesman_area'), function($join){
 					    		$join->on('txn_stock_transfer_in_header.salesman_code','=','salesman_area.salesman_code');
 						});

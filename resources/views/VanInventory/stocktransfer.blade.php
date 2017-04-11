@@ -43,6 +43,8 @@
 	  								<span ng-bind="record.transaction_date_formatted = (formatDate(record.transfer_date) | date:'MM/dd/yyyy hh:mm a')"></span>
 	  							@endif	
 							</td>
+							<td>[[record.salesman_name]]</td>
+							<td>[[record.area_name]]</td>
 							<td>[[record.dest_van_code]]</td>
 							<td>[[record.segment_code]]</td>
 							<td>[[record.brand]]</td>
