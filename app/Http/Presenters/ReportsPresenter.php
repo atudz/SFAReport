@@ -7681,10 +7681,8 @@ class ReportsPresenter extends PresenterCore
 				$sheet->setColumnFormat([
 					'G' => '0,0.00',
 					'F' => 'MM/DD/YYYY',
-					'H' => 'MM/DD/YYYY',
-					'J' => 'MM/DD/YYYY',
-					'M' => 'MM/DD/YYYY',
-					'N' => '0,0.00'
+					'L' => 'MM/DD/YYYY',					
+					'M' => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
