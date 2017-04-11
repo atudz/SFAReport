@@ -275,6 +275,8 @@ class ReportsPresenter extends PresenterCore
                 return PresenterFactory::getInstance('User')->getUserGroup();
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
     	}
     }
     
@@ -5063,6 +5065,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getMaterialPriceListColumns();
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
+			case 'reversalsummary':
+				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
     	}	
     }
     
@@ -5977,7 +5981,7 @@ class ReportsPresenter extends PresenterCore
 				$rows = $reversalPresenter->getSummaryReversalSelectColumns();
 				$header = 'Summary of Reversal';
 				$filters = $reversalPresenter->getSummaryReversalFilterData();
-				$filename = 'Summary of Reversal';				
+				$filename = 'Summary of Reversal';			
 				break;
 				
 			case 'cashpayment':

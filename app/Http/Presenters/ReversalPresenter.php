@@ -34,11 +34,13 @@ class ReversalPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Reversal No.','sort'=>'revision_number'],
     			['name'=>'Reversal Date','sort'=>'created_at'],
-    			['name'=>'Type of Report','sort'=>'report_type'],
-    			['name'=>'Username','sort'=>'username'],
+    			['name'=>'Type of Report','sort'=>'report_type'],    			
+    			['name'=>'Area','sort'=>'area_name'],
+    			['name'=>'Salesman Name','sort'=>'salesman_name'],
     			['name'=>'Original','sort'=>'before'],
     			['name'=>'Edited','sort'=>'value'],
     			['name'=>'Reason of Reversal','sort'=>'comment'],    			
+    			['name'=>'Username','sort'=>'username'],
     	];
     
     	return $headers;
@@ -55,10 +57,12 @@ class ReversalPresenter extends PresenterCore
     			'revision_number',
     			'created_at',
     			'report_type',
-    			'username',
+    			'area_name',
+    			'salesman_name',
     			'before',
     			'value',
-    			'comment'    			
+    			'comment',    
+    			'username',
     	];
     }
     
@@ -96,7 +100,6 @@ class ReversalPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
-    	 
     	return response()->json($data);
     }
     
@@ -110,16 +113,19 @@ class ReversalPresenter extends PresenterCore
     			   report_revisions.revision_number,
     			   table_logs.created_at,
     			   table_logs.report_type,
-    			   CONCAT(user.firstname,\' \',user.lastname) username,
+    			   CONCAT(user.firstname,\' \',user.lastname) salesman_name,
     			   table_logs.before,
     			   table_logs.value,
-    		 	   table_logs.comment
+    		 	   table_logs.comment,
+    			   user.username,
+    			   app_area.area_name
     			';
     	
     	$prepare = \DB::table('report_revisions')
     					->selectRaw($select)
     					->leftJoin('table_logs','table_logs.id','=','report_revisions.table_log_id')
-				    	->leftJoin('user','user.id','=','table_logs.updated_by');				    	
+				    	->leftJoin('user','user.id','=','table_logs.updated_by')				    					    	
+				    	->leftJoin('app_area','app_area.area_code','=','user.location_assignment_code');
     	    	
     	
     	$reportFilter = FilterFactory::getInstance('Select');

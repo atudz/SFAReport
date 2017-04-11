@@ -28,10 +28,12 @@
 								<span ng-bind="record.created_at_formatted = (formatDate(record.created_at) | date:'MM/dd/yyyy h:mm a')"></span>
 							</td>
 							<td>[[record.report_type]]</td>
-							<td>[[record.username]]</td>
+							<td>[[record.area_name]]</td>
+							<td>[[record.salesman_name]]</td>
 							<td>[[record.before]]</td>
 							<td>[[record.value]]</td>
-							<td>[[record.comment]]</td>														
+							<td>[[record.comment]]</td>
+							<td>[[record.username]]</td>														
 						</tr>									
 					</tbody>				
 					{!!Html::tfooter(true,20)!!}
