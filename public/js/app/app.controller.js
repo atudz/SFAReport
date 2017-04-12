@@ -141,6 +141,77 @@
 	    editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 	
+	/**
+	 * Van Inventory Stock Transfer Report
+	 */
+	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix',StockTransfer]);
+	
+	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+	    		  'salesman_code',
+		          'company_code',
+		          'area',
+		          'segment',
+		          'item_code',
+		          'transfer_date_from',
+		          'transfer_date_to',		          		          
+		          'stock_transfer_number'		          
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
+	
+	/**
+	 * User List controller
+	 */
+	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', StockTransferAdd]);
+
+	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
+
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
+		
+		$scope.save = function (){
+			var API = $resource('controller/vaninventory/stocktransfer');
+			
+			var params = {
+				'stock_transfer_number': $('#stock_transfer_number').val(),
+				'stock_transfer_id': $('#stock_transfer_id').val(),
+			    'transfer_date_from': $('#transfer_date_from').val(),
+				'src_van_code': $('#src_van_code').val(),
+				'dest_van_code': $('#dest_van_code').val(),
+				'type': $('#type').val(),
+				'item_code': $('#item_code').val(),
+				'salesman_code': $('#salesman_code').val(),
+				'uom_code': $('#uom_code').val(),
+				'quantity': $('#quantity').val(),
+			};
+			
+			API.save(params).$promise.then(function(data){
+				$location.path('vaninventory.stocktransfer');
+			}, function(error){
+				if(error.data){
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						if(-1 !== index.indexOf('_from')){
+							$('[id='+index+']').parent().next('.help-block').html(val);
+							$('[id='+index+']').parent().parent().parent().addClass('has-error');
+						} else {
+							$('[id='+index+']').next('.help-block').html(val);
+							$('[id='+index+']').parent().parent().addClass('has-error');
+						}						
+					});
+				}
+			});
+		}
+	};
 	
 	/**
 	 * Van Inventory Controller

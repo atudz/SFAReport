@@ -32,7 +32,8 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/salescollection/{type?}', ['as'=>'sales-collection', 'uses'=>'ReportsPresenter@salesCollection']);
 	Route::get('/vaninventory/{type?}', ['as'=>'van-inventory', 'uses'=>'ReportsPresenter@vanInventory']);
 
-	
+	Route::get('/stocktransfer', ['as'=>'stock-transfer', 'uses'=>'VanInventoryPresenter@stockTransfer']);
+	Route::get('/stocktransfer/add', ['as'=>'stock-transfer-add', 'uses'=>'VanInventoryPresenter@createStockTransfer']);
 	Route::get('/reversal/summary', ['as'=>'reversal-summary', 'uses'=>'ReversalPresenter@index']);
 	Route::get('/cashpayments', ['as'=>'sales-collection', 'uses'=>'SalesCollectionPresenter@cashpayments']);
 	
@@ -82,6 +83,8 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	//Route::get('/user/changepass', ['as'=>'report-save', 'uses'=>'UserController@changePassword']);
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
+	
+	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
 });
 
 

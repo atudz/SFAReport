@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Collection;
-Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[]) {
+Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[],$value=null) {
 
 	$options = [
 		'class' => 'form-control',	
@@ -11,21 +11,23 @@ Html::macro('select', function($name, $label, $list=[], $default='All',$addons=[
 	if($default)
 	{
 		if($list instanceof  Collection)
-			$list = $list->prepend($default);
+			$list = $list->prepend($default,'');
 		else
-			$list = [$default] + $list;
+			$list = [''=>$default] + $list;
 	}	
 	
 	if($addons)
 		$options = array_merge($options,$addons);
 	
 	$html = '<div class="form-group">
-			 	<div class="col-xs-12 col-md-5 col-sm-5 control-label">
+			 	<div class="col-xs-12 col-md-4 col-sm-4 control-label">
 			 		<label for="'.$name.'" class="">'.$label.'</label>
 			 	</div>
-			 	<div class="col-xs-12 col-sm-6">'.
-			 		Form::select($name, $list, null, $options).
-			 '	</div>
+			 	<div class="col-xs-12 col-sm-8	">'.
+			 		Form::select($name, $list, $value, $options).
+			 '	
+			 	<span class="error help-block"></span>
+			 	</div>
 			 </div>';
 
 	return $html;

@@ -12,7 +12,7 @@ class TxnStockTransferInDetail extends ModelCore
 	 */
 	protected $table = 'txn_stock_transfer_in_detail';
 	
-	protected $timestamp = false;
+	public $timestamps = false;
 	
 	/**
 	 * This models' relation to stock transfer header

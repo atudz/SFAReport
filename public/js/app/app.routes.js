@@ -49,6 +49,16 @@
 					controller: 'VanInventoryFrozen',
 					//controllerAs: 'vic'*/
 				})
+				.when('/vaninventory.stocktransfer',{
+					templateUrl: '/reports/stocktransfer',
+					controller: 'StockTransfer',
+					//controllerAs: 'vic'*/
+				})
+				.when('/stocktransfer.add',{
+					templateUrl: '/reports/stocktransfer/add',
+					controller: 'StockTransferAdd',
+					//controllerAs: 'vic'*/
+				})
 				// Sales Report
 				.when('/salesreport.permaterial',{
 					templateUrl: '/reports/salesreport/permaterial',

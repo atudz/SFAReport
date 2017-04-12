@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGroupToNavSeeder::class);
         $this->call(AddManagerSeeder::class);
 		$this->call(CashPaymentsSeeder::class);
+		$this->call(StockTransferReportSeeder::class);
 
         Model::reguard();
     }
