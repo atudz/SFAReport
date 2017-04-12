@@ -27,7 +27,7 @@
 								{!!Html::select('salesman_code','Sr. Salesman <span class="required">*</span>', $salesman, 'Select Sr. Salesman',['onblur'=>'validate(this)','onchange'=>'set_customer(this)'],$bounceCheck->salesman_code)!!}
 							</div>							
 							<div class="row form-input-field">
-								{!!Html::input('text','jr_salesman_code','Jr. Salesman',$bounceCheck->id ? $bounceCheck->jr_salesman->fullname: 'No Jr.Salesman',['disabled'=>true])!!}								
+								{!!Html::input('text','jr_salesman_code','Jr. Salesman',$bounceCheck->id && $bounceCheck->jr_salesman ? $bounceCheck->jr_salesman->fullname: 'No Jr.Salesman',['disabled'=>true])!!}								
 							</div>													
 							<div class="row form-input-field">
 								@if($bounceCheck->id)
