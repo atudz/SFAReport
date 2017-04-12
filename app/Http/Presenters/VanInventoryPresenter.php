@@ -197,7 +197,7 @@ class VanInventoryPresenter extends PresenterCore
     			['name'=>'Stock Transfer No.','sort'=>'stock_transfer_number'],
     			['name'=>'Transaction Date','sort'=>'transfer_date'],
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
-    			['name'=>'Area','sort'=>'area'],
+    			['name'=>'Area','sort'=>'area_name'],
     			['name'=>'From Loc/Van Salesman','sort'=>'dest_van_code'],    			
     			['name'=>'Segment','sort'=>'segment_code'],
     			['name'=>'Brand','sort'=>'brand'],

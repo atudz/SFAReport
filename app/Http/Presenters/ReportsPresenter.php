@@ -277,6 +277,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
     	}
     }
     
@@ -5067,6 +5069,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
+			case 'stocktransfer':
+				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
     	}	
     }
     
@@ -6005,6 +6009,16 @@ class ReportsPresenter extends PresenterCore
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
 				break;
+			case 'stocktransfer':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedStockTransfer();
+				$rows = $vanInventoryPresenter->getStockTransferReportSelectColumns();
+				$header = 'Stock Transfer Report';
+				$filters = $vanInventoryPresenter->getStockTransferFilterData();
+				$filename = 'Stock Transfer Report';
+				break;
+				
     		default:
     			return;
     	}	
@@ -6594,6 +6608,10 @@ class ReportsPresenter extends PresenterCore
 			case 'cashpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
 				$total = count($prepare->get());
+				break;
+			case 'stocktransfer':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
+				$total = $prepare->count();
 				break;
     		default:
     			return;

@@ -62,7 +62,7 @@
 							</td>
 						</tr>									
 					</tbody>				
-					{!!Html::tfooter(true,9)!!}
+					{!!Html::tfooter(true,11)!!}
 				{!!Html::tclose()!!}			
 			</div>			
 		</div>

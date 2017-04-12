@@ -90,5 +90,8 @@ return [
 	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com',
 
 	// Invoice Key Code for auto generating invoice code.
-	'invoice_key' => [ 1000 => 'C', 2000 => 'D']
+	'invoice_key' => [ 1000 => 'C', 2000 => 'D'],
+		
+	// custom pk start
+	'custom_pk_start' => '2000000001',
 ];
