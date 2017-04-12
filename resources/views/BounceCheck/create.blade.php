@@ -82,7 +82,7 @@
 								{!!Html::input('text','txn_number','Transaction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}								
 							</div>	
 							<div class="row form-input-field">
-								<div class="col-md-4 col-md-offset-4">
+								<div class="col-md-8 col-md-offset-4">
 									<button class="btn btn-info" onclick="preview()">Preview</button> &nbsp;&nbsp;
 									@if($bounceCheck->id)
 										<button class="btn btn-info" onclick="add_payment()">Add Payment</button>
