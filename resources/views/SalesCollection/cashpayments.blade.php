@@ -101,17 +101,6 @@
 					$('#customer_code').removeAttr('disabled');
 				}			
 			});
-	
-			var url2 = 'reports/salesman/jr/'+sel;
-			$.get(url2,function(data){				
-				if(data){
-					$('#jr_salesman_code').val(data);
-				} else {
-					$('#jr_salesman_code').val('No Jr. Salesman');
-				}			
-			});
-	
-			$('#customer_code').trigger('change');
 		}
 	}	
 

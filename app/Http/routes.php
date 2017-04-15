@@ -48,6 +48,10 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/getcount/{report}/{type?}', ['as'=>'report-count', 'uses'=>'ReportsPresenter@getDataCount']);
 	
 	Route::get('/synching/{id}/{column}', ['as'=>'synch', 'uses'=>'ReportsPresenter@isSynching']);
+	
+	Route::get('/salesman/customer/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_customer($salesmanCode));
+	});
 });
 
 

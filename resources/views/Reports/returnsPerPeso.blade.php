@@ -9,9 +9,9 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">						
 						@if($isSalesman)
-							{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
+							{!!Html::select('salesman_code','Salesman', $salesman,'',['onchange'=>'set_customer(this)'])!!}
 						@else
-							{!!Html::select('salesman_code','Salesman', $salesman)!!}
+							{!!Html::select('salesman_code','Salesman', $salesman,'',['onchange'=>'set_customer(this)'])!!}
 						@endif
 						{!!Html::select('area','Area', $areas)!!}
 						{!!Html::select('company_code','Company Code', $companyCode)!!}
@@ -115,3 +115,42 @@
 		</div>
 	</div>
 </div>
+
+
+<script>
+	$(document).ready(function () {
+		set_customer($('#salesman_code'))
+	});
+	
+	function set_customer(el)
+	{
+		var sel = $(el).val();
+		if(!sel){
+			$('#customer').empty();
+			$('#customer')
+				.append($("<option></option>")
+				.attr("value", '').text('Select Salesman'));
+			$('#customer').attr('disabled',true);
+			$('#jr_salesman_code').val('No Jr. Salesman');
+			$('#area').val('');			
+		}
+		else{
+			var url = 'reports/salesman/customer/'+sel;
+			$.get(url,function(data){
+				if(data){
+					$('#customer').empty();
+					$('#customer').append($("<option></option>").attr("value", '').text('All'));
+					$.each(data, function(k,v){
+						$('#customer')
+							.append($("<option></option>")
+							.attr("value", k).text(v));
+					});
+					$('#customer').removeAttr('disabled');
+				}			
+			});
+	
+			$('#customer').trigger('change');
+		}
+	}	
+
+</script>
