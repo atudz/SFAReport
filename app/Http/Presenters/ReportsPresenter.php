@@ -197,7 +197,7 @@ class ReportsPresenter extends PresenterCore
     public function bir()
     {
     	$this->view->salesman = $this->getSalesman();
-    	$this->view->area = $this->getArea(false,false);
+    	$this->view->area = $this->getArea();
     	$this->view->tableHeaders = $this->getBirColumns();
     	return $this->view('bir');
     }
