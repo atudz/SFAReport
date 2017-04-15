@@ -5514,7 +5514,10 @@ class ReportsPresenter extends PresenterCore
 	    				->selectRaw($select)
 	    				->leftJoin('app_salesman_customer','app_salesman.salesman_code','=','app_salesman_customer.salesman_code')
 	    				->leftJoin('app_customer','app_customer.customer_code','=','app_salesman_customer.customer_code')
+	    				->leftJoin('app_area','app_area.area_code','=','app_customer.area_code')
 	    				->where('app_salesman.status','=','A')
+	    				->where('app_customer.status','=','A')
+	    				->where('app_area.status','=','A')
 	    				->orderBy('name');
     	
     	if($strictSalesman && $this->isSalesman())
@@ -5523,6 +5526,7 @@ class ReportsPresenter extends PresenterCore
     	if(!$this->hasAdminRole() && auth()->user())
     	{
     		$codes = $this->getAlikeAreaCode(auth()->user()->location_assignment_code);
+    		//dd(auth()->user()->location_assignment_code,$codes);
     		$prepare->whereIn('app_customer.area_code',$codes);    		
     	}
     		 
