@@ -86,7 +86,7 @@ return [
 	'max_admin_users' => 6,	
 
 	// Reset password admin recipients	
-	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com,markgeraldcabatingan@gmail.com,chriswhiz01@gmail.com,jurado.andybon@gmail.com',
+	'reset_password_recipients' => 'abnertudtud@gmail.com,alexjohnsuarez@gmail.com,jarisse.carbo13@gmail.com,skitbane@gmail.com,suecelle_jagna@yahoo.com',
 
 	// Invoice Key Code for auto generating invoice code.
 	'invoice_key' => [ 1000 => 'C', 2000 => 'D'],

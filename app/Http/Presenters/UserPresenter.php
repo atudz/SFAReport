@@ -399,14 +399,13 @@ class UserPresenter extends PresenterCore
 	{
 		$headers = [
 			['name' => 'Incident #', 'sort' => 'id'],
+			['name' => 'Date', 'sort' => 'created_at'],
 			['name' => 'Subject', 'sort' => 'subject'],
 			['name' => 'Summary', 'sort' => 'message'],
-			['name' => 'Action', 'sort' => 'action'],
-			['name' => 'Status', 'sort' => 'status'],
 			['name' => 'Reported By', 'sort' => 'name'],
-			['name' => 'Branch', 'sort' => 'location_assignment_code'],
-			['name' => 'Date', 'sort' => 'created_at']
-
+			['name' => 'Branch', 'sort' => 'location_assignment_code'],			
+			['name' => 'Status', 'sort' => 'status'],					
+			['name' => 'Action', 'sort' => 'action'],
 		];
 
 		return $headers;

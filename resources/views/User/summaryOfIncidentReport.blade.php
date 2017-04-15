@@ -23,14 +23,14 @@
                 {!!Html::theader($tableHeaders)!!}
                 <tbody>
                 <tr ng-repeat="record in records |filter:query | orderBy:propertyName:reverse" ng-if="records.length != 0">
-                    <td class="bold">[[ record.id | number ]]</td>
-                    <td class="bold">[[ record.subject ]]</td>
-                    <td class="bold">[[ record.message | limitTo: 20 ]] [[ record.message.length > 40 ? '...' : '' ]]</td>
-                    <td class="bold">[[ record.action ]]</td>
-                    <td class="bold">[[ record.status ]]</td>
-                    <td class="bold">[[ record.full_name ]]</td>
-                    <td class="bold">[[ record.areas[0].area_name ]]</td>
-                    <td class="bold">[[ record.created_at ]]</td>
+                    <td>[[ record.id | number ]]</td>
+                    <td>[[ record.created_at ]]</td>
+                    <td>[[ record.subject ]]</td>
+                    <td>[[ record.message | limitTo: 20 ]] [[ record.message.length > 40 ? '...' : '' ]]</td>                    
+                    <td>[[ record.full_name ]]</td>
+                    <td>[[ record.areas[0].area_name ]]</td>
+                    <td>[[ record.status ]]</td>                    
+					<td class="bold">[[ record.action ]]</td>                   
                 </tr>
                 </tbody>
                 {!!Html::tfooter(true,8)!!}
