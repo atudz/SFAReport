@@ -88,9 +88,9 @@
 	}
 
 	
-	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
+	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CashPaymentsReport]);
 	
-	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 	    var params = [
 		          'company_code',
