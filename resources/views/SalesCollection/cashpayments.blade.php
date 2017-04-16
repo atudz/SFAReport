@@ -76,6 +76,10 @@
 </div>
 
 <script>
+	$(document).ready(function () {
+	    set_customer($('#salesman'));
+	});
+	
 	function set_customer(el)
 	{
 		var sel = $(el).val();
