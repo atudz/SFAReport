@@ -93,11 +93,11 @@
 			$('#area').val('');			
 		}
 		else{
-			var url = 'reports/salesman/customer/'+sel;
-			$('#customer_code').append($("<option></option>").attr("value", '').text('All'));
+			var url = 'reports/salesman/customer/'+sel;			
 			$.get(url,function(data){
 				if(data){
 					$('#customer_code').empty();
+					$('#customer_code').append($("<option></option>").attr("value", '').text('All'));					
 					$.each(data, function(k,v){
 						$('#customer_code')
 							.append($("<option></option>")
