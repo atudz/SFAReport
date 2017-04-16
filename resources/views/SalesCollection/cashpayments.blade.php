@@ -94,6 +94,7 @@
 		}
 		else{
 			var url = 'reports/salesman/customer/'+sel;
+			$('#customer_code').append($("<option></option>").attr("value", '').text('All'));
 			$.get(url,function(data){
 				if(data){
 					$('#customer_code').empty();
