@@ -7221,9 +7221,9 @@ class ReportsPresenter extends PresenterCore
 	{
 		$code = ModelFactory::getInstance('AppCustomer');
 		if ($isName) {
-			$code = $code->where('customer_name', $customer)->select('area_code')->first();
+			$code = $code->where('customer_name', $customer)->select(['area_code','customer_code'])->first();
 		} else {
-			$code = $code->where('customer_code', $customer)->select('area_code')->first();
+			$code = $code->where('customer_code', $customer)->select(['area_code','customer_code'])->first();
 		}
 		return $code;
 	}
@@ -7274,10 +7274,16 @@ class ReportsPresenter extends PresenterCore
 	public function generateInvoiceNumber($customer, $isVan = false)
 	{
 		$areaCodes = $this->arrayOfAreaCodes();
-		$customerCode = $this->getCustomerAreaCode($customer, $isVan)->area_code;
-		$code = (int)explode('_', $customer)[0];
+		$customerModel = $this->getCustomerAreaCode($customer, $isVan);
+		$areaCode = $customerModel->area_code;
+		$customerCode = $customerCode->customer_code;
+		$chunks = explode('_', $customerCode);
+		if(!isset($chunks[0]))
+			return '';
+		
+		$code = (int)$chunks[0];
 		$invoice_key = config('system.invoice_key');
-		$invoiceCode = $invoice_key[$code] . $areaCodes[$customerCode];
+		$invoiceCode = $invoice_key[$code] . $areaCodes[$areaCode];
 		return $invoiceCode;
 	}
     
