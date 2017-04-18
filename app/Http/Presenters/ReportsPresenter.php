@@ -2093,6 +2093,8 @@ class ReportsPresenter extends PresenterCore
     					return $model->where('collection.area_code','=',$self->getValue());
     				});    		
 
+    	$prepare->orderBy('collection.invoice_date');
+    	
     	return $prepare;
     }
     /**
