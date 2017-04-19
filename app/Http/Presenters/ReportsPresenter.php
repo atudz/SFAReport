@@ -7276,7 +7276,7 @@ class ReportsPresenter extends PresenterCore
 		$areaCodes = $this->arrayOfAreaCodes();
 		$customerModel = $this->getCustomerAreaCode($customer, $isVan);
 		$areaCode = $customerModel->area_code;
-		$customerCode = $customerCode->customer_code;
+		$customerCode = $customerModel->customer_code;
 		$chunks = explode('_', $customerCode);
 		if(!isset($chunks[0]))
 			return '';
