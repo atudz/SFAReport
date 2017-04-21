@@ -5,23 +5,29 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<!-- Filter -->
-				{!!Html::fopen('Toggle Filter')!!}
-					<div class="col-md-6">
-						{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All')!!}
-						{!!Html::select('company_code','Company Code', $companyCode)!!}						
-						{!!Html::select('area_code','Area', $areas)!!}												
-						{!!Html::select('customer_code','Customer', $customers)!!}												 																															
-					</div>					
-					<div class="col-md-6">	
-						{!!Html::datepicker('invoice_date','Invoice Date',true)!!}
-						{!!Html::select('item_code','Regular Item Code', $items)!!}						
-					</div>			
-				{!!Html::fclose()!!}
-				<!-- End Filter -->
-				
-				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>$isGuest1])!!}
-					{!!Html::theader($tableHeaders)!!}
+				@if($navigationActions['show_filter'])
+					<!-- Filter -->
+					{!!Html::fopen('Toggle Filter')!!}
+						<div class="col-md-6">
+							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All')!!}
+							{!!Html::select('company_code','Company Code', $companyCode)!!}						
+							{!!Html::select('area_code','Area', $areas)!!}												
+							{!!Html::select('customer_code','Customer', $customers)!!}												 																															
+						</div>					
+						<div class="col-md-6">	
+							{!!Html::datepicker('invoice_date','Invoice Date',true)!!}
+							{!!Html::select('item_code','Regular Item Code', $items)!!}						
+						</div>			
+					{!!Html::fclose()!!}
+					<!-- End Filter -->
+				@endif
+				@if($navigationActions['show_table'])
+					{!!Html::topen([
+						'show_download'   => $navigationActions['show_download'],
+						'show_print'      => $navigationActions['show_print'],
+						'show_search'     => $navigationActions['show_search_field'],
+					])!!}
+					{!!Html::theader($tableHeaders,$navigationActions['can_sort_columns'])!!}
 					<tbody>
 						<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>							
 							<td>[[record.area_name]]</td>
@@ -61,7 +67,8 @@
 						</tr>									
 					</tbody>				
 					{!!Html::tfooter(true,14)!!}
-				{!!Html::tclose()!!}			
+					{!!Html::tclose()!!}			
+				@endif
 			</div>			
 		</div>
 	</div>

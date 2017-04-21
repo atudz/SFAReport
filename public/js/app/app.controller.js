@@ -12,10 +12,12 @@
 	var defaultDate = '';
 	var fetch = true;
 	
-	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionReport]);
+	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionReport]);
 	
-	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'customer_name',
@@ -44,10 +46,12 @@
 	 * Sales & Collection Posting controller
 	 */
 
-	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionPosting]);
+	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionPosting]);
 	
-	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix)
+	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{		
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'customer_name',
@@ -72,10 +76,12 @@
 	 * Sales & Collection Summary controller
 	 */
 
-	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix',SalesCollectionSummary]);
+	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionSummary]);
 
-	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix)
+	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'invoice_date_from',
@@ -91,10 +97,12 @@
 	/**
 	 * Cash payments controller
 	 */
-	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CashPaymentsReport]);
+	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',CashPaymentsReport]);
 	
-	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'customer_code',
@@ -118,10 +126,12 @@
 	/**
 	 * Check payments controller
 	 */
-	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CheckPaymentsReport]);
+	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',CheckPaymentsReport]);
 	
-	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'customer_code',
@@ -146,10 +156,12 @@
 	 * Van & Inventory (Canned) controller
 	 */
 
-	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryCanned]);
+	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache',VanInventoryCanned]);
 
-	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
+	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable);
 
 		//editable rows
@@ -160,10 +172,12 @@
 	 * Van & Inventory (Frozen) controller
 	 */
 
-	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable',VanInventoryFrozen]);
+	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache',VanInventoryFrozen]);
 
-	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable)
+	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable);
 
 		//editable rows
@@ -173,10 +187,12 @@
 	/**
 	 * Van Inventory Stock Transfer Report
 	 */
-	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix',StockTransfer]);
+	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',StockTransfer]);
 	
-	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
+	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',
 				  'company_code',
@@ -201,10 +217,12 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix',StockAudit]);
+	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',StockAudit]);
 	
-	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix)
+	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',		          
 				  'area',
@@ -225,10 +243,12 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix',FlexiDeal]);
+	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',FlexiDeal]);
 	
-	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix)
+	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',		          
 				  'area_code',
@@ -249,11 +269,12 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix',ActualCount]);
+	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',ActualCount]);
 	
-	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix)
+	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
-		
+		deletePreviousCache($route,$templateCache);
+
 		$scope.editHide = 'hidden'
 		$scope.url = '#actualcount.edit/';
 		$scope.editUrl = '';
@@ -277,8 +298,8 @@
 
 	function ActualCountAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache) {
 		
-		var currentPageTemplate = $route.current.loadedTemplateUrl;
-		$templateCache.remove(currentPageTemplate);
+		deletePreviousCache($route,$templateCache);
+
 		
 		$scope.save = function (){
 			var hasError = false;
@@ -358,9 +379,11 @@
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
-	app.controller('ActualCountDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',ActualCountDelete]);
+	app.controller('ActualCountDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',ActualCountDelete]);
 	
-	function ActualCountDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+	function ActualCountDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.params = params;
 		
 		$scope.save = function (){			
@@ -393,11 +416,12 @@
 	/**
 	 * Van Inventory Adjustment Adjustment
 	 */
-	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix',Adjustment]);
+	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',Adjustment]);
 	
-	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix)
+	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
-		
+		deletePreviousCache($route,$templateCache);
+
 		$scope.editHide = 'hidden'
 		$scope.url = '#adjustment.edit/';
 		$scope.editUrl = '';
@@ -421,10 +445,8 @@
 	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', '$route', '$templateCache', AdjustmentAdd]);
 
 	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
-		
-		var currentPageTemplate = $route.current.loadedTemplateUrl;
-		$templateCache.remove(currentPageTemplate);
-		
+		deletePreviousCache($route,$templateCache);
+
 		$scope.save = function (){
 			var hasError = false;			
 			
@@ -495,9 +517,11 @@
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
-	app.controller('AdjustmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',AdjustmentDelete]);
+	app.controller('AdjustmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',AdjustmentDelete]);
 	
-	function AdjustmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+	function AdjustmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.params = params;
 		
 		$scope.save = function (){			
@@ -533,8 +557,8 @@
 
 	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
 
-		var currentPageTemplate = $route.current.loadedTemplateUrl;
-		$templateCache.remove(currentPageTemplate);
+		deletePreviousCache($route,$templateCache);
+
 		
 		$scope.save = function (){
 			var API = $resource('controller/vaninventory/stocktransfer');
@@ -575,10 +599,12 @@
 	/**
 	 * Van Inventory Replenishment Adjustment
 	 */
-	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix',InvoiceSeries]);
+	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',InvoiceSeries]);
 	
-	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix)
+	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',		          
 				  'invoice_start',
@@ -598,7 +624,8 @@
 	app.controller('InvoiceSeriesAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', InvoiceSeriesAdd]);
 
 	function InvoiceSeriesAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
-		
+		deletePreviousCache($route,$templateCache);
+
 		var currentPageTemplate = $route.current.loadedTemplateUrl;
 		$templateCache.remove(currentPageTemplate);
 
@@ -657,9 +684,11 @@
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
-	app.controller('InvoiceSeriesDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',InvoiceSeriesDelete]);
+	app.controller('InvoiceSeriesDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',InvoiceSeriesDelete]);
 	
-	function InvoiceSeriesDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+	function InvoiceSeriesDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.params = params;
 		
 		$scope.save = function (){			
@@ -692,10 +721,12 @@
 	/**
 	 * Bounce Check Controller
 	 */
-	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix',BounceCheck]);
+	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',BounceCheck]);
 	
-	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix)
+	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',		          
 				  'area_code',
@@ -718,9 +749,7 @@
 	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', BounceCheckAdd]);
 
 	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
-		
-		var currentPageTemplate = $route.current.loadedTemplateUrl;
-		$templateCache.remove(currentPageTemplate);
+		deletePreviousCache($route,$templateCache);
 
 		$scope.save = function (){
 			var hasError = false;						
@@ -790,9 +819,11 @@
 	/**
 	 * Bounce Check Delete
 	 */
-	app.controller('BounceCheckDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',BounceCheckDelete]);
+	app.controller('BounceCheckDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',BounceCheckDelete]);
 	
-	function BounceCheckDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+	function BounceCheckDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.params = params;
 		
 		$scope.save = function (){			
@@ -864,10 +895,12 @@
 	/**
 	 * Unpaid Report
 	 */
-	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log',Unpaid]);
+	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',Unpaid]);
 
-	function Unpaid($scope, $resource, $uibModal, $window, $log)
+	function Unpaid($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 					  'company_code',
 					  'invoice_date_from',
@@ -884,10 +917,12 @@
 	/**
 	 * Sales Report Per Material
 	 */
-	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',SalesReportPerMaterial]);
+	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesReportPerMaterial]);
 
-	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log)
+	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'posting_date_from',
 				  'posting_date_to',
@@ -923,10 +958,12 @@
 	/**
 	 * Sales Report Per Peso
 	 */
-	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log',SalesReportPerPeso]);
+	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesReportPerPeso]);
 
-	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log)
+	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'posting_date_from',
 				  'posting_date_to',
@@ -949,10 +986,12 @@
 	/**
 	 * Return Report Per Material
 	 */
-	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerMaterial]);
+	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',ReturnReportPerMaterial]);
 
-	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log)
+	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'posting_date_from',
 				  'posting_date_to',
@@ -975,10 +1014,12 @@
 	/**
 	 * Return Report Per Peso
 	 */
-	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log',ReturnReportPerPeso]);
+	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',ReturnReportPerPeso]);
 
-	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log)
+	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'posting_date_from',
 				  'posting_date_to',
@@ -1000,10 +1041,12 @@
 	/**
 	 * Customer List
 	 */
-	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log',CustomerList]);
+	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',CustomerList]);
 
-	function CustomerList($scope, $resource, $uibModal, $window, $log)
+	function CustomerList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',
 				  'area',
@@ -1023,10 +1066,12 @@
 	/**
 	 * Salesman List
 	 */
-	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log',SalesmanList]);
+	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesmanList]);
 
-	function SalesmanList($scope, $resource, $uibModal, $window, $log)
+	function SalesmanList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'salesman_code',
 				  'area',
@@ -1044,10 +1089,12 @@
 	/**
 	 * Material Price List
 	 */
-	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log',MaterialPriceList]);
+	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',MaterialPriceList]);
 
-	function MaterialPriceList($scope, $resource, $uibModal, $window, $log)
+	function MaterialPriceList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'company_code',
 				  'area',
@@ -1071,10 +1118,11 @@
 	 * Bir controller
 	 */
 
-	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log',Bir]);
+	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',Bir]);
 
-	function Bir($scope, $resource, $uibModal, $window, $log)
+	function Bir($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
 
 		var params = [
 				  'area',
@@ -1093,10 +1141,12 @@
 	/**
 	 * Date Input Controller
 	 */
-	app.controller('Calendar',['$scope','$http','$log', Calendar]);
+	app.controller('Calendar',['$scope','$http','$log','$route','$templateCache', Calendar]);
 
-	function Calendar($scope, $http, $log)
+	function Calendar($scope, $http, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.dateFrom = null;
 		$scope.dateTo = null;
 		$scope.setFrom = function(from){
@@ -1135,10 +1185,12 @@
 	/**
 	 * Date Input Controller
 	 */
-	app.controller('CalendarMonth',['$scope','$http','$log', CalendarMonth]);
+	app.controller('CalendarMonth',['$scope','$http','$log','$route','$templateCache', CalendarMonth]);
 
-	function CalendarMonth($scope, $http, $log)
+	function CalendarMonth($scope, $http, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.dateFrom = null;
 		$scope.dateTo = null;
 		$scope.setFrom = function(from){
@@ -1177,10 +1229,12 @@
 	/**
 	 * Date Input Controller
 	 */
-	app.controller('CalendarYear',['$scope','$http','$log', CalendarYear]);
+	app.controller('CalendarYear',['$scope','$http','$log','$route','$templateCache', CalendarYear]);
 
-	function CalendarYear($scope, $http, $log)
+	function CalendarYear($scope, $http, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.dateFrom = null;
 		$scope.dateTo = null;
 		$scope.setFrom = function(from){
@@ -1219,10 +1273,12 @@
 	/**
 	 * Date Input Controller for editable columns
 	 */
-	app.controller('EditableColumnsCalendar',['$scope','$http','$log', EditableColumnsCalendar]);
+	app.controller('EditableColumnsCalendar',['$scope','$http','$log','$route','$templateCache', EditableColumnsCalendar]);
 
-	function EditableColumnsCalendar($scope, $http, $log)
+	function EditableColumnsCalendar($scope, $http, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		if(defaultDate)
 			$scope.dateFrom = defaultDate;
 		else
@@ -2104,9 +2160,10 @@
 	/**
 	 * Export report controller
 	 */
-	app.controller('ExportReport',['$scope','$uibModalInstance','$window','params','$log', ExportReport]);
+	app.controller('ExportReport',['$scope','$uibModalInstance','$window','params','$log','$route','$templateCache', ExportReport]);
 
-	function ExportReport($scope, $uibModalInstance, $window, params, $log) {
+	function ExportReport($scope, $uibModalInstance, $window, params, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
 		$scope.offset = 0;
@@ -2140,9 +2197,11 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable', EditTableRecord]);
+	app.controller('EditTableRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable','$route','$templateCache', EditTableRecord]);
 
-	function EditTableRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable) {
+	function EditTableRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.change = function () {
 
 			$('#regExpr').on('click keyup', function () {
@@ -2267,9 +2326,10 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log', UserList]);
+	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log','$route','$templateCache', UserList]);
 
-	function UserList($scope, $resource, $window, $uibModal, $log) {
+	function UserList($scope, $resource, $window, $uibModal, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
 
 		// Filter flag
 		$scope.toggleFilter = true;
@@ -2371,9 +2431,10 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log', UserGroupList]);
+	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log','$route','$templateCache', UserGroupList]);
 
-	function UserGroupList($scope, $resource, $window, $uibModal, $log) {
+	function UserGroupList($scope, $resource, $window, $uibModal, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
 
 		// Filter flag
 		$scope.toggleFilter = true;
@@ -2492,9 +2553,10 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserAdd',['$scope','$resource','$location','$window','$uibModal','$log', UserAdd]);
+	app.controller('UserAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', UserAdd]);
 
-	function UserAdd($scope, $resource, $location, $window, $uibModal, $log) {
+	function UserAdd($scope, $resource, $location, $window, $uibModal, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
 
 		$scope.id = 0;
 		$scope.role_id = 1;
@@ -2526,9 +2588,11 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log', UserEdit]);
+	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log','$route','$templateCache', UserEdit]);
 
-	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
+	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.regExemail = function(){
 			var email = $('#email').val();
 			if(email){
@@ -2582,9 +2646,11 @@
 	/**
 	 * User Contact us controller
 	 */
-	app.controller('ContactUs', ['$scope', '$resource', '$http', ContactUs]);
+	app.controller('ContactUs', ['$scope', '$resource', '$http','$route','$templateCache', ContactUs]);
 
-	function ContactUs($scope, $resource, $http) {
+	function ContactUs($scope, $resource, $http,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.success = false;
 		$scope.error = false;
 		$scope.loading = false;
@@ -2726,9 +2792,11 @@
 	/**
 	 * User Incident report controller
 	 */
-	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams','$uibModal', '$window', '$location', '$log', SummaryOfIncidentReport]);
+	app.controller('SummaryOfIncidentReport', ['$scope', '$resource', '$routeParams','$uibModal', '$window', '$location', '$log','$route','$templateCache', SummaryOfIncidentReport]);
 
-	function SummaryOfIncidentReport($scope, $resource, $routeParams, $uibModal, $window, $location, $log) {
+	function SummaryOfIncidentReport($scope, $resource, $routeParams, $uibModal, $window, $location, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		// Filter flag
 		$scope.toggleFilter = true;
 		$scope.propertyName = 'id';
@@ -2813,9 +2881,11 @@
 	/**
 	 * User Guide.
 	 */
-	app.controller('UserGuide', ['$scope', '$resource', '$window', '$http', UserGuide]);
+	app.controller('UserGuide', ['$scope', '$resource', '$window', '$http','$route','$templateCache', UserGuide]);
 
-	function UserGuide($scope, $resource, $window, $http) {
+	function UserGuide($scope, $resource, $window, $http,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
 		$scope.logged = $window.user;
 		$scope.alerts = {
 			error: false,
@@ -3197,10 +3267,12 @@
 	 * Sync controller
 	 */
 
-	app.controller('Sync',['$scope','$resource','$log',Sync]);
+	app.controller('Sync',['$scope','$resource','$log','$route','$templateCache',Sync]);
 
-	function Sync($scope, $resource, $log)
+	function Sync($scope, $resource, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.showError = false;
 		$scope.showSuccess = false;
 		$scope.showLoading = false;
@@ -3234,9 +3306,10 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log', UserAction]);
+	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log','$route','$templateCache', UserAction]);
 
-	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log) {
+	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
 		//$log.info(params);
@@ -3293,10 +3366,12 @@
 	 * Change password Controller
 	 */
 
-	app.controller('ChangePassword',['$scope','$resource','$log',ChangePassword]);
+	app.controller('ChangePassword',['$scope','$resource','$log','$route','$templateCache',ChangePassword]);
 
-	function ChangePassword($scope, $resource, $log)
+	function ChangePassword($scope, $resource, $log,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.error = false;
 		$scope.success = false;
 		$scope.submit = function(){
@@ -3367,10 +3442,12 @@
 	 * Profile Controller
 	 */
 
-	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log',Profile]);
+	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache',Profile]);
 
-	function Profile($scope, $resource, $location,$uibModal,$window, $log)
+	function Profile($scope, $resource, $location,$uibModal,$window, $lo,$route,$templateCacheg)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		$scope.age = '';
 		$scope.from = null;
 		$scope.to = null;
@@ -3400,9 +3477,9 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('Info',['$scope','$uibModalInstance','params','$log', Info]);
+	app.controller('Info',['$scope','$uibModalInstance','params','$log','$route','$templateCache', Info]);
 
-	function Info($scope, $uibModalInstance, params, $log) {
+	function Info($scope, $uibModalInstance, params, $log,$route,$templateCache) {
 
 		$scope.params = params;
 		//$log.info(params);
@@ -3417,10 +3494,12 @@
 		  $scope.var1 = '07-2013';
 		});
 	
-	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix',ReversalSummary]);
+	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',ReversalSummary]);
 	
-	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix)
+	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{	    	
+		deletePreviousCache($route,$templateCache);
+
 		var params = [
 				  'report',
 				  'branch',
@@ -3441,10 +3520,12 @@
 	/**
 	 * Open and Closing Period controller
 	 */
-	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix',OpenClosingPeriod]);
+	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',OpenClosingPeriod]);
 	
-	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix)
+	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
 	{
+		deletePreviousCache($route,$templateCache);
+
 		var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 		$scope.toggleFilter = true;
@@ -3547,6 +3628,8 @@
 				.then(function(response){
 					var navigation_reports = angular.copy(response.data.navigation_reports);
 					$scope.navigation_reports = angular.copy(response.data.navigation_reports);
+
+					$scope.navigation_reports = response.data.navigation_reports;
 
 					$scope.filter.year = year;
 					$scope.filter.month = month;
@@ -3654,4 +3737,303 @@
         }
 	}
 
+	/**
+	 * User Access Matrix controller
+	 */
+	app.controller('UserAccessMatrix',['$scope','$http','$uibModal','$window','$log','TableFix','toaster', '$route','$templateCache',UserAccessMatrix]);
+	
+	function UserAccessMatrix($scope, $http, $uibModal, $window, $log, TableFix, toaster, $route, $templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.toggleFilter = true;
+		$scope.success = false;
+		$scope.savePermissionData = {};
+		$scope.navigations = [];
+		$scope.navs = [];
+		$scope.nav_actions = [];
+		$scope.nav_overrides = [];
+		$scope.nav_action_overrides = [];
+		$scope.choosen_navigations = [];
+
+		function navigationStatus(navigation_id){
+			if($scope.savePermissionData.type == 'user'){
+				var nav_overrides_length = $scope.nav_overrides.length;
+
+				if(nav_overrides_length > 0){
+					for (var nav_overrides_ctr = 0; nav_overrides_ctr < nav_overrides_length; nav_overrides_ctr++) {
+						if(navigation_id == $scope.nav_overrides[nav_overrides_ctr]['navigation_id']){
+							return $scope.nav_overrides[nav_overrides_ctr]['status'];
+						}
+					}
+				}
+
+				return 'inherit';
+			}
+
+			var nav_length = $scope.navs.length;
+
+			if(nav_length > 0){
+				for (var navs_ctr = 0; navs_ctr < nav_length; navs_ctr++) {
+					if(navigation_id == $scope.navs[navs_ctr]){
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		function navigationActionStatus(permission_id){
+			if($scope.savePermissionData.type == 'user'){
+				var nav_action_overrides_length = $scope.nav_action_overrides.length;
+
+				if(nav_action_overrides_length > 0){
+					for (var nav_action_overrides_ctr = 0; nav_action_overrides_ctr < nav_action_overrides_length; nav_action_overrides_ctr++) {
+						if(permission_id == $scope.nav_action_overrides[nav_action_overrides_ctr]['permission_id']){
+							return $scope.nav_action_overrides[nav_action_overrides_ctr]['status'];
+						}
+					}
+				}
+
+				return 'inherit';
+			}
+
+			var nav_actions_length = $scope.nav_actions.length;
+
+			if(nav_actions_length > 0){
+				for (var nav_actions_ctr = 0; nav_actions_ctr < nav_actions_length; nav_actions_ctr++) {
+					if(permission_id == $scope.nav_actions[nav_actions_ctr]){
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		function processPermissionStatus(){
+			var navigations_length = $scope.navigations.length;
+			if(navigations_length > 0){
+				for (var navigations_ctr = 0; navigations_ctr < navigations_length; navigations_ctr++) {
+					$scope.navigations[navigations_ctr].status = navigationStatus($scope.navigations[navigations_ctr].id);
+
+					var children_length = $scope.navigations[navigations_ctr].children.length;
+					if(children_length > 0){
+						for(var children_ctr = 0; children_ctr < children_length; children_ctr++){
+							$scope.navigations[navigations_ctr].children[children_ctr].status = navigationStatus($scope.navigations[navigations_ctr].children[children_ctr].id);
+
+							var children_action_length = $scope.navigations[navigations_ctr].children[children_ctr].action.length;
+							if(children_action_length > 0){
+								for(var children_action_ctr = 0; children_action_ctr < children_action_length; children_action_ctr++){
+									$scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].status = navigationActionStatus($scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].id);
+								}
+							}
+						}
+					}
+
+					var action_length = $scope.navigations[navigations_ctr].action.length;
+					if(action_length > 0){
+						for(var action_ctr = 0; action_ctr < action_length; action_ctr++){
+							$scope.navigations[navigations_ctr].action[action_ctr].status = navigationActionStatus($scope.navigations[navigations_ctr].action[action_ctr].id);
+						}
+					}
+				}
+			}
+		}
+
+		// reset the filter
+		$scope.reset =  function(){
+			$scope.navigations = [];
+		}
+
+		// filter on showing reports to open and close
+		$scope.filter = function(){
+			$scope.navigations = [];
+
+			var data = {
+				user_group_id : angular.element("#user_group_id").val(),
+				user_id: angular.element("#user_id").val()
+			};
+
+			if(angular.element('#user_group_id').length) {
+			    $scope.savePermissionData.type = 'role';
+			}
+
+			if(angular.element('#user_id').length) {
+			    $scope.savePermissionData.type = 'user';
+			}
+
+			$http
+				.post('/controller/user-access-matrix/load-permissions', data)
+				.then(function(response){
+					$scope.navigations = response.data.navigations;
+					$scope.navs = response.data.user_navs;
+					$scope.nav_actions = response.data.user_nav_actions;
+					$scope.nav_overrides = response.data.user_nav_overrides;
+					$scope.nav_action_overrides = response.data.user_nav_action_overrides;
+					processPermissionStatus();
+				}, function(){
+
+				});
+		}
+
+		$scope.hideSubMenu = function(navigation_id){
+			angular.element(".navigation-" + navigation_id).slideToggle();
+		}
+
+		$scope.hideAction = function(navigation_id){
+			angular.element(".navigation-" + navigation_id + "-action").slideToggle();
+		}
+
+		$scope.parentChange = function(parent_index,value){
+			$scope.navigations[parent_index].status = value;
+
+			var children_length = $scope.navigations[parent_index].children.length;
+			if(children_length > 0){
+				for (var child_ctr = 0; child_ctr < children_length; child_ctr++) {
+					$scope.navigations[parent_index].children[child_ctr].status = value;
+
+					var child_action_length = $scope.navigations[parent_index].children[child_ctr].action.length;
+					if(child_action_length > 0){
+						for (var child_action_ctr = 0; child_action_ctr < child_action_length; child_action_ctr++) {
+							$scope.navigations[parent_index].children[child_ctr].action[child_action_ctr].status = value;
+						}
+					}
+				}
+			}
+
+			var action_length = $scope.navigations[parent_index].action.length;
+			if(action_length > 0){
+				for (var action_ctr = 0; action_ctr < action_length; action_ctr++) {
+					$scope.navigations[parent_index].action[action_ctr].status = value;
+				}
+			}
+		}
+
+		$scope.parentActionChange = function(parent_index,parent_action_index,value){
+			$scope.navigations[parent_index].action[parent_action_index].status = value;
+		}
+
+		$scope.childChange = function(parent_index,child_index,value){
+			$scope.navigations[parent_index].children[child_index].status = value;
+
+			var child_action_length = $scope.navigations[parent_index].children[child_index].action.length;
+			if(child_action_length > 0){
+				for (var child_action_ctr = 0; child_action_ctr < child_action_length; child_action_ctr++) {
+					$scope.navigations[parent_index].children[child_index].action[child_action_ctr].status = value;
+				}
+			}
+		}
+
+		$scope.childActionChange = function(parent_index,child_index,child_action_index,value){
+			$scope.navigations[parent_index].children[child_index].action[child_action_index].status = value;
+		}
+
+		$scope.savePermission = function(){
+			var allowed_navs = [];
+			var allowed_nav_actions = [];
+			var user_navs = [];
+			var user_nav_actions = [];
+
+			var navigations_length = $scope.navigations.length;
+			for (var navigations_ctr = 0; navigations_ctr < navigations_length; navigations_ctr++) {
+				if($scope.savePermissionData.type == 'role'){
+					if($scope.navigations[navigations_ctr].status){
+						allowed_navs.push($scope.navigations[navigations_ctr].id);
+					}
+				}
+				if($scope.savePermissionData.type == 'user'){
+					user_navs.push({
+						id : $scope.navigations[navigations_ctr].id,
+						status: $scope.navigations[navigations_ctr].status
+					});
+				}
+
+				var children_length = $scope.navigations[navigations_ctr].children.length;
+				if(children_length > 0){
+					for(var children_ctr = 0; children_ctr < children_length; children_ctr++){
+						if($scope.savePermissionData.type == 'role' && $scope.navigations[navigations_ctr].children[children_ctr].status){
+							allowed_navs.push($scope.navigations[navigations_ctr].children[children_ctr].id);
+						}
+						if($scope.savePermissionData.type == 'user'){
+							user_navs.push({
+								id : $scope.navigations[navigations_ctr].children[children_ctr].id,
+								status: $scope.navigations[navigations_ctr].children[children_ctr].status
+							});
+						}
+
+						var children_action_length = $scope.navigations[navigations_ctr].children[children_ctr].action.length;
+						if(children_action_length > 0){
+							for(var children_action_ctr = 0; children_action_ctr < children_action_length; children_action_ctr++){
+								if($scope.savePermissionData.type == 'role' && $scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].status){
+									allowed_nav_actions.push($scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].id);
+								}
+								if($scope.savePermissionData.type == 'user'){
+									user_nav_actions.push({
+										id : $scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].id,
+										status: $scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].status
+									});
+								}
+							}
+						}
+					}
+				}
+
+				var action_length = $scope.navigations[navigations_ctr].action.length;
+				if(action_length > 0){
+					for(var action_ctr = 0; action_ctr < action_length; action_ctr++){
+						if($scope.savePermissionData.type == 'role' && $scope.navigations[navigations_ctr].action[action_ctr].status){
+							allowed_nav_actions.push($scope.navigations[navigations_ctr].action[action_ctr].id);
+						}
+						if($scope.savePermissionData.type == 'user'){
+							user_nav_actions.push({
+								id : $scope.navigations[navigations_ctr].action[action_ctr].id,
+								status: $scope.navigations[navigations_ctr].action[action_ctr].status
+							});
+						}
+					}
+				}
+			}
+
+			var data = {
+				allowed_navs: allowed_navs,
+				allowed_nav_actions: allowed_nav_actions,
+				user_navs: user_navs,
+				user_nav_actions: user_nav_actions
+			};
+
+			if($scope.savePermissionData.type == 'role'){
+				data.id = angular.element("#user_group_id").val();
+				data.type = 'role';
+			}
+
+			if($scope.savePermissionData.type == 'user'){
+				data.id = angular.element("#user_id").val();
+				data.type = 'user';
+			}
+
+			$http
+				.post('/controller/user-access-matrix/save-permissions', data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Permission Saved',3000);
+						window.location.reload();
+					}
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * Delete the Previous Cache of a page
+	 * @param  {Object} route
+	 * @param  {Object} templateCache
+	 * @return NONE
+	 */
+	function deletePreviousCache(route,templateCache){
+		var currentPageTemplate = route.current.loadedTemplateUrl;
+		templateCache.remove(currentPageTemplate);
+	}
 })();

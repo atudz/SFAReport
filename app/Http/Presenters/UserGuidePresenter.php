@@ -4,6 +4,7 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\ModelFactory;
 use Auth;
+use App\Factories\PresenterFactory;
 
 class UserGuidePresenter extends PresenterCore
 {
@@ -53,7 +54,10 @@ class UserGuidePresenter extends PresenterCore
      */
     public function userGuide()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
         $this->view->tableHeaders = $this->getUserGuideTableColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-guide',$user_group_id,$user_id);
 
         return $this->view('userGuide');
     }

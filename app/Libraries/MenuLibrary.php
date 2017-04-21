@@ -6,6 +6,7 @@ use App\Interfaces\SingletonInterface;
 use App\Core\LibraryCore;
 use App\Factories\ModelFactory;
 use App\Factories\LibraryFactory;
+use App\Factories\PresenterFactory;
 
 /**
  * This is a library class for Menu
@@ -112,7 +113,7 @@ class MenuLibrary extends LibraryCore implements SingletonInterface
 			$treeLib->addwhereIn('id', $navIds);
 			$navs = $treeLib->getData();
 			
-			$this->menuList = $navs;
+			$this->menuList = PresenterFactory::getInstance('UserAccessMatrix')->getAllowedMenus($navs);
 			
 			// store this to session so that we'll just pull the data from session
 			// and no longer need to Query again

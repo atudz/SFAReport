@@ -39,4 +39,22 @@ class Navigation extends ModelCore
 	{
 		return $this->belongsToMany('UserGroup');
 	}
+
+	/**
+	 * Navigation's relation to user_group table
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function children()
+	{
+		return $this->hasMany('App\Http\Models\Navigation','parent_id','id');
+	}
+
+	/**
+	 * Navigation's relation to user_group table
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function action()
+	{
+		return $this->hasMany('App\Http\Models\NavigationPermission','navigation_id','id');
+	}
 }

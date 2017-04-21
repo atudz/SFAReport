@@ -114,6 +114,10 @@ Route::get('/open-closing-period', ['as'=>'open-closing-period', 'uses'=>'OpenCl
 Route::post('/open-closing-period/request-reports', ['as'=>'open-closing-period-reports', 'uses'=>'OpenClosingPeriodPresenter@reports']);
 Route::get('/period/print-report', ['as'=>'period-print-report', 'uses'=>'OpenClosingPeriodPresenter@printReport']);
 
+Route::get('/user-access-matrix', ['as'=>'user-access-matrix', 'uses'=>'UserAccessMatrixPresenter@user']);
+
+Route::get('/role-access-matrix', ['as'=>'role-access-matrix', 'uses'=>'UserAccessMatrixPresenter@role']);
+
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -154,6 +158,10 @@ Route::group(['prefix' => 'controller'],function(){
 
 	Route::post('/period/update-status', ['as'=>'period-close', 'uses'=>'OpenClosingPeriodController@updateStatus']);
 	Route::post('/period/update-date', ['as'=>'period-update-date', 'uses'=>'OpenClosingPeriodController@updateDate']);
+
+	Route::post('/user-access-matrix/load-permissions', ['as'=>'user-access-matrix-load-permission', 'uses'=>'UserAccessMatrixController@loadPermissions']);
+
+	Route::post('/user-access-matrix/save-permissions', ['as'=>'user-access-matrix-save-permission', 'uses'=>'UserAccessMatrixController@savePermissions']);
 });
 
 

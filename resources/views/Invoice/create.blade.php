@@ -67,9 +67,11 @@
 					</div>
 						
 					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
-						<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
+						@if($navigationActions['can_save'] || $navigationActions['can_update'])
+							<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
+						@endif
 						<a href="#invoiceseries.mapping" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
-						@if($invoice->id)
+						@if($navigationActions['can_delete'])
 							<button class="btn btn-danger" ng-click="remove()">Delete</button>&nbsp;&nbsp;
 						@endif						
 					</div>																		
@@ -78,29 +80,30 @@
 	</div>
 </div>
 
-
-<script type="text/ng-template" id="DeleteInvoiceSeries">
- 	<div class="modal-body">
-		<form class="form-horizontal">	 
-			<h4>Deleting Invoice Series</h4>       		 
-			<div class="form-group">
-				<label class="col-sm-3">Remarks:</label>
-				<div class="col-sm-9">
-					<textarea class="form-control inner-addon fxresize" maxlength="150" name="remarks" rows="5" id="remarks" onblur="validate(this)"></textarea>
-					<span class="help-block"></span>
-				</div>
-			</div>						  
-			<div class="form-group">
-				<div class="col-sm-12">
-					<div class="pull-right">	
-						<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
-						<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+@if($navigationActions['can_delete'])
+	<script type="text/ng-template" id="DeleteInvoiceSeries">
+	 	<div class="modal-body">
+			<form class="form-horizontal">	 
+				<h4>Deleting Invoice Series</h4>       		 
+				<div class="form-group">
+					<label class="col-sm-3">Remarks:</label>
+					<div class="col-sm-9">
+						<textarea class="form-control inner-addon fxresize" maxlength="150" name="remarks" rows="5" id="remarks" onblur="validate(this)"></textarea>
+						<span class="help-block"></span>
+					</div>
+				</div>						  
+				<div class="form-group">
+					<div class="col-sm-12">
+						<div class="pull-right">	
+							<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
+							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+						</div>
 					</div>
 				</div>
-			</div>
-		</form>										 					
-	</div>			    			
-</script>
+			</form>										 					
+		</div>			    			
+	</script>
+@endif
 
 <script>
 	function preview()

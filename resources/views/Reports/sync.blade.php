@@ -7,7 +7,9 @@
 			<div class="panel-body">
 				<div class="row">
 					<div style="margin-left: 38%;margin-right: 62%;width: 6em">
-						<button class="btn btn-success" ng-click="sync()">Sync Now</button>&nbsp;&nbsp;&nbsp;															
+						@if($navigationActions['show_sync_button'])
+							<button class="btn btn-success" ng-click="sync()">Sync Now</button>&nbsp;&nbsp;&nbsp;															
+						@endif
 					</div>					
 				</div>
 				<div class="row">

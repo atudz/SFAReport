@@ -20,6 +20,9 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function createStockTransfer()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems();
@@ -28,6 +31,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->uom = $this->getUom();
 		$this->view->stockTransfers = stock_transfer();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-transfer',$user_group_id,$user_id);
 		return $this->view('add');
 	}
 	
@@ -39,6 +43,9 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function createActualCount()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems(true);
@@ -46,6 +53,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->vanCodes = $this->getVanCodes();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);		
 		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('actual-count-replenishment',$user_group_id,$user_id);
 		return $this->view('addActualCount');
 	}
 	
@@ -57,6 +65,9 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function createAdjustment()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems(true);
@@ -66,6 +77,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->segmentCodes = item_segment();
 		$this->view->brandCodes = brands();
 		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('adjustment-replenishment',$user_group_id,$user_id);
 		return $this->view('addAdjustment');
 	}
 	
@@ -117,7 +129,10 @@ class VanInventoryPresenter extends PresenterCore
      * @return string The rendered html view
      */
     public function stockTransfer()
-    {    	
+    {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->companyCode = $reportsPresenter->getCompanyCode();
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
@@ -125,6 +140,7 @@ class VanInventoryPresenter extends PresenterCore
     	$this->view->items = $reportsPresenter->getItems();
     	$this->view->segments = $reportsPresenter->getItemSegmentCode();
     	$this->view->tableHeaders = $this->getStockTransferColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-transfer',$user_group_id,$user_id);
     	return $this->view('stocktransfer');    	    	
     }
     
@@ -135,10 +151,14 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function stockAudit()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);    	
     	$this->view->areas = $reportsPresenter->getRdsSalesmanArea();
     	$this->view->tableHeaders = $this->getStockAuditColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-audit',$user_group_id,$user_id);
     	return $this->view('stockAudit');
     }
     
@@ -150,9 +170,13 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function actualCount()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getActualCountColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('actual-count-replenishment',$user_group_id,$user_id);
     	return $this->view('actualCount');
     }
     
@@ -163,9 +187,13 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function adjustment()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);    	
     	$this->view->tableHeaders = $this->getAdjustmentColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('adjustment-replenishment',$user_group_id,$user_id);
     	return $this->view('adjustment');
     }
     
@@ -176,6 +204,9 @@ class VanInventoryPresenter extends PresenterCore
      */
     public function flexiDeal()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->areas = $reportsPresenter->getArea();
@@ -183,6 +214,7 @@ class VanInventoryPresenter extends PresenterCore
     	$this->view->customers = $reportsPresenter->getCustomer();
     	$this->view->items = $reportsPresenter->getItemCodes();
     	$this->view->tableHeaders = $this->getFlexiDealColumns();    	
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('flexi-deal',$user_group_id,$user_id);
     	return $this->view('flexiDeal');
     }
     

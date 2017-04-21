@@ -63,7 +63,9 @@
 						</div>
 						
 						<div class="col-md-4 col-md-offset-6" style="padding-top:10px;">
-							<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;
+							@if($navigationActions['can_save'])
+								<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;
+							@endif
 							<a href="#vaninventory.stocktransfer" class="btn btn-warning">Cancel</a>
 						</div>
 					</div>										

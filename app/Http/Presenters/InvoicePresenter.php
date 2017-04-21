@@ -16,9 +16,13 @@ class InvoicePresenter extends PresenterCore
      */
     public function index()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getInvoiceSeriesColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
         return $this->view('invoice');
     }
 
@@ -30,9 +34,13 @@ class InvoicePresenter extends PresenterCore
      */
     public function create()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->invoice = ModelFactory::getInstance('Invoice');
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
     	return $this->view('create');
     }
 
@@ -44,9 +52,13 @@ class InvoicePresenter extends PresenterCore
      */
     public function edit($id)
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->invoice = ModelFactory::getInstance('Invoice')->find($id);
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
     	return $this->view('create');
     }
     

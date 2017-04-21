@@ -162,7 +162,7 @@
              			</div>											
 					</div>
 
-					@if(!$readOnly)
+					@if($navigationActions['can_save_profile'])
 					<div class="rs-mini-toolbar">
 						<div class="rs-toolbar-savebtn">
 							<a ng-click="save(true,true)" class="button-primary revgreen" href="javascript:void(0)" id="button_save_slide-tb" original-title="" style="display: block;"><i class="fa fa-floppy-o" style="display: inline-block;vertical-align: middle;width: 25px;height: 20px;background-repeat: no-repeat;"></i>Save Profile</a>
