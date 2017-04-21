@@ -101,6 +101,11 @@ Route::group(['prefix' => 'user'],function(){
 });
 
 	Route::get('contact-us', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);
+
+Route::get('/open-closing-period', ['as'=>'open-closing-period', 'uses'=>'OpenClosingPeriodPresenter@index']);
+Route::post('/open-closing-period/request-reports', ['as'=>'open-closing-period-reports', 'uses'=>'OpenClosingPeriodPresenter@reports']);
+Route::get('/period/print-report', ['as'=>'period-print-report', 'uses'=>'OpenClosingPeriodPresenter@printReport']);
+
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -139,6 +144,8 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/bouncecheck/save', ['as'=>'bouncecheck-save', 'uses'=>'BounceCheckController@save']);
 	Route::post('/bouncecheck/delete/{id}', ['as'=>'bouncecheck-delete', 'uses'=>'BounceCheckController@destroy']);
 
+	Route::post('/period/update-status', ['as'=>'period-close', 'uses'=>'OpenClosingPeriodController@updateStatus']);
+	Route::post('/period/update-date', ['as'=>'period-update-date', 'uses'=>'OpenClosingPeriodController@updateDate']);
 });
 
 
@@ -162,4 +169,3 @@ Route::filter('no-cache',function($route, $request, $response){
     $response->headers->set('Pragma','no-cache');
     $response->headers->set('Expires','Fri, 01 Jan 1990 00:00:00 GMT');
 });
-

@@ -254,6 +254,12 @@
 					/*controllerAs: 'sync'*/
 				})
 				
+				
+				.when('/openclosing.period',{
+					templateUrl: '/open-closing-period',
+					controller: 'OpenClosingPeriod',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'

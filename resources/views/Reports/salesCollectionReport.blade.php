@@ -32,27 +32,30 @@
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_address]]</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks')" ng-if="record.closed_period == 0">
 	    						[[ record.remarks ]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[ record.remarks ]]</span>
 	  					@else
 	  						[[ record.remarks ]]
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text',record.sales_order_table,'invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
+							<a href="" class="editable-click" ng-click="editColumn('text',record.sales_order_table,'invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')" ng-if="record.closed_period == 0">
 	    						[[ record.invoice_number | uppercase ]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[ record.invoice_number | uppercase ]]</span>
 	  					@else
 	  						[[ record.invoice_number | uppercase ]]
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_date_table,record.invoice_date_col,record.invoice_date_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_date_table,record.invoice_date_col,record.invoice_date_id,record.invoice_date,$index,'Invoice Date','invoice_date')" ng-if="record.closed_period == 0">
 	    						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
+	  						<span ng-if="record.closed_period == 1" ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  					@else
 	  						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  					@endif
@@ -71,9 +74,10 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_sales_order_header_discount','ref_no',record.reference_num,record.ref_no,$index,'CM Number','ref_no')" ng-if="record.closed_period == 0">
 	    						[[ record.ref_no | uppercase ]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[ record.ref_no | uppercase ]]</span>
 	  					@else
 	  						[[ record.ref_no | uppercase ]]
 	  					@endif
@@ -83,9 +87,10 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','return_slip_num',record.return_header_id,record.return_slip_num,$index,'Return Slip Number','return_slip_num')" ng-if="record.closed_period == 0">
 	    						[[record.return_slip_num | uppercase]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[ record.return_slip_num | uppercase ]]</span>
 	  					@else
 	  						[[record.return_slip_num | uppercase]]
 	  					@endif
@@ -104,18 +109,20 @@
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')" ng-if="record.closed_period == 0">
 	    						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
+	  						<span ng-if="record.closed_period == 1" ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
 	  					@else
 	  						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
 	  					@endif
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_header','or_number',record.collection_header_id,record.or_number,$index,'OR Number','or_number')" ng-if="record.closed_period == 0">
 	    						[[record.or_number | uppercase]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[record.or_number | uppercase]]</span>
 	  					@else
 	  						[[record.or_number | uppercase]]
 	  					@endif
@@ -134,36 +141,40 @@
 					</td>				
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')" ng-if="record.closed_period == 0">
 	    						[[record.bank | uppercase]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[record.bank | uppercase]]</span>
 	  					@else
 	  						[[record.bank | uppercase]]
 	  					@endif
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','check_number',record.collection_detail_id,record.check_number,$index,'Check No','check_number')" ng-if="record.closed_period == 0">
 	    						[[record.check_number]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[record.check_number]]</span>
 	  					@else
 	  						[[record.check_number]]
 	  					@endif
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
+							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')" ng-if="record.closed_period == 0">
 	    						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
+	  						<span ng-if="record.closed_period == 1"  ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
 	  					@else
 	  						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
 	  					@endif	
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','cm_number',record.collection_detail_id,record.cm_number,$index,'CM No','cm_number')" ng-if="record.closed_period == 0">
 	    						[[record.cm_number | uppercase]]
 	  						</a>
+	  						<span ng-if="record.closed_period == 1">[[record.cm_number | uppercase]]</span>
 	  					@else
 	  						[[record.cm_number | uppercase]]
 	  					@endif

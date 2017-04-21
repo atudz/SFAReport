@@ -27,18 +27,20 @@
 						<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 							<td>
 								@if($isAdmin || $isAuditor)
-									<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',record.stock_transfer_in_header_id,record.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index)">
+									<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',record.stock_transfer_in_header_id,record.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index)" ng-if="record.closed_period == 0">
 	    								[[record.stock_transfer_number | uppercase]]
 	  								</a>
+	  								<span ng-if="record.closed_period == 1">[[record.stock_transfer_number | uppercase]]</span>
 	  							@else
 	  								[[record.stock_transfer_number | uppercase]]
 	  							@endif
 							</td>	
 							<td>
 								@if($isAdmin || $isAuditor)
-									<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',record.stock_transfer_in_header_id,record.transfer_date,$index,'Transaction Date','transfer_date',false,$parent.$index)">
+									<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',record.stock_transfer_in_header_id,record.transfer_date,$index,'Transaction Date','transfer_date',false,$parent.$index)" ng-if="record.closed_period == 0">
 	    								<span ng-bind="record.transaction_date_formatted = (formatDate(record.transfer_date) | date:'MM/dd/yyyy hh:mm a')"></span>
 	  								</a>
+	  								<span ng-if="record.closed_period == 1" ng-bind="record.transaction_date_formatted = (formatDate(record.transfer_date) | date:'MM/dd/yyyy hh:mm a')"></span>
 	  							@else
 	  								<span ng-bind="record.transaction_date_formatted = (formatDate(record.transfer_date) | date:'MM/dd/yyyy hh:mm a')"></span>
 	  							@endif	
@@ -51,9 +53,10 @@
 							<td>[[record.uom_code]]</td>
 							<td>
 								@if($isAdmin || $isAuditor)
-									<a href="" class="editable-click" ng-click="editColumn('number','txn_stock_transfer_in_detail','quantity',record.stock_transfer_in_detail_id,record.quantity,$index,'Qty','quantity',false,$parent.$index)">
+									<a href="" class="editable-click" ng-click="editColumn('number','txn_stock_transfer_in_detail','quantity',record.stock_transfer_in_detail_id,record.quantity,$index,'Qty','quantity',false,$parent.$index)" ng-if="record.closed_period == 0">
 	    								[[record.quantity]]
 	  								</a>
+	  								<span ng-if="record.closed_period == 1">[[record.quantity]]</span>
 	  							@else
 	  								[[record.quantity]]
 	  							@endif

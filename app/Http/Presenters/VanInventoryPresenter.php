@@ -356,6 +356,18 @@ class VanInventoryPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();   
     	$data['total'] = $result->total();
+
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $item_code_info = explode('_', $value->item_code);
+                $year = date('Y',strtotime($value->transfer_date));
+                $month = date('n',strtotime($value->transfer_date));
+                $period_status = !empty($open_close_period->periodClosed($item_code_info[0],25,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
+
     	return response()->json($data);
     }
     
@@ -370,6 +382,7 @@ class VanInventoryPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
+
     	return response()->json($data);
     }
     

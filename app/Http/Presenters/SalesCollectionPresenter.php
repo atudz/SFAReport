@@ -60,6 +60,16 @@ class SalesCollectionPresenter extends PresenterCore
     		$summary = $this->getCashPaymentTotal($result);
     	}    	
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
+
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $year = date('Y',strtotime($value->or_date));
+                $month = date('n',strtotime($value->or_date));
+                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),40,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
     	 
     	$data['summary'] = '';
     	if($summary)
@@ -91,6 +101,16 @@ class SalesCollectionPresenter extends PresenterCore
     		$summary = $this->getCashPaymentTotal($result);
     	}
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
+
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $year = date('Y',strtotime($value->or_date));
+                $month = date('n',strtotime($value->or_date));
+                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),41,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
     
     	$data['summary'] = '';
     	if($summary)
