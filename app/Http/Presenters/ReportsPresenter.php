@@ -7432,7 +7432,11 @@ class ReportsPresenter extends PresenterCore
     			'X'     => 'MM/DD/YYYY',
     			'AA:AB' => '0,0.00',
     			'V'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-    			'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+    			'S'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+    			'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+    			'W'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+    			'S'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+    			'Y'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
     
     			]);
     			$this->formatValueForExcel($report, $records);
