@@ -6008,6 +6008,7 @@ class ReportsPresenter extends PresenterCore
 					$summary = $salesCollectionPresenter->getCashPaymentTotal($result);
 				}
 				$records = $this->validateInvoiceNumber($result);				
+				$records = array_splice($records, $offset, $limit);
 				$vaninventory = true;
 				 
 				$rows = $salesCollectionPresenter->getCashPaymentSelectColumns();
