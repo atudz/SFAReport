@@ -6041,7 +6041,12 @@ class ReportsPresenter extends PresenterCore
 	    	$records = $prepare->get();
 	    	if($salesSummary)
 	    	{
-	    		$records = $this->populateScrInvoice($records);
+	    		$records = $this->populateScrInvoice($records);	    		
+	    	}
+	    	
+	    	if($report == 'reversalsummary')
+	    	{
+	    		$records = $reversalPresenter->addSalesmanDetails($records);
 	    	}
     	}
     	//dd($rows);
