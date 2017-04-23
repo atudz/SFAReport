@@ -225,6 +225,7 @@ class ReversalPresenter extends PresenterCore
 			    	->where('app_salesman_customer.status','=','A')
 			    	->where('app_customer.status','=','A')
 			    	->where('app_area.status','=','A')
+			    	->where('app_salesman.salesman_code','=',$salesmanCode)
 			    	->groupBy('app_salesman.salesman_code')
 			    	->groupBy('app_salesman.salesman_name')
 			    	->groupBy('app_area.area_code')			    	
