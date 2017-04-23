@@ -45,8 +45,6 @@
 									@else
 										{{ $record->$row }}
 									@endif
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}		
 								@elseif(ctype_alnum($record->$row))
 									{!!strtoupper($record->$row)!!}
 								@else
@@ -61,8 +59,6 @@
 									@else	
 										{{ $record[$row] }}
 									@endif
-								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
-									{!!number_format($record[$row],2,'.',',')!!}		
 								@elseif(ctype_alnum($record[$row]))
 									{!!strtoupper($record[$row])!!}
 								@else
@@ -81,33 +77,9 @@
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
 								@if(is_object($summary) && isset($summary->$row))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$summary->$row!!}
-										@else
-											({!!number_format($summary->$row,2,'.',',')!!})
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$summary->$row!!}
-										@else
-											{!!number_format($summary->$row,2,'.',',')!!}
-										@endif
-									@endif									
+									{!!$summary->$row!!}																	
 								@elseif(is_array($summary) && isset($summary[$row]))
-									@if(in_array($row,['discount_amount','collective_discount_amount']))
-										@if($row == 'quantity')
-											{!!$summary->$row!!}
-										@else
-											{!!number_format($summary->$row,2,'.',',')!!}
-										@endif
-									@else
-										@if($row == 'quantity')
-											{!!$summary[$row]!!}
-										@else
-											{!!number_format($summary[$row],2,'.',',')!!}
-										@endif
-									@endif
+									$summary[$row]
 								@endif													
 							</th>
 						@endif						
