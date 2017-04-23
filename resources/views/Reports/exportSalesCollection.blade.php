@@ -133,22 +133,10 @@
 				<tr>
 					@foreach($rows as $row)
 						<td align="left" style="wrap-text:true">
-							@if(is_object($record) && isset($record->$row))
-								@if(false !== strpos($row,'date') && $record->$row)
-									{{ date('m/d/Y', strtotime($record->$row)) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record->$row!!}
-								@endif
+							@if(is_object($record) && isset($record->$row))								
+								{!!$record->$row!!}								
 							@elseif(is_array($record) && isset($record[$row]))
-								@if(false !== strpos($row,'date') && $record[$row])
-									{{ date('m/d/Y', strtotime($record[$row])) }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
-									{!!number_format($record->$row,2,'.',',')!!}	
-								@else
-									{!!$record[$row]!!}
-								@endif									
+								{!!$record[$row]!!}																	
 							@endif
 						</td>
 					@endforeach

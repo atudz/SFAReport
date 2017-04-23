@@ -7530,10 +7530,10 @@ class ReportsPresenter extends PresenterCore
     	foreach ($records as &$record) {
     		switch ($report) {    			
     			case 'salescollectionreport':
-    				//$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));     				
-    				//$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
-    				//$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
-    				//$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cm_date));    				
+    				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));     				
+    				$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+    				$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
+    				$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cm_date));    				
     				break;
     			case 'salescollectionposting':
     				$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
