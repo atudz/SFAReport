@@ -7351,6 +7351,7 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'materialpricelist':
     			$sheet->setColumnFormat([
+    			'E' => '0,0.00',
     			'G:H' => 'MM/DD/YYYY',
     			'J'   => 'MM/DD/YYYY'
     					]);
