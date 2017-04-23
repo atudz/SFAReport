@@ -63,7 +63,7 @@
 					<td></td>
 					<td></td>					
 					<td class="bold">
-						<span ng-bind="summary.payment_amount = negate(summary.payment_amount)"></span>						
+						<span ng-bind="summary.payment_amount = formatNumber(summary.payment_amount)"></span>						
 					</td>									
 				</tr>
 				</tbody>

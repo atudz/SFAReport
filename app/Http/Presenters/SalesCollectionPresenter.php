@@ -41,7 +41,7 @@ class SalesCollectionPresenter extends PresenterCore
     	if($result)
     	{
     		$summary = $this->getCashPaymentTotal($result);
-    	}    	
+    	}  
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
     	 
     	$data['summary'] = '';
@@ -72,13 +72,7 @@ class SalesCollectionPresenter extends PresenterCore
     		foreach($cols as $key)
     			$summary[$key] += $val->$key;
     	}
-    	 
-    	//format
-    	foreach($cols as $key)
-    	{
-    		$summary[$key] = number_format($summary[$key],2);
-    	}
-    
+    	
     	return $summary;
     }
     /**
