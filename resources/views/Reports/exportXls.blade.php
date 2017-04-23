@@ -79,7 +79,7 @@
 								@if(is_object($summary) && isset($summary->$row))
 									{!!$summary->$row!!}																	
 								@elseif(is_array($summary) && isset($summary[$row]))
-									$summary[$row]
+									{!!$summary[$row]!!}
 								@endif													
 							</th>
 						@endif						
