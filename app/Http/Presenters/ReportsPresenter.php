@@ -6157,9 +6157,9 @@ class ReportsPresenter extends PresenterCore
     		'invoice_posting_date',
     		'segment_code',
     		'item_code',
-    		'description',    		
-    		'condition_code',
+    		'description',
     		'quantity',
+    		'condition_code',
     		'uom_code',
     		'gross_served_amount',
     		'vat_amount',    					
@@ -6224,9 +6224,9 @@ class ReportsPresenter extends PresenterCore
     			'return_posting_date',
     			'segment_code',
     			'item_code',
-    			'description',
+    			'description',    			
+    			'condition_code',
     			'quantity',
-    			'condition_code',    			 
     			'uom_code',    			
     			'gross_amount',
     			'vat_amount',
@@ -7436,7 +7436,7 @@ class ReportsPresenter extends PresenterCore
     			'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
     			'W'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
     			'S'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
-    			'Y'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
+    			'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
     
     			]);
     			$this->formatValueForExcel($report, $records);
