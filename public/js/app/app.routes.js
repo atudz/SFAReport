@@ -32,10 +32,16 @@
 					controller: 'SalesCollectionSummary',
 					//controllerAs: 'scp'*/
 				})
-				// Sales & Collection
+				// Cash Payments
 				.when('/cashpayments',{
 					templateUrl: '/reports/cashpayments',
 					controller: 'CashPaymentsReport'
+					//controllerAs: 'scr'*/
+				})
+				// Check payments
+				.when('/checkpayments',{
+					templateUrl: '/reports/checkpayments',
+					controller: 'CheckPaymentsReport'
 					//controllerAs: 'scr'*/
 				})
 				// Van Inventory

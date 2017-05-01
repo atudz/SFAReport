@@ -111,6 +111,33 @@
 	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
+	
+	/**
+	 * Check payments controller
+	 */
+	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix',CheckPaymentsReport]);
+	
+	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
+	{	    	
+	    var params = [
+		          'company_code',
+		          'customer_code',
+		          'area_code',
+		          'invoice_date_from',
+		          'invoice_date_to',		          
+		          'or_date_from',
+		          'or_date_to',
+		          'salesman',
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log, TableFix);
+
+	    //editable rows
+	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+
+	}
 
 	
 	/**
@@ -1262,6 +1289,10 @@
 						reportType = "Cash Payments";
 						report = 'cashpayments';
 						break;
+					case 'checkpayments':
+						reportType = "Check Payments";
+						report = 'checkpayments';
+						break;
 				}
 				
 				var stepInterval = 1;
@@ -1471,23 +1502,12 @@
 	    
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
+	    var reports = ['salescollectionreport','salescollectionposting','salescollectionsummary','cashpayment','checkpayment'];
 	    
-	    if(report == 'salescollectionreport')
+	    if($.inArray(report,reports))
 	    {
 	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
-	    else if(report == 'salescollectionposting')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
-	    else if(report == 'salescollectionsummary')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
-	    else if(report == 'cashpayment')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
+	    }	    
 
 
 	    toggleLoading(true);

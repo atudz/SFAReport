@@ -275,6 +275,8 @@ class ReportsPresenter extends PresenterCore
                 return PresenterFactory::getInstance('User')->getUserGroup();
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
+			case 'checkpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentReport();
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
 			case 'stocktransfer':
@@ -407,7 +409,8 @@ class ReportsPresenter extends PresenterCore
     			$rec->show = true;
     			$formatted[] = $rec;    			    			    			
     			$index = $k;  
-    			$total = $rec->total_collected_amount;
+    			if(isset($rec->total_collected_amount))
+    				$total = $rec->total_collected_amount;
     		}
     		else
     		{
@@ -428,8 +431,13 @@ class ReportsPresenter extends PresenterCore
     			$rec->RTN_total_collective_discount = null;
     			$rec->RTN_net_amount = null;
     			$rec->total_invoice_net_amount = null;
-    			$total += $rec->total_collected_amount;
-    			$rec->total_collected_amount = null;
+    			
+    			if(isset($rec->total_collected_amount))
+    			{
+	    			$total += $rec->total_collected_amount;
+	    			$rec->total_collected_amount = null;
+    			}
+    			
     			$rec->rowspan = 1;
     			$rec->show = false;
     			$row++;
@@ -437,7 +445,8 @@ class ReportsPresenter extends PresenterCore
     			
     			if($k == $max)
     			{
-    				$formatted[$index]->total_collected_amount = $total;
+    				if(isset($rec->total_collected_amount))
+    					$formatted[$index]->total_collected_amount = $total;
     				$formatted[$index]->rowspan = $row;
     				$formatted[$index]->show = true;
     			}
@@ -5069,6 +5078,8 @@ class ReportsPresenter extends PresenterCore
     			return $this->getMaterialPriceListColumns();
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
+			case 'checkpayment':
+				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns();
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
 			case 'stocktransfer':
@@ -6016,6 +6027,30 @@ class ReportsPresenter extends PresenterCore
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
 				break;
+				
+			case 'checkpayment':
+				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
+				$columns = $this->getTableColumns($report);
+				
+				$prepare = $salesCollectionPresenter->getPreparedCheckPayment();
+				$collection = $prepare->get();
+				
+				$result = $this->formatSalesCollection($collection);
+				
+				$summary = '';
+				if($result)
+				{
+					$summary = $salesCollectionPresenter->getCashPaymentTotal($result,false);
+				}
+				$records = $this->validateInvoiceNumber($result);
+				$vaninventory = true;
+				
+				$rows = $salesCollectionPresenter->getCheckPaymentSelectColumns();
+				$header = 'List of Check Payment';
+				$filters = $salesCollectionPresenter->getCheckPaymentFilterData();
+				$filename = 'List of Check Payment';
+				
+				break;
 			case 'stocktransfer':
 				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
 				$columns = $this->getTableColumns($report);
@@ -6619,6 +6654,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'cashpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
+				$total = count($prepare->get());
+				break;
+			case 'checkpayment':
+				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCheckPayment();
 				$total = count($prepare->get());
 				break;
 			case 'stocktransfer':
@@ -7512,10 +7551,9 @@ class ReportsPresenter extends PresenterCore
     			$sheet->setColumnFormat([
     			'G' => '0,0.00',
     			'F' => 'MM/DD/YYYY',
-    			'H' => 'MM/DD/YYYY',
-    			'J' => 'MM/DD/YYYY',
-    			'M' => 'MM/DD/YYYY',
-    			'N' => '0,0.00'
+    			'H' => 'MM/DD/YYYY',    			
+    			'L' => 'MM/DD/YYYY',
+    			'M' => '0,0.00'
     					]);
     			$this->formatValueForExcel($report, $records);
     			break;

@@ -36,6 +36,7 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/stocktransfer/add', ['as'=>'stock-transfer-add', 'uses'=>'VanInventoryPresenter@createStockTransfer']);
 	Route::get('/reversal/summary', ['as'=>'reversal-summary', 'uses'=>'ReversalPresenter@index']);
 	Route::get('/cashpayments', ['as'=>'sales-collection', 'uses'=>'SalesCollectionPresenter@cashpayments']);
+	Route::get('/checkpayments', ['as'=>'check-payments', 'uses'=>'SalesCollectionPresenter@checkpayments']);
 	
 	Route::get('/salesreport/{type?}', ['as'=>'sales-report', 'uses'=>'ReportsPresenter@salesReport']);
 	Route::get('/unpaidinvoice', ['as'=>'unpaid', 'uses'=>'ReportsPresenter@unpaidInvoice']);
