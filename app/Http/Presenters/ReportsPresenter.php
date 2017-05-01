@@ -314,12 +314,6 @@ class ReportsPresenter extends PresenterCore
     		foreach($cols as $key)    		
     			$summary[$key] += $val->$key;
     	}
-    	
-    	//format
-    	foreach($cols as $key)
-    	{    			    			
-    		$summary[$key] = number_format($summary[$key],2);
-    	}
     	    	
     	return $summary;	
     }

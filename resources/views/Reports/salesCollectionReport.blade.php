@@ -188,52 +188,52 @@
 					<td></td>
 					<td></td>
 					<td class="bold">
-						<span ng-bind="summary.so_total_served = negate(summary.so_total_served)"></span>					
+						<span>[[formatNumber(summary.so_total_served)]]</span>					
 					</td>
 					<td class="bold">
-						<span ng-bind="summary.so_total_item_discount = negate(summary.so_total_item_discount)"></span>					
+						<span>[[formatNumber(summary.so_total_item_discount)]]</span>					
 					</td>
 					<td class="bold">
-						<span ng-bind="summary.so_total_collective_discount = negate(summary.so_total_collective_discount)"></span>				
+						<span>[[formatNumber(summary.so_total_collective_discount)]]</span>				
 					</td>
 					<td class="bold">
-						<span ng-bind="summary.total_invoice_amount = negate(summary.total_invoice_amount)"></span>						
-					</td>
-					<td></td>
-					<td class="bold">
-						<span ng-bind="summary.other_deduction_amount = negate(summary.other_deduction_amount)"></span>
+						<span>[[formatNumber(summary.total_invoice_amount)]]</span>						
 					</td>
 					<td></td>
 					<td class="bold">
-						<span ng-bind="summary.RTN_total_gross = negate(summary.RTN_total_gross)"></span>				
-					</td>
-					<td class="bold">
-						<span ng-bind="summary.RTN_total_collective_discount = negate(summary.RTN_total_collective_discount)"></span>						
-					</td>
-					<td class="bold">
-						<span ng-bind="summary.RTN_net_amount = negate(summary.RTN_net_amount)"></span>				
-					</td>
-					<td class="bold">
-						<span ng-bind="summary.total_invoice_net_amount = negate(summary.total_invoice_net_amount)"></span>					
+						<span>[[formatNumber(summary.other_deduction_amount)]]</span>
 					</td>
 					<td></td>
-					<td></td>
 					<td class="bold">
-						<span ng-bind="summary.cash_amount = negate(summary.cash_amount)"></span>					
+						<span>[[formatNumber(summary.RTN_total_gross)]]</span>				
 					</td>
 					<td class="bold">
-						<span ng-bind="summary.check_amount = negate(summary.check_amount)"></span>					
+						<span>[[formatNumber(summary.RTN_total_collective_discount)]]</span>						
+					</td>
+					<td class="bold">
+						<span>[[formatNumber(summary.RTN_net_amount)]]</span>				
+					</td>
+					<td class="bold">
+						<span>[[formatNumber(summary.total_invoice_net_amount)]]</span>					
 					</td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
 					<td class="bold">
-						<span ng-bind="summary.credit_amount = negate(summary.credit_amount)"></span>
+						<span>[[formatNumber(summary.cash_amount)]]</span>					
 					</td>
 					<td class="bold">
-						<span ng-bind="summary.total_collected_amount = negate(summary.total_collected_amount)"></span>						
+						<span>[[formatNumber(summary.check_amount)]]</span>					
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="bold">
+						<span>[[formatNumber(summary.credit_amount)]]</span>
+					</td>
+					<td class="bold">
+						<span">[[formatNumber(summary.total_collected_amount)]]</span>						
 					</td>									
 				</tr>
 				</tbody>

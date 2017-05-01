@@ -226,7 +226,7 @@
 						@if($key > 0)
 							<th align="left" style="wrap-text:true">
 								@if(isset($currentSummary[$row]))
-									{!!$currentSummary[$row]!!}
+									{!!number_format($currentSummary[$row],2)!!}
 								@endif
 							</th>
 						@endif
