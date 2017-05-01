@@ -7659,7 +7659,8 @@ class ReportsPresenter extends PresenterCore
 					'I'   => 'MM/DD/YYYY',
 					'L'   => 'MM/DD/YYYY',
 					'N'   => 'MM/DD/YYYY',
-					'Q'   => 'MM/DD/YYYY'
+					'Q'   => 'MM/DD/YYYY',
+					'R'   => \PHPExcel_Style_NumberFormat::FORMAT_NUMBER
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
