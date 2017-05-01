@@ -5070,7 +5070,7 @@ class ReportsPresenter extends PresenterCore
 			case 'invoiceseries':
 				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns();
 			case 'bouncecheck':
-				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns();
+				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns(true);
 			case 'cashpayment':
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns();
 			case 'checkpayment':
@@ -6071,6 +6071,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Bounce Check Report';
 				$filters = $bounceCheckPresenter->getBounceCheckFilterData();
 				$filename = 'Bounce Check Report';
+				$fontSize = '10px';
 				break;
 				
 			case 'cashpayment':

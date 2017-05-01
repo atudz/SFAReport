@@ -116,8 +116,8 @@
 							@elseif(false !== strpos($row,'date') && $record->$row)
 								@if($report == 'bir')
 									{{ $record->$row }}
-								@elseif($report == 'stocktransfer')
-									{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
+								@elseif($report == 'stocktransfer' || ($report == 'bouncecheck' && $row == 'invoice_date'))
+									{{ date('m/d/Y g:i A', strtotime($record->$row)) }}									
 								@else
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@endif								
@@ -132,8 +132,8 @@
 							@elseif(false !== strpos($row,'date') && $record[$row])
 								@if($report == 'bir')
 									{{ $record[$row] }}
-								@elseif($report == 'stocktransfer')
-									{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+								@elseif($report == 'stocktransfer' || ($report == 'bouncecheck' && $row == 'invoice_date'))
+									{{ date('m/d/Y g:i A', strtotime($record[$row])) }}
 								@else	
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@endif

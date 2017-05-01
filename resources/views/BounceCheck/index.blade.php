@@ -60,7 +60,7 @@
 						</tr>									
 					</tbody>				
 					{!!Html::tfooter(true,20)!!}
-				{!!Html::tclose()!!}			
+				{!!Html::tclose(false)!!}			
 			</div>			
 		</div>
 	</div>

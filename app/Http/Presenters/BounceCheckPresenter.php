@@ -76,9 +76,8 @@ class BounceCheckPresenter extends PresenterCore
     public function getBounceCheckReport()
     {
     	$prepare = $this->getPreparedBounceCheck();
-    	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();
-    	$data['total'] = $result->total();
+    	$data['records'] = $prepare->get();
+    	$data['total'] = count($data['records']);
     	
     	return response()->json($data);
     }
