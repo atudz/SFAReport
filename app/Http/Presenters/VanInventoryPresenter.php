@@ -224,14 +224,14 @@ class VanInventoryPresenter extends PresenterCore
     			['name'=>'Customer','sort'=>'customer_name'],
     			['name'=>'Invoice No.','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Customer Address'],
+    			['name'=>'Customer Address' ,'sort'=>'customer_address'],
     			['name'=>'Regular Item Code','sort'=>'item_code'],
-    			['name'=>'Regular Item Description'],
-    			['name'=>'Quantity','sort'=>'regular_order_qty'],
+    			['name'=>'Regular Item Description' ,'sort'=>'item_desc'],
+    			['name'=>'Quantity'],
     			['name'=>'Deal Item Code','sort'=>'trade_item_code'],
-    			['name'=>'Deal Item Description'],
-    			['name'=>'Quantity','sort'=>'trade_order_qty'],
-    			['name'=>'Amount','sort'=>'gross_served_amount'],
+    			['name'=>'Deal Item Description','sort'=>'deal_item_desc'],
+    			['name'=>'Quantity'],
+    			['name'=>'Amount'],
     	];
     
     	return $headers;
