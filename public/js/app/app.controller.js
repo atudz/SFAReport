@@ -1502,13 +1502,12 @@
 	    
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
-	    var reports = ['salescollectionreport','salescollectionposting','salescollectionsummary','cashpayment','checkpayment'];
-	    
-	    if($.inArray(report,reports))
+	    var reports = ["salescollectionreport","salescollectionposting","salescollectionsummary","cashpayment","checkpayment"];
+	    	    
+	    if($.inArray(report,reports) || report == 'salescollectionreport')
 	    {
 	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 	    }	    
-
 
 	    toggleLoading(true);
 	    API.get(params,function(data){
