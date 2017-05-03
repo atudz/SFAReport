@@ -49,7 +49,7 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						@if($isAdmin || $isAuditor)
+						@if($isAdmin || $isAuditor || $isAccounting)
 							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_date_table,record.invoice_date_col,record.invoice_date_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
 	    						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
@@ -103,7 +103,7 @@
 						<span ng-bind="record.total_invoice_net_amount_formatted = negate(record.total_invoice_net_amount)"></span>
 					</td>
 					<td>
-						@if($isAdmin || $isAuditor)
+						@if($isAdmin || $isAuditor || $isAccounting)
 							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
 	    						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
 	  						</a>						
