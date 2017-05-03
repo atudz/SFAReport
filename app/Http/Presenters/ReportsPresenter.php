@@ -7566,66 +7566,66 @@ class ReportsPresenter extends PresenterCore
     	foreach ($records as &$record) {
     		switch ($report) {    			
     			case 'salescollectionreport':
-    				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));     				
-    				$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
-    				$record->check_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->check_date));
-    				$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cm_date));    				
+    				$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date)) ;     				
+    				$record->or_date = !$record->or_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
+    				$record->check_date = !$record->check_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->check_date));
+    				$record->cm_date = !$record->cm_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cm_date));    				
     				break;
     			case 'salescollectionposting':
-    				$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->collection_posting_date));
-    				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
-    				$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_posting_date));
-    				$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
+    				$record->collection_posting_date = !$record->collection_posting_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->collection_posting_date));
+    				$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
+    				$record->invoice_posting_date = !$record->invoice_posting_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_posting_date));
+    				$record->or_date = !$record->or_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
     				break;
     			case 'salescollectionsummary':
     			case 'unpaidinvoice':
     			case 'flexideal':
     			case 'bouncecheck':
-    				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
+    				$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
     				break;
     			case 'salesreportpermaterial':
     			case 'salesreportperpeso':
-    				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
-    				$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_posting_date));
+    				$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
+    				$record->invoice_posting_date = !$record->invoice_posting_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_posting_date));
     				$record->discount_rate = ($record->discount_rate) ? $record->discount_rate / 100 : 0;
     				$record->collective_discount_rate = ($record->collective_discount_rate) ? $record->collective_discount_rate / 100 : 0;
     				break;
     			case 'returnpermaterial':
     			case 'returnperpeso':
-    				$record->return_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->return_date));
-    				$record->return_posting_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->return_posting_date));
+    				$record->return_date = !$record->return_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->return_date));
+    				$record->return_posting_date = !$record->return_posting_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->return_posting_date));
     				$record->discount_rate = ($record->discount_rate) ? $record->discount_rate / 100 : 0;
     				$record->collective_discount_rate = ($record->collective_discount_rate) ? $record->collective_discount_rate / 100 : 0;
     				break;
     			case 'materialpricelist':
-    				$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->effective_date_to));
-    				$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->effective_date_from));
-    				$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->sfa_modified_date));
+    				$record->effective_date_to = !$record->effective_date_to ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->effective_date_to));
+    				$record->effective_date_from = !$record->effective_date_from ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->effective_date_from));
+    				$record->sfa_modified_date = !$record->sfa_modified_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->sfa_modified_date));
     				break;    			
     			case 'customerlist':
     			case 'salesmanlist':
-    				$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->sfa_modified_date));
+    				$record->sfa_modified_date = !$record->sfa_modified_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->sfa_modified_date));
     				break;   
     			case 'bir':
-    				$record->document_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->document_date));
+    				$record->document_date = !$record->document_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->document_date));
     				break;
     			case 'bouncecheck':
-    				$record->cheque_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cheque_date));
-    				$record->dm_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->dm_date));
-    				$record->payment_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->payment_date));
+    				$record->cheque_date = !$record->cheque_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cheque_date));
+    				$record->dm_date = !$record->dm_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->dm_date));
+    				$record->payment_date = !$record->payment_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->payment_date));
     				break;
     			case 'invoiceseries';
-    				$record->created_at = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->created_at));
+    				$record->created_at = !$record->created_at ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->created_at));
     				break;    				    			  					
     			case 'cashpayment';
-	    			$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
-	    			$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
+	    			$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
+	    			$record->or_date = !$record->or_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
     				break;
     			case 'checkpayment';
-	    			$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
-	    			$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
-	    			$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cm_date));
-	    			$record->check_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->check_date));
+	    			$record->invoice_date = !$record->invoice_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
+	    			$record->or_date = !$record->or_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->or_date));
+	    			$record->cm_date = !$record->cm_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->cm_date));
+	    			$record->check_date = !$record->check_date ? : PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->check_date));
     				break;
     				
     		}
