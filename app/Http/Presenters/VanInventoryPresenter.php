@@ -287,8 +287,8 @@ class VanInventoryPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Segment Code','sort'=>'segment_code'],
     			['name'=>'Brand Name','sort'=>'brand_name'],
-    			['name'=>'Material Code','sort'=>'item_code'],
     			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Material Code','sort'=>'item_code'],    			 
     			['name'=>'Total Quantity','sort'=>'quantity'],
     	];
     	 
