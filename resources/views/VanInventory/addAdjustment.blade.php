@@ -52,8 +52,8 @@
 									<tr>
 										<th>Segment Code</th>
 										<th width="25%">Brand Name</th>
-										<th width="12%">Material Code</th>
-										<th>Material Description</th>																														
+										<th>Material Description</th>
+										<th width="12%">Material Code</th>																																							
 										<th width="10%">Total Quantity</th>
 										<th>&nbsp;</th>
 									</tr>
