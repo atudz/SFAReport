@@ -76,6 +76,13 @@
 						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
 						 								</div>
 						 							</div>		
+												</td>												
+												<td>
+													<div class="form-group">			 								
+						 								<div class="col-xs-12 col-sm-12">
+						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','disabled'=>true],$item->item_code)!!}
+						 								</div>
+						 							</div>		
 												</td>
 												<td width="12%">
 													<div class="form-group">			 								
@@ -83,13 +90,6 @@
 						 									{!!Form::select('item_code[]',$itemCodes,$item->item_code,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 						 								</div>
 						 							</div>										
-												</td>
-												<td>
-													<div class="form-group">			 								
-						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','disabled'=>true],$item->item_code)!!}
-						 								</div>
-						 							</div>		
 												</td>																						
 												<td width="10%">
 													<div class="form-group">			 								
@@ -119,21 +119,21 @@
 					 									{!!Form::select('brands[]',$brandCodes,null,['class'=>'form-control'])!!}
 					 								</div>
 					 							</div>		
-											</td>
-											<td width="12%">
-												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
-					 								</div>
-					 							</div>										
-											</td>
+											</td>											
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
 					 								</div>
 					 							</div>		
-											</td>											
+											</td>	
+											<td width="12%">
+												<div class="form-group">			 								
+					 								<div class="col-xs-12 col-sm-12 no-side-padding">
+					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
+					 								</div>
+					 							</div>										
+											</td>										
 											<td width="10%">
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
