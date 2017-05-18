@@ -220,8 +220,8 @@
 	function setItem(el)
 	{
 		var sel = $(el).val();
-		$(el).parent().parent().parent().next().find('select').val($(el).val())
-		$('select[name^=segment_code').val(sel);
+		$(el).parent().parent().parent().prev().find('select').val($(el).val())
+		$('select[name^=segment_code]').val(sel);
 	}
 
 	function setSalesmanDetails(el)
