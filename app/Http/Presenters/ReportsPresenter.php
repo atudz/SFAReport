@@ -384,7 +384,16 @@ class ReportsPresenter extends PresenterCore
     	{    		    	
     		$data['summary'] = $summary1;
     	}
-    	 
+    	
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $year = date('Y',strtotime($value->or_date));
+                $month = date('n',strtotime($value->or_date));
+                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),9,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
     	
     	$data['total'] = count($result);
     	 
@@ -2483,6 +2492,20 @@ class ReportsPresenter extends PresenterCore
 			$this->validateInvoiceNumber($data['records']);
 		}
 
+
+
+        if(!empty($data['stocks'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['stocks'] as $key => $value) {
+                $company_code = $this->request->get('inventory_type') == 'canned' ? 1000 : 2000;
+                $navigation_id = $this->request->get('inventory_type') == 'canned' ? 12 : 13;
+                $year = date('Y',strtotime($value->transaction_date));
+                $month = date('n',strtotime($value->transaction_date));
+                $period_status = !empty($open_close_period->periodClosed($company_code,$navigation_id,$month,$year)) ? 1 : 0;
+                $data['stocks'][$key]->closed_period = $period_status;
+            }
+        }
+
     	return ($reports) ? $reportRecords : response()->json($data);
     }
     
@@ -3463,6 +3486,17 @@ class ReportsPresenter extends PresenterCore
     	}
     	    	
     	$data['total'] = $result->total();
+
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $customer_code_info = explode('_', $value->customer_code);
+                $year = date('Y',strtotime($value->invoice_posting_date));
+                $month = date('n',strtotime($value->invoice_posting_date));
+                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],14,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
     
     	return response()->json($data);
     }
@@ -3882,6 +3916,17 @@ class ReportsPresenter extends PresenterCore
     	}
     	
     	$data['total'] = $result->total();
+
+        if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
+            foreach ($data['records'] as $key => $value) {
+                $customer_code_info = explode('_', $value->customer_code);
+                $year = date('Y',strtotime($value->invoice_posting_date));
+                $month = date('n',strtotime($value->invoice_posting_date));
+                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],15,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
+            }
+        }
     	
     	return response()->json($data);
     }

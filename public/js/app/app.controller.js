@@ -16,26 +16,26 @@
 	
 	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-		          'company_code',
-		          'customer_name',
-		          'invoice_date_from',
-		          'invoice_date_to',
-		          'collection_date_from',
-		          'collection_date_to',
-		          'posting_date_from',
-		          'posting_date_to',
-		          'salesman',
-		          'invoice_number',
-		          'or_number'
+		var params = [
+				  'company_code',
+				  'customer_name',
+				  'invoice_date_from',
+				  'invoice_date_to',
+				  'collection_date_from',
+				  'collection_date_to',
+				  'posting_date_from',
+				  'posting_date_to',
+				  'salesman',
+				  'invoice_number',
+				  'or_number'
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log, TableFix);
 
-	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
 	
@@ -48,22 +48,22 @@
 	
 	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix)
 	{		
-	    var params = [
-		          'company_code',
-		          'customer_name',
-		          'invoice_date_from',
-		          'invoice_date_to',
-		          'collection_date_from',
-		          'collection_date_to',
-		          'posting_date_from',
-		          'posting_date_to',
-		          'salesman',
-		          'invoice_number',
-		          'or_number'
+		var params = [
+				  'company_code',
+				  'customer_name',
+				  'invoice_date_from',
+				  'invoice_date_to',
+				  'collection_date_from',
+				  'collection_date_to',
+				  'posting_date_from',
+				  'posting_date_to',
+				  'salesman',
+				  'invoice_number',
+				  'or_number'
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log, TableFix);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log, TableFix);
 
 	}
 
@@ -76,16 +76,16 @@
 
 	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{
-	    var params = [
-		          'company_code',
-		          'invoice_date_from',
-		          'salesman',
-		          'area'
+		var params = [
+				  'company_code',
+				  'invoice_date_from',
+				  'salesman',
+				  'area'
 
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
 	}
 	
 	/**
@@ -95,23 +95,23 @@
 	
 	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-		          'company_code',
-		          'customer_code',
-		          'area_code',
-		          'invoice_date_from',
-		          'invoice_date_to',		          
-		          'or_date_from',
-		          'or_date_to',
-		          'salesman',
+		var params = [
+				  'company_code',
+				  'customer_code',
+				  'area_code',
+				  'invoice_date_from',
+				  'invoice_date_to',		          
+				  'or_date_from',
+				  'or_date_to',
+				  'salesman',
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log, TableFix);
 
-	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
 	
@@ -122,23 +122,23 @@
 	
 	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-		          'company_code',
-		          'customer_code',
-		          'area_code',
-		          'invoice_date_from',
-		          'invoice_date_to',		          
-		          'or_date_from',
-		          'or_date_to',
-		          'salesman',
+		var params = [
+				  'company_code',
+				  'customer_code',
+				  'area_code',
+				  'invoice_date_from',
+				  'invoice_date_to',		          
+				  'or_date_from',
+				  'or_date_to',
+				  'salesman',
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log, TableFix);
 
-	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
 
@@ -153,7 +153,7 @@
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable);
 
 		//editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log);
+		editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 
 	/**
@@ -167,7 +167,7 @@
 		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable);
 
 		//editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log);
+		editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 
 	/**
@@ -177,23 +177,23 @@
 	
 	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-	    		  'salesman_code',
-		          'company_code',
-		          'area',
-		          'segment',
-		          'item_code',
-		          'transfer_date_from',
-		          'transfer_date_to',		          		          
-		          'stock_transfer_number'		          
+		var params = [
+				  'salesman_code',
+				  'company_code',
+				  'area',
+				  'segment',
+				  'item_code',
+				  'transfer_date_from',
+				  'transfer_date_to',		          		          
+				  'stock_transfer_number'		          
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
 
-	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
 	
@@ -205,19 +205,19 @@
 	
 	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-	    		  'salesman_code',		          
-		          'area',
-		          'month_from',
-		          'year_from',
-		          'period_from',
-		          'period_to',		          		          
-		          'reference_number'		          
+		var params = [
+				  'salesman_code',		          
+				  'area',
+				  'month_from',
+				  'year_from',
+				  'period_from',
+				  'period_to',		          		          
+				  'reference_number'		          
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log, TableFix);
 
 	}
 	
@@ -229,19 +229,19 @@
 	
 	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-	    		  'salesman_code',		          
-		          'area_code',
-		          'customer_code',
-		          'company_code',
-		          'invoice_date_from',
-		          'invoice_date_to',		          		          
-		          'item_code'		          
+		var params = [
+				  'salesman_code',		          
+				  'area_code',
+				  'customer_code',
+				  'company_code',
+				  'invoice_date_from',
+				  'invoice_date_to',		          		          
+				  'item_code'		          
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log, TableFix);
 
 	}
 	
@@ -258,15 +258,15 @@
 		$scope.url = '#replenishment.edit/';
 		$scope.editUrl = '';
 		
-	    var params = [
-	    		  'salesman_code',		          
-		          'replenishment_date_from',
-		          'reference_number'		          		          
+		var params = [
+				  'salesman_code',		          
+				  'replenishment_date_from',
+				  'reference_number'		          		          
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
 
 	}
 	
@@ -295,14 +295,14 @@
 				var API = $resource('controller/vaninventory/replenishment');
 				
 				var items = $("select[name^='item_code']").map(function (idx, el) {
-					   			return $(el).val();
+								return $(el).val();
 							}).get();
 				var quantities = $("input[name^='quantity']").map(function (idx, el) {
-		   						return $(el).val();
+								return $(el).val();
 							}).get();
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
-				    'replenishment_date_from': $('#replenishment_date_from').val(),
+					'replenishment_date_from': $('#replenishment_date_from').val(),
 					'reference_number': $('#reference_number').val(),
 					'counted': $('#counted').val(),
 					'confirmed': $('#confirmed').val(),
@@ -339,8 +339,8 @@
 		$scope.remove = function () {			
 			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
-			 	animation: true,
-			 	scope: $scope,
+				animation: true,
+				scope: $scope,
 				templateUrl: 'DeleteActualcount',
 				controller: 'ReplenishmentDelete',
 				windowClass: 'center-modal',
@@ -348,7 +348,7 @@
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
 		}
@@ -366,7 +366,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/vaninventory/replenishment/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -402,16 +402,16 @@
 		$scope.url = '#adjustment.edit/';
 		$scope.editUrl = '';
 		
-	    var params = [
-	    		  'salesman_code',		          
-		          'replenishment_date_from',
-		          'reference_number',
-		          'adjustment_reason'
+		var params = [
+				  'salesman_code',		          
+				  'replenishment_date_from',
+				  'reference_number',
+				  'adjustment_reason'
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log, TableFix);
 
 	}
 	
@@ -433,10 +433,10 @@
 				var API = $resource('controller/vaninventory/adjustment');
 				
 				var items = $("select[name^='item_code']").map(function (idx, el) {
-					   			return $(el).val();
+								return $(el).val();
 							}).get();
 				var quantities = $("input[name^='quantity']").map(function (idx, el) {
-		   						return $(el).val();
+								return $(el).val();
 							}).get();
 				var brands = $("select[name^='brands']").map(function (idx, el) {
 									return $(el).val();
@@ -444,7 +444,7 @@
 				
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
-				    'replenishment_date_from': $('#replenishment_date_from').val(),
+					'replenishment_date_from': $('#replenishment_date_from').val(),
 					'reference_number': $('#reference_number').val(),
 					'adjustment_reason': $('#adjustment_reason').val(),					
 					'item_code': items,
@@ -476,8 +476,8 @@
 		$scope.remove = function () {			
 			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
-			 	animation: true,
-			 	scope: $scope,
+				animation: true,
+				scope: $scope,
 				templateUrl: 'DeleteAdjustment',
 				controller: 'AdjustmentDelete',
 				windowClass: 'center-modal',
@@ -485,7 +485,7 @@
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
 		}
@@ -503,7 +503,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/vaninventory/adjustment/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -542,7 +542,7 @@
 			var params = {
 				'stock_transfer_number': $('#stock_transfer_number').val(),
 				'stock_transfer_id': $('#stock_transfer_id').val(),
-			    'transfer_date_from': $('#transfer_date_from').val(),
+				'transfer_date_from': $('#transfer_date_from').val(),
 				'src_van_code': $('#src_van_code').val(),
 				'dest_van_code': $('#dest_van_code').val(),
 				'type': $('#type').val(),
@@ -580,15 +580,15 @@
 	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 		var params = [
-	    		  'salesman_code',		          
-		          'invoice_start',
-		          'invoice_end',
-		          'status'
+				  'salesman_code',		          
+				  'invoice_start',
+				  'invoice_end',
+				  'status'
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log, TableFix);
 
 	}
 	
@@ -609,7 +609,7 @@
 				var API = $resource('controller/invoiceseries/save');				
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
-				    'invoice_start': $('#invoice_start').val(),
+					'invoice_start': $('#invoice_start').val(),
 					'invoice_end': $('#invoice_end').val(),
 					'status': $('#status').val(),
 					'id' : $('#id').val()
@@ -638,8 +638,8 @@
 		$scope.remove = function () {			
 			var params = { id:$('#id').val(), id: $('#id').val() };
 			var modalInstance = $uibModal.open({
-			 	animation: true,
-			 	scope: $scope,
+				animation: true,
+				scope: $scope,
 				templateUrl: 'DeleteInvoiceSeries',
 				controller: 'InvoiceSeriesDelete',
 				windowClass: 'center-modal',
@@ -647,7 +647,7 @@
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
 		}
@@ -665,7 +665,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/invoiceseries/delete/'+$scope.params.id);
 			var params = {
-				    'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -697,18 +697,18 @@
 	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 		var params = [
-	    		  'salesman_code',		          
-		          'area_code',
-		          'customer_code',
-		          'txn_number',
-		          'invoice_date_from',
-		          'dm_date_from',
-		          'reason'
+				  'salesman_code',		          
+				  'area_code',
+				  'customer_code',
+				  'txn_number',
+				  'invoice_date_from',
+				  'dm_date_from',
+				  'reason'
 
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log, TableFix);
 
 	}
 	
@@ -730,7 +730,7 @@
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 					'customer_code': $('#customer_code').val(),
-				    'dm_number': $('#dm_number').val(),
+					'dm_number': $('#dm_number').val(),
 					'dm_date_from': $('#dm_date_from').val(),
 					'invoice_number': $('#invoice_number').val(),
 					'invoice_date_from': $('#invoice_date_from').val(),
@@ -771,8 +771,8 @@
 		$scope.remove = function () {			
 			var params = { txn_number: $('#txn_number').val() };
 			var modalInstance = $uibModal.open({
-			 	animation: true,
-			 	scope: $scope,
+				animation: true,
+				scope: $scope,
 				templateUrl: 'DeleteBounceCheck',
 				controller: 'BounceCheckDelete',
 				windowClass: 'center-modal',
@@ -780,7 +780,7 @@
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
 		}
@@ -798,7 +798,7 @@
 		$scope.save = function (){			
 			var API = $resource('controller/bouncecheck/delete/'+$scope.params.txn_number);
 			var params = {
-				    'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
@@ -835,31 +835,31 @@
 		var report = reportType;
 
 		// Fetch table data from server
-	    scope.records = [];
+		scope.records = [];
 
-	    var API = resource('/reports/getdata/'+report);
-	    var params = [
-		          'salesman_code',
-		          'transaction_date',
-		          'transaction_date_from',
-		          'transaction_date_to',
-		          'status',
-		          'inventory_type',
-		          'invoice_number',
-		          'stock_transfer_number',
-		          'return_slip_num',
-		          'reference_number',
-		          'audited_by'
+		var API = resource('/reports/getdata/'+report);
+		var params = [
+				  'salesman_code',
+				  'transaction_date',
+				  'transaction_date_from',
+				  'transaction_date_to',
+				  'status',
+				  'inventory_type',
+				  'invoice_number',
+				  'stock_transfer_number',
+				  'return_slip_num',
+				  'reference_number',
+				  'audited_by'
 		];
 
-	    // Filter table records
+		// Filter table records
 		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
 
-	    // Download report
-	    downloadReport(scope, modal, resource, window, report, params, log);
+		// Download report
+		downloadReport(scope, modal, resource, window, report, params, log);
 
-	    // Format date
-	    formatDate(scope);
+		// Format date
+		formatDate(scope);
 	}
 	/**
 	 * Unpaid Report
@@ -869,12 +869,12 @@
 	function Unpaid($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
-			          'company_code',
-			          'invoice_date_from',
-			          'invoice_date_to',
-			          'invoice_number',
-			          'salesman',
-			          'customer'
+					  'company_code',
+					  'invoice_date_from',
+					  'invoice_date_to',
+					  'invoice_number',
+					  'salesman',
+					  'customer'
 			];
 
 		// main controller
@@ -889,35 +889,35 @@
 	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
-		          'posting_date_from',
-		          'posting_date_to',
-		          'return_date_from',
-		          'return_date_to',
-		          'salesman_code',
-		          'area',
-		          'company_code',
-		          'customer',
-		          'material',
-		          'invoice_number',
-		          'segment'
+				  'posting_date_from',
+				  'posting_date_to',
+				  'return_date_from',
+				  'return_date_to',
+				  'salesman_code',
+				  'area',
+				  'company_code',
+				  'customer',
+				  'material',
+				  'invoice_number',
+				  'segment'
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log);
 
-	    var API = '';
-	    $scope.conditionCodes = function(){
-	    	API = $resource('/reports/getdata/conditioncodes');
-	    	API.get({},function(data){
-		    	$scope.codes = data;
-		    	//$log.info(data);
-		    });
-	    }
+		var API = '';
+		$scope.conditionCodes = function(){
+			API = $resource('/reports/getdata/conditioncodes');
+			API.get({},function(data){
+				$scope.codes = data;
+				//$log.info(data);
+			});
+		}
 
-	    //Edit table records
-	    //var selectAPI = '/reports/getdata/conditioncodes';
-	    var options = {GOOD:'GOOD',BAD:'BAD'};
-	    editTable($scope, $uibModal, $resource, $window, options, $log);
+		//Edit table records
+		//var selectAPI = '/reports/getdata/conditioncodes';
+		var options = {GOOD:'GOOD',BAD:'BAD'};
+		editTable($scope, $uibModal, $resource, $window, options, $log);
 	}
 
 	/**
@@ -928,21 +928,21 @@
 	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
-		          'posting_date_from',
-		          'posting_date_to',
-		          'return_date_from',
-		          'return_date_to',
-		          'salesman_code',
-		          'area',
-		          'company_code',
-		          'invoice_number',
-		          'customer'
+				  'posting_date_from',
+				  'posting_date_to',
+				  'return_date_from',
+				  'return_date_to',
+				  'salesman_code',
+				  'area',
+				  'company_code',
+				  'invoice_number',
+				  'customer'
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
 
-	    editTable($scope, $uibModal, $resource, $window, {}, $log);
+		editTable($scope, $uibModal, $resource, $window, {}, $log);
 	}
 
 
@@ -953,22 +953,22 @@
 
 	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log)
 	{
-	    var params = [
-		          'posting_date_from',
-		          'posting_date_to',
-		          'return_date_from',
-		          'return_date_to',
-		          'salesman_code',
-		          'area',
-		          'company_code',
-		          'invoice_number',
-		          'material',
-		          'customer',
-		          'segment'
+		var params = [
+				  'posting_date_from',
+				  'posting_date_to',
+				  'return_date_from',
+				  'return_date_to',
+				  'salesman_code',
+				  'area',
+				  'company_code',
+				  'invoice_number',
+				  'material',
+				  'customer',
+				  'segment'
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log);
 	}
 
 
@@ -979,22 +979,22 @@
 
 	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log)
 	{
-	    var params = [
-		          'posting_date_from',
-		          'posting_date_to',
-		          'return_date_from',
-		          'return_date_to',
-		          'salesman_code',
-		          'area',
-		          'customer',
-		          'company_code',
-		          'invoice_number',
-		          'material',
-		          'segment'
+		var params = [
+				  'posting_date_from',
+				  'posting_date_to',
+				  'return_date_from',
+				  'return_date_to',
+				  'salesman_code',
+				  'area',
+				  'customer',
+				  'company_code',
+				  'invoice_number',
+				  'material',
+				  'segment'
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log);
 	}
 
 	/**
@@ -1004,19 +1004,19 @@
 
 	function CustomerList($scope, $resource, $uibModal, $window, $log)
 	{
-	    var params = [
-		          'salesman_code',
-		          'area',
-		          'status',
-		          'company_code',
-		          'customer_name',
-		          'customer_price_group',
-		          'sfa_modified_date_from',
-		          'sfa_modified_date_to',
+		var params = [
+				  'salesman_code',
+				  'area',
+				  'status',
+				  'company_code',
+				  'customer_name',
+				  'customer_price_group',
+				  'sfa_modified_date_from',
+				  'sfa_modified_date_to',
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log);
 	}
 
 
@@ -1028,16 +1028,16 @@
 	function SalesmanList($scope, $resource, $uibModal, $window, $log)
 	{
 		var params = [
-		          'salesman_code',
-		          'area',
-		          'status',
-		          'company_code',
-		          'sfa_modified_date_from',
-		          'sfa_modified_date_to'
+				  'salesman_code',
+				  'area',
+				  'status',
+				  'company_code',
+				  'sfa_modified_date_from',
+				  'sfa_modified_date_to'
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log);
 
 	}
 
@@ -1048,22 +1048,22 @@
 
 	function MaterialPriceList($scope, $resource, $uibModal, $window, $log)
 	{
-	    var params = [
-		          'company_code',
-		          'area',
-		          'segment_code',
-		          'item_code',
-		          'status',
-		          'sfa_modified_date_from',
-		          'sfa_modified_date_to',
-		          'effective_date1_from',
-		          'effective_date1_to',
-		          'effective_date2_from',
-		          'effective_date2_to',
+		var params = [
+				  'company_code',
+				  'area',
+				  'segment_code',
+				  'item_code',
+				  'status',
+				  'sfa_modified_date_from',
+				  'sfa_modified_date_to',
+				  'effective_date1_from',
+				  'effective_date1_to',
+				  'effective_date2_from',
+				  'effective_date2_to',
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log);
 
 	}
 
@@ -1076,17 +1076,17 @@
 	function Bir($scope, $resource, $uibModal, $window, $log)
 	{
 
-	    var params = [
-		          'area',
-		          'salesman',
-		          'reference',
-		          'customer_name',
-		          'document_date_from',
-		          'document_date_to'
+		var params = [
+				  'area',
+				  'salesman',
+				  'reference',
+				  'customer_name',
+				  'document_date_from',
+				  'document_date_to'
 		];
 
-	    // main controller
-	    reportController($scope,$resource,$uibModal,$window,'bir',params,$log);
+		// main controller
+		reportController($scope,$resource,$uibModal,$window,'bir',params,$log);
 	}
 
 
@@ -1098,24 +1098,24 @@
 	function Calendar($scope, $http, $log)
 	{
 		$scope.dateFrom = null;
-	    $scope.dateTo = null;
-	    $scope.setFrom = function(from){
-	    	if(from)
-	    		$scope.dateFrom = new Date(from);
-	    }
+		$scope.dateTo = null;
+		$scope.setFrom = function(from){
+			if(from)
+				$scope.dateFrom = new Date(from);
+		}
 
-	    $scope.setTo = function(to){
-	    	if(to)
-	    		$scope.dateTo = new Date(to);
-	    }
+		$scope.setTo = function(to){
+			if(to)
+				$scope.dateTo = new Date(to);
+		}
 
-	    $scope.maxDate = new Date(2020, 5, 22);
+		$scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
-		    $event.stopPropagation();
+			$event.stopPropagation();
 
-		    $("ul[class*='ng-valid-date']").hide();
+			$("ul[class*='ng-valid-date']").hide();
 			$("input[class*='ng-valid-date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
@@ -1125,8 +1125,8 @@
 		};
 
 		$scope.dateOptions = {
-		    formatYear: 'yy',
-		    startingDay: 0
+			formatYear: 'yy',
+			startingDay: 0
 		};
 
 		$scope.format = 'MM/dd/yyyy';		  
@@ -1140,24 +1140,24 @@
 	function CalendarMonth($scope, $http, $log)
 	{
 		$scope.dateFrom = null;
-	    $scope.dateTo = null;
-	    $scope.setFrom = function(from){
-	    	if(from)
-	    		$scope.dateFrom = new Date(from);
-	    }
+		$scope.dateTo = null;
+		$scope.setFrom = function(from){
+			if(from)
+				$scope.dateFrom = new Date(from);
+		}
 
-	    $scope.setTo = function(to){
-	    	if(to)
-	    		$scope.dateTo = new Date(to);
-	    }
+		$scope.setTo = function(to){
+			if(to)
+				$scope.dateTo = new Date(to);
+		}
 
-	    $scope.maxDate = new Date(2020, 5, 22);
+		$scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
-		    $event.stopPropagation();
+			$event.stopPropagation();
 
-		    $("ul[class*='ng-valid-date']").hide();
+			$("ul[class*='ng-valid-date']").hide();
 			$("input[id*='ng-valid-date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
@@ -1167,8 +1167,8 @@
 		};
 
 		$scope.dateOptions = {
-		    formatYear: 'yy',
-		    startingDay: 0
+			formatYear: 'yy',
+			startingDay: 0
 		};
 
 		$scope.format = 'MMM/yyyy';			  
@@ -1182,24 +1182,24 @@
 	function CalendarYear($scope, $http, $log)
 	{
 		$scope.dateFrom = null;
-	    $scope.dateTo = null;
-	    $scope.setFrom = function(from){
-	    	if(from)
-	    		$scope.dateFrom = new Date(from);
-	    }
+		$scope.dateTo = null;
+		$scope.setFrom = function(from){
+			if(from)
+				$scope.dateFrom = new Date(from);
+		}
 
-	    $scope.setTo = function(to){
-	    	if(to)
-	    		$scope.dateTo = new Date(to);
-	    }
+		$scope.setTo = function(to){
+			if(to)
+				$scope.dateTo = new Date(to);
+		}
 
-	    $scope.maxDate = new Date(2020, 5, 22);
+		$scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
-		    $event.stopPropagation();
+			$event.stopPropagation();
 
-		    $("ul[class*='ng-valid-date']").hide();
+			$("ul[class*='ng-valid-date']").hide();
 			$("input[id*='ng-valid-date']").each(function() {
 				var elemScope = angular.element(this).scope();
 				var elemId = $(this).attr("id");
@@ -1209,8 +1209,8 @@
 		};
 
 		$scope.dateOptions = {
-		    formatYear: 'yy',
-		    startingDay: 0
+			formatYear: 'yy',
+			startingDay: 0
 		};
 
 		$scope.format = 'yyyy';			  
@@ -1227,19 +1227,19 @@
 			$scope.dateFrom = defaultDate;
 		else
 			$scope.dateFrom = null;
-	    $scope.dateTo = null;
+		$scope.dateTo = null;
 
-	    $scope.maxDate = new Date(2020, 5, 22);
+		$scope.maxDate = new Date(2020, 5, 22);
 
 		$scope.open = function($event, elementId) {
 			$event.preventDefault();
-		    $event.stopPropagation();
-		    $scope[elementId] = true;
+			$event.stopPropagation();
+			$scope[elementId] = true;
 		};
 
 		$scope.dateOptions = {
-		    formatYear: 'yy',
-		    startingDay: 0
+			formatYear: 'yy',
+			startingDay: 0
 		};
 
 		//$scope.format = 'yyyy/MM/dd';
@@ -1264,52 +1264,52 @@
 		//log.info(params);
 		//log.info(scope.dateValue);
 
-	    API.save(params,function(data){
+		API.save(params,function(data){
 
-	    		if(data.total)
-	    		{
-	    			scope.items.push({
-				    	records: data.records,
-				    	total: data.total,
-				    	stocks: data.stocks,
-				    	show_stocks: data.total_stocks,
-				    	replenishment: data.replenishment,
-				    	showBody: data.total,
-				    	showReplenishment: !data.first_upload && data.replenishment.total,
-				    	short_over_stocks: data.short_over_stocks,
-				    	stock_on_hand: data.stock_on_hand,
-				    	first_upload: data.first_upload
-			    	});
-	    			$('#no_records_div').hide();
-	    			fetch = false;
-	    		}
-	    		else
-	    		{
-	    			if(!loadMore && !scope.items.length){
-	    				$('#no_records_div').show();
-	    			}
-
-	    		}
-	    		//toggleLoading();
-	    		//log.info(scope.items);
-
-	    		if (scope.items.length){
-	    			$('#no_records_div').hide();
-	    			$("table.table").floatThead({
-					    position: "absolute",
-					    autoReflow: true,
-					    zIndex: "2",
-					    scrollContainer: function($table){
-					        return $table.closest(".wrapper");
-					    }
+				if(data.total)
+				{
+					scope.items.push({
+						records: data.records,
+						total: data.total,
+						stocks: data.stocks,
+						show_stocks: data.total_stocks,
+						replenishment: data.replenishment,
+						showBody: data.total,
+						showReplenishment: !data.first_upload && data.replenishment.total,
+						short_over_stocks: data.short_over_stocks,
+						stock_on_hand: data.stock_on_hand,
+						first_upload: data.first_upload
 					});
-				    //console.log('Build table');
-	    		} else {
-	    			//toggleLoading();
-	    			$('#no_records_div').show();
-	    			$("table.table").floatThead('destroy');
-		    		console.log('Destroy table');
-	    		}
+					$('#no_records_div').hide();
+					fetch = false;
+				}
+				else
+				{
+					if(!loadMore && !scope.items.length){
+						$('#no_records_div').show();
+					}
+
+				}
+				//toggleLoading();
+				//log.info(scope.items);
+
+				if (scope.items.length){
+					$('#no_records_div').hide();
+					$("table.table").floatThead({
+						position: "absolute",
+						autoReflow: true,
+						zIndex: "2",
+						scrollContainer: function($table){
+							return $table.closest(".wrapper");
+						}
+					});
+					//console.log('Build table');
+				} else {
+					//toggleLoading();
+					$('#no_records_div').show();
+					$("table.table").floatThead('destroy');
+					console.log('Destroy table');
+				}
 		});
 	}
 
@@ -1346,8 +1346,8 @@
 			if(!hasError)
 			{
 				if(typeof InventoryFixTable !== "undefined"){
-		    		InventoryFixTable.ift();
-		    	}
+					InventoryFixTable.ift();
+				}
 
 				var dateFrom = new Date($('#transaction_date_from').val());
 				var dateTo = new Date($('#transaction_date_to').val());
@@ -1372,7 +1372,7 @@
 					}, i * 2000);
 				});
 			}
-	    }
+		}
 
 		scope.more = function() {
 
@@ -1411,15 +1411,15 @@
 			$('p[id$="_error"]').addClass('hide');
 			// scope.toggleFilter = true;
 			toggleLoading();
-	    	scope.items = []
-	    	$('#no_records_div').removeClass('hide');
-	    	$('#load_more').addClass('hide');
+			scope.items = []
+			$('#no_records_div').removeClass('hide');
+			$('#load_more').addClass('hide');
 
-	    	if(typeof InventoryFixTable !== "undefined"){
-	    		InventoryFixTable.ift();
-	    	}
+			if(typeof InventoryFixTable !== "undefined"){
+				InventoryFixTable.ift();
+			}
 
-	    }
+		}
 	}
 
 	/**
@@ -1434,7 +1434,7 @@
 			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment','bouncecheck'];
 			var formatReport = ['salescollectionsummary','stockaudit'];
 			var formatField = ['invoice_date_from','month_from','year_from'];
-	    	scope.page = 1;
+			scope.page = 1;
 
 			params['page'] = scope.page;
 			params['page_limit'] = scope.perpage;
@@ -1461,7 +1461,7 @@
 				}
 
 				if(report == 'salescollectionreport' && val.indexOf('posting_date') != -1)
-			    {
+				{
 					var invoiceFrom = new Date($('#invoice_date_from').val());
 					var invoiceTo = new Date($('#invoice_date_to').val());
 					var prevFrom = new Date(from);
@@ -1473,7 +1473,7 @@
 						$('#'+val.replace('_from','_error')).html('Date range must be less than Invoice Date.');
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
-			    }
+				}
 				else if(report == 'replenishment' && !$.trim(params[val]))
 				{
 					if(val.indexOf('_from') != -1){
@@ -1510,24 +1510,24 @@
 				scope.toggleFilter = true;
 				toggleLoading(true);
 				API.save(params,function(data){
-		    		//log.info(data);
-			    	scope.records = data.records;
-			    	scope.total = data.total;
-			    	scope.summary = data.summary;
-			    	toggleLoading();
-			    	if(typeof value !== "undefined"){
-			    		TableFix.tableload();
-			    	}
-			    	togglePagination(data.total);
-			    	
-			    	if(-1 !== $.inArray(report,exclude) && data.reference_num){
-			    		scope.editHide = '';
-			    		scope.editUrl = scope.url + data.reference_num;
-			    	}
-			    });
+					//log.info(data);
+					scope.records = data.records;
+					scope.total = data.total;
+					scope.summary = data.summary;
+					toggleLoading();
+					if(typeof value !== "undefined"){
+						TableFix.tableload();
+					}
+					togglePagination(data.total);
+					
+					if(-1 !== $.inArray(report,exclude) && data.reference_num){
+						scope.editHide = '';
+						scope.editUrl = scope.url + data.reference_num;
+					}
+				});
 			}
 
-	    }
+		}
 
 		scope.reset = function(){
 
@@ -1557,30 +1557,30 @@
 			$('p[id$="_error"]').addClass('hide');
 
 			if(report == 'salescollectionreport')
-		    {
+			{
 				params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-		    }
-		    else if(report == 'salescollectionposting')
-		    {
-		    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-		    }
-		    else if(report == 'salescollectionsummary')
-		    {
-		    	params = {salesman:$('#salesman').val()};
-		    }
+			}
+			else if(report == 'salescollectionposting')
+			{
+				params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
+			}
+			else if(report == 'salescollectionsummary')
+			{
+				params = {salesman:$('#salesman').val()};
+			}
 
 			// scope.toggleFilter = true;
 			toggleLoading(true);
-	    	API.save(params,function(data){
-	    		//log.info(data);
-			    scope.total = data.total;
-		    	scope.records = data.records;
-			    scope.summary = data.summary;
-	    		togglePagination(data.total);
-		    	toggleLoading();
-		    });
+			API.save(params,function(data){
+				//log.info(data);
+				scope.total = data.total;
+				scope.records = data.records;
+				scope.summary = data.summary;
+				togglePagination(data.total);
+				toggleLoading();
+			});
 
-	    }
+		}
 	}
 
 	/**
@@ -1627,22 +1627,22 @@
 			API.save(params, function(data){
 				//log.info(data);
 				scope.records = data.records;
-		    	scope.toggleFilter = true;
-		    	toggleLoading();
+				scope.toggleFilter = true;
+				toggleLoading();
 
-		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+				var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
 
-		    	$("table.table").floatThead({
-				    position: "absolute",
-				    autoReflow: true,
-				    zIndex: "2",
-				    scrollContainer: function($table){
-				        return $table.closest(".wrapper");
-				    }
+				$("table.table").floatThead({
+					position: "absolute",
+					autoReflow: true,
+					zIndex: "2",
+					scrollContainer: function($table){
+						return $table.closest(".wrapper");
+					}
 				});
 
-		    	console.log('Refresh table. Scroll value: '+scrollpos);
-		    	$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+				console.log('Refresh table. Scroll value: '+scrollpos);
+				$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
 	}
@@ -1657,10 +1657,10 @@
 		scope.page = 1;
 		if(scope.perpage == 25 || !scope.perpage)
 			scope.perpage = 25;
-	    scope.total = 0;
+		scope.total = 0;
 
 		// Paginate table records
-	    scope.paginate = function(page) {
+		scope.paginate = function(page) {
 			scope.perpage = page;
 			scope.page = 1;
 			$('#limit'+page).parent().parent().find('.active').removeClass('active');
@@ -1680,81 +1680,81 @@
 			API.save(params, function(data){
 				//log.info(data);
 				scope.records = data.records;
-		    	scope.toggleFilter = true;
-		    	toggleLoading();
+				scope.toggleFilter = true;
+				toggleLoading();
 
-		    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+				var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
 
-    			if(typeof TableFix !== "undefined"){
-		    		TableFix.tableload();
-		    	}
+				if(typeof TableFix !== "undefined"){
+					TableFix.tableload();
+				}
 				console.log('Paginate Factory. Scroll value: '+scrollpos);
 
-                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+				$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 			});
 		}
 
-	    // Pager table records
-	    scope.pager = function(increment,first,last) {
-	    	var request = false;
-	    	if(first)
-	    	{
-	    		scope.page = 1;
-	    		request = true;
-	    	}
-	    	else if(last)
-	    	{
-	    		if(0 == scope.total%scope.perpage)
-	    			scope.page = scope.total/scope.perpage;
-	    		else
-	    			scope.page = Math.ceil(scope.total/scope.perpage);
-	    		request = true;
-	    	}
-	    	else if((scope.page + increment > 0 && scope.page!=(scope.total/scope.perpage))
-	    			|| (increment < 0 && scope.page > 1))
-	    	{
-	    		var maxPage = 0;
-	    		if(0 == scope.total%scope.perpage)
-	    			maxPage = Math.round(scope.total/scope.perpage);
-	    		else
-	    			maxPage = Math.ceil(scope.total/scope.perpage);
-	    		var nextPage = scope.page + increment;
+		// Pager table records
+		scope.pager = function(increment,first,last) {
+			var request = false;
+			if(first)
+			{
+				scope.page = 1;
+				request = true;
+			}
+			else if(last)
+			{
+				if(0 == scope.total%scope.perpage)
+					scope.page = scope.total/scope.perpage;
+				else
+					scope.page = Math.ceil(scope.total/scope.perpage);
+				request = true;
+			}
+			else if((scope.page + increment > 0 && scope.page!=(scope.total/scope.perpage))
+					|| (increment < 0 && scope.page > 1))
+			{
+				var maxPage = 0;
+				if(0 == scope.total%scope.perpage)
+					maxPage = Math.round(scope.total/scope.perpage);
+				else
+					maxPage = Math.ceil(scope.total/scope.perpage);
+				var nextPage = scope.page + increment;
 
-	    		if(maxPage >= nextPage)
-	    		{
-		    		scope.page = nextPage;
-		    		request = true;
-	    		}
-	    	}
+				if(maxPage >= nextPage)
+				{
+					scope.page = nextPage;
+					request = true;
+				}
+			}
 
-	    	if(request)
-	    	{
-	    		params['page'] = scope.page;
+			if(request)
+			{
+				params['page'] = scope.page;
 				params['page_limit'] = scope.perpage;
 				params['sort'] = scope.sortColumn;
 				params['order'] = scope.sortDirection;
 
-	    		$.each(filter, function(key,val){
+				$.each(filter, function(key,val){
 					params[val] = $('#'+val).val();
 				});
 				//log.info(params);
 
-	    		toggleLoading(true);
-	    		API.save(params, function(data){
+				toggleLoading(true);
+				API.save(params, function(data){
 					//log.info(data);
 					scope.records = data.records;
-			    	scope.toggleFilter = true;
-			    	toggleLoading();
-			    	var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
+					scope.toggleFilter = true;
+					toggleLoading();
+					var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 20;
 
-	    			if(typeof TableFix !== "undefined"){
-			    		TableFix.tableload();
-			    	}
+					if(typeof TableFix !== "undefined"){
+						TableFix.tableload();
+					}
 					console.log('Pager Factory. Scroll value: '+scrollpos);
 
-	                $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+					$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 					});
-	    	}
+			}
 		}
 	}
 
@@ -1876,8 +1876,8 @@
 				
 				
 				var modalInstance = modal.open({
-				 	animation: true,
-				 	scope: scope,
+					animation: true,
+					scope: scope,
 					templateUrl: template,
 					controller: 'EditTableRecord',
 					windowClass: 'center-modal',
@@ -1885,7 +1885,7 @@
 					resolve: {
 						params: function () {
 							return params;
-					    }
+						}
 					}
 				});
 					
@@ -1929,16 +1929,16 @@
 				if(!data.total)
 				{
 					var params = {message:'No data to export.'};
-			    	var modalInstance = modal.open({
-			    		animation: true,
-					 	templateUrl: 'Info',
+					var modalInstance = modal.open({
+						animation: true,
+						templateUrl: 'Info',
 						controller: 'Info',
 						windowClass: 'center-modal',
 						size: 'sm',
 						resolve: {
 							params: function () {
 								return params;
-						    }
+							}
 						}
 					});
 				}
@@ -1956,13 +1956,13 @@
 					};
 
 					var modalInstance = modal.open({
-						 	animation: true,
+							animation: true,
 							templateUrl: 'exportModal',
 							controller: 'ExportReport',
 							resolve: {
 								params: function () {
 									return scope.params;
-							    }
+								}
 							}
 					});
 				 }
@@ -1988,61 +1988,61 @@
 		scope.toggleFilter = true;
 
 		// Fetch table headers from server
-	    /*scope.tableHeaders = {};
-	    resource('/reports/getheaders/'+report).query({}, function(data){
-	    	scope.tableHeaders = data;
-	    });*/
+		/*scope.tableHeaders = {};
+		resource('/reports/getheaders/'+report).query({}, function(data){
+			scope.tableHeaders = data;
+		});*/
 
-	    // Fetch table data from server
-	    scope.records = [];
+		// Fetch table data from server
+		scope.records = [];
 
-	    var API = resource('/reports/getdata/'+report);
-	    var params = {};
+		var API = resource('/reports/getdata/'+report);
+		var params = {};
 
-	    if(report == 'salescollectionreport' || report == 'salescollectionposting' || report == 'cashpayment' || report == 'checkpayment')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }else if(report == 'salescollectionsummary')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }
+		if(report == 'salescollectionreport' || report == 'salescollectionposting' || report == 'cashpayment' || report == 'checkpayment')
+		{
+			params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
+		}else if(report == 'salescollectionsummary')
+		{
+			params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
+		}
 
-	    toggleLoading(true);
-	    API.get(params,function(data){
-	    	scope.records = data.records;
-	    	scope.summary = data.summary;
-	    	scope.total = data.total;
-	    	//log.info(data);
-	    	toggleLoading();
+		toggleLoading(true);
+		API.get(params,function(data){
+			scope.records = data.records;
+			scope.summary = data.summary;
+			scope.total = data.total;
+			//log.info(data);
+			toggleLoading();
 
-	    	if(typeof TableFix !== "undefined"){
-	    		TableFix.tableload();
-	    	}
+			if(typeof TableFix !== "undefined"){
+				TableFix.tableload();
+			}
 
-	    	togglePagination(data.total);
-	    });
+			togglePagination(data.total);
+		});
 
-	    params = filter;
+		params = filter;
 
-	    //Sort table records
-	    scope.sortColumn = '';
+		//Sort table records
+		scope.sortColumn = '';
 		scope.sortDirection = 'asc';
 		sortColumn(scope,API,params,log, TableFix);
 
-	    // Filter table records
-	    filterSubmit(scope,API,params,log, report, TableFix);
+		// Filter table records
+		filterSubmit(scope,API,params,log, report, TableFix);
 
-	    // Paginate table records
-	    pagination(scope,API,params,log, TableFix);
+		// Paginate table records
+		pagination(scope,API,params,log, TableFix);
 
-	    // Download report
-	    downloadReport(scope, modal, resource, window, report, filter, log);
+		// Download report
+		downloadReport(scope, modal, resource, window, report, filter, log);
 
-	    // Format date
-	    formatDate(scope);
+		// Format date
+		formatDate(scope);
 
-	    //Format number
-	    formatNumber(scope,log);
+		//Format number
+		formatNumber(scope,log);
 	}
 
 	/**
@@ -2053,33 +2053,33 @@
 		if(show)
 		{
 			$('#pagination_div').removeClass('hidden');
-		    $('#pagination_div').addClass('show');
-		    $('#no_records_div').hide();
-		    $('#total_summary').show();
+			$('#pagination_div').addClass('show');
+			$('#no_records_div').hide();
+			$('#total_summary').show();
 
-		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
-		    $("table.table").floatThead({
-			    position: "absolute",
-			    autoReflow: true,
-			    zIndex: "2",
-			    scrollContainer: function($table){
-			        return $table.closest(".wrapper");
-			    }
+			var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
+			$("table.table").floatThead({
+				position: "absolute",
+				autoReflow: true,
+				zIndex: "2",
+				scrollContainer: function($table){
+					return $table.closest(".wrapper");
+				}
 			});
-		    //console.log('Build table');
-		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+			//console.log('Build table');
+			$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}
 		else
 		{
 			$('#pagination_div').removeClass('show');
-		    $('#pagination_div').addClass('hidden');
-		    $('#no_records_div').show();
-		    $('#total_summary').hide();
+			$('#pagination_div').addClass('hidden');
+			$('#no_records_div').show();
+			$('#total_summary').hide();
 
-		    var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
-		    $("table.table").floatThead('destroy');
-		    //console.log('Destroy table');
-		    $(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
+			var scrollpos = $(".floatThead-wrapper .wrapper").scrollLeft() - 10;
+			$("table.table").floatThead('destroy');
+			//console.log('Destroy table');
+			$(".floatThead-wrapper .wrapper").animate({scrollLeft: scrollpos}, 800);
 		}
 	}
 
@@ -2091,12 +2091,12 @@
 		if(show)
 		{
 			$('#loading_div').removeClass('hidden');
-		    $('#loading_div').addClass('show');
+			$('#loading_div').addClass('show');
 		}
 		else
 		{
 			$('#loading_div').removeClass('show');
-		    $('#loading_div').addClass('hidden');
+			$('#loading_div').addClass('hidden');
 		}
 	}
 
@@ -2243,23 +2243,23 @@
 	 * Get date ranges base from parameters
 	 */
 	function getDates(startDate, stopDate) {
-	    var dateArray = new Array();
-	    var currentDate = startDate;
-	    while (currentDate <= stopDate) {
-	    	var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
-	    	dateArray.push( formatted )
-	    	currentDate = currentDate.addDays(1);
-	    }
-	    return dateArray;
+		var dateArray = new Array();
+		var currentDate = startDate;
+		while (currentDate <= stopDate) {
+			var formatted = currentDate.getFullYear() + '/' + (currentDate.getMonth() + 1) + '/' + currentDate.getDate();
+			dateArray.push( formatted )
+			currentDate = currentDate.addDays(1);
+		}
+		return dateArray;
 	}
 
 	/**
 	 * Add days
 	 */
 	Date.prototype.addDays = function(days) {
-	    var dat = new Date(this.valueOf())
-	    dat.setDate(dat.getDate() + days);
-	    return dat;
+		var dat = new Date(this.valueOf())
+		dat.setDate(dat.getDate() + days);
+		return dat;
 	}
 
 
@@ -2274,96 +2274,96 @@
 		// Filter flag
 		$scope.toggleFilter = true;
 
-	    // Fetch table data from server
-	    $scope.records = [];
+		// Fetch table data from server
+		$scope.records = [];
 
-	    var API = $resource('/reports/getdata/userlist');
-	    var params = {};
+		var API = $resource('/reports/getdata/userlist');
+		var params = {};
 
-	    toggleLoading(true);
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	//$log.info(data);
-	    	toggleLoading();
-	    	togglePagination(data.total);
-	    });
+		toggleLoading(true);
+		API.get(params,function(data){
+			$scope.records = data.records;
+			$scope.total = data.total;
+			//$log.info(data);
+			toggleLoading();
+			togglePagination(data.total);
+		});
 
-	    params = {
-	    	fullname: 'fullname',
-	    	user_group_id: 'user_group_id',
-	    	location_assignment_code: 'location_assignment_code',
-	    	location_assignment_type: 'location_assignment_type',
-	    	created_at_from: 'created_at_from',
-	    	created_at_to: 'created_at_to'
-	    };
+		params = {
+			fullname: 'fullname',
+			user_group_id: 'user_group_id',
+			location_assignment_code: 'location_assignment_code',
+			location_assignment_type: 'location_assignment_type',
+			created_at_from: 'created_at_from',
+			created_at_to: 'created_at_to'
+		};
 
-	    //Sort table records
-	    $scope.sortColumn = '';
+		//Sort table records
+		$scope.sortColumn = '';
 		$scope.sortDirection = 'asc';
 		sortColumn($scope,API,params,$log);
 
-	    // Filter table records
-	    filterSubmit($scope,API,params,$log);
+		// Filter table records
+		filterSubmit($scope,API,params,$log);
 
-	    // Paginate table records
-	    pagination($scope,API,params,$log);
+		// Paginate table records
+		pagination($scope,API,params,$log);
 
-	    var params;
-	    $scope.activate = function(id,row){
-	    	params = {id:id,action:'activate',message:'Are you sure you want to activate this user?',row:row};
-	    	var modalInstance = $uibModal.open({
-	    		scope: $scope,
-			 	animation: true,
-			 	templateUrl: 'Confirm',
+		var params;
+		$scope.activate = function(id,row){
+			params = {id:id,action:'activate',message:'Are you sure you want to activate this user?',row:row};
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
 				controller: 'UserAction',
 				windowClass: 'center-modal',
 				size: 'sm',
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
-	    }
+		}
 
-	    $scope.deactivate = function(id,row){
-	    	params = {id:id,action:'deactivate',message:'Are you sure you want to deactivate this user?',row:row};
-	    	var modalInstance = $uibModal.open({
-	    		scope: $scope,
-			 	animation: true,
-			 	templateUrl: 'Confirm',
+		$scope.deactivate = function(id,row){
+			params = {id:id,action:'deactivate',message:'Are you sure you want to deactivate this user?',row:row};
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
 				controller: 'UserAction',
 				windowClass: 'center-modal',
 				size: 'sm',
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
-	    }
+		}
 
-	    $scope.remove = function(id){
-	    	params = {id:id,action:'delete',message:'Are you sure you want to delete this user?'};
-	    	var modalInstance = $uibModal.open({
-			 	animation: true,
-			 	scope: $scope,
-			 	templateUrl: 'Confirm',
+		$scope.remove = function(id){
+			params = {id:id,action:'delete',message:'Are you sure you want to delete this user?'};
+			var modalInstance = $uibModal.open({
+				animation: true,
+				scope: $scope,
+				templateUrl: 'Confirm',
 				controller: 'UserAction',
 				windowClass: 'center-modal',
 				size: 'sm',
 				resolve: {
 					params: function () {
 						return params;
-				    }
+					}
 				}
 			});
-	    }
+		}
 
-	    //this should be a filter
-	    $scope.parseDate = function(date) {
-	    	 date = date.replace(/-/g, '/');
+		//this should be a filter
+		$scope.parseDate = function(date) {
+			 date = date.replace(/-/g, '/');
 			return new Date(date);
 		}
 	};
@@ -2378,36 +2378,36 @@
 		// Filter flag
 		$scope.toggleFilter = true;
 
-	    // Fetch table data from server
-	    $scope.records = [];
+		// Fetch table data from server
+		$scope.records = [];
 
-	    var API = $resource('/reports/getdata/usergrouplist');
-	    var params = {};
+		var API = $resource('/reports/getdata/usergrouplist');
+		var params = {};
 
-	    toggleLoading(true);
-	    API.get(params,function(data){
-	    	$scope.records = data.records;
-	    	$scope.total = data.total;
-	    	//$log.info(data);
-	    	toggleLoading();
-	    	togglePagination(data.total);
-	    });
+		toggleLoading(true);
+		API.get(params,function(data){
+			$scope.records = data.records;
+			$scope.total = data.total;
+			//$log.info(data);
+			toggleLoading();
+			togglePagination(data.total);
+		});
 
-	    params = {
-	    	id: 'id',
-	    	name: 'name',
-	    };
+		params = {
+			id: 'id',
+			name: 'name',
+		};
 
-	    //Sort table records
-	    $scope.sortColumn = '';
+		//Sort table records
+		$scope.sortColumn = '';
 		$scope.sortDirection = 'asc';
 		sortColumn($scope,API,params,$log);
 
-	    // Filter table records
-	    filterSubmit($scope,API,params,$log);
+		// Filter table records
+		filterSubmit($scope,API,params,$log);
 
-	    // Paginate table records
-	    pagination($scope,API,params,$log);
+		// Paginate table records
+		pagination($scope,API,params,$log);
 
 	};
 
@@ -2417,13 +2417,13 @@
 	function formatDate(scope) {
 
 		// @Function
-	    // Description  : Triggered while displaying expiry date in Customer Details screen.
-	    scope.formatDate = function(date){
-	    	  if(!date) return '';
-	    	  date = date.replace(/-/g, '/');
-	    	  var dateOut = new Date(date);
-	          return dateOut;
-	    };
+		// Description  : Triggered while displaying expiry date in Customer Details screen.
+		scope.formatDate = function(date){
+			  if(!date) return '';
+			  date = date.replace(/-/g, '/');
+			  var dateOut = new Date(date);
+			  return dateOut;
+		};
 	}
 
 	/**
@@ -2439,53 +2439,53 @@
 			return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		};
 
-	    scope.formatNumber = function(number, negate, round){
+		scope.formatNumber = function(number, negate, round){
 
-	    	  if(number == '')
-	    		  return '';
+			  if(number == '')
+				  return '';
 
-	    	  if('string' == typeof number)
-	    	  {
-	    		  number = Number(number);
-	    		  if(round)
-	    		  {
-	    			  number = Math.round(number);
-	    			  if(negate || number < 0) number = '('+Math.abs(number)+')';
-	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	    		  }
-	    		  number = number.toFixed(2);
-	    	  }
+			  if('string' == typeof number)
+			  {
+				  number = Number(number);
+				  if(round)
+				  {
+					  number = Math.round(number);
+					  if(negate || number < 0) number = '('+Math.abs(number)+')';
+					  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				  }
+				  number = number.toFixed(2);
+			  }
 
-	    	  if('number' == typeof number)
-	    	  {
-	    		  if(round)
-	    		  {
-	    			  number = Math.round(number);
-	    			  if(negate || number < 0) number = '('+Math.abs(number)+')';
-	    			  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	    		  }
-	    		  number = number.toString();
-	    	  }
+			  if('number' == typeof number)
+			  {
+				  if(round)
+				  {
+					  number = Math.round(number);
+					  if(negate || number < 0) number = '('+Math.abs(number)+')';
+					  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				  }
+				  number = number.toString();
+			  }
 
 
-	    	  if(!number || number == undefined || number == '0') return '';
+			  if(!number || number == undefined || number == '0') return '';
 
-	    	  var chunks = [];
-	    	  var realNumber;
+			  var chunks = [];
+			  var realNumber;
 
-	    	  if(number.indexOf('.') != -1)
-	    	  {
-	    		  chunks = number.split('.');
-	    		  realNumber = chunks[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' + chunks[1];
-	    	  }
-	    	  else
-	    	  {
-	    		  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	    	  }
-	    	  if(negate === '1' || negate === true || negate === 1 || realNumber < 0)
-	    		  realNumber = '(' + Math.abs(realNumber) + ')';
-	    	  return realNumber;
-	    };
+			  if(number.indexOf('.') != -1)
+			  {
+				  chunks = number.split('.');
+				  realNumber = chunks[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.' + chunks[1];
+			  }
+			  else
+			  {
+				  realNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			  }
+			  if(negate === '1' || negate === true || negate === 1 || realNumber < 0)
+				  realNumber = '(' + Math.abs(realNumber) + ')';
+			  return realNumber;
+		};
 	}
 
 
@@ -2517,8 +2517,8 @@
 		//	});
 		//};
 
-	    // Save user profile
-	    saveUser($scope,$resource,$location, $uibModal, $window, $log);
+		// Save user profile
+		saveUser($scope,$resource,$location, $uibModal, $window, $log);
 	};
 
 
@@ -2531,10 +2531,10 @@
 	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log) {
 		$scope.regExemail = function(){
 			var email = $('#email').val();
-		    if(email){
+			if(email){
 				var str=document.getElementById("email");
-			    var regex=/[^a-zA-Z0-9._@-]/gi;
-			    str.value=str.value.replace(regex ,"");
+				var regex=/[^a-zA-Z0-9._@-]/gi;
+				str.value=str.value.replace(regex ,"");
 			}
 		}
 		$scope.age = '';
@@ -2543,34 +2543,34 @@
 		$scope.id = 0;
 
 		var API = $resource('/user/edit/'+$routeParams.id);
-	    var params = {};
+		var params = {};
 
-	    API.get(params,function(data){
+		API.get(params,function(data){
 
-	    	//angular acts weird with integer option values
-	    	data.user_group_id = String(data.user_group_id);
+			//angular acts weird with integer option values
+			data.user_group_id = String(data.user_group_id);
 
-	    	$scope.records = data;
-	    	//$log.info(data);
-	    	$scope.id = data.id;
-	    	$scope.age = Number(data.age);
+			$scope.records = data;
+			//$log.info(data);
+			$scope.id = data.id;
+			$scope.age = Number(data.age);
 			$scope.isJr = $scope.records.jr_salesman_code != ''	 ? true : false;
 
 
-	    	if(data.location_assignment_from){
-	    		$scope.from = new Date(data.location_assignment_from);
-	    	}
-	    	if(data.location_assignment_to){
-	    		$scope.to = new Date(data.location_assignment_to);
-	    	}
+			if(data.location_assignment_from){
+				$scope.from = new Date(data.location_assignment_from);
+			}
+			if(data.location_assignment_to){
+				$scope.to = new Date(data.location_assignment_to);
+			}
 
 
-	    });
+		});
 
-	    // Save user profile
-	    saveUser($scope,$resource,$location,$uibModal,$window, $log);
+		// Save user profile
+		saveUser($scope,$resource,$location,$uibModal,$window, $log);
 
-	    $scope.req_salesman = 'hidden';
+		$scope.req_salesman = 'hidden';
 		$scope.checkRole = function(){
 			if($scope.records.user_group_id == 4)
 				$scope.req_salesman = '';
@@ -2887,8 +2887,8 @@
 			var email = $('#email').val();
 		   if(email){
 				var str=document.getElementById("email");
-			    var regex=/[^a-zA-Z0-9._@-]/gi;
-			    str.value=str.value.replace(regex ,"");
+				var regex=/[^a-zA-Z0-9._@-]/gi;
+				str.value=str.value.replace(regex ,"");
 			}
 		};
 		scope.personalInfoError = false;
@@ -3203,15 +3203,15 @@
 	{
 		$scope.showError = false;
 		$scope.showSuccess = false;
-	    $scope.showLoading = false;
-	    $scope.syncLogs = '';
+		$scope.showLoading = false;
+		$scope.syncLogs = '';
 
-	    $scope.sync = function(){
+		$scope.sync = function(){
 
-	    	$scope.showError = false;
-	    	$scope.showSuccess = false;
+			$scope.showError = false;
+			$scope.showSuccess = false;
 			$scope.showLoading = true;
-	    	var API = $resource('controller/reports/sync');
+			var API = $resource('controller/reports/sync');
 			API.get({}, function(data){
 				if(data.logs)
 				{
@@ -3227,7 +3227,7 @@
 					$scope.showSuccess = false;
 				}
 			});
-	    }
+		}
 	}
 
 
@@ -3251,26 +3251,26 @@
 							$("#table_success").slideUp(500);
 						});
 					});
-				    $scope.$parent.records[$scope.params.row].active = true;
+					$scope.$parent.records[$scope.params.row].active = true;
 					break;
 				case 'deactivate':
-			    	var API = $resource('/controller/user/deactivate/'+$scope.params.id);
-				    API.get({}, function () {
+					var API = $resource('/controller/user/deactivate/'+$scope.params.id);
+					API.get({}, function () {
 						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
 							$("#table_success").slideUp(500);
 						});
 					});
-				    $scope.$parent.records[$scope.params.row].active = false;
+					$scope.$parent.records[$scope.params.row].active = false;
 					break;
 				case 'delete':
 					var API = $resource('/controller/user/delete/'+$scope.params.id);
-				    API.get({},function(data){
-				    	$('#'+$scope.params.id).remove();
-				    	//$log.info(data);
+					API.get({},function(data){
+						$('#'+$scope.params.id).remove();
+						//$log.info(data);
 						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
 							$("#table_success").slideUp(500);
 						});
-				    });
+					});
 					break;
 				case 'guide':
 					console.log('test');
@@ -3343,9 +3343,9 @@
 			}
 
 
-	    	var params = {old_pass:$('#old_password').val(),new_pass:$('#new_password').val()};
-	    	//$log.info(params);
-	    	var API = $resource('controller/user/changepass');
+			var params = {old_pass:$('#old_password').val(),new_pass:$('#new_password').val()};
+			//$log.info(params);
+			var API = $resource('controller/user/changepass');
 			API.save(params, function(data){
 				//$log.info(data);
 				if(data.success)
@@ -3359,7 +3359,7 @@
 					$scope.success = false;
 				}
 			});
-	    }
+		}
 	}
 
 
@@ -3377,24 +3377,24 @@
 		$scope.id = 0;
 
 		var API = $resource('/user/myprofile');
-	    var params = {};
+		var params = {};
 
-	    API.get(params,function(data){
-	    	//angular acts weird with integer option values
-	    	data.user_group_id = String(data.user_group_id);
-	    	$scope.records = data;
-	    	//$log.info(data);
-	    	$scope.id = data.id;
-	    	$scope.age = Number(data.age);
-	    	if(data.location_assignment_from != '0000-00-00 00:00:00' && data.location_assignment_from != null)
-	    		$scope.from = new Date(data.location_assignment_from)
-	    	if(data.location_assignment_to != '0000-00-00 00:00:00' && data.location_assignment_to != null)
-	    		$scope.to = new Date(data.location_assignment_to)
+		API.get(params,function(data){
+			//angular acts weird with integer option values
+			data.user_group_id = String(data.user_group_id);
+			$scope.records = data;
+			//$log.info(data);
+			$scope.id = data.id;
+			$scope.age = Number(data.age);
+			if(data.location_assignment_from != '0000-00-00 00:00:00' && data.location_assignment_from != null)
+				$scope.from = new Date(data.location_assignment_from)
+			if(data.location_assignment_to != '0000-00-00 00:00:00' && data.location_assignment_to != null)
+				$scope.to = new Date(data.location_assignment_to)
 
-	    });
+		});
 
-	    // Save user profile
-	    saveUser($scope,$resource,$location ,$uibModal,$window,$log);
+		// Save user profile
+		saveUser($scope,$resource,$location ,$uibModal,$window,$log);
 	}
 
 	/**
@@ -3421,21 +3421,237 @@
 	
 	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
-	    var params = [
-		          'report',
-		          'branch',
-		          'updated_by',		          
-		          'created_at_from',
-		          'created_ate_to',
-		          'revision'		          
+		var params = [
+				  'report',
+				  'branch',
+				  'updated_by',		          
+				  'created_at_from',
+				  'created_ate_to',
+				  'revision'		          
 		];
 
-	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'reversalsummary',params,$log, TableFix);
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'reversalsummary',params,$log, TableFix);
 
-	    //editable rows
-	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
+	}
+
+	/**
+	 * Open and Closing Period controller
+	 */
+	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix',OpenClosingPeriod]);
+	
+	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix)
+	{
+		var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+		$scope.toggleFilter = true;
+
+		$scope.navigation_reports = [];
+
+		$scope.filter = {
+			limit_day : 31,
+			current_parent_name : '-'
+		};
+
+		function updatePeriodStatus(index){
+			var data = {
+				period_id : $scope.navigation_reports[index].period_id,
+				period_status : $scope.navigation_reports[index].period_status
+			};
+
+			$http
+				.post('/controller/period/update-status', data)
+				.then(function(response){
+					var result = response.data;
+					if(result.success == true){
+						$scope.navigation_reports[index].period_status = result.data.period_status;
+					} else {
+						$scope.navigation_reports[index].period_status = status_value == 1 ? 0 : 1;
+					}
+				}, function(){
+
+				});
+		}
+
+		function updatePeriodDateStatus(navigation_id,index,update_all,day){
+			var data = {
+				period_id : $scope.navigation_reports[index].period_id,
+				company_code : $scope.navigation_reports[index].company_code == null ? $scope.filter.company_code : $scope.navigation_reports[index].company_code,
+				period_month : $scope.navigation_reports[index].period_month == null ? $scope.filter.month : $scope.navigation_reports[index].period_month,
+				period_year : $scope.navigation_reports[index].period_year == null ? $scope.filter.year : $scope.navigation_reports[index].period_year,
+				navigation_id : navigation_id,
+				dates : $scope.navigation_reports[index].dates
+			};
+
+			$http
+				.post('/controller/period/update-date', data)
+				.then(function(response){
+					var result = response.data;
+					if(result.success == true){
+						if($scope.navigation_reports[index].period_id == null){
+							$scope.navigation_reports[index].period_id = result.data.period_id;
+							$scope.navigation_reports[index].company_code = result.data.company_code;
+							$scope.navigation_reports[index].period_month = result.data.period_month;
+							$scope.navigation_reports[index].period_year = result.data.period_year;
+							$scope.navigation_reports[index].navigation_id = result.data.navigation_id;
+						}
+					} else {
+						if(update_all){
+							for(var day = 1; day <= $scope.filter.limit_day; day++){
+								$scope.navigation_reports[index].dates[day] = 0;
+							}
+						} else {
+							if($scope.navigation_reports[index].dates[day] == 1){
+								$scope.navigation_reports[index].dates[day] = 0;
+							} else {
+								$scope.navigation_reports[index].dates[day] = 1;
+							}
+						}
+					}
+				}, function(){
+
+				});
+		}
+
+		// creates 1 to 28,29,30 and 31 
+		$scope.rangeLimit =  function(limit){
+			var day = [];
+			for (var i = 1; i <= limit; i++) {
+				day.push(i);
+			}
+			return day;
+		}
+
+		// filter on showing reports to open and close
+		$scope.filter = function(){
+			$scope.navigation_reports = [];
+			$scope.filter.current_parent_name = '-';
+			$scope.filter.limit_day = 0;
+
+			var year = $('#year').val();
+			var month = $('#month').val();
+			var company_code = $('#company_code').val();
+
+			var data = {
+				navigations_ids : $('#navigation_ids').val(),
+				year: year,
+				month: month,
+				company_code: company_code,
+			};
+
+			$http
+				.post('/open-closing-period/request-reports', data)
+				.then(function(response){
+					var navigation_reports = angular.copy(response.data.navigation_reports);
+					$scope.navigation_reports = angular.copy(response.data.navigation_reports);
+
+					$scope.filter.year = year;
+					$scope.filter.month = month;
+					$scope.filter.company_code = company_code;
+					$scope.filter.limit_day = response.data.day_limit;
+					$scope.filter.period_label = months[month-1] + ' ' + year;
+				}, function(){
+
+				});
+		}
+
+		// check all checkboxes of a report
+		$scope.checkAll = function(parent_id,child_id){
+			var id = (child_id == null ? parent_id : child_id);
+			var navigation_reports_length = $scope.navigation_reports.length;
+			for(var x = 0; x < navigation_reports_length; x++){
+				if($scope.navigation_reports[x].parent_id == id || $scope.navigation_reports[x].child_id == id){
+
+					for(var day = 1; day <= $scope.filter.limit_day; day++){
+						$scope.navigation_reports[x].dates[day] = 'close';
+					}
+
+					updatePeriodDateStatus(id,x,true,0);
+					break;
+				}
+			};
+		}
+
+		// show "Check All" button
+		$scope.showCheckAllButton = function(parent_id,child_id){
+			var id = (child_id == null ? parent_id : child_id);
+
+			var navigation_reports_length = $scope.navigation_reports.length;
+			for(var x = 0; x < navigation_reports_length; x++){
+				if($scope.navigation_reports[x].parent_id == id || $scope.navigation_reports[x].child_id == id){
+					var check_count = 0;
+					for(var day = 1; day <= $scope.filter.limit_day; day++){
+						if($scope.navigation_reports[x].dates[day] == 'close'){
+							check_count++;
+						}
+					}
+					if($scope.filter.limit_day == check_count){
+						return false;
+					}
+				}
+			};
+			return true;
+		}
+
+		// close the said report period
+		$scope.closeReportPeriod = function(parent_id,child_id){
+			var id = (child_id == null ? parent_id : child_id);
+			var navigation_reports_length = $scope.navigation_reports.length;
+			for(var x = 0; x < navigation_reports_length; x++){
+				if($scope.navigation_reports[x].parent_id == id || $scope.navigation_reports[x].child_id == id){
+					$scope.navigation_reports[x].period_status = 'close';
+
+					updatePeriodStatus(x);
+					break;
+				}
+			};
+		}
+
+		// open the said report period
+		$scope.openReportPeriod = function(parent_id,child_id){
+			var id = (child_id == null ? parent_id : child_id);
+			var navigation_reports_length = $scope.navigation_reports.length;
+			for(var x = 0; x < navigation_reports_length; x++){
+				if($scope.navigation_reports[x].parent_id == id || $scope.navigation_reports[x].child_id == id){
+					$scope.navigation_reports[x].period_status = 'open';
+
+					updatePeriodStatus(x);
+					break;
+				}
+			};
+		}
+
+		// change status of a period date
+		$scope.changePeriodDateStatus = function(parent_id,child_id,day){
+			var id = (child_id == null ? parent_id : child_id);
+			var navigation_reports_length = $scope.navigation_reports.length;
+			for(var x = 0; x < navigation_reports_length; x++){
+				if($scope.navigation_reports[x].parent_id == id || $scope.navigation_reports[x].child_id == id){
+					if($scope.navigation_reports[x].dates[day] == 'close'){
+						$scope.navigation_reports[x].dates[day] = 'open';
+					} else {
+						$scope.navigation_reports[x].dates[day] = 'close';
+					}
+
+					updatePeriodDateStatus(id,x,false,day);
+					break;
+				}
+			};
+		}
+
+		// reset the filter
+		$scope.reset =  function(){
+			$scope.navigation_reports = [];
+			$scope.filter.limit_day = 0;
+		}
+
+		// download
+        $scope.download = function(download_extension){
+			window.open('/period/print-report?limit_day=' + $scope.filter.limit_day + '&period_label=' + $scope.filter.period_label + '&navigations_ids=' + $('#navigation_ids').val() + '&year=' + $scope.filter.year + '&month=' + $scope.filter.month + '&company_code=' + $scope.filter.company_code, '_blank');
+        }
 	}
 
 })();

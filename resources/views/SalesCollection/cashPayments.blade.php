@@ -41,9 +41,10 @@
 					<td>[[record.or_number | uppercase]]</td>
 					<td>
 						@if($isAdmin || $isAuditor)
-							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.payment_amount,$index,'Payment Amount','payment_amount')">
+							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.payment_amount,$index,'Payment Amount','payment_amount')" ng-if="record.closed_period == 0">
 	    						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 	  						</a>						
+	  						<span ng-if="record.closed_period == 1" ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 	  					@else
 	  						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 	  					@endif
