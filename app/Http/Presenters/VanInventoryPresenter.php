@@ -44,7 +44,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->items = $reportsPresenter->getItems(true);
 		$this->view->jrSalesmans = $this->getJrSalesman();
 		$this->view->vanCodes = $this->getVanCodes();
-		$this->view->salesman = $reportsPresenter->getSalesman(true);
+		$this->view->salesman = $reportsPresenter->getSalesman(true);		
 		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
 		return $this->view('addReplenishment');
 	}
@@ -269,8 +269,8 @@ class VanInventoryPresenter extends PresenterCore
     public function getReplenishmentColumns()
     {
     	$headers = [
-    			['name'=>'Material Code','sort'=>'item_code'],
     			['name'=>'Material Description','sort'=>'description'],
+    			['name'=>'Material Code','sort'=>'item_code'],    			 
     			['name'=>'Total Quantity','sort'=>'quantity'],    			    		
     	];
     	

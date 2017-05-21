@@ -23,7 +23,7 @@
 						<div class ="col-md-8">
 							<input id="id" type="hidden" name="id" value="{{(int)$replenishment->id}}">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],van_salesman($replenishment->van_code))!!}
+								{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman, 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'setSalesmanDetails(this)'],$replenishment->modified_by)!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1],van_salesman($replenishment->van_code))!!}
@@ -61,7 +61,7 @@
 						</div>
 					</div>
 					
-					<h4>Replenishment Items</h4>					
+					<h4>Actual Count Items</h4>					
 					<div class="row">
 						<div class="col-md-12 table-responsive">
 							<table class="table table-striped table-condensed table-bordered" id="table_items">

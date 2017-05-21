@@ -76,7 +76,7 @@ function format_date($date, $format)
  */
 function sr_salesman($code)
 {
-	$salesman = ModelFactory::getInstance('RdsSalesman')->where('salesman_code',$code)->first();
+	$salesman = ModelFactory::getInstance('AppSalesman')->where('salesman_code',$code)->first();
 	return $salesman ? $salesman->salesman_name : '';
 }
 
@@ -342,4 +342,20 @@ function get_reports()
 			'stocktransfer'=>'Van Inventory - Stock Transfer',
 			'vaninventoryfrozen'=>'Van Inventory - Frozen & Kassel',
 	];
+}
+
+/**
+ * Get salesman Sheet reference no
+ * @param unknown $salesmanCode
+ * @param string $type
+ * @return unknown
+ */
+function salesman_sheet_refno($salesmanCode, $type='actual_count')
+{
+	$lists = ModelFactory::getInstance('Replenishment')
+				->where('modified_by',$salesmanCode)
+				->where('type',$type)
+				->lists('reference_number','reference_number');	
+	
+	return count($lists) > 0 ? $lists : '';
 }
