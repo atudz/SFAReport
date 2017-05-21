@@ -15,7 +15,7 @@ class ActualCountReplenishmentSeeder extends Seeder
     	 
     	// Navigation sub menu items
     	$navigation_item = [
-    			['name'=>'Actual Count Replenishment','url'=>'vaninventory.replenishment','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>6,'created_at' => $today,'updated_at'=>$today],
+    			['name'=>'Actual Count Replenishment','url'=>'vaninventory.actualcount','class'=>'glyphicon glyphicon-share-alt','parent_id'=>'3','order'=>6,'created_at' => $today,'updated_at'=>$today],
     	];
     	 
     	DB::table('navigation')->insert($navigation_item);

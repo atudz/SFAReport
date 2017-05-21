@@ -12,7 +12,7 @@
 							<h4>Actual Count Replenishment</h4>
 						</div>					
 						<div class="pull-right">
-				      		<a href="#vaninventory.replenishment" class="btn btn-success btn-sm">Back to Actual Count Replenishment</a>
+				      		<a href="#vaninventory.actualcount" class="btn btn-success btn-sm">Back to Actual Count Replenishment</a>
 				      	</div>
 					</div>
 				</div>
@@ -150,7 +150,7 @@
 					
 					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
 						<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
-						<a href="#vaninventory.replenishment" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
+						<a href="#vaninventory.actualcount" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
 						@if($replenishment->id)
 							<button class="btn btn-danger" ng-click="remove()">Delete</button>&nbsp;&nbsp;
 						@endif

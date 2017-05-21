@@ -75,19 +75,19 @@
 					controller: 'FlexiDeal',
 					//controllerAs: 'vic'*/
 				})
-				.when('/vaninventory.replenishment',{
-					templateUrl: '/reports/replenishment',
-					controller: 'Replenishment',
+				.when('/vaninventory.actualcount',{
+					templateUrl: '/reports/actualcount',
+					controller: 'ActualCount',
 					//controllerAs: 'vic'*/
 				})
-				.when('/replenishment.add',{
-					templateUrl: '/reports/replenishment/add',
-					controller: 'ReplenishmentAdd',
+				.when('/actualcount.add',{
+					templateUrl: '/reports/actualcount/add',
+					controller: 'ActualCountAdd',
 					//controllerAs: 'vic'*/
 				})
-				.when('/replenishment.edit/:id',{
-					templateUrl: function(params){ return '/reports/replenishment/edit/'+params.id},
-					controller: 'ReplenishmentAdd',
+				.when('/actualcount.edit/:id',{
+					templateUrl: function(params){ return '/reports/actualcount/edit/'+params.id},
+					controller: 'ActualCountAdd',
 					//controllerAs: 'vic'*/
 				})
 				.when('/vaninventory.adjustment',{

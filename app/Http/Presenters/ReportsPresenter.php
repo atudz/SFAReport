@@ -283,8 +283,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
 			case 'flexideal':
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
-			case 'replenishment':
-				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
+			case 'actualcount':
+				return PresenterFactory::getInstance('VanInventory')->getActualCountReport();
 			case 'adjustment':
 				return PresenterFactory::getInstance('VanInventory')->getAdjustmentReport();
 			case 'invoiceseries':
@@ -6093,8 +6093,8 @@ class ReportsPresenter extends PresenterCore
 				$filename = 'Flexi Deal Report';
 				break;
 				
-			case 'replenishment':
-				return PresenterFactory::getInstance('VanInventory')->exportReplenishment($type);
+			case 'actualcount':
+				return PresenterFactory::getInstance('VanInventory')->exportActualCount($type);
 				break;				
 			case 'adjustment':
 				return PresenterFactory::getInstance('VanInventory')->exportAdjustment($type);
@@ -6798,8 +6798,8 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
 				$total = $prepare->count();
 				break;
-			case 'replenishment':
-				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedRelenishment();
+			case 'actualcount':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedActualCount();
 				$total = $prepare->count();
 				break;
 			case 'adjustment':

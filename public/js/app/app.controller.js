@@ -249,13 +249,13 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('Replenishment',['$scope','$resource','$uibModal','$window','$log','TableFix',Replenishment]);
+	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix',ActualCount]);
 	
-	function Replenishment($scope, $resource, $uibModal, $window, $log, TableFix)
+	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix)
 	{	    	
 		
 		$scope.editHide = 'hidden'
-		$scope.url = '#replenishment.edit/';
+		$scope.url = '#actualcount.edit/';
 		$scope.editUrl = '';
 		
 		var params = [
@@ -266,16 +266,16 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log, TableFix);
 
 	}
 	
 	/**
 	 * User List controller
 	 */
-	app.controller('ReplenishmentAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', ReplenishmentAdd]);
+	app.controller('ActualCountAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', ActualCountAdd]);
 
-	function ReplenishmentAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache) {
+	function ActualCountAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache) {
 		
 		var currentPageTemplate = $route.current.loadedTemplateUrl;
 		$templateCache.remove(currentPageTemplate);
@@ -292,7 +292,7 @@
 			
 			if(!hasError){
 				
-				var API = $resource('controller/vaninventory/replenishment');
+				var API = $resource('controller/vaninventory/actualcount');
 				
 				var items = $("select[name^='item_code']").map(function (idx, el) {
 								return $(el).val();
@@ -317,7 +317,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
-					$location.path('vaninventory.replenishment');
+					$location.path('vaninventory.actualcount');
 				}, function(error){
 					if(error.data){
 						$('.help-block').html('');
@@ -342,7 +342,7 @@
 				animation: true,
 				scope: $scope,
 				templateUrl: 'DeleteActualcount',
-				controller: 'ReplenishmentDelete',
+				controller: 'ActualCountDelete',
 				windowClass: 'center-modal',
 				size: 'lg',
 				resolve: {
@@ -358,19 +358,19 @@
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
-	app.controller('ReplenishmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',ReplenishmentDelete]);
+	app.controller('ActualCountDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable',ActualCountDelete]);
 	
-	function ReplenishmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
+	function ActualCountDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable) {
 		$scope.params = params;
 		
 		$scope.save = function (){			
-			var API = $resource('controller/vaninventory/replenishment/delete/'+$scope.params.id);
+			var API = $resource('controller/vaninventory/actualcount/delete/'+$scope.params.id);
 			var params = {
 					'remarks': $('#remarks').val()					
 				};
 			
 			API.save(params).$promise.then(function(data){
-				$location.path('vaninventory.replenishment');
+				$location.path('vaninventory.actualcount');
 			}, function(error){
 				if(error.data){
 					$log.info(error);
@@ -391,7 +391,7 @@
 
 	
 	/**
-	 * Van Inventory Replenishment Adjustment
+	 * Van Inventory Adjustment Adjustment
 	 */
 	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix',Adjustment]);
 	
@@ -1431,7 +1431,7 @@
 		
 		scope.filter = function(){
 				
-			var exclude = ['salescollectionsummary','stockaudit','replenishment','adjustment','bouncecheck'];
+			var exclude = ['salescollectionsummary','stockaudit','actualcount','adjustment','bouncecheck'];
 			var formatReport = ['salescollectionsummary','stockaudit'];
 			var formatField = ['invoice_date_from','month_from','year_from'];
 			scope.page = 1;
@@ -1474,7 +1474,7 @@
 						$('#'+val.replace('_from','_error')).removeClass('hide');
 					}
 				}
-				else if(report == 'replenishment' && !$.trim(params[val]))
+				else if(report == 'actualcount' && !$.trim(params[val]))
 				{
 					if(val.indexOf('_from') != -1){
 						$('#'+val).parent().next('span').html('This field is required.');

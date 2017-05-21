@@ -6,13 +6,13 @@ use App\Core\ControllerCore;
 use App\Http\Requests\StockTransferRequest;
 use App\Factories\ModelFactory;
 use Carbon\Carbon;
-use App\Http\Requests\ReplenishmentRequest;
 use App\Factories\PresenterFactory;
 use DB;
-use App\Http\Requests\ReplenishmentDelete;
 use App\Http\Models\Replenishment;
 use App\Http\Requests\AdjustmentRequest;
 use App\Http\Requests\AdjustmentDelete;
+use App\Http\Requests\ActualCountRequest;
+use App\Http\Requests\ActualCountDelete;
 
 class VanInventoryController extends ControllerCore
 {
@@ -100,7 +100,7 @@ class VanInventoryController extends ControllerCore
 	 * @param ReplenishmentRequest $request
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function saveReplenishment(ReplenishmentRequest $request)
+	public function saveActualCount(ActualCountRequest $request)
 	{		
 		DB::beginTransaction();
 		
@@ -165,7 +165,7 @@ class VanInventoryController extends ControllerCore
 	 * @param unknown $id
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function deleteReplenishment(ReplenishmentDelete $request, $id)
+	public function deleteActualCount(ActualCountDelete $request, $id)
 	{
 		
 		$replenish = ModelFactory::getInstance('Replenishment')->find($id);

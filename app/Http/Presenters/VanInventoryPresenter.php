@@ -37,7 +37,7 @@ class VanInventoryPresenter extends PresenterCore
 	 * @param string $type
 	 * @return string The rendered html view
 	 */
-	public function createReplenishment()
+	public function createActualCount()
 	{
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
@@ -46,7 +46,7 @@ class VanInventoryPresenter extends PresenterCore
 		$this->view->vanCodes = $this->getVanCodes();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);		
 		$this->view->replenishment = ModelFactory::getInstance('Replenishment');
-		return $this->view('addReplenishment');
+		return $this->view('addActualCount');
 	}
 	
 	
@@ -74,7 +74,7 @@ class VanInventoryPresenter extends PresenterCore
 	 * @param string $type
 	 * @return string The rendered html view
 	 */
-	public function editReplenishment($referenceNum)
+	public function editActualCount($referenceNum)
 	{
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
@@ -86,7 +86,7 @@ class VanInventoryPresenter extends PresenterCore
 		if(!$replenishment)
 			$replenishment = ModelFactory::getInstance('Replenishment');
 		$this->view->replenishment = $replenishment;
-		return $this->view('addReplenishment');
+		return $this->view('addActualCount');
 	}
 	
 	/**
@@ -148,12 +148,12 @@ class VanInventoryPresenter extends PresenterCore
      * @param string $type
      * @return string The rendered html view
      */
-    public function replenishment()
+    public function actualCount()
     {
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
-    	$this->view->tableHeaders = $this->getReplenishmentColumns();
-    	return $this->view('replenishment');
+    	$this->view->tableHeaders = $this->getActualCountColumns();
+    	return $this->view('actualCount');
     }
     
     /**
@@ -266,7 +266,7 @@ class VanInventoryPresenter extends PresenterCore
      * Get replenishment table headers
      * @return string[][]
      */
-    public function getReplenishmentColumns()
+    public function getActualCountColumns()
     {
     	$headers = [
     			['name'=>'Material Description','sort'=>'description'],
@@ -395,9 +395,9 @@ class VanInventoryPresenter extends PresenterCore
      * Get replenishment report report
      * @return \App\Core\PaginatorCore
      */
-    public function getReplenishmentReport()
+    public function getActualCountReport()
     {    	    	
-    	$prepare = $this->getPreparedRelenishment();
+    	$prepare = $this->getPreparedActualCount();
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
@@ -767,7 +767,7 @@ class VanInventoryPresenter extends PresenterCore
     /**
      * Get Prepared statement for stock transfer
      */
-    public function getPreparedRelenishment()
+    public function getPreparedActualCount()
     {
     	$select = '
     			replenishment.reference_number,
@@ -1266,9 +1266,9 @@ class VanInventoryPresenter extends PresenterCore
      * @param unknown $type
      * @return unknown
      */
-    public function exportReplenishment($type)
+    public function exportActualCount($type)
     {    	
-    	$prepare = $this->getPreparedRelenishment();
+    	$prepare = $this->getPreparedActualCount();
     	
     	if($type == 'pdf')
     		$prepare->where('replenishment_item.quantity','>',0);
@@ -1289,14 +1289,14 @@ class VanInventoryPresenter extends PresenterCore
     	{
     		\Excel::create('Actual Count Replenishment Report', function($excel) use ($replenishment){
     			$excel->sheet('Sheet1', function($sheet) use ($replenishment){    				
-    				$sheet->loadView('VanInventory.replenishmentXlsExport',compact('replenishment'));
+    				$sheet->loadView('VanInventory.actualCountXlsExport',compact('replenishment'));
     			});
     	
     		})->export($type);
     	}
     	elseif($type == 'pdf')
     	{    		
-    		$pdf = \PDF::loadView('VanInventory.replenishmentPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;    		
+    		$pdf = \PDF::loadView('VanInventory.actualCountPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;    		
     		return $pdf->download('Actual Count Replenishment Report.pdf');
     	}
     }

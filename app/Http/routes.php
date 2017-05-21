@@ -43,9 +43,9 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/checkpayments', ['as'=>'check-payments', 'uses'=>'SalesCollectionPresenter@checkpayments']);	
 	Route::get('/reversal/summary', ['as'=>'reversal-summary', 'uses'=>'ReversalPresenter@index']);
 	
-	Route::get('/replenishment', ['as'=>'replenishment', 'uses'=>'VanInventoryPresenter@replenishment']);
-	Route::get('/replenishment/add', ['as'=>'replenishment-add', 'uses'=>'VanInventoryPresenter@createReplenishment']);
-	Route::get('/replenishment/edit/{id}', ['as'=>'replenishment-edit', 'uses'=>'VanInventoryPresenter@editReplenishment']);
+	Route::get('/actualcount', ['as'=>'actualcount', 'uses'=>'VanInventoryPresenter@actualCount']);
+	Route::get('/actualcount/add', ['as'=>'actualcount-add', 'uses'=>'VanInventoryPresenter@createActualCount']);
+	Route::get('/actualcount/edit/{id}', ['as'=>'actualcount-edit', 'uses'=>'VanInventoryPresenter@editActualCount']);
 	
 	Route::get('/adjustment', ['as'=>'adjustment', 'uses'=>'VanInventoryPresenter@adjustment']);
 	Route::get('/adjustment/add', ['as'=>'adjustment-add', 'uses'=>'VanInventoryPresenter@createAdjustment']);
@@ -141,8 +141,8 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/user/userguide/download/{id}', ['as' => 'user-guide-download', 'uses' => 'UserGuideController@download']);
 	Route::get('/user/contact/mail/{support_id}', ['as'=>'user-contact-us', 'uses'=>'UserController@mail']);
 	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
-	Route::post('/vaninventory/replenishment', ['as'=>'replenishment-save', 'uses'=>'VanInventoryController@saveReplenishment']);
-	Route::post('/vaninventory/replenishment/delete/{id}', ['as'=>'replenishment-delete', 'uses'=>'VanInventoryController@deleteReplenishment']);
+	Route::post('/vaninventory/actualcount', ['as'=>'actualcount-save', 'uses'=>'VanInventoryController@saveActualCount']);
+	Route::post('/vaninventory/actualcount/delete/{id}', ['as'=>'actualcount-delete', 'uses'=>'VanInventoryController@deleteActualCount']);
 	Route::post('/vaninventory/adjustment', ['as'=>'adjustment-save', 'uses'=>'VanInventoryController@saveAdjustment']);
 	Route::post('/vaninventory/adjustment/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'VanInventoryController@deleteAdjustment']);
 	
