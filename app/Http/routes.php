@@ -79,6 +79,10 @@ Route::group(['prefix' => 'reports'],function(){
 		return response()->json(salesman_sheet_refno($salesmanCode));
 	});
 	
+		Route::get('/salesman/adjustment/{salesman_code}', function($salesmanCode){
+			return response()->json(salesman_sheet_refno($salesmanCode,'replenishment'));
+		});
+	
 	Route::get('/salesman/jr/{salesman_code}', function($salesmanCode){
 		return response()->json(sfa_jr_salesman($salesmanCode));
 	});

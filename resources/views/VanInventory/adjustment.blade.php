@@ -8,9 +8,9 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-8">	
-						{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)'])!!}
+						{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'set_refno(this)'])!!}
 						{!!Html::datepicker('replenishment_date','Adjustment date/time <span class="required">*</span>',false)!!}
-						{!!Html::input('text','reference_number','Adjustment No. <span class="required">*</span>','',['onblur'=>'validate(this)'])!!}						
+						{!!Html::select('reference_number','Count Sheet No. <span class="required">*</span>', [], 'No Adjustment No.',['disabled'=>'disabled'])!!}						
 						{!!Html::input('text','adjustment_reason','Adjustment Reason')!!}
 					</div>			
 				{!!Html::fclose()!!}
@@ -33,3 +33,28 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	function set_refno(el)
+	{
+		var sel = $(el).val();
+		var url = 'reports/salesman/adjustment/'+sel;
+		$.get(url,function(data){
+			if(data){
+				$('#reference_number').empty();
+				$.each(data, function(k,v){
+					$('#reference_number')
+						.append($("<option></option>")
+						.attr("value", k).text(v));
+				});
+				$('#reference_number').removeAttr('disabled');
+			} else {				
+				$('#reference_number').empty();
+				$('#reference_number').append($("<option></option>").attr("value", '').text('No Count Sheet No.'));
+				$('#reference_number').attr('disabled','disabled');
+			}							
+		});
+			
+	}	
+
+</script>
