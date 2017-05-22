@@ -43,7 +43,7 @@ class NavigationSlugTableSeeder extends Seeder
             ['Actual Count Replenishment','actual-count-replenishment'],
             ['User Guide','user-guide'],
             ['Adjustment Replenishment','adjustment-replenishment'],
-            ['Bounce Check Report','bounce-check-report'],
+            ['Bounce Check','bounce-check-report'],
             ['Invoice Series Mapping','invoice-series-mapping'],
             ['Cash Payments','cash-payments'],
             ['Check Payments','check-payments'],

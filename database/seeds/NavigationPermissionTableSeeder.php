@@ -44,7 +44,7 @@ class NavigationPermissionTableSeeder extends Seeder
 
         $flexiDealId = DB::table('navigation')->where('name', '=', 'Flexi Deal')->value('id');
 
-        $bounceCheckReportId = DB::table('navigation')->where('name', '=', 'Bounce Check Report')->value('id');
+        $bounceCheckReportId = DB::table('navigation')->where('name', '=', 'Bounce Check')->value('id');
 
         $invoiceSeriesMappingId = DB::table('navigation')->where('name', '=', 'Invoice Series Mapping')->value('id');
 
