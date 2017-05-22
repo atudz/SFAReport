@@ -2,13 +2,13 @@
 
 Html::macro('topen', function($options=[]) {
 
-	$no_download = isset($options['no_download']) && $options['no_download'];
+	$show_download = isset($options['show_download']) && $options['show_download'];
 	
 	$loading = isset($options['no_loading']) && $options['no_loading'] ? 'hide' : 'show';
-	$no_search = isset($options['no_search']);
+
 	$html = '<div class="col-sm-12 form-group row">';
 	
-	if(!$no_search)
+	if(array_key_exists('show_search', $options) && $options['show_search'])
 	{
 		$html .= '				
 					<div class="pull-left">
@@ -19,7 +19,7 @@ Html::macro('topen', function($options=[]) {
 			      	</div>';
 	}
 
-	if(isset($options['add_link']))
+	if(array_key_exists('show_add_button', $options) && $options['show_add_button'])
 	{
 		$html .= '
 						<div class="pull-left" style="padding:0px 5px 0px 10px">
@@ -44,7 +44,7 @@ Html::macro('topen', function($options=[]) {
 				      	</div>';
 	}
 	
-	if(!$no_download)
+	if(array_key_exists('show_download', $options) && $options['show_download'])
 	{						
 		$html.= '<div class="pull-right">					
 		      		<div class="btn-group">
@@ -55,7 +55,7 @@ Html::macro('topen', function($options=[]) {
 							';
 		if(!isset($options['no_xls']) || !$options['no_xls'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'xlsx\')">Excel</a></li>';
-		if(!isset($options['no_pdf']) || !$options['no_pdf'])
+		if(array_key_exists('show_print', $options) && $options['show_print'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
 							      
 		$html .= '	      </ul>

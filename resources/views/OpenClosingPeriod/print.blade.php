@@ -21,7 +21,7 @@
         </style>
     </head>
     <body style="width: 100%; background-color: #FFF;">
-        <div style="margin: 0 auto;">
+        <div style="margin: 0 auto; padding: 30px;">
             <h3 style="width: 100%; text-align: center;">SUNPRIDE FOODS INC.</h3>
             <br>
 

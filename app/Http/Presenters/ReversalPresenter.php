@@ -15,12 +15,15 @@ class ReversalPresenter extends PresenterCore
      */
     public function index()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
         $reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getSummaryReversalColumns();
     	$this->view->areas = $reportsPresenter->getArea(true);
     	$this->view->customers = $reportsPresenter->getCustomer();
-    	
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('summary-of-reversal',$user_group_id,$user_id);
     	return $this->view('index');
     }
 

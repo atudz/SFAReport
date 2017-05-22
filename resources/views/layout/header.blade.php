@@ -30,3 +30,4 @@
 							
 		</div><!-- /.container-fluid -->
 	</nav>
+	<toaster-container toaster-options="{'close-button':true, 'animation-class': 'toast-top-right'}"></toaster-container>

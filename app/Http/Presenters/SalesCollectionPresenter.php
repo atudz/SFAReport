@@ -15,6 +15,9 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function cashpayments()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->companyCode = $reportsPresenter->getCompanyCode();
     	$this->view->customerCode = $reportsPresenter->getCustomerCode();
@@ -22,6 +25,7 @@ class SalesCollectionPresenter extends PresenterCore
     	$this->view->areas = $reportsPresenter->getArea();
     	$this->view->customers = $reportsPresenter->getCustomer();
     	$this->view->tableHeaders = $this->getCashPaymentColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('cash-payments',$user_group_id,$user_id);
     	return $this->view('cashPayments');
     }
     
@@ -32,6 +36,9 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function checkpayments()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->companyCode = $reportsPresenter->getCompanyCode();
     	$this->view->customerCode = $reportsPresenter->getCustomerCode();
@@ -39,6 +46,7 @@ class SalesCollectionPresenter extends PresenterCore
     	$this->view->areas = $reportsPresenter->getArea();
     	$this->view->customers = $reportsPresenter->getCustomer();
     	$this->view->tableHeaders = $this->getCheckPaymentColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('check-payments',$user_group_id,$user_id);
     	return $this->view('checkPayments');
     }
     
@@ -865,5 +873,4 @@ class SalesCollectionPresenter extends PresenterCore
     
     	return $filters;
     }
-    
 }

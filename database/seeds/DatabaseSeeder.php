@@ -34,8 +34,15 @@ class DatabaseSeeder extends Seeder
         $this->call(UserGuideNavigationSeeder::class);
 //        $this->call(UpdateUserGuideSeeder::class);
 		$this->call(CashPaymentsSeeder::class);
+
 		$this->call(CheckPaymentSeeder::class);
 		$this->call(OrganizeNavsSeeder::class);
+
+        // Access Matrix Table
+        $this->call(NavigationUserAccessMatrixTableSeeder::class);
+        $this->call(NavigationPermissionTableSeeder::class);
+        $this->call(DefaultNavigationPermissionsTableSeeder::class);
+        $this->call(NavigationSlugTableSeeder::class);
         Model::reguard();
     }
 }

@@ -39,6 +39,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function index()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$menus = \DB::table('navigation')->where('summary',1)->get();
     	$menuList = [];
     	foreach($menus as $menu)
@@ -52,6 +55,8 @@ class ReportsPresenter extends PresenterCore
     	{    	
     		$this->view->{$report->report} = $report->count;
     	}
+
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('dashboard',$user_group_id,$user_id);
     	return $this->view('index');
     }
     
@@ -63,25 +68,31 @@ class ReportsPresenter extends PresenterCore
      */
     public function salesCollection($type='report')
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	switch($type)
     	{
     		case 'report':
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
-    			$this->view->tableHeaders = $this->getSalesCollectionReportColumns();
+                $this->view->tableHeaders = $this->getSalesCollectionReportColumns();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('report',$user_group_id,$user_id);
     			return $this->view('salesCollectionReport');
     		case 'posting':
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->customerCode = $this->getCustomerCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionPostingColumns();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('posting',$user_group_id,$user_id);
     			return $this->view('salesCollectionPosting');
     		case 'summary':
     			$this->view->customerCode = $this->getCompanyCode();
     			$this->view->salesman = $this->getSalesman();
     			$this->view->area = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesCollectionSummaryColumns();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('monthly-summary-of-sales',$user_group_id,$user_id);
     			return $this->view('salesCollectionSummary');
     	}
     }
@@ -93,6 +104,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function salesReport($type='permaterial')
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	switch($type)
     	{
     		case 'permaterial':
@@ -104,6 +118,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->segments = $this->getItemSegmentCode();
     			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('per-material',$user_group_id,$user_id);
     			return $this->view('salesReportPerMaterial');
     		case 'perpeso':
     			$this->view->companyCode = $this->getCompanyCode();    			
@@ -112,6 +127,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->areas = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesReportPesoColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('peso-value',$user_group_id,$user_id);
     			return $this->view('salesReportPerPeso');
     		case 'returnpermaterial':
     			$this->view->companyCode = $this->getCompanyCode();
@@ -122,6 +138,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->segments = $this->getItemSegmentCode();
     			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('returns-per-material',$user_group_id,$user_id);
     			return $this->view('returnsPerMaterial');
     		case 'returnperpeso':
     			$this->view->customers = $this->getCustomer();
@@ -130,6 +147,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->areas = $this->getArea();
     			$this->view->tableHeaders = $this->getReturnReportPerPesoColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('returns-peso-value',$user_group_id,$user_id);
     			return $this->view('returnsPerPeso');
     		case 'customerlist':
     			$this->view->salesman = $this->getSalesman();
@@ -139,6 +157,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->priceGroup = $this->getPriceGroup();
     			$this->view->tableHeaders = $this->getCustomerListColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-customer',$user_group_id,$user_id);
     			return $this->view('customerList');
     		case 'salesmanlist':
     			$this->view->salesman = $this->getSalesman();
@@ -147,6 +166,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->tableHeaders = $this->getSalesmanListColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-salesman',$user_group_id,$user_id);
     			return $this->view('salesmanList');
     		case 'materialpricelist':
     			$this->view->segmentCodes = $this->getItemSegmentCode();
@@ -156,6 +176,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->companyCode = $this->getCompanyCode();
     			$this->view->tableHeaders = $this->getMaterialPriceListColumns();
     			$this->view->isSalesman = $this->isSalesman();
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-material-price',$user_group_id,$user_id);
     			return $this->view('materialPriceList');
     	}
     }
@@ -168,6 +189,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function vanInventory($type='canned')
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	switch($type)
     	{
     		case 'canned':
@@ -177,7 +201,8 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns();
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
-    			$this->view->type = 'canned';    			
+    			$this->view->type = 'canned';
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('canned-and-mixes',$user_group_id,$user_id);
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
@@ -186,6 +211,7 @@ class ReportsPresenter extends PresenterCore
     			$this->view->statuses = $this->getCustomerStatus();
     			$this->view->tableHeaders = $this->getVanInventoryColumns('frozen');
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
+                $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('frozen-and-kassel',$user_group_id,$user_id);
     			$this->view->type = 'frozen';    			
     			return $this->view('vanInventory');
     	}
@@ -198,9 +224,13 @@ class ReportsPresenter extends PresenterCore
      */
     public function bir()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$this->view->salesman = $this->getSalesman();
     	$this->view->area = $this->getArea(false,false);
     	$this->view->tableHeaders = $this->getBirColumns();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bir',$user_group_id,$user_id);
     	return $this->view('bir');
     }
     
@@ -212,6 +242,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function unpaidInvoice()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$this->view->salesman = $this->getSalesman();
     	$this->view->customers = $this->getCustomer();
     	$this->view->companyCode = $this->getCompanyCode();
@@ -220,6 +253,7 @@ class ReportsPresenter extends PresenterCore
     	$this->view->from = (new Carbon(config('system.go_live_date')))->subDay()->format('m/d/Y');
     	$this->view->to = (new Carbon())->format('m/d/Y');
     	$this->view->isSalesman = $this->isSalesman();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('unpaid-invoice',$user_group_id,$user_id);
     	
     	return $this->view('unpaidInvoice');
     }
@@ -230,6 +264,9 @@ class ReportsPresenter extends PresenterCore
      */
     public function sync()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('sync-data',$user_group_id,$user_id);
     	return $this->view('sync');
     }
     

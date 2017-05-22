@@ -260,6 +260,20 @@
 					controller: 'OpenClosingPeriod',
 					/*controllerAs: 'sync'*/
 				})
+				
+				
+				.when('/user.access.matrix',{
+					templateUrl: '/user-access-matrix',
+					controller: 'UserAccessMatrix',
+					/*controllerAs: 'sync'*/
+				})
+				
+				
+				.when('/role.access.matrix',{
+					templateUrl: '/role-access-matrix',
+					controller: 'UserAccessMatrix',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'

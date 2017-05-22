@@ -16,10 +16,14 @@ class UserPresenter extends PresenterCore
 	 */
 	public function userList()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->roles = $this->getRoles();		
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->tableHeaders = $this->getUserTableColumns();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
 		return $this->view('users');
 	}
 
@@ -29,7 +33,11 @@ class UserPresenter extends PresenterCore
 	 */
 	public function contactUs()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('contact-us',$user_group_id,$user_id);
 		return $this->view('contactUs');
 	}
 
@@ -39,10 +47,14 @@ class UserPresenter extends PresenterCore
 	 */
 	public function summaryOfIncidentReport()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->roles = $this->getRoles();
 		$this->view->name = $this->contactUsName();
 		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
 		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('summary-of-incident-report',$user_group_id,$user_id);
 		return $this->view('summaryOfIncidentReport');
 	}
 	
@@ -65,10 +77,14 @@ class UserPresenter extends PresenterCore
 	 */
 	public function addEdit($userId=0)
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
 		return $this->view('addEdit');
 	}
 
@@ -98,25 +114,36 @@ class UserPresenter extends PresenterCore
 	 */
 	public function edit()
 	{
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
 		return $this->view('edit');
 	}
 	
 	
 	public function changePassword(){
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-management',$user_group_id,$user_id);
 		return $this->view('changePassword');
 	}
 	
 	public function profile(){
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
 		$this->view->assignmentOptions = $this->getAssignmentOptions();
 		$this->view->roles = $this->getRoles();
 		$this->view->gender = $this->getGender();
 		$admin = $this->isAdmin();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
-		$this->view->readOnly = $admin ? '' : 'readonly';
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-management',$user_group_id,$user_id);
+		$this->view->readOnly = $this->view->navigationActions['read_only_profile'] ? 'changePassword' : '';
 		return $this->view('myProfile');
 	}
 	

@@ -17,11 +17,15 @@ class BounceCheckPresenter extends PresenterCore
      */
     public function index()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getBounceCheckColumns();
-    	$this->view->areas = $reportsPresenter->getArea();;
-    	$this->view->customers = $reportsPresenter->getCustomer();;
+    	$this->view->areas = $reportsPresenter->getArea();
+    	$this->view->customers = $reportsPresenter->getCustomer();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
     	return $this->view('index');
     }
 
@@ -33,6 +37,9 @@ class BounceCheckPresenter extends PresenterCore
      */
     public function create()
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getBounceCheckColumns(true);
@@ -40,6 +47,7 @@ class BounceCheckPresenter extends PresenterCore
     	$this->view->payments = 0;
     	$this->view->txn_code = generate_txn_code();
     	$this->view->max_count = 0;
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
         return $this->view('create');
     }
 
@@ -51,6 +59,9 @@ class BounceCheckPresenter extends PresenterCore
      */
     public function edit($id)
     {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getBounceCheckColumns(true);
@@ -66,6 +77,7 @@ class BounceCheckPresenter extends PresenterCore
     	if(false !== strpos($max,'-'))
     		$count = explode('-', $max)[1];
     	$this->view->max_count = $count;
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
     	return $this->view('create');
     }
     

@@ -3,7 +3,7 @@
     <hr />
     <div class="row">
 
-    	@if($menuList['Sales & Collection'])
+    	@if($navigationActions['show_sales_and_collection_count'] && $menuList['Sales & Collection'])
 	        <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-red panel-widget ">
 	                <div class="row no-padding">
@@ -19,7 +19,7 @@
 	        </div>
 	    @endif
 
-	    @if($menuList['Van Inventory'])
+	    @if($navigationActions['show_van_inventory_count'] && $menuList['Van Inventory'])
 	        <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-teal panel-widget">
 	                <div class="row no-padding">
@@ -35,7 +35,7 @@
 	        </div>
 	    @endif
 
-	    @if($menuList['Unpaid Invoice'])
+	    @if($navigationActions['show_unpaid_invoice_count'] && $menuList['Unpaid Invoice'])
 	        <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-orange panel-widget">
 	                <div class="row no-padding">
@@ -51,7 +51,7 @@
 	        </div>
 		@endif
 		
-		@if($menuList['Sales Report'])
+		@if($navigationActions['show_sales_report_count'] && $menuList['Sales Report'])
 	         <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-gold panel-widget">
 	                <div class="row no-padding">
@@ -67,7 +67,7 @@
 	        </div> 
 	    @endif
         
-        @if($menuList['BIR'])
+        @if($navigationActions['show_bir_count'] && $menuList['BIR'])
 	        <div class="col-xs-12 col-md-6 col-lg-3">
 	            <div class="panel panel-blue panel-widget">
 	                <div class="row no-padding">

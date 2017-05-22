@@ -27,11 +27,13 @@
 				      <input type="password" class="form-control" id="confirm_password" placeholder="">
 				    </div>
 				</div>
-				<div class="form-group row">
-				    <div class="col-sm-offset-2 col-sm-5">
-				      <button type="button" class="btn btn-success" ng-click="submit()">Submit</button>
-				    </div>
-			 	</div>
+				@if($navigationActions['can_change_password'])
+					<div class="form-group row">
+					    <div class="col-sm-offset-2 col-sm-5">
+					      <button type="button" class="btn btn-success" ng-click="submit()">Submit</button>
+					    </div>
+				 	</div>
+			 	@endif
 			</div>
 		</div>
 	</div>

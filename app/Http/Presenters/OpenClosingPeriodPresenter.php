@@ -13,13 +13,16 @@ class OpenClosingPeriodPresenter extends PresenterCore
      * @return Laravel Blade View
      */
     public function index(){
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
         $reportsPresenter = PresenterFactory::getInstance('Reports');
 
         $this->view->companyCode = $reportsPresenter->getCompanyCode();
         $this->view->months = $this->getMonths();
         $this->view->years = $this->getYears();
         $this->view->reportNavigations = $this->getReportConnectedNavigation();
-
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('open-closing-period',$user_group_id,$user_id);
         return $this->view('index');
     }
 
@@ -271,6 +274,7 @@ class OpenClosingPeriodPresenter extends PresenterCore
         ];
 
         $pdf = PDF::loadView('OpenClosingPeriod.print', $data)->setPaper('legal', 'landscape');
-        return $pdf->stream("invoice.pdf", array("Attachment" => 0));
+
+        return $pdf->download('period-' . str_replace(' ', '',$this->request->get('period_label')) . '.pdf');
     }
 }

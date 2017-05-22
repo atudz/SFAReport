@@ -1,12 +1,12 @@
 <?php
 
-Html::macro('theader', function(array $headers) {
+Html::macro('theader', function(array $headers, $can_sort = false) {
 
 	$html = '<thead>
 				<tr>';
 	foreach($headers as $header)
 	{
-		if(isset($header['sort']))
+		if($can_sort && isset($header['sort']))
 		{
 			$html .= '<th'.Html::attributes(array_except($header, ['name','sort'])).
 					' class="sortable" ng-click="sort(\''.$header['sort'].'\')" id="'.$header['sort'].'">'.
