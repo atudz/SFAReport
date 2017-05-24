@@ -7888,4 +7888,9 @@ class ReportsPresenter extends PresenterCore
 
 		return $records;
 	}
+
+    public function vanInventoryItemCode($type)
+    {
+        return response()->json($this->getVanInventoryItems($type,'item_code'));
+    }
 }

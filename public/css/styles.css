@@ -1208,3 +1208,12 @@ textarea.fxresize{
 #toast-container{
     top: 50px;
 }
+
+.van-inventory-header,
+.item-code{
+    height: 114px;
+}
+
+.item-code{
+    display: none;
+}
