@@ -156,13 +156,14 @@
 	 * Van & Inventory (Canned) controller
 	 */
 
-	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache',VanInventoryCanned]);
+	app.controller('VanInventoryCanned',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache','$http',VanInventoryCanned]);
 
-	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache)
+	function VanInventoryCanned($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache,$http)
 	{
 		deletePreviousCache($route,$templateCache);
+		$scope.item_code = {};
 
-		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable);
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventorycanned', $log, InventoryFixTable,$http);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log);
@@ -172,13 +173,13 @@
 	 * Van & Inventory (Frozen) controller
 	 */
 
-	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache',VanInventoryFrozen]);
+	app.controller('VanInventoryFrozen',['$scope','$resource','$uibModal','$window','$log', 'InventoryFixTable','$route','$templateCache','$http',VanInventoryFrozen]);
 
-	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache)
+	function VanInventoryFrozen($scope, $resource, $uibModal, $window, $log, InventoryFixTable,$route,$templateCache,$http)
 	{
 		deletePreviousCache($route,$templateCache);
 
-		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable);
+		vanInventoryController($scope, $resource, $uibModal, $window, 'vaninventoryfrozen', $log, InventoryFixTable,$http);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log);
@@ -855,13 +856,16 @@
 	/**
 	 * Van Inventory Controller
 	 */
-	function vanInventoryController(scope, resource, modal, window, reportType, log, InventoryFixTable)
+	function vanInventoryController(scope, resource, modal, window, reportType, log, InventoryFixTable, http)
 	{
 		// Filter flag
 		scope.toggleFilter = true;
 
 		// items data
 		scope.items = [];
+
+		// item_code data
+		scope.item_codes = [];
 
 		var report = reportType;
 
@@ -882,6 +886,23 @@
 				  'reference_number',
 				  'audited_by'
 		];
+
+		http
+			.get('/reports/vaninventory/' + (report == 'vaninventorycanned' ? 'canned' : 'frozen') + '/item-codes')
+			.then(function(response){
+				var th_ctr = 8;
+				angular.element('th').addClass('van-inventory-header');
+				angular.forEach(response.data, function(value, key){
+					angular.element('th').eq(th_ctr).addClass('code_' + value.item_code).addClass('code-header');
+					th_ctr++;
+				});
+			}, function(){
+
+			});
+
+		scope.checkIfHeaderDisplayed = function (code){
+			return angular.element('.code-header.' + code).css('display') != 'none' ? true : false;
+		};
 
 		// Filter table records
 		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
@@ -1324,7 +1345,7 @@
 
 				if(data.total)
 				{
-					scope.items.push({
+					var item = {
 						records: data.records,
 						total: data.total,
 						stocks: data.stocks,
@@ -1335,7 +1356,75 @@
 						short_over_stocks: data.short_over_stocks,
 						stock_on_hand: data.stock_on_hand,
 						first_upload: data.first_upload
-					});
+					};
+
+					var replenishment_length = Object.keys(item.replenishment).length;
+					if(item.first_upload && replenishment_length > 0)
+					{
+						angular.forEach(item.replenishment, function(value, key){
+							if(key.includes('code_') && value != 0 && checkItemCodeExist(key) == -1){
+								scope.item_codes.push(key);
+							}
+						});
+					} 
+
+					var stocks_length = item.stocks.length;
+					if(item.show_stocks > 0 && stocks_length > 0)
+					{
+						angular.forEach(item.stocks, function(stock, stock_key){
+							angular.forEach(item.stocks[stock_key], function(value, value_key){
+								if(value_key.includes('code_') && checkItemCodeExist(value_key) == -1){
+									scope.item_codes.push(value_key);
+								}
+							});
+						});
+					}
+
+					var records_length = item.records.length;
+					if(item.total > 0 && records_length > 0)
+					{
+						angular.forEach(item.records, function(record, record_key){
+							angular.forEach(item.records[record_key], function(value, value_key){
+								if(value_key.includes('code_') && checkItemCodeExist(value_key) == -1){
+									scope.item_codes.push(value_key);
+								}
+							});
+						});
+					}
+
+					var stock_on_hand_length = Object.keys(item.stock_on_hand).length;
+					if(item.showBody > 0 && stock_on_hand_length > 0)
+					{
+						angular.forEach(item.stock_on_hand, function(value, key){
+							if(key.includes('code_') && value != 0 && checkItemCodeExist(key) == -1){
+								scope.item_codes.push(key);
+							}
+						});
+					}
+
+					if(item.showReplenishment)
+					{
+						if(replenishment_length > 0)
+						{
+							angular.forEach(item.replenishment, function(value, key){
+								if(key.includes('code_') && value != 0 && checkItemCodeExist(key) == -1){
+									scope.item_codes.push(key);
+								}
+							});
+						}
+
+						var short_over_stocks_length = Object.keys(item.short_over_stocks).length;
+						if(short_over_stocks_length > 0)
+						{
+							angular.forEach(item.short_over_stocks, function(value, key){
+								if(key.includes('code_') && value != 0 && checkItemCodeExist(key) == -1){
+									scope.item_codes.push(key);
+								}
+							});
+						}
+					}
+
+					scope.items.push(item);
 					$('#no_records_div').hide();
 					fetch = false;
 				}
@@ -1360,6 +1449,11 @@
 						}
 					});
 					//console.log('Build table');
+
+					angular.element('.code-header').hide();
+					angular.forEach(scope.item_codes, function(value, key){
+						angular.element('.' + value).show();
+					});
 				} else {
 					//toggleLoading();
 					$('#no_records_div').show();
@@ -1367,6 +1461,10 @@
 					console.log('Destroy table');
 				}
 		});
+
+		function checkItemCodeExist(code){
+			return scope.item_codes.indexOf(code);
+		}
 	}
 
 	/**

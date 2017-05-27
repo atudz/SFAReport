@@ -34,6 +34,7 @@
 						<tbody>
 						<tbody ng-repeat="item in items">
 																	
+
 							<!-- Beginning balance -->
 							<tr ng-show="item.first_upload">
 								<td class="bold">Beginning Balance</td>
@@ -47,7 +48,7 @@
 								</td>
 								<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 								@foreach($itemCodes as $item)
-									<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>																	
 							
@@ -84,7 +85,7 @@
 
 
 								@foreach($itemCodes as $item)
-									<td class="bold">[[stock.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[stock.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>
 							
@@ -101,10 +102,10 @@
 								<td></td>
 								<td></td>
 								@foreach($itemCodes as $item)
-									<td> [[record.{{'code_'.$item->item_code}}]]</td>
+									<td ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')"> [[record.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
-							</tr>
-							
+							</tr>							
+
 							<!-- Stock on Hand -->
 							<tr style="background-color: #ccffcc" ng-show="item.showBody">
 								<td class="bold">Stock On Hand</td>
@@ -116,7 +117,7 @@
 								<td class="bold"></td>
 								<td class="bold"></td>
 								@foreach($itemCodes as $item)
-									<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>
 								
@@ -133,7 +134,7 @@
 								</td>
 								<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 								@foreach($itemCodes as $item)
-									<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>
 													
@@ -148,7 +149,7 @@
 								<td class="bold"></td>
 								<td class="bold"></td>
 								@foreach($itemCodes as $item)
-									<td class="bold">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>
 							
@@ -163,7 +164,7 @@
 								<td class="bold"></td>
 								<td class="bold"></td>
 								@foreach($itemCodes as $item)
-									<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>
 																			
