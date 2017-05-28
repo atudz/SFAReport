@@ -30,8 +30,6 @@
 						{!!Html::theader($tableHeaders,$navigationActions['can_sort_columns'])!!}
 						<tbody>
 							<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
-								<td>[[record.segment_code]]</td>
-								<td>[[record.brand_name]]</td>							
 								<td>[[record.item_code]]</td>
 								<td>[[record.description]]</td>
 								<td>[[record.quantity]]</td>														

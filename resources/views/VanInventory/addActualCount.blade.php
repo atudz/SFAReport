@@ -117,7 +117,7 @@
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12">
-					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
+					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 					 								</div>
 					 							</div>		
 											</td>
@@ -212,7 +212,8 @@
 	function setItem(el)
 	{
 		var sel = $(el).val();
-		$(el).parent().parent().parent().next().find('select').val($(el).val())
+		$(el).parent().parent().parent().parent().find('select[name^="item"]').val($(el).val())
+		$(el).parent().parent().parent().parent().find('select[name^="item_code"]').val($(el).val())
 	}
 
 	function setSalesmanDetails(el)

@@ -50,11 +50,9 @@
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
 								<thead>
 									<tr>
-										<th>Segment Code</th>
-										<th width="25%">Brand Name</th>
+										<th>Material Code</th>
 										<th>Material Description</th>
-										<th width="12%">Material Code</th>																																							
-										<th width="10%">Total Quantity</th>
+										<th>Material Quantity</th>
 										<th>&nbsp;</th>
 									</tr>
 								</thead>
@@ -62,21 +60,7 @@
 									
 									@if(count($replenishment->items) > 0)
 										@foreach($replenishment->items as $k=>$item)
-											<tr>
-												<td>
-													<div class="form-group">			 								
-						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('item[]',$segmentCodes,$item->item_code,['class'=>'form-control','disabled'=>true])!!}
-						 								</div>
-						 							</div>		
-												</td>	
-												<td width="25%">
-													<div class="form-group">			 								
-						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('brands[]',$brandCodes,$item->brand_code,['class'=>'form-control'])!!}
-						 								</div>
-						 							</div>		
-												</td>												
+											<tr>																								
 												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
@@ -84,14 +68,14 @@
 						 								</div>
 						 							</div>		
 												</td>
-												<td width="12%">
+												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
 						 									{!!Form::select('item_code[]',$itemCodes,$item->item_code,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 						 								</div>
 						 							</div>										
 												</td>																						
-												<td width="10%">
+												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
 						 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="{{$item->quantity}}" min="0" onblur="validateQty(this)">
@@ -105,36 +89,22 @@
 											</tr>
 										@endforeach
 									@else
-										<tr>
+										<tr>																					
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('segment_code[]',$segmentCodes,null,['class'=>'form-control','disabled'=>true])!!}
-					 								</div>
-					 							</div>		
-											</td>
-											<td width="25%">
-												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('brands[]',$brandCodes,null,['class'=>'form-control'])!!}
-					 								</div>
-					 							</div>		
-											</td>											
-											<td>
-												<div class="form-group">			 								
-					 								<div class="col-xs-12 col-sm-12 no-side-padding">
-					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','disabled'=>true])!!}
+					 									{!!Form::select('item[]',$items,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 					 								</div>
 					 							</div>		
 											</td>	
-											<td width="12%">
+											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									{!!Form::select('item_code[]',$itemCodes,null,['class'=>'form-control','onchange'=>'setItem(this)'])!!}
 					 								</div>
 					 							</div>										
 											</td>										
-											<td width="10%">
+											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12 no-side-padding">
 					 									<input class="form-control" id="quantity" name="quantity[]" type="number" value="0" min="0" onblur="validateQty(this)">
@@ -150,7 +120,7 @@
 								</tbody>
 								<tfoot>
 									<tr>
-										<td colspan="6">
+										<td colspan="4">
 											<div class="text-center">
 												<button class="btn btn-info" onclick="addTd()">Add More</button>&nbsp;&nbsp;
 											</div>
@@ -223,8 +193,8 @@
 	function setItem(el)
 	{
 		var sel = $(el).val();
-		$(el).parent().parent().parent().prev().find('select').val($(el).val())
-		$('select[name^=segment_code]').val(sel);
+		$(el).parent().parent().parent().parent().find('select[name^="item"]').val($(el).val())
+		$(el).parent().parent().parent().parent().find('select[name^="item_code"]').val($(el).val())				
 	}
 
 	function setSalesmanDetails(el)
