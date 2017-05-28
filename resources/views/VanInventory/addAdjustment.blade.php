@@ -64,7 +64,7 @@
 												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
-						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','disabled'=>true],$item->item_code)!!}
+						 									{!!Form::select('item[]',$items,$item->item_code,['class'=>'form-control','onchange'=>'setItem(this)'],$item->item_code)!!}
 						 								</div>
 						 							</div>		
 												</td>

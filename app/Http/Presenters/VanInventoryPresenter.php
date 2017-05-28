@@ -88,6 +88,8 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function editActualCount($referenceNum)
 	{
+		$user_group_id = auth()->user()->group->id;
+		$user_id = auth()->user()->id;
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems(true);
@@ -98,6 +100,7 @@ class VanInventoryPresenter extends PresenterCore
 		if(!$replenishment)
 			$replenishment = ModelFactory::getInstance('Replenishment');
 		$this->view->replenishment = $replenishment;
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('actual-count-replenishment',$user_group_id,$user_id);
 		return $this->view('addActualCount');
 	}
 	
@@ -108,6 +111,8 @@ class VanInventoryPresenter extends PresenterCore
 	 */
 	public function editAdjustment($referenceNum)
 	{
+		$user_group_id = auth()->user()->group->id;
+		$user_id = auth()->user()->id;
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
 		$this->view->itemCodes = $this->getItemCodes();
 		$this->view->items = $reportsPresenter->getItems(true);
@@ -120,6 +125,7 @@ class VanInventoryPresenter extends PresenterCore
 		if(!$replenishment)
 			$replenishment = ModelFactory::getInstance('Replenishment');
 		$this->view->replenishment = $replenishment;
+		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('adjustment-replenishment',$user_group_id,$user_id);
 		return $this->view('addAdjustment');
 	}
 	
