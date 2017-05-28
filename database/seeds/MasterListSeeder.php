@@ -33,10 +33,10 @@ class MasterListSeeder extends Seeder
     		
     		DB::table('user_group_to_nav')->insert($mappings);
     		DB::table('navigation')->where('name','Invoice Series Mapping')->update(['parent_id'=>$id,'order'=>1,'class'=>'glyphicon glyphicon-share-alt']);
-    		DB::table('navigation')->where('name','Bounce Check')->update(['parent_id'=>$id,'order'=>2,'order'=>1,'class'=>'glyphicon glyphicon-share-alt']);
-    		DB::table('navigation')->where('name','Master (Customer)')->update(['parent_id'=>$id,'order'=>3,'order'=>1,'class'=>'glyphicon glyphicon-share-alt']);
-    		DB::table('navigation')->where('name','Master (Salesman)')->update(['parent_id'=>$id,'order'=>4,'order'=>1,'class'=>'glyphicon glyphicon-share-alt']);
-    		DB::table('navigation')->where('name','Master (Material Price)')->update(['parent_id'=>$id,'order'=>5,'order'=>1,'class'=>'glyphicon glyphicon-share-alt']);
+    		DB::table('navigation')->where('name','Bounce Check')->update(['parent_id'=>$id,'order'=>2,'class'=>'glyphicon glyphicon-share-alt']);
+    		DB::table('navigation')->where('name','Master (Customer)')->update(['parent_id'=>$id,'order'=>3,'class'=>'glyphicon glyphicon-share-alt']);
+    		DB::table('navigation')->where('name','Master (Salesman)')->update(['parent_id'=>$id,'order'=>4,'class'=>'glyphicon glyphicon-share-alt']);
+    		DB::table('navigation')->where('name','Master (Material Price)')->update(['parent_id'=>$id,'order'=>5,'class'=>'glyphicon glyphicon-share-alt']);
     		    		
     		$permissions = [
     				[
