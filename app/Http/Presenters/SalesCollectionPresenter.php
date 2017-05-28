@@ -826,7 +826,7 @@ class SalesCollectionPresenter extends PresenterCore
     			'Customer Name' => $customer,
     			'Company Code' => $company_code,
     			'Invoice Date' => $invoiceDate,
-    			'Or Date' => $orDate,
+    			'Collection Date' => $orDate,
     	];
     
     	return $filters;
