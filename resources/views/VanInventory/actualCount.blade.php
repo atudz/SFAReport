@@ -11,7 +11,7 @@
 						<div class="col-md-8">	
 							{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'set_sheet(this)'])!!}
 							{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>',false)!!}
-							{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>','',['disabled'=>'disabled','onblur'=>'validate(this)'])!!}
+							{!!Html::select('reference_number','Count Sheet No. <span class="required">*</span>',[],'Select Salesman',['disabled'=>'disabled'])!!}
 						</div>			
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
@@ -23,7 +23,7 @@
 						'show_print'      => $navigationActions['show_print'],
 						'show_search'     => $navigationActions['show_search_field'],
 						'show_add_button' => $navigationActions['show_add_button'],
-						'add_link'        => 'replenishment.add',
+						'add_link'        => 'actualcount.add',
 						'edit_link'       => '[[editUrl]]',
 						'edit_hide'       => '[[editHide]]'
 					])!!}

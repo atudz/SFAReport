@@ -11,7 +11,7 @@
 						<div class="col-md-8">	
 							{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'set_refno(this)'])!!}
 							{!!Html::datepicker('replenishment_date','Adjustment date/time <span class="required">*</span>',false)!!}
-							{!!Html::input('text','reference_number','Adjustment No. <span class="required">*</span>','',['disabled'=>'disabled','onblur'=>'validate(this)'])!!}						
+							{!!Html::select('reference_number','Adjustment No. <span class="required">*</span>',[],'Select Salesman',['disabled'=>'disabled'])!!}												
 							{!!Html::input('text','adjustment_reason','Adjustment Reason')!!}
 						</div>			
 					{!!Html::fclose()!!}
