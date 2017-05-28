@@ -336,6 +336,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentReport();
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
     	}
     }
     
@@ -5159,6 +5161,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns();
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
+			case 'replenishment':
+				return PresenterFactory::getInstance('VanInventory')->getReplenishmentColumns();
     	}	
     }
     
@@ -6212,6 +6216,16 @@ class ReportsPresenter extends PresenterCore
 				$filename = 'Summary of Reversal';				
 				break;
 				
+			case 'replenishment':
+				$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
+				$columns = $this->getTableColumns($report);
+				$prepare = $vanInventoryPresenter->getPreparedReplenishment();
+				$rows = $vanInventoryPresenter->getReplenishmentSelectColumns();
+				$header = 'Replenishment Report';
+				$filters = $vanInventoryPresenter->getReplenishmentFilterData();
+				$filename = 'Replenishment Report';
+				break;
+
     		default:
     			return;
     	}	
@@ -6861,6 +6875,10 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'reversalsummary':
 				$prepare = PresenterFactory::getInstance('Reversal')->getPreparedSummaryReversal();
+				$total = $prepare->count();
+				break;
+			case 'replenishment':
+				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedReplenishment();
 				$total = $prepare->count();
 				break;
     		default:

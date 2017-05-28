@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Van Inventory','Actual Count Replenishment'])!!}
-{!!Html::pageheader('Actual Count Replenishment')!!}
+{!!Html::breadcrumb(['Van Inventory','Replenishment'])!!}
+{!!Html::pageheader('Replenishment')!!}
 
 <div class="row">
 	<div class="col-lg-12">
@@ -65,5 +65,4 @@
 		});
 			
 	}	
-
 </script>

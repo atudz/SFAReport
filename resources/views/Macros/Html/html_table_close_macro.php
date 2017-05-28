@@ -218,6 +218,15 @@ Html::macro('tclose', function($paginate=true) {
 			// 	});
 			</script>
 			
+			<script type="text/ng-template" id="ConfirmPost">
+        		<div class="modal-body">		
+					<p><h5>You are uploading data to Van Inventory, Please confirm that all your data are correct.</h5></p>		
+					<form class="form-inline">				         
+						 <button class="btn btn-danger" type="button btn-sm" ng-click="ok()">Confirm</button>
+						 <button class="btn btn-default" type="button btn-sm" ng-click="cancel()">Cancel</button>					 		
+					</form>   										 					
+				</div>			    			
+    		</script>
 			
 			';
 	if($paginate)

@@ -287,8 +287,7 @@
 
 		];
 
-		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log, TableFix);
+	    reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log, TableFix);
 
 	}
 	
@@ -549,6 +548,30 @@
 		$scope.cancel = function (){
 			$uibModalInstance.dismiss('cancel');
 		}
+	}
+	
+	/**
+	 * Van Inventory Stock Audit Report
+	 */
+	app.controller('Replenishment',['$scope','$resource','$uibModal','$window','$log','TableFix','toaster',Replenishment]);
+	
+	function Replenishment($scope, $resource, $uibModal, $window, $log, TableFix, toaster)
+	{	    	
+		
+		var params = [
+	    		  'salesman_code',		          
+		          'replenishment_date',
+		          'reference_number',
+		          'type',
+		          'area_code',
+
+		];
+
+	    // main controller codes
+	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
+	    
+	    executeReplenishment($scope, $resource, $uibModal, params,$log,toaster);
+
 	}
 	
 	/**
@@ -2048,6 +2071,7 @@
 		}
 
 	}
+	
 	/**
 	 * Export report
 	 */
@@ -2159,6 +2183,8 @@
 		}else if(report == 'salescollectionsummary')
 		{
 			params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
+		}else if(report == 'replenishment') {
+			params = {type:$('#type').val()};
 		}
 
 		toggleLoading(true);
@@ -3834,6 +3860,145 @@
 			window.open('/period/print-report?limit_day=' + $scope.filter.limit_day + '&period_label=' + $scope.filter.period_label + '&navigations_ids=' + $('#navigation_ids').val() + '&year=' + $scope.filter.year + '&month=' + $scope.filter.month + '&company_code=' + $scope.filter.company_code, '_blank');
         }
 	}
+	
+	
+	/**
+	 * Execute Replenishment
+	 */
+	function executeReplenishment(scope, resource, modal, filter, log, toaster)
+	{
+		var url = '/reports/replenishment/export';
+		var delimeter = '?';
+		var query = '';
+
+		$.each(filter, function(index,val){
+			if(index > 0)
+				delimeter = '&';
+			query += delimeter + val + '=' + $('#'+val).val();
+		});
+		url += query;
+		
+		scope.params = filter;	
+		scope.urlQuery = query;
+		
+		scope.exportXls = function() {			
+			window.location.href = url;						
+		}
+				
+		scope.postData = function(){		
+			var modalInstance = modal.open({
+				scope: scope,
+				animation: true,
+				templateUrl: 'ConfirmPost',
+				controller: 'ReplenishmentConfirm',
+				windowClass: 'center-modal',						
+			});		
+		}
+		
+		scope.seedHeader = function(){		
+			var API = resource('controller/vaninventory/replenishment/seed/header');
+			
+			var params = {
+				'salesman_code': $('#salesman_code').val(),
+				'type': $('#type').val(),
+				'area_code': $('#area_code').val(),
+				'reference_number': $('#reference_number').val(),
+				'replenishment_date': $('#replenishment_date').val()				
+			};
+			
+			API.save(params).$promise.then(function(data){
+				if(data.success){
+					toaster.pop('success', 'Success', 'Successfuly Seeded Header', 5000);
+				} else {
+					toaster.pop('error', 'Error', data.msg, 5000);
+				}
+			}, function(error){
+				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
+			});
+		}
+		
+		scope.seedData = function(){		
+			var API = resource('controller/vaninventory/replenishment/seed/detail');
+			
+			var params = {
+				'salesman_code': $('#salesman_code').val(),
+				'type': $('#type').val(),
+				'area_code': $('#area_code').val(),
+				'reference_number': $('#reference_number').val(),
+				'replenishment_date': $('#replenishment_date').val()				
+			};
+			
+			API.save(params).$promise.then(function(data){
+				if(data.success){
+					toaster.pop('success', 'Success', 'Successfuly Seeded Data', 5000);
+				} else {
+					toaster.pop('error', 'Error', data.msg, 5000);
+				}
+			}, function(error){
+				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
+			});
+		}
+		
+		scope.clearData = function(){		
+			var API = resource('controller/vaninventory/replenishment/seed/clear');
+			
+			var params = {
+				'salesman_code': $('#salesman_code').val(),
+				'type': $('#type').val(),
+				'area_code': $('#area_code').val(),
+				'reference_number': $('#reference_number').val(),
+				'replenishment_date': $('#replenishment_date').val()				
+			};
+			
+			API.save(params).$promise.then(function(data){
+				if(data.success){
+					toaster.pop('success', 'Success', 'Successfuly Cleared', 5000);
+				} else {
+					toaster.pop('error', 'Error', data.msg, 5000);
+				}
+			}, function(error){
+				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
+			});
+		}
+	}
+	
+	/**
+	 * Open and Closing Period controller
+	 */
+	app.controller('ReplenishmentConfirm',['$scope','$http','$uibModalInstance','$window','$log','toaster',ReplenishmentConfirm]);
+	
+	function ReplenishmentConfirm($scope, $http, $uibModalInstance, $window, $log, toaster)
+	{
+		
+		$scope.ok = function () {
+			
+			var url = 'controller/vaninventory/replenishment/post';
+			var postData = {
+					salesman_code: $('#salesman_code').val(),
+					salesman_code: $('#replenishment_date').val(),
+					salesman_code: $('#reference_number').val(),
+					salesman_code: $('#type').val(),
+					salesman_code: $('#area_code').val()
+			};
+
+			$http.post(url,postData)
+			.success(function (data) {
+				if(data.success){
+					toaster.pop('success', 'Success', 'Successfuly Posted Data', 5000);
+				} else {
+					toaster.pop('error', 'Error', data.msg, 5000);
+				}
+			}).error(function (data) {
+				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
+			});
+			
+			$uibModalInstance.dismiss('cancel');
+		};
+
+		$scope.cancel = function () {		
+			$uibModalInstance.dismiss('cancel');
+		};
+	}	
 
 	/**
 	 * User Access Matrix controller

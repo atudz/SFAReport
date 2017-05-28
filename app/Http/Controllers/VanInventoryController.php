@@ -6,6 +6,7 @@ use App\Core\ControllerCore;
 use App\Http\Requests\StockTransferRequest;
 use App\Factories\ModelFactory;
 use Carbon\Carbon;
+use App\Http\Requests\ActualCount;
 use App\Factories\PresenterFactory;
 use DB;
 use App\Http\Models\Replenishment;
@@ -13,6 +14,7 @@ use App\Http\Requests\AdjustmentRequest;
 use App\Http\Requests\AdjustmentDelete;
 use App\Http\Requests\ActualCountRequest;
 use App\Http\Requests\ActualCountDelete;
+use Illuminate\Http\Request;
 
 class VanInventoryController extends ControllerCore
 {
@@ -97,7 +99,7 @@ class VanInventoryController extends ControllerCore
 	
 	/**
 	 * Save replenishment
-	 * @param ReplenishmentRequest $request
+	 * @param ActualCount $request
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function saveActualCount(ActualCountRequest $request)
@@ -188,7 +190,7 @@ class VanInventoryController extends ControllerCore
 	
 	/**
 	 * Save replenishment adjustment
-	 * @param ReplenishmentRequest $request
+	 * @param ActualCount $request
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function saveAdjustment(AdjustmentRequest $request)
@@ -209,7 +211,7 @@ class VanInventoryController extends ControllerCore
 		$replenish->modified_date = $today;
 		$replenish->sfa_modified_date = $today;
 		$replenish->modified_by = $request->salesman_code;
-		$replenish->type = Replenishment::REPLENISHMENT_TYPE;
+		$replenish->type = Replenishment::ADJUSTMENT_TYPE;
 	
 		$replenish->fill($request->all());
 	
@@ -276,6 +278,154 @@ class VanInventoryController extends ControllerCore
 			}
 		}
 	
+		return response()->json(['success'=>true]);
+	}
+	
+	/**
+	 * Post Replenishment data
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function postReplenishment(Request $request)
+	{
+		$headers = (array)$request->session()->get('replenishments');
+		$headerRefs = [];
+		foreach($headers as $header)
+		{
+			$headerRefs[] = $header['reference_number'];
+			$replenishment = ModelFactory::getInstance('TxnReplenishmentHeader');
+			$replenishment->replenishment_header_id = replenishment_next_pk();
+			$replenishment->reference_number = $header['reference_number'];
+			$replenishment->van_code = $header['van_code'];
+			$replenishment->replenishment_date = new Carbon($header['replenishment_date']);
+			$replenishment->modified_by = 'STAGING';
+			$replenishment->modified_date = new Carbon();
+			$replenishment->sfa_modified_date = new Carbon();
+			$replenishment->version = '';
+			$replenishment->status = 'A';
+			$replenishment->updated_by = auth()->user()->id;
+			$replenishment->updated_at = new Carbon();
+			$replenishment->save();											
+		}
+		
+		if($headerRefs){
+			$data = ['posted_date'=> new Carbon(), 'posted_by'=>auth()->user()->id];
+			ModelFactory::getInstance('Replenishment')->whereIn('reference_number',$headerRefs)->update($data);			
+		}
+		
+		$details = (array)$request->session()->get('replenishment_details');
+		$detailRefs = [];
+		foreach($details as $detail)
+		{
+			$detailRefs[]  = $detail['reference_number'];
+			$item = ModelFactory::getInstance('TxnReplenishmentDetail');
+			$item->replenishment_detail_id = replenishment_next_pk(true);
+			$item->reference_number = $detail['reference_number'];
+			$item->item_code = $detail['item_code'];
+			$item->uom_code = $detail['uom_code'];
+			$item->quantity = $detail['quantity'];
+			$item->modified_by = 'STAGING';
+			$item->modified_date = new Carbon();
+			$item->sfa_modified_date = new Carbon();
+			$item->version = '';
+			$item->status = 'A';
+			$item->updated_by = auth()->user()->id;
+			$item->updated_at = new Carbon();
+			$item->save();			
+		}
+		
+		if($detailRefs){
+			$data = ['posted_date'=> new Carbon(), 'posted_by'=>auth()->user()->id];
+			ModelFactory::getInstance('Replenishment')->whereIn('reference_number',$detailRefs)->update($data);
+		}
+				
+		$request->session()->forget(['replenishment_details','replenishments']);
+		
+		if(!count($details) && !count($headers)){
+			return response()->json(['success'=>false,'msg'=>'No records to post']);
+		}
+		
+		return response()->json(['success'=>true]);
+	}
+	
+	/**
+	 * Seed Header
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function seedHeader(Request $request)
+	{
+		$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedReplenishment(true);
+			
+		$replenishments = [];	
+		$data = $prepare->get();
+		
+		if(count($data) < 1){
+			return response()->json(['success'=>false,'msg'=>'No records to seed']);
+		}
+		
+		$previous  = $request->session()->get('replenishments');
+		$refs = collect($previous)->pluck('reference_number')->toArray();
+		
+		foreach($data as $replenish)
+		{
+			if(!in_array($replenish->reference_number, $refs)){
+				$row = (array)$replenish;
+				unset($row['type']);
+				$replenishments[] = $row;
+			}			
+		}
+		
+		$replenishments = array_merge((array)$previous,$replenishments);		
+		$request->session()->set('replenishments', $replenishments);
+		
+		return response()->json(['success'=>$replenishments]);
+	}
+	
+	/**
+	 * Seed Header
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function seedDetail(Request $request)
+	{
+		$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedReplenishment(true);
+			
+		$data = $prepare->get();
+		
+		if(count($data) < 1){
+			return response()->json(['success'=>false,'msg'=>'No records to seed']);
+		}
+		
+		$previous  = $request->session()->get('replenishment_details');
+		$prevRefs = collect($previous)->pluck('reference_number')->toArray();
+		$refs = [];
+		foreach($data as $replenish)
+		{
+			if(!in_array($replenish->reference_number, $prevRefs)){
+				$refs[] = $replenish->reference_number;
+			}
+		}
+		
+		$items = ModelFactory::getInstance('ReplenishmentItem')
+						->whereIn('reference_number',$refs)
+						->get(['reference_number','item_code','uom_code','quantity']);
+		
+		$details = array_merge((array)$previous,$items->toArray());						
+		
+		$request->session()->set('replenishment_details', $details);
+		
+		return response()->json(['success'=>$details]);
+	}
+	
+	/**
+	 * Seed Clear
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function seedClear(Request $request)
+	{
+		$request->session()->forget(['replenishment_details','replenishments']);
 		return response()->json(['success'=>true]);
 	}
 }

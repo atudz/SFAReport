@@ -43,6 +43,10 @@ class DatabaseSeeder extends Seeder
         $this->call(NavigationPermissionTableSeeder::class);
         $this->call(DefaultNavigationPermissionsTableSeeder::class);
         $this->call(NavigationSlugTableSeeder::class);
+
+        $this->call(ReplenishmentSeeder::class);
+        $this->call(OrganizeNavsSeeder::class);        
+
         Model::reguard();
     }
 }

@@ -105,6 +105,11 @@
 					controller: 'AdjustmentAdd',
 					//controllerAs: 'vic'*/
 				})
+				.when('/vaninventory.replenishment',{
+					templateUrl: '/reports/replenishment',
+					controller: 'Replenishment',
+					//controllerAs: 'vic'*/
+				})
 				
 				
 				// Sales Report

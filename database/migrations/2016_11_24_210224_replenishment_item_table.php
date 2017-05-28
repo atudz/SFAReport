@@ -23,7 +23,7 @@ class ReplenishmentItemTable extends Migration
     		$table->dateTime('modified_date')->nullable();
     		$table->dateTime('sfa_modified_date')->nullable();
     		$table->string('status',2)->default('A');
-    		$table->bigInteger('version')->nullable();
+    		$table->bigInteger('version')->nullable();    		
     	});
     	
     	Schema::table('replenishment', function (Blueprint $table) {
@@ -37,9 +37,10 @@ class ReplenishmentItemTable extends Migration
     		$table->string('modified_by')->nullable()->default('STAGING')->after('replenishment_date');
     		$table->dateTime('modified_date')->nullable()->after('modified_by');
     		$table->dateTime('sfa_modified_date')->nullable()->after('modified_date');
-    		$table->enum('type', ['actual_count','replenishment'])->nullable();
+    		$table->enum('type', ['actual_count','adjustment'])->nullable();
     		$table->bigInteger('version')->nullable()->after('last_ddr');
     		$table->string('status',2)->default('A')->after('version');
+    		$table->dateTime('posted_date')->nullable()->index();
     	});
     }
 

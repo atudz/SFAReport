@@ -27,7 +27,7 @@ class Replenishment extends ModelCore
 	];
 	
 	const ACTUAL_COUNT_TYPE = 'actual_count';
-	const REPLENISHMENT_TYPE = 'replenishment';
+	const ADJUSTMENT_TYPE = 'adjustment';
 	
 	/**
 	 * This models't relation to replenishment items

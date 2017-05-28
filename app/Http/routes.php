@@ -53,6 +53,9 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/adjustment/add', ['as'=>'adjustment-add', 'uses'=>'VanInventoryPresenter@createAdjustment']);
 	Route::get('/adjustment/edit/{id}', ['as'=>'adjustment-edit', 'uses'=>'VanInventoryPresenter@editAdjustment']);
 	
+	Route::get('/replenishment', ['as'=>'replenishment-report', 'uses'=>'VanInventoryPresenter@replenishment']);
+	Route::get('/replenishment/export', ['as'=>'replenishment-export', 'uses'=>'VanInventoryPresenter@exportReplenishmentData']);	
+	
 	Route::get('/invoiceseries', ['as'=>'invoice-series', 'uses'=>'InvoicePresenter@index']);
 	Route::get('/invoiceseries/add', ['as'=>'invoice-series-add', 'uses'=>'InvoicePresenter@create']);
 	Route::get('/invoiceseries/edit/{id}', ['as'=>'invoice-series-edit', 'uses'=>'InvoicePresenter@edit']);
@@ -81,9 +84,9 @@ Route::group(['prefix' => 'reports'],function(){
 		return response()->json(salesman_sheet_refno($salesmanCode));
 	});
 	
-		Route::get('/salesman/adjustment/{salesman_code}', function($salesmanCode){
-			return response()->json(salesman_sheet_refno($salesmanCode,'replenishment'));
-		});
+	Route::get('/salesman/adjustment/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_sheet_refno($salesmanCode,'adjustment'));
+	});
 	
 	Route::get('/salesman/jr/{salesman_code}', function($salesmanCode){
 		return response()->json(sfa_jr_salesman($salesmanCode));
@@ -91,6 +94,14 @@ Route::group(['prefix' => 'reports'],function(){
 	
 	Route::get('/customer/area/{customer_code}', function($customerCode){
 		return response()->json(customer_area($customerCode));
+	});
+	
+	Route::get('/salesman/replenishment/refs/{salesman_code}/{type?}', function($salesmanCode, $type=''){
+		return response()->json(replenishment_refs($salesmanCode,$type));
+	});
+	
+	Route::get('/salesman/replenishment/dates/{salesman_code}/{type?}', function($salesmanCode, $type=''){
+		return response()->json(replenishment_dates($salesmanCode,$type));
 	});
 });
 
@@ -151,6 +162,10 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/vaninventory/actualcount/delete/{id}', ['as'=>'actualcount-delete', 'uses'=>'VanInventoryController@deleteActualCount']);
 	Route::post('/vaninventory/adjustment', ['as'=>'adjustment-save', 'uses'=>'VanInventoryController@saveAdjustment']);
 	Route::post('/vaninventory/adjustment/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'VanInventoryController@deleteAdjustment']);
+	Route::post('/vaninventory/replenishment/post', ['as'=>'replenishment-post', 'uses'=>'VanInventoryController@postReplenishment']);
+	Route::post('/vaninventory/replenishment/seed/header', ['as'=>'replenishment-seed-header', 'uses'=>'VanInventoryController@seedHeader']);
+	Route::post('/vaninventory/replenishment/seed/detail', ['as'=>'replenishment-seed-header', 'uses'=>'VanInventoryController@seedDetail']);
+	Route::post('/vaninventory/replenishment/seed/clear', ['as'=>'replenishment-seed-header', 'uses'=>'VanInventoryController@seedClear']);
 	
 	Route::post('/invoiceseries/save', ['as'=>'invoiceseries-save', 'uses'=>'InvoiceController@save']);
 	Route::post('/invoiceseries/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'InvoiceController@destroy']);

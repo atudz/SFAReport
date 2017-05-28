@@ -358,4 +358,89 @@ function salesman_sheet_refno($salesmanCode, $type='actual_count')
 				->lists('reference_number','reference_number');	
 	
 	return count($lists) > 0 ? $lists : '';
+
+}
+
+/**
+ * Replenishment types
+ * @return string[]
+ */
+function replenishment_types()
+{
+	return [
+		'adjustment' => 'Adjustment',
+		'actual_count' => 'Actual Count',			
+	];
+}
+
+/**
+ * Get Replenishment reference no
+ * @param string $salesmanCode
+ * @param string $type
+ * @return unknown
+ */
+function replenishment_refs($salesmanCode='',$type='')
+{
+	$prepare =  ModelFactory::getInstance('Replenishment');
+	
+	if($salesmanCode)
+	{
+		$prepare = $prepare->where('modified_by',$salesmanCode);
+	}
+	if($type)
+	{
+		$prepare = $prepare->where('type',$type);
+	}	
+	
+	return $prepare->lists('reference_number','reference_number');
+}
+
+/**
+ * Get replenishment dates.
+ * @return unknown
+ */
+function replenishment_dates($salesmanCode='',$type='')
+{
+	$prepare =  ModelFactory::getInstance('Replenishment');
+	
+	if($salesmanCode)
+	{
+		$prepare = $prepare->where('modified_by',$salesmanCode);
+	}
+	if($type)
+	{
+		$prepare = $prepare->where('type',$type);
+	}
+	
+	return $prepare->lists('replenishment_date','replenishment_date');	
+}
+
+/**
+ * 
+ * @param unknown $rows
+ * @return string
+ */
+function array_to_sql($table, $rows)
+{
+	$columns = array_keys($rows);
+	$sql = 'INSERT INTO '.$table.' ('.implode(',', $columns).') VALUES (\''.implode("','", $rows).'\')';
+	return $sql;
+}
+
+/**
+ * Get Next pk Id
+ * @param string $detail
+ * @return mixed|\Illuminate\Foundation\Application|number
+ */
+function replenishment_next_pk($detail=false)
+{
+	$model = $detail ? 'TxnReplenishmentDetail' : 'TxnReplenishmentHeader';
+	$pk = $detail ? 'replenishment_detail_id' : 'replenishment_header_id';
+	$maxPk = ModelFactory::getInstance($model)->max($pk);
+	$customPkStart = config('system.custom_pk_start');
+	if($customPkStart > $maxPk) {
+		return $customPkStart;
+	} else {
+		return $maxPk+1;
+	}		
 }
