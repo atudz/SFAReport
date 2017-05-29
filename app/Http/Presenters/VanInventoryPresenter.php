@@ -458,17 +458,25 @@ class VanInventoryPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedStockTransfer();
     	$result = $this->paginate($prepare);
-    	$data['records'] = $result->items();   
+    	$data['records'] = $result->items();
     	$data['total'] = $result->total();
 
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
+                $data['records'][$key]->stock_transfer_number_updated = '';
+                $data['records'][$key]->transfer_date_updated = '';
+                if(!empty($value->stock_transfer_in_header_id) || !is_null($value->stock_transfer_in_header_id)){
+                    $data['records'][$key]->stock_transfer_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','stock_transfer_number')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->transfer_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','transfer_date')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->quantity_updated = '';
+                if(!empty($value->stock_transfer_in_detail_id) || !is_null($value->stock_transfer_in_detail_id)){
+                    $data['records'][$key]->quantity_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_detail')->where('column','=','transfer_date')->where('pk_id','=',$value->stock_transfer_in_detail_id)->count() ? 'modified' : '';
+                }
+
                 $item_code_info = explode('_', $value->item_code);
-                $year = date('Y',strtotime($value->transfer_date));
-                $month = date('n',strtotime($value->transfer_date));
-                $period_status = !empty($open_close_period->periodClosed($item_code_info[0],25,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($item_code_info[0],25,date('n',strtotime($value->transfer_date)),date('Y',strtotime($value->transfer_date)))) ? 1 : 0;
             }
         }
 

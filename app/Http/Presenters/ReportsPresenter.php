@@ -425,12 +425,50 @@ class ReportsPresenter extends PresenterCore
     	}
     	
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $year = date('Y',strtotime($value->or_date));
-                $month = date('n',strtotime($value->or_date));
-                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),9,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->remarks_updated = '';
+                if(!empty($value->evaluated_objective_id) || !is_null($value->evaluated_objective_id)){
+                    $data['records'][$key]->remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_evaluated_objective')->where('column','=','remarks')->where('pk_id','=',$value->evaluated_objective_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->invoice_number_updated = '';
+                if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
+                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','invoice_number')->where('pk_id','=',$value->sales_order_header_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->invoice_date_updated = '';
+                if(!empty($value->invoice_date_id) || !is_null($value->invoice_date_id)){
+                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','invoice_date')->where('pk_id','=',$value->invoice_date_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->ref_no_updated = '';
+                if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
+                    $data['records'][$key]->ref_no_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header_discount')->where('column','=','ref_no')->where('pk_id','=',$value->reference_num)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->return_slip_num_updated = '';
+                if(!empty($value->return_header_id) || !is_null($value->return_header_id)){
+                    $data['records'][$key]->return_slip_num_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_return_header')->where('column','=','return_slip_num')->where('pk_id','=',$value->return_header_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->or_date_updated = '';
+                $data['records'][$key]->or_number_updated =  '';
+                if(!empty($value->collection_header_id) || !is_null($value->collection_header_id)){
+                    $data['records'][$key]->or_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_header')->where('column','=','or_date')->where('pk_id','=',$value->collection_header_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->or_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_header')->where('column','=','or_number')->where('pk_id','=',$value->collection_header_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->bank_updated = '';
+                $data['records'][$key]->check_number_updated = '';
+                $data['records'][$key]->check_date_updated = '';
+                $data['records'][$key]->cm_number_updated = '';
+                if(!empty($value->collection_detail_id) || !is_null($value->collection_detail_id)){
+                    $data['records'][$key]->bank_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','bank')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->check_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','check_number')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->check_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','check_date')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->cm_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','cm_number')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                }
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),9,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
             }
         }
     	
@@ -2534,14 +2572,14 @@ class ReportsPresenter extends PresenterCore
 
 
         if(!empty($data['stocks'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['stocks'] as $key => $value) {
-                $company_code = $this->request->get('inventory_type') == 'canned' ? 1000 : 2000;
-                $navigation_id = $this->request->get('inventory_type') == 'canned' ? 12 : 13;
-                $year = date('Y',strtotime($value->transaction_date));
-                $month = date('n',strtotime($value->transaction_date));
-                $period_status = !empty($open_close_period->periodClosed($company_code,$navigation_id,$month,$year)) ? 1 : 0;
-                $data['stocks'][$key]->closed_period = $period_status;
+                $data['stocks'][$key]->transaction_date_updated = '';
+                $data['stocks'][$key]->stock_transfer_number_updated = '';
+                if(!empty($value->stock_transfer_in_header_id) || !is_null($value->stock_transfer_in_header_id)){
+                    $data['stocks'][$key]->transaction_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','transfer_date')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
+                    $data['stocks'][$key]->stock_transfer_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','stock_transfer_number')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
+                }
+                $data['stocks'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed(($this->request->get('inventory_type') == 'canned' ? 1000 : 2000),($this->request->get('inventory_type') == 'canned' ? 12 : 13),date('n',strtotime($value->transaction_date)),date('Y',strtotime($value->transaction_date)))) ? 1 : 0;
             }
         }
 
@@ -3527,13 +3565,33 @@ class ReportsPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
+                $data['records'][$key]->remarks_updated = '';
+                if(!empty($value->evaluated_objective_id) || !is_null($value->evaluated_objective_id)){
+                    $data['records'][$key]->remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','remarks')->where('pk_id','=',$value->evaluated_objective_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->invoice_number_updated = '';
+                $data['records'][$key]->invoice_date_updated = '';
+                $data['records'][$key]->invoice_posting_date_updated = '';
+                if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
+                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_number_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->invoice_posting_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_posting_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->quantity_updated = '';
+                if(!empty($value->quantity_pk_id) || !is_null($value->quantity_pk_id)){
+                    $data['records'][$key]->quantity_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->quantity_table)->where('column','=',$value->quantity_column)->where('pk_id','=',$value->quantity_pk_id)->count() ? 'modified' : '';
+                }
+
+                $data['records'][$key]->condition_code_updated = '';
+                if(!empty($value->condition_code_pk_id) || !is_null($value->condition_code_pk_id)){
+                    $data['records'][$key]->condition_code_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->condition_code_table)->where('column','=',$value->condition_code_column)->where('pk_id','=',$value->condition_code_pk_id)->count() ? 'modified' : '';
+                }
+
                 $customer_code_info = explode('_', $value->customer_code);
-                $year = date('Y',strtotime($value->invoice_posting_date));
-                $month = date('n',strtotime($value->invoice_posting_date));
-                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],14,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($customer_code_info[0],14,date('n',strtotime($value->invoice_posting_date)),date('Y',strtotime($value->invoice_posting_date)))) ? 1 : 0;
             }
         }
     
@@ -3957,13 +4015,18 @@ class ReportsPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
+                $data['records'][$key]->invoice_number_updated = '';
+                $data['records'][$key]->invoice_date_updated = '';
+                $data['records'][$key]->invoice_posting_date_updated = '';
+                if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
+                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_number_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->invoice_posting_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_posting_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
+                }
+
                 $customer_code_info = explode('_', $value->customer_code);
-                $year = date('Y',strtotime($value->invoice_posting_date));
-                $month = date('n',strtotime($value->invoice_posting_date));
-                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],15,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($customer_code_info[0],15,date('n',strtotime($value->invoice_posting_date)),date('Y',strtotime($value->invoice_posting_date)))) ? 1 : 0;
             }
         }
     	

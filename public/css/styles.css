@@ -1104,7 +1104,8 @@ h5.page-header
     margin-left: -10%;
 }
 
-tr.modified {
+tr.modified,
+td.modified{
     background-color: #FCF8E3 !important;
 }
 
