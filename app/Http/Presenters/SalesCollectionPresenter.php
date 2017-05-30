@@ -5,6 +5,7 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
 use App\Factories\FilterFactory;
+use App\Factories\ModelFactory;
 
 class SalesCollectionPresenter extends PresenterCore
 {
@@ -70,12 +71,12 @@ class SalesCollectionPresenter extends PresenterCore
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
 
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $year = date('Y',strtotime($value->or_date));
-                $month = date('n',strtotime($value->or_date));
-                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),40,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->payment_amount_updated = '';
+                if(!empty($value->collection_detail_id) || !is_null($value->collection_detail_id)){
+                    $data['records'][$key]->payment_amount_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','payment_amount')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                }
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),40,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
             }
         }
     	 
@@ -111,12 +112,14 @@ class SalesCollectionPresenter extends PresenterCore
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
 
         if(!empty($data['records'])){
-            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $year = date('Y',strtotime($value->or_date));
-                $month = date('n',strtotime($value->or_date));
-                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),41,$month,$year)) ? 1 : 0;
-                $data['records'][$key]->closed_period = $period_status;
+                $data['records'][$key]->bank_updated = '';
+                $data['records'][$key]->payment_amount_updated = '';
+                if(!empty($value->collection_detail_id) || !is_null($value->collection_detail_id)){
+                    $data['records'][$key]->bank_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','bank')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->payment_amount_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','payment_amount')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
+                }
+                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),41,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
             }
         }
     

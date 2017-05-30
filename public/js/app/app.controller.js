@@ -1941,7 +1941,7 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				var selectOptions = options;
 				var url = window.location.href;
@@ -2048,7 +2048,8 @@
 						step: stepInterval,
 						updated: updated,
 						report: report,
-						report_type: reportType
+						report_type: reportType,
+						toUpdate: toUpdate
 				};
 				
 				
@@ -2382,7 +2383,6 @@
 			}
 			if (!error) {
 				API.save($scope.params, function (data) {
-
 					// Van Inventory customization
 					if ($scope.params.table == 'txn_stock_transfer_in_header' && $scope.params.report != 'stocktransfer') {
 						var stocks = 'stocks';
@@ -2391,7 +2391,7 @@
 						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
+						$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
 					}
 					else {
 						if ($scope.params.alias) {
@@ -2403,7 +2403,7 @@
 							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						$('#' + $scope.params.index).addClass('modified');
+						$('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
 
 						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
