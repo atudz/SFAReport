@@ -1941,7 +1941,8 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate){
+		// scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
 			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
 				var selectOptions = options;
 				var url = window.location.href;
@@ -2383,6 +2384,7 @@
 			}
 			if (!error) {
 				API.save($scope.params, function (data) {
+
 					// Van Inventory customization
 					if ($scope.params.table == 'txn_stock_transfer_in_header' && $scope.params.report != 'stocktransfer') {
 						var stocks = 'stocks';
@@ -2391,7 +2393,8 @@
 						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
+						//$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
+						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
 					}
 					else {
 						if ($scope.params.alias) {
@@ -2403,7 +2406,8 @@
 							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						$('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
+						// $('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
+						$('#' + $scope.params.index).addClass('modified');
 
 						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
@@ -3568,7 +3572,7 @@
 
 	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache',Profile]);
 
-	function Profile($scope, $resource, $location,$uibModal,$window, $lo,$route,$templateCacheg)
+	function Profile($scope, $resource, $location,$uibModal,$window, $log,$route,$templateCache)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -3706,13 +3710,13 @@
 					} else {
 						if(update_all){
 							for(var day = 1; day <= $scope.filter.limit_day; day++){
-								$scope.navigation_reports[index].dates[day] = 0;
+								$scope.navigation_reports[index].dates[day] = 'close';
 							}
 						} else {
 							if($scope.navigation_reports[index].dates[day] == 1){
-								$scope.navigation_reports[index].dates[day] = 0;
+								$scope.navigation_reports[index].dates[day] = 'close';
 							} else {
-								$scope.navigation_reports[index].dates[day] = 1;
+								$scope.navigation_reports[index].dates[day] = 'open';
 							}
 						}
 					}
@@ -4298,5 +4302,64 @@
 	function deletePreviousCache(route,templateCache){
 		var currentPageTemplate = route.current.loadedTemplateUrl;
 		templateCache.remove(currentPageTemplate);
+	}
+
+	/**
+	 * User Activity Log controller
+	 */
+	app.controller('UserActivityLog',['$scope','$http','$uibModal','$window','$log','TableFix','toaster', '$route','$templateCache',UserActivityLog]);
+	
+	function UserActivityLog($scope, $http, $uibModal, $window, $log, TableFix, toaster, $route, $templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.toggleFilter = true;
+		$scope.records = [];
+
+		// filter on showing reports to open and close
+		$scope.filter = function(){
+			$scope.records = [];
+
+			var data = {
+				user_id: angular.element("#user_id").val(),
+				navigation_id: angular.element("#navigation_id").val(),
+				log_date_from: angular.element("#log_date_from").val(),
+				log_date_to: angular.element("#log_date_to").val(),
+			};
+
+			$http
+				.post('/controller/user-activity-log/load', data)
+				.then(function(response){
+					$scope.records = response.data.records;
+				}, function(){
+
+				});
+		}
+
+		$scope.reset =  function(){
+			$scope.records = [];
+		}
+
+		$scope.download = function(format){
+			var uri = '';
+
+			if(angular.element("#user_id").val()){
+				uri += (uri == '' ? '?' : '&') + 'user_id=' + angular.element("#user_id").val();
+			}
+
+			if(angular.element("#navigation_id").val()){
+				uri += (uri == '' ? '?' : '&') + 'navigation_id=' + angular.element("#navigation_id").val();
+			}
+
+			if(angular.element("#log_date_from").val()){
+				uri += (uri == '' ? '?' : '&') + 'log_date_from=' + angular.element("#log_date_from").val();
+			}
+
+			if(angular.element("#log_date_to").val()){
+				uri += (uri == '' ? '?' : '&') + 'log_date_to=' + angular.element("#log_date_from").val();;
+			}
+
+			window.open('/controller/user-activity-log/load' + uri + '&download=pdf', '_blank');
+		}
 	}
 })();

@@ -20,6 +20,13 @@ class UserAccessMatrixPresenter extends PresenterCore
         $this->view->users = $this->getUserList();
         $this->view->pageTitle = 'User Access Matrix';
         $this->view->navigationActions = $this->getNavigationActions('user-access-matrix',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-access-matrix')->value('id'),
+            'action'        => 'visit User Management - User Access Matrix'
+        ]);
+
         return $this->view('index');
     }
 
@@ -34,6 +41,13 @@ class UserAccessMatrixPresenter extends PresenterCore
         $this->view->roles = PresenterFactory::getInstance('User')->getRoles();
         $this->view->pageTitle = 'Role Access Matrix';
         $this->view->navigationActions = $this->getNavigationActions('role-access-matrix',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','role-access-matrix')->value('id'),
+            'action'        => 'visit User Management - Role Access Matrix'
+        ]);
+
         return $this->view('index');
     }
 

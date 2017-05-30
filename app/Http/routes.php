@@ -131,6 +131,8 @@ Route::get('/user-access-matrix', ['as'=>'user-access-matrix', 'uses'=>'UserAcce
 
 Route::get('/role-access-matrix', ['as'=>'role-access-matrix', 'uses'=>'UserAccessMatrixPresenter@role']);
 
+Route::get('/user-activity-log', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogPresenter@index']);
+
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -179,6 +181,10 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/user-access-matrix/load-permissions', ['as'=>'user-access-matrix-load-permission', 'uses'=>'UserAccessMatrixController@loadPermissions']);
 
 	Route::post('/user-access-matrix/save-permissions', ['as'=>'user-access-matrix-save-permission', 'uses'=>'UserAccessMatrixController@savePermissions']);
+
+	Route::get('/user-activity-log/load', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogController@loadLogs']);
+
+	Route::post('/user-activity-log/load', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogController@loadLogs']);
 });
 
 

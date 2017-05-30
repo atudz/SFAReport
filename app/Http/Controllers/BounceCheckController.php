@@ -20,6 +20,13 @@ class BounceCheckController extends ControllerCore
     public function save(BounceCheckRequest $request)
     {
     	$id = (int)$request->id;
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action'        => (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Bounce Check Report ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
+        ]);
+
         $bounceCheck = ModelFactory::getInstance('BounceCheck')->findOrNew($id);
         $bounceCheck->fill($request->all());
         
@@ -42,9 +49,20 @@ class BounceCheckController extends ControllerCore
         $bounceCheck->created_by = auth()->user()->id;
         if(!$bounceCheck->save())
         {
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'error ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Bounce Check Report ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
+            ]);
+
         	return response()->json(['success'=>0,'msg'=>'Server error']);
         }
-        
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action'        => 'done ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Bounce Check Report ' . (!empty($id) || !is_null($id) ? 'id ' . $id : $bounceCheck->id)
+        ]);
         return response()->json(['success'=>1]);
     }
     
@@ -56,35 +74,97 @@ class BounceCheckController extends ControllerCore
      */
     public function destroy(BounceCheckDelete $request, $txnNumber)
     {
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action'        => 'deleting Bounce Check Report having txn_number ' . $txnNumber
+        ]);
+
     	$bounceCheck = ModelFactory::getInstance('BounceCheck')->where('txn_number',$txnNumber)->first();
-    	if(!$bounceCheck)
-    		return response()->json(['success'=>0,'msg'=>'Transaction not found.']);
-    	
+    	if(!$bounceCheck){
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'deleting error Bounce Check Report having txn_number ' . $txnNumber . ' - Transaction not found.'
+            ]);
+            return response()->json(['success'=>0,'msg'=>'Transaction not found.']);
+        }
     	
     	DB::beginTransaction();
     	
     	$bounceCheck->delete_remarks = $request->comment;
     	$bounceCheck->save();
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action'        => 'saving remarks for deleting Bounce Check Report having txn_number ' . $txnNumber
+        ]);
     	
-    	if(!$bounceCheck->delete())
-    		return response()->json(['success'=>0,'msg'=>'Server error.']);
-    	
+    	if(!$bounceCheck->delete()){
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'error deleting Bounce Check Report having txn_number ' . $txnNumber
+            ]);
+
+            return response()->json(['success'=>0,'msg'=>'Server error.']);
+        }
+
     	if(false !== strpos($txnNumber, '-'))
     	{
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'Bounce Check Report having txn_number ' . $txnNumber .' has a "-"'
+            ]);
+
     		$chunks = explode('-', $txnNumber);
     		$mainBounceCheck = ModelFactory::getInstance('BounceCheck')->where('txn_number',$chunks[0])->first();
+
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'finding Bounce Check Report having txn_number ' . $txnNumber .' that has a "-"'
+            ]);
+
     		if($mainBounceCheck)
     		{
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => auth()->user()->id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                    'action'        => 'found Bounce Check Report having txn_number ' . $txnNumber .' that has a "-"'
+                ]);
+
     			$payments = ModelFactory::getInstance('BounceCheck')->where('txn_number','like',$bounceCheck->txn_number.'%')->sum('payment_amount');
     			$total1 = bcsub($mainBounceCheck->original_amount, $mainBounceCheck->payment_amount, 2);
     			$mainBounceCheck->balance_amount = bcsub($total1, $payments, 2);
-    			if(!$mainBounceCheck->save())
-    				return response()->json(['success'=>0,'msg'=>'Server error.']);
+    			if(!$mainBounceCheck->save()){
+                    ModelFactory::getInstance('UserActivityLog')->create([
+                        'user_id'       => auth()->user()->id,
+                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                        'action'        => 'error updating Bounce Check Report having txn_number ' . $txnNumber .' that has a "-"'
+                    ]);
+
+                    return response()->json(['success'=>0,'msg'=>'Server error.']);
+                }
     		}
     	}
     	else
     	{
     		ModelFactory::getInstance('BounceCheck')->where('txn_number','like',$txnNumber.'%')->delete();
+
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'done saving remarks for deleting Bounce Check Report having txn_number ' . $txnNumber
+            ]);
+
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'       => auth()->user()->id,
+                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                'action'        => 'done deleting Bounce Check Report having txn_number ' . $txnNumber
+            ]);
     	}
     	
     	DB::commit();

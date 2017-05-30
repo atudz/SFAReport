@@ -24,6 +24,13 @@ class UserPresenter extends PresenterCore
 		$this->view->tableHeaders = $this->getUserTableColumns();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-list')->value('id'),
+		    'action'        => 'visit User Management - User List'
+		]);
+
 		return $this->view('users');
 	}
 
@@ -38,6 +45,13 @@ class UserPresenter extends PresenterCore
 
 		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('contact-us',$user_group_id,$user_id);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'visit Support Page - Contact Us'
+		]);
+
 		return $this->view('contactUs');
 	}
 
@@ -55,6 +69,12 @@ class UserPresenter extends PresenterCore
 		$this->view->tableHeaders = $this->getIncidentReportTableColumns();
 		$this->view->branch = PresenterFactory::getInstance('Reports')->getArea(true);
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('summary-of-incident-report',$user_group_id,$user_id);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-incident-report')->value('id'),
+		    'action'        => 'visit Support Page - Summary of Incident Report'
+		]);
 		return $this->view('summaryOfIncidentReport');
 	}
 	
@@ -85,6 +105,13 @@ class UserPresenter extends PresenterCore
 		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-list')->value('id'),
+		    'action'        => 'visit User Management - User List (Add)'
+		]);
+
 		return $this->view('addEdit');
 	}
 
@@ -122,6 +149,13 @@ class UserPresenter extends PresenterCore
 		$this->view->gender = $this->getGender();
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea(true);
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-list',$user_group_id,$user_id);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-list')->value('id'),
+		    'action'        => 'visit User Management - User List (Edit)'
+		]);
+
 		return $this->view('edit');
 	}
 	
@@ -130,6 +164,11 @@ class UserPresenter extends PresenterCore
         $user_group_id = auth()->user()->group->id;
         $user_id = auth()->user()->id;
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-management',$user_group_id,$user_id);
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'visit My Profile - Change Password'
+		]);
 		return $this->view('changePassword');
 	}
 	
@@ -144,6 +183,11 @@ class UserPresenter extends PresenterCore
 		$this->view->areas = PresenterFactory::getInstance('Reports')->getArea();
 		$this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-management',$user_group_id,$user_id);
 		$this->view->readOnly = $this->view->navigationActions['read_only_profile'] ? 'changePassword' : '';
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => $user_id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'visit My Profile'
+		]);
 		return $this->view('myProfile');
 	}
 	
@@ -152,6 +196,16 @@ class UserPresenter extends PresenterCore
 	 * @return \App\Http\Presenters\Ambigous
 	 */
 	public function myProfile(){
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'retrieving My Profile'
+		]);
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done retrieving My Profile'
+		]);
 		return $this->getUser(auth()->user()->id);
 	}
 	
@@ -249,6 +303,12 @@ class UserPresenter extends PresenterCore
 
 		$data['records'] = $this->getPreparedSummaryOfIncidentReportList();
 		$data['total'] = count($data['records']);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-incident-report')->value('id'),
+            'action'        => 'finished loading User Guide data'
+        ]);
 
 		return response()->json($data);
 	}
@@ -373,6 +433,13 @@ class UserPresenter extends PresenterCore
 		$data['records'] = $items;
 		$data['total'] = $result->total();
 		
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-list')->value('id'),
+            'action'        => 'finished loading User Management - User List data'
+        ]);
+
 		return response()->json($data);
 		
 		
