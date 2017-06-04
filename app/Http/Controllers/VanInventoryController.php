@@ -31,12 +31,29 @@ class VanInventoryController extends ControllerCore
 			$stockTransfer = ModelFactory::getInstance('TxnStockTransferInHeader')->where('stock_transfer_in_header_id',$request->stock_transfer_id)->first();
 			if($stockTransfer)
 			{
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+				    'action'        => 'updating Van Inventory - Stock Transfer Header id' . $request->stock_transfer_id
+				]);
 				//dd($stockTransfer->stock_transfer_number);
 				$this->addStockTranserItem($request, $stockTransfer->stock_transfer_number);
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+				    'action'        => 'done updating Van Inventory - Stock Transfer Header id' . $request->stock_transfer_id
+				]);
 			}
 		}
 		else
 		{
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+			    'action'        => 'creating Van Inventory - Stock Transfer Header'
+			]);
+
 			$nextPkId = ModelFactory::getInstance('TxnStockTransferInHeader')->max('stock_transfer_in_header_id');
 			if($nextPkId >= config('system.custom_pk_start'))
 				$nextPkId++;
@@ -61,6 +78,12 @@ class VanInventoryController extends ControllerCore
 			if($stockTransfer->save())
 			{
 				$this->addStockTranserItem($request,$request->stock_transfer_number);
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+				    'action'        => 'done creating Van Inventory - Stock Transfer Header id ' . $stockTransfer->stock_transfer_in_header_id
+				]);
 			}
 			
 		}
@@ -75,6 +98,12 @@ class VanInventoryController extends ControllerCore
 	 */
 	public function addStockTranserItem(StockTransferRequest $request, $reference)
 	{
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+		    'action'        => 'creating Van Inventory - Stock Transfer Detail'
+		]);
+
 		$nextPkId = ModelFactory::getInstance('TxnStockTransferInDetail')->max('stock_transfer_in_detail_id');
 		if($nextPkId >= config('system.custom_pk_start'))
 			$nextPkId++;
@@ -94,6 +123,13 @@ class VanInventoryController extends ControllerCore
 		$stockDetail->modified_by = $request->salesman_code;
 		$stockDetail->modified_date = new Carbon($request->transfer_date_from);
 		$stockDetail->sfa_modified_date = new Carbon($request->transfer_date_from);
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+		    'action'        => 'done creating Van Inventory - Stock Transfer Detail id ' . $stockTransfer->stock_transfer_in_detail_id
+		]);
+
 		return $stockDetail->save();
 	}
 	
@@ -104,6 +140,12 @@ class VanInventoryController extends ControllerCore
 	 */
 	public function saveActualCount(ActualCountRequest $request)
 	{		
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+		    'action'        => 'creating Van Inventory - Actual Count Replenishment'
+		]);
+
 		DB::beginTransaction();
 		
 		$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
@@ -125,6 +167,12 @@ class VanInventoryController extends ControllerCore
 		
 		if($replenish->save())
 		{
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+			    'action'        => 'done creating Van Inventory - Actual Count Replenishment id' . $replenish->id
+			]);
+
 			$items = $request->get('item_code');
 			$qty = $request->get('quantity');
 			
@@ -134,6 +182,12 @@ class VanInventoryController extends ControllerCore
 					->where('reference_number',$replenish->reference_number)
 					->delete();
 					
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+				    'action'        => 'deleting Van Inventory - Actual Count Replenishment Item having reference_number' . $replenish->reference_number
+				]);
+
 				foreach($items as $k=>$item)
 				{						
 					$detail = ModelFactory::getInstance('ReplenishmentItem');					
@@ -147,9 +201,21 @@ class VanInventoryController extends ControllerCore
 					$detail->sfa_modified_date = new Carbon();
 					if(!$detail->save())
 					{
+						ModelFactory::getInstance('UserActivityLog')->create([
+							'user_id'       => auth()->user()->id,
+						    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+						    'action'        => 'error creating Van Inventory - Actual Count Replenishment Item'
+						]);
+
 						DB::rollback();
 						return response()->json(['success'=>false]);						
 					}
+
+					ModelFactory::getInstance('UserActivityLog')->create([
+						'user_id'       => auth()->user()->id,
+					    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+					    'action'        => 'creating Van Inventory - Actual Count Replenishment Item having id' . $detail->id
+					]);
 				}
 			}
 		}
@@ -170,6 +236,12 @@ class VanInventoryController extends ControllerCore
 	public function deleteActualCount(ActualCountDelete $request, $id)
 	{
 		
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+		    'action'        => 'deleting Van Inventory - Actual Count Replenishment id' . $id
+		]);
+
 		$replenish = ModelFactory::getInstance('Replenishment')->find($id);
 		if($replenish)
 		{
@@ -181,6 +253,18 @@ class VanInventoryController extends ControllerCore
 				ModelFactory::getInstance('ReplenishmentItem')
 							->where('reference_number',$replenish->reference_number)
 							->delete();
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+				    'action'        => 'deleting Van Inventory - Actual Count Replenishment Item having reference_number' . $replenish->reference_number
+				]);
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+				    'action'        => 'done deleting Van Inventory - Actual Count Replenishment id' . $id
+				]);
 			}
 		}
 		
@@ -195,6 +279,12 @@ class VanInventoryController extends ControllerCore
 	 */
 	public function saveAdjustment(AdjustmentRequest $request)
 	{
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+		    'action'        => 'creating Van Inventory - Adjustment Replenishment'
+		]);
+
 		DB::beginTransaction();
 	
 		$vanInventoryPresenter = PresenterFactory::getInstance('VanInventory');
@@ -217,6 +307,12 @@ class VanInventoryController extends ControllerCore
 	
 		if($replenish->save())
 		{
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+			    'action'        => 'done creating Van Inventory - Adjustment Replenishment id' . $replenish->id
+			]);
+
 			$items = $request->get('item_code');
 			$qty = $request->get('quantity');
 			$brands = $request->get('brands');
@@ -227,6 +323,12 @@ class VanInventoryController extends ControllerCore
 						->where('reference_number',$replenish->reference_number)
 						->delete();
 					
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+				    'action'        => 'deleting Van Inventory - Adjustment Replenishment Item having reference_number' . $replenish->reference_number
+				]);
+
 				foreach($items as $k=>$item)
 				{
 					$detail = ModelFactory::getInstance('ReplenishmentItem');
@@ -241,9 +343,21 @@ class VanInventoryController extends ControllerCore
 					$detail->sfa_modified_date = new Carbon();
 					if(!$detail->save())
 					{
+						ModelFactory::getInstance('UserActivityLog')->create([
+							'user_id'       => auth()->user()->id,
+						    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+						    'action'        => 'error creating Van Inventory - Adjustment Replenishment Item'
+						]);
+
 						DB::rollback();
 						return response()->json(['success'=>false]);
 					}
+
+					ModelFactory::getInstance('UserActivityLog')->create([
+						'user_id'       => auth()->user()->id,
+					    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+					    'action'        => 'creating Van Inventory - Adjustment Replenishment Item having id' . $detail->id
+					]);
 				}
 			}
 		}
@@ -264,6 +378,12 @@ class VanInventoryController extends ControllerCore
 	public function deleteAdjustment(AdjustmentDelete $request, $id)
 	{
 	
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+		    'action'        => 'deleting Van Inventory - Adjustment Replenishment id' . $id
+		]);
+
 		$replenish = ModelFactory::getInstance('Replenishment')->find($id);
 		if($replenish)
 		{
@@ -275,6 +395,18 @@ class VanInventoryController extends ControllerCore
 				ModelFactory::getInstance('ReplenishmentItem')
 				->where('reference_number',$replenish->reference_number)
 				->delete();
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+				    'action'        => 'deleting Van Inventory - Adjustment Replenishment Item having reference_number' . $replenish->reference_number
+				]);
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+				    'action'        => 'done deleting Van Inventory - Adjustment Replenishment id' . $id
+				]);
 			}
 		}
 	

@@ -57,6 +57,13 @@ class ReportsPresenter extends PresenterCore
     	}
 
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('dashboard',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','dashboard')->value('id'),
+            'action'        => 'visit Dashboard'
+        ]);
+
     	return $this->view('index');
     }
     
@@ -79,6 +86,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->salesman = $this->getSalesman();
                 $this->view->tableHeaders = $this->getSalesCollectionReportColumns();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('report',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','report')->value('id'),
+                    'action'        => 'visit Sales & Collection - Report'
+                ]);
+
     			return $this->view('salesCollectionReport');
     		case 'posting':
     			$this->view->companyCode = $this->getCompanyCode();
@@ -86,6 +100,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->salesman = $this->getSalesman();
     			$this->view->tableHeaders = $this->getSalesCollectionPostingColumns();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('posting',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','posting')->value('id'),
+                    'action'        => 'visit Sales & Collection - Posting'
+                ]);
+
     			return $this->view('salesCollectionPosting');
     		case 'summary':
     			$this->view->customerCode = $this->getCompanyCode();
@@ -93,6 +114,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->area = $this->getArea();
     			$this->view->tableHeaders = $this->getSalesCollectionSummaryColumns();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('monthly-summary-of-sales',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','monthly-summary-of-sales')->value('id'),
+                    'action'        => 'visit Sales & Collection - Monthly Summary of Sales'
+                ]);
+
     			return $this->view('salesCollectionSummary');
     	}
     }
@@ -119,6 +147,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getSalesReportMaterialColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('per-material',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','per-material')->value('id'),
+                    'action'        => 'visit Sales Report - Per Material'
+                ]);
+
     			return $this->view('salesReportPerMaterial');
     		case 'perpeso':
     			$this->view->companyCode = $this->getCompanyCode();    			
@@ -128,6 +163,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getSalesReportPesoColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('peso-value',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','peso-value')->value('id'),
+                    'action'        => 'visit Sales Report - Peso Value'
+                ]);
+
     			return $this->view('salesReportPerPeso');
     		case 'returnpermaterial':
     			$this->view->companyCode = $this->getCompanyCode();
@@ -139,6 +181,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getReturnReportMaterialColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('returns-per-material',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-per-material')->value('id'),
+                    'action'        => 'visit Sales Report - Returns (Per Material)'
+                ]);
+
     			return $this->view('returnsPerMaterial');
     		case 'returnperpeso':
     			$this->view->customers = $this->getCustomer();
@@ -148,6 +197,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getReturnReportPerPesoColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('returns-peso-value',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-peso-value')->value('id'),
+                    'action'        => 'visit Sales Report - Returns (Peso Value)'
+                ]);
+
     			return $this->view('returnsPerPeso');
     		case 'customerlist':
     			$this->view->salesman = $this->getSalesman();
@@ -158,6 +214,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getCustomerListColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-customer',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-customer')->value('id'),
+                    'action'        => 'visit Sales Report - Master (Customer)'
+                ]);
+
     			return $this->view('customerList');
     		case 'salesmanlist':
     			$this->view->salesman = $this->getSalesman();
@@ -167,6 +230,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getSalesmanListColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-salesman',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-salesman')->value('id'),
+                    'action'        => 'visit Sales Report - Master (Salesman)'
+                ]);
+
     			return $this->view('salesmanList');
     		case 'materialpricelist':
     			$this->view->segmentCodes = $this->getItemSegmentCode();
@@ -177,6 +247,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->tableHeaders = $this->getMaterialPriceListColumns();
     			$this->view->isSalesman = $this->isSalesman();
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('master-material-price',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-material-price')->value('id'),
+                    'action'        => 'visit Sales Report - Master (Material Price)'
+                ]);
+
     			return $this->view('materialPriceList');
     	}
     }
@@ -203,6 +280,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->itemCodes = $this->getVanInventoryItems('canned','item_code');
     			$this->view->type = 'canned';
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('canned-and-mixes',$user_group_id,$user_id);
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','canned-and-mixes')->value('id'),
+                    'action'        => 'visit Van Inventory - Canned & Mixes data'
+                ]);
+
     			return $this->view('vanInventory');
     		case 'frozen':
     			$this->view->title = 'Frozen & Kassel';
@@ -213,6 +297,13 @@ class ReportsPresenter extends PresenterCore
     			$this->view->itemCodes = $this->getVanInventoryItems('frozen','item_code');
                 $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('frozen-and-kassel',$user_group_id,$user_id);
     			$this->view->type = 'frozen';    			
+
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','frozen-and-kassel')->value('id'),
+                    'action'        => 'visit Van Inventory - Frozen & Kassel data'
+                ]);
+
     			return $this->view('vanInventory');
     	}
     }
@@ -231,6 +322,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->area = $this->getArea(false,false);
     	$this->view->tableHeaders = $this->getBirColumns();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bir',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bir')->value('id'),
+            'action'        => 'visit BIR'
+        ]);
+
     	return $this->view('bir');
     }
     
@@ -254,7 +352,13 @@ class ReportsPresenter extends PresenterCore
     	$this->view->to = (new Carbon())->format('m/d/Y');
     	$this->view->isSalesman = $this->isSalesman();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('unpaid-invoice',$user_group_id,$user_id);
-    	
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','unpaid-invoice')->value('id'),
+            'action'        => 'visit Unpaid Invoice'
+        ]);
+
     	return $this->view('unpaidInvoice');
     }
     /**
@@ -267,6 +371,13 @@ class ReportsPresenter extends PresenterCore
         $user_group_id = auth()->user()->group->id;
         $user_id = auth()->user()->id;
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('sync-data',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
+            'action'        => 'visit Sync Data'
+        ]);
+
     	return $this->view('sync');
     }
     
@@ -277,64 +388,196 @@ class ReportsPresenter extends PresenterCore
      */
     public function getRecords($type)
     {
+        $user_id = auth()->user()->id;
+
     	switch($type)
     	{
     		case 'salescollectionreport':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','report')->value('id'),
+                    'action'        => 'loading Sales & Collection - Report data'
+                ]);
     			return $this->getSalesCollectionReport();
     		case 'salescollectionposting':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','posting')->value('id'),
+                    'action'        => 'loading Sales & Collection - Posting data'
+                ]);
     			return $this->getSalesCollectionPosting();
     		case 'salescollectionsummary':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','monthly-summary-of-sales')->value('id'),
+                    'action'        => 'loading Sales & Collection - Monthly Summary of Sales data'
+                ]);
     			return $this->getSalesCollectionSummary();
     		case 'vaninventoryfrozen':    			
     		case 'vaninventorycanned':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=',($type == 'vaninventorycanned' ? 'canned-and-mixes' : 'frozen-and-kassel'))->value('id'),
+                    'action'        => 'loading Van Inventory - ' .($type == 'vaninventorycanned' ? 'Canned & Mixes' : 'Frozen & Kassel') . ' data'
+                ]);
     			return $this->getVanInventory();
     		case 'unpaidinvoice':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','unpaid-invoice')->value('id'),
+                    'action'        => 'loading Unpaid Invoice data'
+                ]);
     			return $this->getUnpaidInvoice();    		
     		case 'bir':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bir')->value('id'),
+                    'action'        => 'loading BIR data'
+                ]);
     			return $this->getBir();
 			case 'salesreportpermaterial':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','per-material')->value('id'),
+                    'action'        => 'loading Sales Report - Per Material data'
+                ]);
     			return $this->getSalesReportMaterial();
     		case 'salesreportperpeso':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','peso-value')->value('id'),
+                    'action'        => 'loading Sales Report - Peso Value data'
+                ]);
     			return $this->getSalesReportPeso();
     		case 'returnpermaterial':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-per-material')->value('id'),
+                    'action'        => 'loading Sales Report - Returns (Per Material) data'
+                ]);
     			return $this->getReturnMaterial();
     		case 'returnperpeso':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-peso-value')->value('id'),
+                    'action'        => 'loading Sales Report - Returns (Peso Value) data'
+                ]);
     			return $this->getReturnPeso();
     		case 'customerlist':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-customer')->value('id'),
+                    'action'        => 'loading Sales Report - Master (Customer) data'
+                ]);
     			return $this->getCustomerList();
     		case 'salesmanlist':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-salesman')->value('id'),
+                    'action'        => 'loading Sales Report - Master (Salesman) data'
+                ]);
     			return $this->getSalesmanList();
     		case 'materialpricelist';
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-material-price')->value('id'),
+                    'action'        => 'loading Sales Report - Master (Material Price) data'
+                ]);
     			return $this->getMaterialPriceList();    			
     		case 'conditioncodes':
     			return $this->getConditionCodes();
     		case 'userlist':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-list')->value('id'),
+                    'action'        => 'loading User Management - User List data'
+                ]);
     			return PresenterFactory::getInstance('User')->getUsers();
             case 'usergrouplist':
                 return PresenterFactory::getInstance('User')->getUserGroup();
 			case 'summaryofincidentreport':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-incident-report')->value('id'),
+                    'action'        => 'loading Support Page - Summary of Incident Report data'
+                ]);
 				return PresenterFactory::getInstance('User')->getSummaryOfIncidentReports();				
 			case 'stocktransfer':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+                    'action'        => 'loading Van Inventory - Stock Transfer data'
+                ]);
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
 			case 'stockaudit':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-audit')->value('id'),
+                    'action'        => 'loading Van Inventory - Stock Audit data'
+                ]);
 				return PresenterFactory::getInstance('VanInventory')->getStockAuditReport();
 			case 'flexideal':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','flexi-deal')->value('id'),
+                    'action'        => 'loading Van Inventory - Flexi Deal data'
+                ]);
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealReport();
 			case 'actualcount':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+                    'action'        => 'loading Van Inventory - Actual Count Replenishment data'
+                ]);
 				return PresenterFactory::getInstance('VanInventory')->getActualCountReport();
 			case 'adjustment':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+                    'action'        => 'loading Van Inventory - Adjustment Replenishment data'
+                ]);
 				return PresenterFactory::getInstance('VanInventory')->getAdjustmentReport();
 			case 'invoiceseries':
+                    ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+                    'action'        => 'loading Invoice Series Mapping data'
+                ]);
 				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesReport();
 			case 'bouncecheck':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+                    'action'        => 'loading Bounce Check Report data'
+                ]);
 				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckReport();
 			case 'userguide':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-incident-report')->value('id'),
+                    'action'        => 'loading User Guide data'
+                ]);
 				return PresenterFactory::getInstance('UserGuide')->getUserGuideReports();
 			case 'cashpayment':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','cash-payments')->value('id'),
+                    'action'        => 'loading Sales & Collection - Cash Payments data'
+                ]);
 				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentReport();
 			case 'checkpayment':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','check-payments')->value('id'),
+                    'action'        => 'loading Sales & Collection - Check Payments data'
+                ]);
 				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentReport();
 			case 'reversalsummary':
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'       => $user_id,
+                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
+                    'action'        => 'loading Summary of Reversal data'
+                ]);
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
 			case 'replenishment':
 				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
@@ -425,53 +668,21 @@ class ReportsPresenter extends PresenterCore
     	}
     	
         if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $data['records'][$key]->remarks_updated = '';
-                if(!empty($value->evaluated_objective_id) || !is_null($value->evaluated_objective_id)){
-                    $data['records'][$key]->remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_evaluated_objective')->where('column','=','remarks')->where('pk_id','=',$value->evaluated_objective_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->invoice_number_updated = '';
-                if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
-                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','invoice_number')->where('pk_id','=',$value->sales_order_header_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->invoice_date_updated = '';
-                if(!empty($value->invoice_date_id) || !is_null($value->invoice_date_id)){
-                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','invoice_date')->where('pk_id','=',$value->invoice_date_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->ref_no_updated = '';
-                if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
-                    $data['records'][$key]->ref_no_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header_discount')->where('column','=','ref_no')->where('pk_id','=',$value->reference_num)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->return_slip_num_updated = '';
-                if(!empty($value->return_header_id) || !is_null($value->return_header_id)){
-                    $data['records'][$key]->return_slip_num_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_return_header')->where('column','=','return_slip_num')->where('pk_id','=',$value->return_header_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->or_date_updated = '';
-                $data['records'][$key]->or_number_updated =  '';
-                if(!empty($value->collection_header_id) || !is_null($value->collection_header_id)){
-                    $data['records'][$key]->or_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_header')->where('column','=','or_date')->where('pk_id','=',$value->collection_header_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->or_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_header')->where('column','=','or_number')->where('pk_id','=',$value->collection_header_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->bank_updated = '';
-                $data['records'][$key]->check_number_updated = '';
-                $data['records'][$key]->check_date_updated = '';
-                $data['records'][$key]->cm_number_updated = '';
-                if(!empty($value->collection_detail_id) || !is_null($value->collection_detail_id)){
-                    $data['records'][$key]->bank_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','bank')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->check_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','check_number')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->check_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','check_date')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->cm_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','cm_number')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
-                }
-                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),9,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
+                $year = date('Y',strtotime($value->or_date));
+                $month = date('n',strtotime($value->or_date));
+                $period_status = !empty($open_close_period->periodClosed($this->request->get('company_code'),9,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
             }
         }
-    	
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','report')->value('id'),
+            'action'        => 'finished loading Sales & Collection - Report data'
+        ]);
+
     	$data['total'] = count($result);
     	 
     	return response()->json($data);
@@ -1406,6 +1617,12 @@ class ReportsPresenter extends PresenterCore
     	$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','posting')->value('id'),
+            'action'        => 'finished loading Sales & Collection - Posting data'
+        ]);
+
     	return response()->json($data);    	
     }
     
@@ -1827,6 +2044,12 @@ class ReportsPresenter extends PresenterCore
     	}
     	    	 
     	$data['total'] = $result->total();
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','monthly-summary-of-sales')->value('id'),
+            'action'        => 'finished loading Sales & Collection - Monthly Summary of Sales data'
+        ]);
     	
     	return response()->json($data);  
     }
@@ -2572,16 +2795,22 @@ class ReportsPresenter extends PresenterCore
 
 
         if(!empty($data['stocks'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['stocks'] as $key => $value) {
-                $data['stocks'][$key]->transaction_date_updated = '';
-                $data['stocks'][$key]->stock_transfer_number_updated = '';
-                if(!empty($value->stock_transfer_in_header_id) || !is_null($value->stock_transfer_in_header_id)){
-                    $data['stocks'][$key]->transaction_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','transfer_date')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
-                    $data['stocks'][$key]->stock_transfer_number_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','stock_transfer_number')->where('pk_id','=',$value->stock_transfer_in_header_id)->count() ? 'modified' : '';
-                }
-                $data['stocks'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed(($this->request->get('inventory_type') == 'canned' ? 1000 : 2000),($this->request->get('inventory_type') == 'canned' ? 12 : 13),date('n',strtotime($value->transaction_date)),date('Y',strtotime($value->transaction_date)))) ? 1 : 0;
+                $company_code = $this->request->get('inventory_type') == 'canned' ? 1000 : 2000;
+                $navigation_id = $this->request->get('inventory_type') == 'canned' ? 12 : 13;
+                $year = date('Y',strtotime($value->transaction_date));
+                $month = date('n',strtotime($value->transaction_date));
+                $period_status = !empty($open_close_period->periodClosed($company_code,$navigation_id,$month,$year)) ? 1 : 0;
+                $data['stocks'][$key]->closed_period = $period_status;
             }
         }
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=', ($this->request->get('inventory_type') == 'canned' ? 'canned-and-mixes' : 'frozen-and-kassel'))->value('id'),
+            'action'        => 'finished loading Van Inventory - ' . ($this->request->get('inventory_type') == 'canned' ? 'Canned & Mixes' : 'Frozen & Kassel') . ' data'
+        ]);
 
     	return ($reports) ? $reportRecords : response()->json($data);
     }
@@ -3012,7 +3241,13 @@ class ReportsPresenter extends PresenterCore
     	}
     	
     	$data['total'] = $result->total();
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','unpaid-invoice')->value('id'),
+            'action'        => 'finished loading Unpaid Invoice data'
+        ]);
+
     	return response()->json($data);
     }
     
@@ -3246,7 +3481,13 @@ class ReportsPresenter extends PresenterCore
     		$prepare = $this->getPreparedBir(false,true);
     		$data['summary'] = $prepare->first();
     	}
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bir')->value('id'),
+            'action'        => 'finished loading BIR data'
+        ]);
+
     	return response()->json($data);
     }
     
@@ -3565,35 +3806,21 @@ class ReportsPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $data['records'][$key]->remarks_updated = '';
-                if(!empty($value->evaluated_objective_id) || !is_null($value->evaluated_objective_id)){
-                    $data['records'][$key]->remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_stock_transfer_in_header')->where('column','=','remarks')->where('pk_id','=',$value->evaluated_objective_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->invoice_number_updated = '';
-                $data['records'][$key]->invoice_date_updated = '';
-                $data['records'][$key]->invoice_posting_date_updated = '';
-                if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
-                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_number_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->invoice_posting_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_posting_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->quantity_updated = '';
-                if(!empty($value->quantity_pk_id) || !is_null($value->quantity_pk_id)){
-                    $data['records'][$key]->quantity_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->quantity_table)->where('column','=',$value->quantity_column)->where('pk_id','=',$value->quantity_pk_id)->count() ? 'modified' : '';
-                }
-
-                $data['records'][$key]->condition_code_updated = '';
-                if(!empty($value->condition_code_pk_id) || !is_null($value->condition_code_pk_id)){
-                    $data['records'][$key]->condition_code_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->condition_code_table)->where('column','=',$value->condition_code_column)->where('pk_id','=',$value->condition_code_pk_id)->count() ? 'modified' : '';
-                }
-
                 $customer_code_info = explode('_', $value->customer_code);
-                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($customer_code_info[0],14,date('n',strtotime($value->invoice_posting_date)),date('Y',strtotime($value->invoice_posting_date)))) ? 1 : 0;
+                $year = date('Y',strtotime($value->invoice_posting_date));
+                $month = date('n',strtotime($value->invoice_posting_date));
+                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],14,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
             }
         }
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','per-material')->value('id'),
+            'action'        => 'finished loading Sales Report - Per Material data'
+        ]);
     
     	return response()->json($data);
     }
@@ -4015,21 +4242,22 @@ class ReportsPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         if(!empty($data['records'])){
+            $open_close_period = PresenterFactory::getInstance('OpenClosingPeriod');
             foreach ($data['records'] as $key => $value) {
-                $data['records'][$key]->invoice_number_updated = '';
-                $data['records'][$key]->invoice_date_updated = '';
-                $data['records'][$key]->invoice_posting_date_updated = '';
-                if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
-                    $data['records'][$key]->invoice_number_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_number_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                    $data['records'][$key]->invoice_posting_date_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=',$value->invoice_posting_date_column)->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-                }
-
                 $customer_code_info = explode('_', $value->customer_code);
-                $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($customer_code_info[0],15,date('n',strtotime($value->invoice_posting_date)),date('Y',strtotime($value->invoice_posting_date)))) ? 1 : 0;
+                $year = date('Y',strtotime($value->invoice_posting_date));
+                $month = date('n',strtotime($value->invoice_posting_date));
+                $period_status = !empty($open_close_period->periodClosed($customer_code_info[0],15,$month,$year)) ? 1 : 0;
+                $data['records'][$key]->closed_period = $period_status;
             }
         }
-    	
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','peso-value')->value('id'),
+            'action'        => 'finished loading Sales Report - Peso Value data'
+        ]);
+
     	return response()->json($data);
     }
     
@@ -4411,8 +4639,13 @@ class ReportsPresenter extends PresenterCore
     	}
     	    	
     	$data['total'] = $result->total();
-    
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-per-material')->value('id'),
+            'action'        => 'finished loading Sales Report - Returns (Per Material) data'
+        ]);
+
     	return response()->json($data);
     }
     
@@ -4620,8 +4853,13 @@ class ReportsPresenter extends PresenterCore
     		$data['summary'] = $prepare->first();
     	}    	
     	$data['total'] = $result->total();
-    
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','returns-peso-value')->value('id'),
+            'action'        => 'finished loading Sales Report - Returns (Peso Value) data'
+        ]);
+
     	return response()->json($data);
     }
     
@@ -4804,7 +5042,12 @@ class ReportsPresenter extends PresenterCore
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
     
-    
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-customer')->value('id'),
+            'action'        => 'finished loading Sales Report - Master (Customer) data'
+        ]);
+
     	return response()->json($data);
     	
     }
@@ -4933,8 +5176,13 @@ class ReportsPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
-    
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-salesman')->value('id'),
+            'action'        => 'finished loading Sales Report - Master (Salesman) data'
+        ]);
+
     	return response()->json($data);
     	
     }
@@ -5068,7 +5316,13 @@ class ReportsPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
-    
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','master-material-price')->value('id'),
+            'action'        => 'finished loading Sales Report - Master (Material Price) data'
+        ]);
+
     	return response()->json($data);
     	 
     }
@@ -5946,6 +6200,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Sales & Collection Report';
     			$vaninventory = true;
     			$fontSize = '7px';
+                $navigation_slug = 'report';
     			break;
     		case 'salescollectionposting':
     			$columns = $this->getTableColumns($report);
@@ -5992,6 +6247,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesCollectionFilterData();
     			$filename = 'Sales & Collection Posting Date Report';
     			$vaninventory = true;
+                $navigation_slug = 'posting';
     			break;
     		case 'salescollectionsummary':
     			//$columns = $this->getTableColumns($report);
@@ -6020,6 +6276,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesCollectionSummaryFilterData();
     			$filename = 'Monthly Summary of Sales';
     			$salesSummary = true;
+                $navigation_slug = 'monthly-summary-of-sales';
     			break;
     		case 'bir';
     			$columns = $this->getTableColumns($report);
@@ -6029,6 +6286,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'BIR Report';
     			$filters = $this->getBirFilterData();
     			$filename = 'BIR Report';
+                $navigation_slug = 'bir';
     			break;
     		case 'unpaidinvoice';
     			$columns = $this->getTableColumns($report);
@@ -6040,6 +6298,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Unpaid Invoice Report';
     			$textSize = '14px';
     			$fontSize = '15px';
+                $navigation_slug = 'unpaid-invoice';
     			break;
     		case 'vaninventorycanned';
     			if($type == 'pdf')
@@ -6063,6 +6322,7 @@ class ReportsPresenter extends PresenterCore
 	    		$header = 'Canned & Mixes Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
+                $navigation_slug = 'canned-and-mixes';
 	    		break;
     		case 'vaninventoryfrozen';
     		
@@ -6087,6 +6347,7 @@ class ReportsPresenter extends PresenterCore
 	    		$header = 'Frozen & Kassel Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
+                $navigation_slug = 'frozen-and-kassel';
     			break; 
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
@@ -6101,6 +6362,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Sales Report Per Material';
     			$fontSize = '7px';
+                $navigation_slug = 'per-material';
     			break;
     		case 'salesreportperpeso':
     			$columns = $this->getTableColumns($report);
@@ -6111,6 +6373,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Sales Report Per Peso';
     			$fontSize = '7px';
+                $navigation_slug = 'peso-value';
     			break;
     		case 'returnpermaterial':
     			$columns = $this->getTableColumns($report);
@@ -6121,6 +6384,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Material';
     			$fontSize = '8px';
+                $navigation_slug = 'returns-per-material';
     			break;
     		case 'returnperpeso':
     			$columns = $this->getTableColumns($report);
@@ -6131,6 +6395,7 @@ class ReportsPresenter extends PresenterCore
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Return Per Peso';
     			$fontSize = '10px';
+                $navigation_slug = 'returns-peso-value';
     			break;
     		case 'customerlist':
     			$columns = $this->getTableColumns($report);
@@ -6139,6 +6404,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Customer List';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Customer List';
+                $navigation_slug = 'master-customer';
     			break;
     		case 'salesmanlist':
     			$columns = $this->getTableColumns($report);    			
@@ -6147,6 +6413,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Salesman List';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Salesman List';
+                $navigation_slug = 'master-salesman';
     			break;
     		case 'materialpricelist':
     			$columns = $this->getTableColumns($report);
@@ -6155,6 +6422,7 @@ class ReportsPresenter extends PresenterCore
     			$header = 'Material Price List';
     			$filters = $this->getSalesReportFilterData($report);
     			$filename = 'Material Price List';
+                $navigation_slug = 'master-material-price';
     			break;
 			case 'summaryofincidentsreport':
 				$columns = $this->getTableColumns($report);
@@ -6164,6 +6432,7 @@ class ReportsPresenter extends PresenterCore
 				$filters = $this->getSummaryOfIncidentReportFilterData();
 				$filename = 'Summary Of Incident Report';
 				$summaryOfIncident = true;
+                $navigation_slug = 'summary-of-incident-report';
 				break;
 				
 			case 'stocktransfer':
@@ -6174,6 +6443,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Stock Transfer Report';
 				$filters = $vanInventoryPresenter->getStockTransferFilterData();
 				$filename = 'Stock Transfer Report';
+                $navigation_slug = 'stock-transfer';
 				break;
 				
 			case 'stockaudit':
@@ -6184,6 +6454,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Stock Audit Report';
 				$filters = $vanInventoryPresenter->getStockAuditFilterData();
 				$filename = 'Stock Audit Report';
+                $navigation_slug = 'stock-audit';
 				break;
 				
 			case 'flexideal':
@@ -6195,6 +6466,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Flexi Deal Report';
 				$filters = $vanInventoryPresenter->getFlexiDealFilterData();
 				$filename = 'Flexi Deal Report';
+                $navigation_slug = 'flexi-deal';
 				break;
 				
 			case 'actualcount':
@@ -6211,6 +6483,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Invoice Series Mapping';
 				$filters = $invoicePresenter->getInvoiceSeriesFilterData();
 				$filename = 'Invoice Series Mapping';
+                $navigation_slug = 'invoice-series-mapping';
 				break;
 			case 'bouncecheck':
 				$bounceCheckPresenter = PresenterFactory::getInstance('BounceCheck');
@@ -6221,6 +6494,7 @@ class ReportsPresenter extends PresenterCore
 				$filters = $bounceCheckPresenter->getBounceCheckFilterData();
 				$filename = 'Bounce Check Report';
 				$fontSize = '10px';
+                $navigation_slug = 'bounce-check-report';
 				break;
 				
 			case 'cashpayment':
@@ -6243,6 +6517,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'List of Cash Payment';
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
+                $navigation_slug = 'cash-payments';
 				break;
 				
 			case 'checkpayment':
@@ -6266,7 +6541,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'List of Check Payment';
 				$filters = $salesCollectionPresenter->getCheckPaymentFilterData();
 				$filename = 'List of Check Payment';
-
+                $navigation_slug = 'check-payments';
 				break;
 				
 			case 'reversalsummary':
@@ -6277,6 +6552,7 @@ class ReportsPresenter extends PresenterCore
 				$header = 'Summary of Reversal';
 				$filters = $reversalPresenter->getSummaryReversalFilterData();
 				$filename = 'Summary of Reversal';				
+                $navigation_slug = 'summary-of-reversal';
 				break;
 				
 			case 'replenishment':
@@ -6336,6 +6612,13 @@ class ReportsPresenter extends PresenterCore
 			$current = $this->validateInvoiceNumber($current);
 		}
     	  
+        $navigation = ModelFactory::getInstance('Navigation')->where('slug','=',$navigation_slug)->first();
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => $navigation->id,
+            'action'        => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
+        ]);
+
     	if(in_array($type,['xls','xlsx']))
     	{    
 	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
@@ -6394,6 +6677,7 @@ class ReportsPresenter extends PresenterCore
 			else
 				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
+
     		return $pdf->download($filename.'.pdf');
     	}    		
     }
@@ -6829,7 +7113,7 @@ class ReportsPresenter extends PresenterCore
     			
     			$total = count($records);
     			$special = true;
-    			
+    			$navigation_slug = 'report';
 	    		break;
     		case 'salescollectionposting';
 	    		$prepare = $this->getPreparedSalesCollectionPosting();
@@ -6850,18 +7134,23 @@ class ReportsPresenter extends PresenterCore
     			$records = array_merge($collection1,$collection2);    			
     			$total = count($records);
     			$special = true;
+                $navigation_slug = 'posting';
 	    		break;
 	    	case 'salescollectionsummary';
 	    		$prepare = $this->getPreparedSalesCollectionSummary();
+                $navigation_slug = 'monthly-summary-of-sales';
 	    		break;
     		case 'bir';
     			$prepare = $this->getPreparedBir();
+                $navigation_slug = 'bir';
     			break;
     		case 'unpaidinvoice';
     			$prepare = $this->getPreparedUnpaidInvoice();
+                $navigation_slug = 'unpaid-invoice';
     			break;
     		case 'vaninventorycanned':
     		case 'vaninventoryfrozen':    			
+                $navigation_slug = ($type == 'vaninventorycanned' ? 'canned-and-mixes' : 'frozen-and-kassel');
     			if($dashboard)
     			{
     				$this->getPreparedVanInventory();
@@ -6871,74 +7160,100 @@ class ReportsPresenter extends PresenterCore
 	    			$data['total'] = 1;
 	    			$data['limit'] = 0;
 	    			$data['max_limit'] = false;
-	    			$data['staggered'] = [];   
+	    			$data['staggered'] = [];
+
+                    $navigation = ModelFactory::getInstance('Navigation')->where('slug','=',$navigation_slug)->first();
+                    ModelFactory::getInstance('UserActivityLog')->create([
+                        'user_id'       => auth()->user()->id,
+                        'navigation_id' => $navigation->id,
+                        'action'        => 'preparing ' . $navigation->name . ' for ' . $type . ' download'
+                    ]);
+
 	    			return response()->json($data);
     			}
     		case 'salesreportpermaterial':
     			$prepare = $this->getPreparedSalesReportMaterial();
+                $navigation_slug = 'per-material';
     			break;
     		case 'salesreportperpeso':
     			$prepare = $this->getPreparedSalesReportPeso();
+                $navigation_slug = 'peso-value';
     			break;
     		case 'returnpermaterial':
     			$prepare = $this->getPreparedReturnMaterial();
+                $navigation_slug = 'returns-per-material';
     			break;
     		case 'returnperpeso':
     			$prepare = $this->getPreparedReturnPeso();
+                $navigation_slug = 'returns-peso-value';
     			break;
     		case 'customerlist':
     			$prepare = $this->getPreparedCustomerList();
+                $navigation_slug = 'master-customer';
     			break;
     		case 'salesmanlist':
     			$prepare = $this->getPreparedSalesmanList();
+                $navigation_slug = 'master-salesman';
     			break;
     		case 'materialpricelist':
     			$prepare = $this->getPreparedMaterialPriceList();
+                $navigation_slug = 'master-material-price';
     			break;
 			case 'summaryofincidentsreport':
 				$prepare = PresenterFactory::getInstance('User')->getPreparedSummaryOfIncidentReportList(false);
 				$total = count($prepare->get());
 				$special = true;
+                $navigation_slug = 'summary-of-incident-report';
 				break;
 			case 'stocktransfer':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
 				$total = $prepare->count();
+                $navigation_slug = 'stock-transfer';
 				break;
 			case 'stockaudit':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockAudit();
 				$total = $prepare->count();
+                $navigation_slug = 'stock-audit';
 				break;
 			case 'flexideal':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedFlexiDeal();
 				$total = $prepare->count();
+                $navigation_slug = 'flexi-deal';
 				break;
 			case 'actualcount':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedActualCount();
 				$total = $prepare->count();
+                $navigation_slug = 'actual-count-replenishment';
 				break;
 			case 'adjustment':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedAdjustment();
 				$total = $prepare->count();
+                $navigation_slug = 'adjustment-replenishment';
 				break;
 			case 'invoiceseries':
 				$prepare = PresenterFactory::getInstance('Invoice')->getPreparedInvoiceSeries();
 				$total = $prepare->count();
+                $navigation_slug = 'invoice-series-mapping';
 				break;
 			case 'bouncecheck':
 				$prepare = PresenterFactory::getInstance('BounceCheck')->getPreparedBounceCheck();
 				$total = $prepare->count();
+                $navigation_slug = 'bounce-check-report';
 				break;
 			case 'cashpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCashPayment();
 				$total = count($prepare->get());
+                $navigation_slug = 'cash-payments';
 				break;
 			case 'checkpayment':
 				$prepare = PresenterFactory::getInstance('SalesCollection')->getPreparedCheckPayment();
 				$total = count($prepare->get());
+                $navigation_slug = 'check-payments';
 				break;
 			case 'reversalsummary':
 				$prepare = PresenterFactory::getInstance('Reversal')->getPreparedSummaryReversal();
 				$total = $prepare->count();
+                $navigation_slug = 'summary-of-reversal';
 				break;
 			case 'replenishment':
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedReplenishment();
@@ -6983,6 +7298,13 @@ class ReportsPresenter extends PresenterCore
     		$data['max_limit'] = false;
     		$data['staggered'] = [];
     	}
+
+        $navigation = ModelFactory::getInstance('Navigation')->where('slug','=',$navigation_slug)->first();
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => $navigation->id,
+            'action'        => 'preparing ' . $navigation->name . ' for ' . $type . ' download'
+        ]);
     	
     	return response()->json($data);
     }

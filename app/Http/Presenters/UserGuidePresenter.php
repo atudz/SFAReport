@@ -32,6 +32,12 @@ class UserGuidePresenter extends PresenterCore
         $data['records'] = $this->getPreparedUserGuideReportList();
         $data['total'] = count($data['records']);
 
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+            'action'        => 'finished loading User Guide data'
+        ]);
+
         return response()->json($data);
     }
 
@@ -58,6 +64,12 @@ class UserGuidePresenter extends PresenterCore
         $user_id = auth()->user()->id;
         $this->view->tableHeaders = $this->getUserGuideTableColumns();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('user-guide',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+            'action'        => 'visit User Guide'
+        ]);
 
         return $this->view('userGuide');
     }

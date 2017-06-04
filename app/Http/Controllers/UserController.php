@@ -20,7 +20,12 @@ class UserController extends ControllerCore
 	 */
     public function changePassword(Request $request) 
     {
-		
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'saving My Profile - new Password'
+		]);
+
     	$data['success'] = false;
     	$data['failure'] = true;
     	
@@ -37,7 +42,13 @@ class UserController extends ControllerCore
     			$data['failure'] = false;
     		}
     	}
-    	
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done saving My Profile - new Password'
+		]);
+
     	return response()->json($data);
     }
 
@@ -48,6 +59,14 @@ class UserController extends ControllerCore
      */
     public function save(Request $request)
     {
+        $id = (int)$request->get('id');
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .''
+		]);
+
         $sanitizeFields = ['firstname', 'lastname', 'middlename', 'username', 'address1', 'telephone', 'mobile'];
 
         $userGroupModel = ModelFactory::getInstance('UserGroup');
@@ -61,6 +80,13 @@ class UserController extends ControllerCore
         	{
         		// Minus 1 to exclude default admin user
         		$response['error'] = 'Maximum of '.($max-1).' Administrators only.';        		
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+				    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Maximum of '.($max-1).' Administrators only.'
+				]);
+
         		return response()->json($response);
         	}
         }
@@ -70,24 +96,43 @@ class UserController extends ControllerCore
 			$response['exists'] = true;
 			$response['error'] = 'Invalid date range.';
 
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Invalid date range.'
+			]);
+
 			return response()->json($response);
 		}
         if($request->has('age') && 17 >= $request->get('age'))
         {
             $response['exists'] = true;
             $response['error'] = 'User age cannot be below 18.';
+
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - User age cannot be below 18.'
+			]);
+
             return response()->json($response);
         }
 
         $userModel = ModelFactory::getInstance('User');
 
-        $id = (int)$request->get('id');
 		if ($request->has('jr_salesman_code')) {
 			$exist = $userModel->where('salesman_code', $request->get('jr_salesman_code'))->where('id', '<>', $id)->exists();
 			if ($exist) {
 				$response['exists'] = true;
 				$response['error'] = 'Jr. Salesman code already exists available code is ' .
 					$this->generateJrSalesCode($request->get('salesman_code')) .'.';
+
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+				    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Jr. Salesman code already exists available code is ' .
+					$this->generateJrSalesCode($request->get('salesman_code')) .'.'
+				]);
 
 				return response()->json($response);
 			}
@@ -100,6 +145,12 @@ class UserController extends ControllerCore
 		if ((($request->has('jr_salesman_code') || $request->get('salesman_code')) && !$salesmanCodeExists)) {
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code does not exists in master list.';
+
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Salesman code does not exists in master list.'
+			]);
 
 			return response()->json($response);
 		}
@@ -122,10 +173,22 @@ class UserController extends ControllerCore
 				$response['exists'] = true;
 				$response['error'] = 'Salesman code does not match to its corresponding Van Salesman Name.';
 
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+				    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Salesman code does not match to its corresponding Van Salesman Name.'
+				]);
+
 				return response()->json($response);
 			}
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code already exists.';
+
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Salesman code already exists.'
+			]);
 
 			return response()->json($response);
 		}
@@ -135,6 +198,12 @@ class UserController extends ControllerCore
 			$response['exists'] = true;
 			$response['error'] = 'Salesman code does not match to its corresponding branch.';
 
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Salesman code does not match to its corresponding branch.'
+			]);
+
 			return response()->json($response);
 		}
 
@@ -143,6 +212,12 @@ class UserController extends ControllerCore
 		if (($request->has('jr_salesman_code') && $request->get('salesman_code')) && !$appSalesman) {
 			$response['exists'] = true;
 			$response['error'] = 'The salesman code that you\'ve entered is already been inactive.';
+
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - The salesman code that you\'ve entered is already been inactive.'
+			]);
 
 			return response()->json($response);
 		}
@@ -159,6 +234,13 @@ class UserController extends ControllerCore
         {
         	$response['exists'] = true;
         	$response['error'] = 'Username already exist.';
+
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '') .' error - Username already exist.'
+			]);
+
         	return response()->json($response);        	
         }
 
@@ -199,7 +281,12 @@ class UserController extends ControllerCore
         $response['success'] = true;
         $response['id'] = $user->id;
         
-        
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done saving My Profile '. (!empty($id) || !is_null($id) ? ' id ' . $id  : '')
+		]);
+
         return response()->json($response);
     }
 
@@ -210,11 +297,24 @@ class UserController extends ControllerCore
      */
     public function activate($id)
     {
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'activating My Profile id '. $id
+		]);
+
     	$user = ModelFactory::getInstance('User')->find($id);
     	$user->status = 'A';
     	$user->save();
     	
     	$response['success'] = true;
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done activating My Profile id '. $id
+		]);
+
     	return response()->json($response);
     }
     
@@ -225,11 +325,23 @@ class UserController extends ControllerCore
      */
     public function deactivate($id)
     {
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'deactivating My Profile id '. $id
+		]);
+
     	$user = ModelFactory::getInstance('User')->find($id);
     	$user->status = 'I';
     	$user->save();
     	
     	$response['success'] = true;
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done deactivating My Profile id '. $id
+		]);
     	return response()->json($response);
     }
     
@@ -240,29 +352,74 @@ class UserController extends ControllerCore
      */
     public function delete($id)
     {
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'deleting My Profile id '. $id
+		]);
+
     	$user = ModelFactory::getInstance('User')->find($id);
     	if($user)
     	{
     		$user->status = 'D';
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'My Profile id '. $id . ' status id D'
+			]);
+
     		$deletedEmail = $user->email.'.deleted';
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'My Profile id '. $id . ' email change from ' . $user->email . ' to ' .$deletedEmail
+			]);
+
     		$count = ModelFactory::getInstance('User')
     						->onlyTrashed()
     						->where('email','like',$deletedEmail.'%')
     						->count();
     		$user->email = !$count ? $deletedEmail : $deletedEmail.($count+1);
+    		if($count){
+				ModelFactory::getInstance('UserActivityLog')->create([
+					'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+				    'action'        => 'My Profile id '. $id . ' email change from ' . $deletedEmail . ' to ' .$user->email
+				]);
+			}
     		
     		$deletedUsername = $user->username.'.deleted';
+			ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+			    'action'        => 'My Profile id '. $id . ' username change from ' . $user->username . ' to ' .$deletedUsername
+			]);
+
     		$count = ModelFactory::getInstance('User')
 			    		->onlyTrashed()
 			    		->where('username','like',$deletedUsername.'%')
 			    		->count();
-    		if($user->name)
+    		if($user->name){
     			$user->username = !$count ? $deletedUsername : $deletedUsername.($count+1);
+	    		if($count){
+					ModelFactory::getInstance('UserActivityLog')->create([
+						'user_id'       => auth()->user()->id,
+					    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+					    'action'        => 'My Profile id '. $id . ' email change from ' . $deletedUsername . ' to ' .$user->username
+					]);
+				}
+    		}
     		$user->save();
     		$user->delete();    		
     	}
     	    	
     	$response['success'] = true;
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action'        => 'done deleting My Profile id '. $id
+		]);
     	return response()->json($response);
     }
 
@@ -339,6 +496,12 @@ class UserController extends ControllerCore
 	 */
 	public function mail($support_id)
 	{
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'User id' . auth()->user()->id .' creating mail for Support Page - Contact Us'
+		]);
+
 		$contactUs = ModelFactory::getInstance('ContactUs')->with('file')->where('id', $support_id)->first();
 		$branch = ModelFactory::getInstance('AppArea')->where('area_code',
 			$contactUs->location_assignment_code)->select('area_name')->first();
@@ -360,6 +523,12 @@ class UserController extends ControllerCore
 			$data['file_name'] = $contactUs->file->filename;
 		}
 
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'User id' . auth()->user()->id .' sending mail for Support Page - Contact Us'
+		]);
+
 		Mail::send('emails.contact_us', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
 			$message->to(config('system.from'));
@@ -369,9 +538,21 @@ class UserController extends ControllerCore
 			$message->subject($data['subject']);
 		});
 
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'User id' . auth()->user()->id .' done sending mail for Support Page - Contact Us'
+		]);
+
 		//reply email to sender.
 		$data['time_received'] = strftime("%b %d, %Y", strtotime($contactUs->created_at->format('m/d/Y')));
 		$data['status'] = $contactUs->status;
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'User id' . auth()->user()->id .' sending auto reply mail for Support Page - Contact Us'
+		]);
 
 		Mail::send('emails.auto_reply', $data, function ($message) use (&$data) {
 			$message->from(config('system.from_email'), $data['subject']);
@@ -379,9 +560,25 @@ class UserController extends ControllerCore
 			$message->subject($data['subject']);
 		});
 
+		ModelFactory::getInstance('UserActivityLog')->create([
+		    'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+		    'action'        => 'User id' . auth()->user()->id .' done sending auto reply mail for Support Page - Contact Us'
+		]);
+
 		if (empty(Mail::failures())) {
+			ModelFactory::getInstance('UserActivityLog')->create([
+			    'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+			    'action'        => 'User id' . auth()->user()->id .' done creating mail for Support Page - Contact Us'
+			]);
 			return response()->json($contactUs, 200);
 		} else {
+			ModelFactory::getInstance('UserActivityLog')->create([
+			    'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+			    'action'        => 'User id' . auth()->user()->id .' error creating mail for Support Page - Contact Us - Email not sent.'
+			]);
 			return response()->json('Email not sent.', 471);
 		}
 	}
@@ -424,6 +621,12 @@ class UserController extends ControllerCore
 	public function userContactUsFileUpload($support_id, Request $request)
 	{
 		try {
+			ModelFactory::getInstance('UserActivityLog')->create([
+			    'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+			    'action'        => 'User id' . auth()->user()->id .' uploading file for Support Page - Contact Us'
+			]);
+
 			$file = $request->all();
 			//multiple by 1000 to convert the mb to kb.
 			$fileSize = 1000 * PresenterFactory::getInstance('User')->getFileSize()->value;
@@ -431,6 +634,11 @@ class UserController extends ControllerCore
 			$uploadedSize = ($file['file']->getSize() / 1000);
 
 			if ($uploadedSize > $fileSize) {
+				ModelFactory::getInstance('UserActivityLog')->create([
+				    'user_id'       => auth()->user()->id,
+				    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+				    'action'        => 'User id' . auth()->user()->id .' uploading file error for Support Page - Contact Us -  Max File size is 10mb.'
+				]);
 
 				return response()->json('Max File size is 10mb.');
 			}
@@ -446,9 +654,21 @@ class UserController extends ControllerCore
 				'filename' => $file['file']->getClientOriginalName()
 			]);
 
+			ModelFactory::getInstance('UserActivityLog')->create([
+			    'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+			    'action'        => 'User id' . auth()->user()->id .' done uploading file for Support Page - Contact Us -  Max File size is 10mb.'
+			]);
+
 			return response()->json($contactFile);
 
 		} catch (Exception $e) {
+			ModelFactory::getInstance('UserActivityLog')->create([
+			    'user_id'       => auth()->user()->id,
+			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','contact-us')->value('id'),
+			    'action'        => 'User id' . auth()->user()->id .' error uploading file for Support Page - Contact Us'
+			]);
+
 			return response()->json([
 				'text' => $e->getMessage(),
 				'code' => 500

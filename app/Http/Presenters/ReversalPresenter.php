@@ -5,6 +5,7 @@ namespace App\Http\Presenters;
 use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
 use App\Factories\FilterFactory;
+use App\Factories\ModelFactory;
 
 class ReversalPresenter extends PresenterCore
 {
@@ -24,6 +25,13 @@ class ReversalPresenter extends PresenterCore
     	$this->view->areas = $reportsPresenter->getArea(true);
     	$this->view->customers = $reportsPresenter->getCustomer();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('summary-of-reversal',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
+            'action'        => 'visit Summary of Reversal'
+        ]);
+
     	return $this->view('index');
     }
 
@@ -99,7 +107,13 @@ class ReversalPresenter extends PresenterCore
     	$result = $this->paginate($prepare);
     	$data['records'] = $result->items();
     	$data['total'] = $result->total();
-    	 
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
+            'action'        => 'finished loading Summary of Reversal data'
+        ]);
+
     	return response()->json($data);
     }
     

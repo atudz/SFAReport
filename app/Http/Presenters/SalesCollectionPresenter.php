@@ -27,6 +27,13 @@ class SalesCollectionPresenter extends PresenterCore
     	$this->view->customers = $reportsPresenter->getCustomer();
     	$this->view->tableHeaders = $this->getCashPaymentColumns();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('cash-payments',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','cash-payments')->value('id'),
+            'action'        => 'visit Sales & Collection - Cash Payments'
+        ]);
+
     	return $this->view('cashPayments');
     }
     
@@ -48,6 +55,13 @@ class SalesCollectionPresenter extends PresenterCore
     	$this->view->customers = $reportsPresenter->getCustomer();
     	$this->view->tableHeaders = $this->getCheckPaymentColumns();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('check-payments',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','check-payments')->value('id'),
+            'action'        => 'visit Sales & Collection - Check Payments'
+        ]);
+
     	return $this->view('checkPayments');
     }
     
@@ -87,6 +101,12 @@ class SalesCollectionPresenter extends PresenterCore
     	}
     	
     	$data['total'] = count($result);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','cash-payments')->value('id'),
+            'action'        => 'finished loading Sales & Collection - Cash Payments data'
+        ]);
     	
     	return response()->json($data);
     }
@@ -130,6 +150,12 @@ class SalesCollectionPresenter extends PresenterCore
     	}
     	 
     	$data['total'] = count($result);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','check-payments')->value('id'),
+            'action'        => 'finished loading Sales & Collection - Check Payments data'
+        ]);
     	 
     	return response()->json($data);
     }

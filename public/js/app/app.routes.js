@@ -279,6 +279,13 @@
 					controller: 'UserAccessMatrix',
 					/*controllerAs: 'sync'*/
 				})
+				
+				
+				.when('/user.activity.log',{
+					templateUrl: '/user-activity-log',
+					controller: 'UserActivityLog',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'

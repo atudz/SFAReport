@@ -4,6 +4,7 @@ namespace App\Http\Presenters;
 
 use App\Core\PresenterCore;
 use App\Factories\PresenterFactory;
+use App\Factories\ModelFactory;
 use PDF;
 
 class OpenClosingPeriodPresenter extends PresenterCore
@@ -23,6 +24,13 @@ class OpenClosingPeriodPresenter extends PresenterCore
         $this->view->years = $this->getYears();
         $this->view->reportNavigations = $this->getReportConnectedNavigation();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('open-closing-period',$user_group_id,$user_id);
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => $user_id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action'        => 'visit Open/Closing Period'
+        ]);
+
         return $this->view('index');
     }
 
@@ -204,11 +212,17 @@ class OpenClosingPeriodPresenter extends PresenterCore
      * @return Object
      */
     public function processNavigationReports($navigation_ids,$month,$year,$company_code){
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action'        => 'loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
+        ]);
+
         $day_limit = $this->calculateDayLimit($month,$year);
         $dates = [];
 
         for($x = 1; $x<= $day_limit; $x++){
-            $dates[$x] = 0;
+            $dates[$x] = 'open';
         }
 
         $navigation_reports =   \DB::table('navigation as parent')
@@ -249,14 +263,20 @@ class OpenClosingPeriodPresenter extends PresenterCore
             $navigation_reports[$key]->company_code = !empty($report_period) ? $report_period->company_code : null;
             $navigation_reports[$key]->period_month = !empty($report_period) ? $report_period->period_month : null;
             $navigation_reports[$key]->period_year = !empty($report_period) ? $report_period->period_year : null;
-            $navigation_reports[$key]->period_status = !empty($report_period) ? $report_period->period_status : 0;
+            $navigation_reports[$key]->period_status = !empty($report_period) ? $report_period->period_status : 'open';
 
             if(!is_null($navigation_reports[$key]->period_id)){
                 foreach ($navigation_reports[$key]->dates as $date => $value2) {
-                    $navigation_reports[$key]->dates[$date] = !empty($this->getReportPeriodDateStatus($value->period_id,$date)) ? $this->getReportPeriodDateStatus($value->period_id,$date)->period_date_status : 0;
+                    $navigation_reports[$key]->dates[$date] = !empty($this->getReportPeriodDateStatus($value->period_id,$date)) ? $this->getReportPeriodDateStatus($value->period_id,$date)->period_date_status : 'open';
                 }
             }
         }
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action'        => 'finished loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
+        ]);
 
         return $navigation_reports;
     }

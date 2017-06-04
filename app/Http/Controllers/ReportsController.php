@@ -193,8 +193,20 @@ class ReportsController extends ControllerCore
 	 */
 	public function sync()
 	{
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
+		    'action'        => 'loading Sync Data data'
+		]);
+
 		$result = LibraryFactory::getInstance('Sync')->sync();		
 		$data['logs'] = $result ? true : '';		
+
+		ModelFactory::getInstance('UserActivityLog')->create([
+			'user_id'       => auth()->user()->id,
+		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
+		    'action'        => 'finished loading Sync Data data'
+		]);
 		return response()->json($data);
 	}
 	
