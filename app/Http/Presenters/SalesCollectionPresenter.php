@@ -110,7 +110,8 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCashPaymentTotal($data)
     {
     	$summary = [
-    			'payment_amount'=>0,    			
+    			'payment_amount'=>0,
+    			'total_invoice_net_amount'=>0,
     	];
     	 
     	$cols = array_keys($summary);
@@ -349,7 +350,8 @@ class SalesCollectionPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '    				    				
-    				SUM(collection.payment_amount) payment_amount,    				
+    				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,    				
+					SUM(collection.payment_amount) payment_amount
     				';
     	}
     	 
@@ -433,7 +435,7 @@ class SalesCollectionPresenter extends PresenterCore
     			'remarks',
     			'invoice_number',
     			'invoice_date',
-    			'customer_code',
+    			'total_invoice_net_amount',
     			'or_date',
     			'or_number',
     			'payment_amount'    			
@@ -704,7 +706,8 @@ class SalesCollectionPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-    				SUM(collection.payment_amount) payment_amount,
+					SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
+    				SUM(collection.payment_amount) payment_amount
     				';
     	}
     
