@@ -34,36 +34,7 @@
 							<div class="row form-input-field">
 								{!!Html::select('status','Status <span class="required">*</span>', statuses(), 'Select Status',['onblur'=>'validate(this)'],$invoice->status)!!}
 							</div>							
-							<div class="col-md-4 col-md-offset-4">
-								<button class="btn btn-info" onclick="preview()">Preview</button>
-							</div>
 						</div>
-					</div>
-					
-					<div class="row @if(!$invoice->id) hidden @endif " style="padding-top:10px;" id="preview">
-						<div class="col-md-6 col-md-offset-2 table-responsive">
-							<h4>Invoice Series</h4>
-							<table id="table_preview" class="table table-striped table-condensed table-bordered">
-								<thead>
-									<tr>
-										<th style="text-align:center;" width="20%">#</th>
-										<th style="text-align: center">Invoice No.</th>										
-									</tr>								
-								</thead>
-								<tbody>	
-									<?php $index = 1; ?>
-									@if($invoice->invoice_start && $invoice->invoice_end)
-										@for($i=$invoice->invoice_start; $i <=$invoice->invoice_end; $i++)
-											<tr>
-												<td style="text-align:center;" width="20%">{{$index}}</th>
-												<td style="text-align: center">{{str_pad($i,8,'0',STR_PAD_LEFT)}}</td>										
-											</tr>
-											<?php $index++; ?>
-										@endfor										
-									@endif																	
-								</tbody>								
-							</table>						
-						</div>	
 					</div>
 						
 					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
