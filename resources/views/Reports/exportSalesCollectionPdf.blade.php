@@ -144,16 +144,16 @@
 
 						<div class="row pull-right indent-right label-value">
 							<strong>Previous Inv. Date</strong>&nbsp;&nbsp;&nbsp;FROM: <span class="@if(request()->get('posting_date_from')) underline @endif">@if(request()->get('posting_date_from')) {{request()->get('posting_date_from')}} @else __________ @endif</span>
-						</div>
-						<div class="row pull-right indent-right label-value">
-							<strong>Area Name:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
-						</div>														
+						</div>																				
 					</div>
 					
 					<div class="clear">
 						<div class="row pull-right indent-right label-value">
 							&nbsp;TO: <span @if(request()->get('posting_date_to')) class="underline" @endif>@if(request()->get('posting_date_to')) {{request()->get('posting_date_to')}} @else __________ @endif</span>
-						</div>														
+						</div>		
+						<div class="row pull-right indent-right label-value">
+							<strong>Area Name:</strong><span class="underline">@if($area) {{$area}} @else ______________ @endif</span>
+						</div>												
 					</div>
 					
 					<div class="clear">
