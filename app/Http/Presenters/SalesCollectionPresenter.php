@@ -168,7 +168,8 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCashPaymentTotal($data, $format=true)
     {
     	$summary = [
-    			'payment_amount'=>0,    			
+    			'payment_amount'=>0,
+    			'total_invoice_net_amount'=>0,
     	];
     	 
     	$cols = array_keys($summary);
@@ -415,7 +416,8 @@ class SalesCollectionPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '    				    				
-    				SUM(collection.payment_amount) payment_amount,    				
+    				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,    				
+					SUM(collection.payment_amount) payment_amount
     				';
     	}
     	 
@@ -466,6 +468,54 @@ class SalesCollectionPresenter extends PresenterCore
     	$prepare->orderBy('collection.so_number','asc');    	
     		 
     	return $prepare;
+    }
+    
+    /**
+     * Get cash payments
+     * @return string[][]
+     */
+    public function getCashPaymentColumns()
+    {
+    	$headers = [
+    			['name'=>'Customer Code','sort'=>'customer_code'],
+    			['name'=>'Customer Name','sort'=>'customer_name'],
+    			['name'=>'Customer Address','sort'=>'customer_address'],
+    			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Invoice No','sort'=>'invoice_number'],
+    			['name'=>'Invoice Date','sort'=>'invoice_date'],
+    			['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
+    			['name'=>'Collection Date','sort'=>'or_date'],
+    			['name'=>'OR Number','sort'=>'or_number'],
+    			['name'=>'Cash Amount'],
+    	];
+    
+    	return $headers;
+    }
+    
+    /**
+     * get Cash Payment Filter Data
+     * @return string[]|unknown[]
+     */
+    public function getCashPaymentFilterData()
+    {
+    	$reportPresenter = PresenterFactory::getInstance('Reports');
+    	$customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
+    	$salesman = $this->request->get('salesman') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
+    	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
+    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';    	
+    	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
+    	
+    	$filters = [
+    			'Salesman' => $salesman,
+    			'Area' => $area,
+    			'Customer Name' => $customer,
+    			'Company Code' => $company_code,
+    			'Invoice Date' => $invoiceDate,
+    			'Or Date' => $orDate,    			
+    	];    	
+    
+    	return $filters;
     }
     
     
@@ -706,7 +756,8 @@ class SalesCollectionPresenter extends PresenterCore
     	if($summary)
     	{
     		$select = '
-    				SUM(collection.payment_amount) payment_amount,
+					SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
+    				SUM(collection.payment_amount) payment_amount
     				';
     	}
     
@@ -758,29 +809,7 @@ class SalesCollectionPresenter extends PresenterCore
     	
     	
     	return $prepare;
-    }
-    
-    /**
-     * Get cash payments
-     * @return string[][]
-     */
-    public function getCashPaymentColumns()
-    {
-    	$headers = [
-    			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address','sort'=>'customer_address'],
-    			['name'=>'Remarks','sort'=>'remarks'],
-    			['name'=>'Invoice No','sort'=>'invoice_number'],
-    			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
-    			['name'=>'Collection Date','sort'=>'or_date'],
-    			['name'=>'OR Number','sort'=>'or_number'],
-    			['name'=>'Cash Amount'],
-    	];
-    
-    	return $headers;
-    }
+    }    
     
     /**
      * Get cash payments
@@ -850,33 +879,6 @@ class SalesCollectionPresenter extends PresenterCore
     			'payment_amount'
     	];
     }
-    
-    /**
-     * get Cash Payment Filter Data
-     * @return string[]|unknown[]
-     */
-    public function getCashPaymentFilterData()
-    {
-    	$reportPresenter = PresenterFactory::getInstance('Reports');
-    	$customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
-    	$salesman = $this->request->get('salesman') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman')] : 'All';
-    	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
-    	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
-    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';    	
-    	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
-    	
-    	$filters = [
-    			'Salesman' => $salesman,
-    			'Area' => $area,
-    			'Customer Name' => $customer,
-    			'Company Code' => $company_code,
-    			'Invoice Date' => $invoiceDate,
-    			'Or Date' => $orDate,    			
-    	];    	
-    
-    	return $filters;
-    }
-    
     /**
      * get Check Payment Filter Data
      * @return string[]|unknown[]

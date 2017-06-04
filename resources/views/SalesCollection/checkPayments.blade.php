@@ -85,7 +85,9 @@
 								<td></td>
 								<td></td>
 								<td></td>					
-								<td></td>
+								<td class="bold">
+									<span>[[formatNumber(summary.total_invoice_net_amount)]]</span>
+								</td>
 								<td></td>
 								<td></td>
 								<td></td>
