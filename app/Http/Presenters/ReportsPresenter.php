@@ -2127,9 +2127,10 @@ class ReportsPresenter extends PresenterCore
      * Get Van & Inventory records
      * @param string $reports
      * @param number $offset
-     * @return multitype:array NULL
+     * @param string $export
+     * @return \Illuminate\Http\JsonResponse|array|\Illuminate\Http\JsonResponse|\Illuminate\Http\JsonResponse|array[]|NULL[]|unknown[]
      */
-    public function getVanInventory($reports=false,$offset=0)
+    public function getVanInventory($reports=false,$offset=0, $export=false)
     {    	
     	// This is a required field so return empty if there's none
     	if(!$this->request->get('transaction_date') || $this->isSalesman() && !auth()->user()->salesman_code)
@@ -2335,8 +2336,12 @@ class ReportsPresenter extends PresenterCore
 	    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
 	    				$col = 'order_qty';
 	    			else 
-	    				$col = 'served_qty';	    			
-	    			$result->{'code_'.$item->item_code} = '('.$item->{$col}.')';
+	    				$col = 'served_qty';	    	
+	    			if($export) {
+	    				$result->{'code_'.$item->item_code} = -1*$item->{$col};
+	    			} else {
+	    				$result->{'code_'.$item->item_code} = '('.$item->{$col}.')';
+	    			}	    			
 	    			if(isset($tempInvoices['code_'.$item->item_code]))
 	    				$tempInvoices['code_'.$item->item_code] += $item->{$col};
 	    			else
@@ -2358,7 +2363,11 @@ class ReportsPresenter extends PresenterCore
 	    				$col = 'trade_order_qty';
 	    			else
 	    				$col = 'trade_served_qty';
-	    			$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->regular_order_qty).')';
+	    			if($export) {
+	    				$result->{'code_'.$deal->trade_item_code} = -1*$deal->{$col}+$deal->regular_order_qty;
+	    			} else {
+	    				$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->regular_order_qty).')';
+	    			}
 	    			if(isset($tempInvoices['code_'.$deal->trade_item_code]))
 	    				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->regular_order_qty);
 	    			else
@@ -5893,7 +5902,7 @@ class ReportsPresenter extends PresenterCore
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
     				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
-    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
+    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset,true));
     			}
     			    			
 	    		$rows = $this->getVanInventorySelectColumns('canned');
@@ -5913,7 +5922,7 @@ class ReportsPresenter extends PresenterCore
     				$params['transaction_date'] = $from;
     				$this->request->replace($params);
     				$from = date('Y/m/d', strtotime('+1 day', strtotime($from)));
-    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset));
+    				$records = array_merge($records,(array)$this->getVanInventory(true, $offset, true));
     			}
     			
 	    		$rows = $this->getVanInventorySelectColumns('frozen');
