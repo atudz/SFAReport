@@ -301,6 +301,16 @@
 		deletePreviousCache($route,$templateCache);
 
 		
+		$scope.preview = function (){		
+			var modalInstance = $uibModal.open({
+				animation: true,
+				templateUrl: 'ActualCountPreview',
+				controller: 'ActualCountPreview',
+				windowClass: 'center-modal',
+				size: 'lg'
+			});	
+		};
+		
 		$scope.save = function (){
 			var hasError = false;
 			
@@ -374,6 +384,61 @@
 			});
 		}
 	};
+	
+	/**
+	 * Actual Count Preview
+	 */
+	app.controller('ActualCountPreview',['$scope','$http','$uibModalInstance','$log',ActualCountPreview]);
+	
+	function ActualCountPreview($scope, $http, $uibModalInstance, $log)
+	{
+		
+		var replenishment = '';
+		if(angular.element('#replenishment_date_from').val()){
+			// @todo: add date format with time
+			replenishment = angular.element('#replenishment_date_from').val();
+		}
+		var salesman = '';
+		if(angular.element('#salesman_code').val()){
+			salesman = angular.element('#salesman_code option:selected').text();
+		}
+		var jr_salesman = '';
+		if(angular.element('#jr_salesman').val()){
+			jr_salesman = angular.element('#jr_salesman option:selected').text();
+		}
+		var van_code = '';
+		if(angular.element('#van_code').val()){
+			van_code = angular.element('#van_code option:selected').text();
+		}
+		
+		var details = {
+				'salesman_name' : salesman,
+				'jr_salesman' : jr_salesman,
+				'van_code' : van_code,
+				'replenishment_date' : replenishment,
+				'reference' : angular.element('#reference_number').val(),
+		};
+		$scope.details = details;
+		
+		var items = new Array();
+		
+		angular.element('#table_items').find('tr[id^=items]').each(function(i,el){
+				var tds = $(this).find('td');
+				items.push({
+						item_code: tds.eq(0).find("option:selected").text(),
+						item_desc: tds.eq(1).find("option:selected").text(),
+						item_qty: tds.eq(2).find("input").val()
+					});
+		});
+		
+		$scope.items = items;
+		$log.info(details);
+		$log.info(items);
+		
+		$scope.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
 	
 
 	/**

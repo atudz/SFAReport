@@ -77,7 +77,7 @@
 									
 									@if(count($replenishment->items) > 0)
 										@foreach($replenishment->items as $k=>$item)
-											<tr>
+											<tr id="items[]">
 												<td>
 													<div class="form-group">			 								
 						 								<div class="col-xs-12 col-sm-12">
@@ -106,7 +106,7 @@
 											</tr>
 										@endforeach
 									@else
-										<tr>
+										<tr id="items[]">
 											<td>
 												<div class="form-group">			 								
 					 								<div class="col-xs-12 col-sm-12">
@@ -139,6 +139,7 @@
 									<tr>
 										<td colspan="4">
 											<div class="text-center">
+												<button class="btn btn-info" ng-click="preview()">Preview</button>&nbsp;&nbsp;
 												<button class="btn btn-info" onclick="addTd()">Add More</button>&nbsp;&nbsp;
 											</div>
 										</td>
@@ -188,6 +189,58 @@
 		</div>			    			
 	</script>
 @endif
+
+<script type="text/ng-template" id="ActualCountPreview">
+	<div class="modal-body">		
+		<div class="row">
+			<form class="form-horizontal">
+  				<div class="form-group" style="padding-top:5px;margin-bottom:0px;">
+    				<label style="text-align:left;padding-left:30px;" class="col-sm-3 control-label">Salesman Name:</label>
+    				<label style="text-align:left;padding-left:5px;" class="col-sm-6 control-label">[[details.salesman_name]]</label>    					    				
+  				</div> 
+				<div class="form-group" style="padding-top:5px;margin-bottom:0px;">
+    				<label style="text-align:left;padding-left:30px;" class="col-sm-3 control-label">Junior Salesman: </label>
+    				<label style="text-align:left;padding-left:5px;" class="col-sm-6 control-label">[[details.jr_salesman]]</label>    					    				
+  				</div> 
+				<div class="form-group" style="padding-top:5px;margin-bottom:0px;">
+    				<label style="text-align:left;padding-left:30px;" class="col-sm-3 control-label">Van Code:</label>
+    				<label style="text-align:left;padding-left:5px;" class="col-sm-6 control-label">[[details.van_code]]</label>    					    				
+  				</div> 
+				<div class="form-group" style="padding-top:5px;margin-bottom:0px;">
+    				<label style="text-align:left;padding-left:30px;" class="col-sm-3 control-label">Count date/time:</label>
+    				<label style="text-align:left;padding-left:5px;" class="col-sm-6 control-label">[[details.replenishment_date]]</label>    					    				
+  				</div> 
+				<div class="form-group" style="padding-top:5px;margin-bottom:10px;">
+    				<label style="text-align:left;padding-left:30px;" class="col-sm-3 control-label">Count Sheet No:</label>
+    				<label style="text-align:left;padding-left:5px;" class="col-sm-6 control-label">[[details.reference]]</label>    					    				
+  				</div> 				 				 						
+			</form>
+		</div>
+		<div class="row">
+			<div class="col-md-12 table-responsive">
+				<table class="table table-striped table-condensed table-bordered">
+					<thead>
+						<tr>
+							<th>Material Code</th>
+							<th>Material Description</th>
+							<th>Material Quantity</th>						
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in items" >
+							<td>[[item.item_code]]</td>
+							<td>[[item.item_desc]]</td>
+							<td>[[item.item_qty]]</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>		
+		<p class="text-center">				         						 
+			<button class="btn btn-warning" type="button btn-sm" ng-click="close()">Close</button>					 		
+		</p>							 					
+	</div>			    			
+    </script>
     		
 <script>
 	$(document).ready(function(){
