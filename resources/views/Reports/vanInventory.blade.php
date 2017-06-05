@@ -60,8 +60,9 @@
 								<td class="bold"></td>
 								<td class="bold" id="[[$parent.$index]]_[[$index]]-transaction_date_updated" ng-class="[stock.transaction_date_updated]">
 									@if($navigationActions['show_transaction_date_column'] && $navigationActions['edit_transaction_date_column'])
-										<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',stock.stock_transfer_in_header_id,stock.transaction_date,$index,'Transaction Date','transaction_date',false,$parent.$index,'transaction_date_updated')" ng-if="stock.closed_period == 0">
-		    								<span ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
+										<a href="" class="editable-click" ng-click="editColumn('date','txn_stock_transfer_in_header','transfer_date',stock.stock_transfer_in_header_id,stock.transaction_date,$index,'Transaction Date','transaction_date',false,$parent.$index,'','transaction_date_updated','{{ $slug }}')" ng-if="stock.closed_period == 0">
+		    								<span ng-if="stock.transaction_date.trim() != '' || stock.transaction_date != null" ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
+	    									<span ng-if="stock.transaction_date.trim() == '' || stock.transaction_date == null">Edit Transaction Date</span>
 		  								</a>
 		  								<span ng-if="stock.closed_period == 1" ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
 		  							@endif
@@ -71,8 +72,9 @@
 								</td>
 								<td id="[[$parent.$index]]_[[$index]]-stock_transfer_number_updated" class=[[stock.stock_transfer_number_updated]]>
 									@if($navigationActions['show_stock_transfer_number_column'] && $navigationActions['edit_stock_transfer_number_column'])
-										<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',stock.stock_transfer_in_header_id,stock.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index,stock_transfer_number_updated)" ng-if="stock.closed_period == 0">
-		    								[[stock.stock_transfer_number | uppercase]]
+										<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',stock.stock_transfer_in_header_id,stock.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index,'','stock_transfer_number_updated','{{ $slug }}')" ng-if="stock.closed_period == 0">
+		    								<span ng-if="stock.stock_transfer_number.trim() != '' || stock.stock_transfer_number != null">[[stock.stock_transfer_number | uppercase]]</span>
+	    									<span ng-if="stock.stock_transfer_number.trim() == '' || stock.stock_transfer_number == null">Edit Stock Transfer No.</span>
 		  								</a>
 		  								<span ng-if="stock.closed_period == 1">[[stock.stock_transfer_number | uppercase]]</span>
 	  								@endif

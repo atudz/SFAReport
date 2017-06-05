@@ -19,13 +19,19 @@ class ReportsController extends ControllerCore
 	 */
 	public function save(Request $request)
 	{
-		$table = $request->get('table');
+		$id = $request->get('id');
 		$column = $request->get('column');
+		ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'action'        => 'saving editable column ' . $column . ' data having id ' . $id
+        ]);
+
+		$table = $request->get('table');
 		if(false === strpos($column,'date'))
 			$value = $request->get('value');
 		else 
 			$value = new \DateTime($request->get('value'));
-		$id = $request->get('id');
 		$comment = $request->get('comment');
 		$report_type = $request->has('report_type') ? $request->get('report_type') : '';
 		$report = $request->has('report') ? $request->get('report') : '';
@@ -183,6 +189,11 @@ class ReportsController extends ControllerCore
 			}
 		}
 		
+		ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'       => auth()->user()->id,
+            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'action'        => 'done saving editable column ' . $column . ' data having id ' . $id
+        ]);
 		$data['success'] = true;
 		return response()->json($data);	
 	}

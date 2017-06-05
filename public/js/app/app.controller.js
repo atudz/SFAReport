@@ -2006,9 +2006,8 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		// scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate){
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
-			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate, slug){
+			resource('/reports/synching/'+id+'/'+column + '?slug=' + slug).get().$promise.then(function(data){
 				var selectOptions = options;
 				var url = window.location.href;
 				url = url.split("/");
@@ -2115,7 +2114,8 @@
 						updated: updated,
 						report: report,
 						report_type: reportType,
-						toUpdate: toUpdate
+						toUpdate: toUpdate,
+						slug: slug
 				};
 				
 				
@@ -2458,8 +2458,7 @@
 						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						//$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
-						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
+						$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
 					}
 					else {
 						if ($scope.params.alias) {
@@ -2471,8 +2470,7 @@
 							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						// $('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
-						$('#' + $scope.params.index).addClass('modified');
+						$('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
 
 						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();

@@ -71,8 +71,9 @@
 								</td>
 								<td id="[[$index]]-remarks_updated" ng-class="[record.remarks_updated]">
 									@if($navigationActions['show_remarks_column'] && $navigationActions['edit_remarks_column'])
-										<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks','remarks_updated')" ng-if="record.closed_period == 0">
-				    						[[ record.remarks ]]
+										<a href="" class="editable-click" ng-click="editColumn('text','txn_evaluated_objective','remarks',record.evaluated_objective_id,record.remarks,$index,'Remarks','','','','','remarks_updated','per-material')" ng-if="record.closed_period == 0">
+				    						<span ng-if="record.remarks.trim() != '' || record.remarks != null">[[ record.remarks ]]</span>
+		    								<span ng-if="record.remarks.trim() == '' || record.remarks == null">Edit Remarks</span>
 				  						</a>
 				  						<span ng-if="record.closed_period == 1">[[ record.remarks ]]</span>
 				  					@endif
@@ -107,8 +108,9 @@
 								</td>
 								<td id="[[$index]]-invoice_number_updated" ng-class="[record.invoice_number_updated]">
 									@if($navigationActions['show_invoice_no_or_return_slip_no_column'] && $navigationActions['edit_invoice_no_or_return_slip_no_column'])
-										<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number','invoice_number_updated')" ng-if="record.closed_period == 0">
-			    							[[ record.invoice_number | uppercase]]
+										<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number','','','','invoice_number_updated','per-material')" ng-if="record.closed_period == 0">
+			    							<span ng-if="record.invoice_number.trim() != '' || record.invoice_number != null">[[ record.invoice_number | uppercase ]]</span>
+		    								<span ng-if="record.invoice_number.trim() == '' || record.invoice_number == null">Edit Invoice Number</span>
 			  							</a>
 				  						<span ng-if="record.closed_period == 1">[[ record.invoice_number | uppercase]]</span>
 			  						@endif
@@ -118,8 +120,9 @@
 								</td>
 								<td id="[[$index]]-invoice_date_updated" ng-class="[record.invoice_date_updated]">
 									@if($navigationActions['show_invoice_date_or_return_date_column'] && $navigationActions['edit_invoice_date_or_return_date_column'])
-										<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date','invoice_date_updated')" ng-if="record.closed_period == 0">
-			    							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
+										<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date','','','','invoice_date_updated','per-material')" ng-if="record.closed_period == 0">
+			    							<span ng-if="record.invoice_date.trim() != '' || record.invoice_date != null" ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
+		    								<span ng-if="record.invoice_date.trim() == '' || record.invoice_date == null">Edit Invoice Date/Return Date</span>
 			  							</a>
 				  						<span ng-if="record.closed_period == 1" ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 			  						@endif
@@ -129,8 +132,9 @@
 								</td>
 								<td id="[[$index]]-invoice_posting_date_updated" ng-class="[record.invoice_posting_date_updated]">
 									@if($navigationActions['show_invoice_or_return_posting_date_column'] && $navigationActions['edit_invoice_or_return_posting_date_column'])
-										<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date','invoice_posting_date_updated')" ng-if="record.closed_period == 0">
-			    							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
+										<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date','','','','invoice_posting_date_updated','per-material')" ng-if="record.closed_period == 0">
+			    							<span ng-if="record.invoice_posting_date.trim() != '' || record.invoice_posting_date != null" ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
+		    								<span ng-if="record.invoice_posting_date.trim() == '' || record.invoice_posting_date == null">Edit Invoice/Return Posting Date</span>
 			  							</a>
 			  							<span ng-if="record.closed_period == 1" ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 			  						@endif
@@ -155,8 +159,9 @@
 								</td>
 								<td id="[[$index]]-quantity_updated" ng-class="[record.quantity_updated]">
 									@if($navigationActions['show_quantity_column'] && $navigationActions['edit_quantity_column'])
-										<a href="" class="editable-click" ng-click="editColumn('number',record.quantity_table,record.quantity_column,record.quantity_pk_id,record.quantity,$index,'Quantity','quantity',true,'quantity_updated')" ng-if="record.closed_period == 0">
-			    							[[record.quantity]]
+										<a href="" class="editable-click" ng-click="editColumn('number',record.quantity_table,record.quantity_column,record.quantity_pk_id,record.quantity,$index,'Quantity','quantity',true,'','','quantity_updated','per-material')" ng-if="record.closed_period == 0">
+			    							<span ng-if="record.quantity.trim() != '' || record.quantity > 0 || record.quantity != null">[[ record.quantity ]]</span>
+		    								<span ng-if="record.quantity.trim() == '' || record.quantity == 0 || record.quantity == null">Edit Quantity</span>
 			  							</a>
 			  							<span ng-if="record.closed_period == 1">[[record.quantity]]</span>
 			  						@endif
@@ -166,12 +171,13 @@
 								</td>
 								<td id="[[$index]]-condition_code_updated" ng-class="[record.condition_code_updated]">
 									@if($navigationActions['show_condition_code_column'] && $navigationActions['edit_condition_code_column'])
-										<a href="" class="editable-click" ng-click="editColumn('select',record.condition_code_table,record.condition_code_column,record.condition_code_pk_id,record.condition_code,$index,'Condition Code','condition_code','condition_code_updated')" ng-if="record.closed_period == 0">
-			    							[[record.condition_code]]
+										<a href="" class="editable-click" ng-click="editColumn('select',record.condition_code_table,record.condition_code_column,record.condition_code_pk_id,record.condition_code,$index,'Condition Code','condition_code','','','','condition_code_updated','per-material')" ng-if="record.closed_period == 0">
+			    							<span ng-if="record.condition_code.trim() != '' || record.condition_code != null">[[record.condition_code]]</span>
+		    								<span ng-if="record.condition_code.trim() == '' || record.condition_code == null">Edit Condition Code</span>
 			  							</a>
 			  							<span ng-if="record.closed_period == 1">[[record.condition_code]]</span>
 			  						@endif
-			  						@if($navigationActions['show_condition_code_column'] && $navigationActions['edit_condition_code_column'])
+			  						@if($navigationActions['show_condition_code_column'] && !$navigationActions['edit_condition_code_column'])
 			  							[[record.condition_code]]
 			  						@endif
 								</td>
