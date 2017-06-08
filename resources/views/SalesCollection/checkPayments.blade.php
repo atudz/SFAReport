@@ -51,8 +51,9 @@
 								</td>
 								<td id="[[$index]]-bank_updated" class=[[record.bank_updated]]>
 									@if($isAdmin || $isAuditor)
-										<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank','bank_updated')">
-				    						[[record.bank | uppercase]]
+										<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank','','','','bank_updated','check-payments')">
+				    						<span ng-if="record.bank.trim() != '' || record.bank != null">[[record.bank | uppercase]]</span>
+		    								<span ng-if="record.bank.trim() == '' || record.bank == null">Edit Bank Name</span>
 				  						</a>
 				  					@else
 				  						[[record.bank | uppercase]]
@@ -64,8 +65,9 @@
 								</td>
 								<td id="[[$index]]-payment_amount_updated" class=[[record.payment_amount_updated]]>
 									@if($navigationActions['show_check_amount_column'] && $navigationActions['edit_check_amount_column'])
-										<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.payment_amount,$index,'Payment Amount','payment_amount','payment_amount_updated')" ng-if="record.closed_period == 0">
-				    						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
+										<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','payment_amount',record.collection_detail_id,record.payment_amount,$index,'Payment Amount','payment_amount','','','','payment_amount_updated','check-payments')" ng-if="record.closed_period == 0">
+				    						<span ng-if="record.payment_amount.trim() != '' || record.payment_amount > 0 || record.payment_amount != null" ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
+    										<span ng-if="record.payment_amount.trim() == '' || record.payment_amount == 0 || record.payment_amount == null">Edit Payment Amount</span>
 				  						</a>						
 			    						<span ng-if="record.closed_period == 1" ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 				  					@endif

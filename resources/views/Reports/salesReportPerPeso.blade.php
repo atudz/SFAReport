@@ -35,7 +35,7 @@
 					])!!}
 						{!!Html::theader($tableHeaders,$navigationActions['can_sort_columns'])!!}
 							<tbody>
-								<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
+								<tr ng-repeat="record in records|filter:query" id=[[$index]]>
 									<td>
 										@if($navigationActions['show_so_no_column'])
 											[[record.so_number]]
@@ -98,8 +98,9 @@
 									</td>
 									<td id="[[$index]]-invoice_number_updated" ng-class="[record.invoice_number_updated]">
 										@if($navigationActions['show_invoice_no_or_return_slip_no_column'] && $navigationActions['edit_invoice_no_or_return_slip_no_column'])
-											<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number','invoice_number_updated')" ng-if="record.closed_period == 0">
-				    							[[ record.invoice_number | uppercase]]
+											<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number','','','','invoice_number_updated','peso-value')" ng-if="record.closed_period == 0">
+				    							<span ng-if="record.invoice_number.trim() != '' || record.invoice_number != null">[[ record.invoice_number | uppercase ]]</span>
+		    									<span ng-if="record.invoice_number.trim() == '' || record.invoice_number == null">Edit Invoice Number</span>
 				  							</a>
 				  							<span ng-if="record.closed_period == 1">[[ record.invoice_number | uppercase]]</span>
 				  						@endif
@@ -109,8 +110,9 @@
 									</td>
 									<td id="[[$index]]-invoice_date_updated" ng-class="[record.invoice_date_updated]">
 										@if($navigationActions['show_invoice_date_or_return_date_column'] && $navigationActions['edit_invoice_date_or_return_date_column'])
-											<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date','invoice_date_updated')" ng-if="record.closed_period == 0">
-				    							<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
+											<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_date_column,record.invoice_pk_id,record.invoice_date,$index,'Invoice Date/Return Date','invoice_date','','','','invoice_date_updated','peso-value')" ng-if="record.closed_period == 0">
+				    							<span ng-if="record.invoice_date.trim() != '' || record.invoice_date != null" ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
+		    									<span ng-if="record.invoice_date.trim() == '' || record.invoice_date == null">Edit Invoice Date/Return Date</span>
 				  							</a>
 				  							<span ng-if="record.closed_period == 1" ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 				  						@endif
@@ -120,8 +122,9 @@
 									</td>
 									<td id="[[$index]]-invoice_posting_date_updated" ng-class="[record.invoice_posting_date_updated]">
 										@if($navigationActions['show_invoice_or_return_posting_date_column'] && $navigationActions['edit_invoice_or_return_posting_date_column'])
-											<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date','invoice_posting_date_updated')" ng-if="record.closed_period == 0">
-				    							<span ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
+											<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_table,record.invoice_posting_date_column,record.invoice_pk_id,record.invoice_posting_date,$index,'Invoice/Return Posting Date','invoice_posting_date','','','','invoice_posting_date_updated','peso-value')" ng-if="record.closed_period == 0">
+				    							<span ng-if="record.invoice_posting_date.trim() != '' || record.invoice_posting_date != null" ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
+		    									<span ng-if="record.invoice_posting_date.trim() == '' || record.invoice_posting_date == null">Edit Invoice/Return Posting Date</span>
 				  							</a>
 				  							<span ng-if="record.closed_period == 1" ng-bind="record.invoice_posting_date_formatted = (formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy')"></span>
 				  						@endif
