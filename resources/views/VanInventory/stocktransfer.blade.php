@@ -14,9 +14,9 @@
 						{!!Html::select('segment','Segment', $segments)!!}													 																															
 					</div>					
 					<div class="col-md-6">	
-						{!!Html::select('item_code','Material', $items)!!}
 						{!!Html::datepicker('transfer_date','Stock Transfer Date',true)!!}
-						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}						
+						{!!Html::input('text','stock_transfer_number','Stock Transfer #')!!}
+						{!!Html::select('item_code','Material', $items)!!}												
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

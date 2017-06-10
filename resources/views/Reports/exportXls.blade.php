@@ -41,7 +41,7 @@
 									{{ format_date($record->from, 'M d') }} - {{ format_date($record->to, 'M d Y') }} 
 								@elseif(false !== strpos($row,'date') && $record->$row)
 									@if($report == 'stocktransfer')
-										{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
+										{{ date('m/d/Y g:i A', strtotime($record->$row)) }}									
 									@else
 										{{ $record->$row }}
 									@endif
@@ -55,7 +55,7 @@
 									{{ format_date($record['from'], 'M d') }} - {{ format_date($record['to'], 'M d Y') }}
 								@elseif(false !== strpos($row,'date') && $record[$row])
 									@if($report == 'stocktransfer')
-										{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+										{{ date('m/d/Y g:i A', strtotime($record[$row])) }}
 									@else	
 										{{ $record[$row] }}
 									@endif

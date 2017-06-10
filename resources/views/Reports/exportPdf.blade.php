@@ -117,7 +117,7 @@
 								@if($report == 'bir')
 									{{ $record->$row }}
 								@elseif($report == 'stocktransfer')
-									{{ date('m/d/Y g:i a', strtotime($record->$row)) }}									
+									{{ date('m/d/Y g:i A', strtotime($record->$row)) }}									
 								@else
 									{{ date('m/d/Y', strtotime($record->$row)) }}
 								@endif								
@@ -133,7 +133,7 @@
 								@if($report == 'bir')
 									{{ $record[$row] }}
 								@elseif($report == 'stocktransfer')
-									{{ date('m/d/Y g:i a', strtotime($record[$row])) }}
+									{{ date('m/d/Y g:i A', strtotime($record[$row])) }}
 								@else	
 									{{ date('m/d/Y', strtotime($record[$row])) }}
 								@endif
