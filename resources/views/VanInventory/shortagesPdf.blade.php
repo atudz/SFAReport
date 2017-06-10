@@ -175,7 +175,7 @@
 				</div>
 				<div class="report">{{$type}}</div>
 				<div class="report date">
-					PERIOD COVERED: {{format_date(Input::get('transaction_date_from'),'d M')}} TO {{format_date(Input::get('transaction_date_from'),'d M Y')}}
+					PERIOD COVERED: {{format_date(Input::get('transaction_date_from'),'d M')}} TO {{format_date(Input::get('transaction_date_to'),'d M Y')}}
 				</div>
 			</div>	
 			
