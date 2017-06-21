@@ -17,9 +17,10 @@ class AuthController extends ControllerCore
 	public function authenticate(Request $request)
 	{
 		ModelFactory::getInstance('UserActivityLog')->create([
-			'user_id'       => null,
-		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
-		    'action'        => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA')
+			'user_id'           => null,
+		    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action_identifier' => '',
+		    'action'            => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA')
 		]);
 
 		$this->validate($request, [
@@ -33,9 +34,10 @@ class AuthController extends ControllerCore
 		if($user && $user->status == 'I')
 		{
 			ModelFactory::getInstance('UserActivityLog')->create([
-				'user_id'       => null,
-			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
-			    'action'        => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA') . ' error - The user account is inactive. Try again?'
+				'user_id'           => null,
+			    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+	    		'action_identifier' => '',
+			    'action'            => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA') . ' error - The user account is inactive. Try again?'
 			]);
 
 			return redirect('/login')
@@ -52,17 +54,19 @@ class AuthController extends ControllerCore
 	    {
 
 			ModelFactory::getInstance('UserActivityLog')->create([
-				'user_id'       => \Auth::user()->id,
-			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
-			    'action'        => 'logged in ' . date('F j,Y g:i:sA')
+				'user_id'           => \Auth::user()->id,
+			    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    	'action_identifier' => 'login',
+			    'action'            => 'logged in ' . date('F j,Y g:i:sA')
 			]);
 	        return redirect('/');
 	    }
 
 		ModelFactory::getInstance('UserActivityLog')->create([
-			'user_id'       => null,
-		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
-		    'action'        => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA') . ' error - The credentials you entered did not match our records. Try again? '
+			'user_id'           => null,
+		    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    'action_identifier' => '',
+		    'action'            => 'user(' . $request->input('login') .') trying to login ' . date('F j,Y g:i:sA') . ' error - The credentials you entered did not match our records. Try again? '
 		]);
 
 	    return redirect('/login')
@@ -126,9 +130,10 @@ class AuthController extends ControllerCore
 		if(\Auth::check())
 		{
 			ModelFactory::getInstance('UserActivityLog')->create([
-				'user_id'       => \Auth::user()->id,
-			    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
-			    'action'        => 'logged out ' . date('F j,Y g:i:sA')
+				'user_id'           => \Auth::user()->id,
+			    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-management')->value('id'),
+		    	'action_identifier' => 'logout',
+			    'action'            => 'logged out ' . date('F j,Y g:i:sA')
 			]);
 
 			\Auth::logout();

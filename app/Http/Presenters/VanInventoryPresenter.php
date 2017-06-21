@@ -34,9 +34,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-transfer',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
-            'action'        => 'visit Van Inventory - Stock Transfer (Add)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Stock Transfer (Add)'
         ]);
 
 		return $this->view('add');
@@ -63,9 +64,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('actual-count-replenishment',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
-            'action'        => 'visit Van Inventory - Actual Count Replenishment (Add)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Actual Count Replenishment (Add)'
         ]);
 
 		return $this->view('addActualCount');
@@ -163,9 +165,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-transfer',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
-            'action'        => 'visit Van Inventory - Stock Transfer'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Stock Transfer'
         ]);
 
     	return $this->view('stocktransfer');    	    	
@@ -188,9 +191,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('stock-audit',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-audit')->value('id'),
-            'action'        => 'visit Van Inventory - Stock Audit'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-audit')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Stock Audit'
         ]);
 
     	return $this->view('stockAudit');
@@ -213,9 +217,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('actual-count-replenishment',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
-            'action'        => 'visit Van Inventory - Actual Count Replenishment'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Actual Count Replenishment'
         ]);
     	return $this->view('actualCount');
     }
@@ -256,9 +261,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('adjustment-replenishment',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
-            'action'        => 'visit Van Inventory - Adjustment Replenishment'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Adjustment Replenishment'
         ]);
 
     	return $this->view('adjustment');
@@ -284,9 +290,10 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('flexi-deal',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','flexi-deal')->value('id'),
-            'action'        => 'visit Van Inventory - Flexi Deal'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','flexi-deal')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Flexi Deal'
         ]);
 
     	return $this->view('flexiDeal');
@@ -529,9 +536,10 @@ class VanInventoryPresenter extends PresenterCore
         }
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
-            'action'        => 'finished loading Van Inventory - Stock Transfer data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Van Inventory - Stock Transfer data'
         ]);
 
     	return response()->json($data);
@@ -550,9 +558,10 @@ class VanInventoryPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','stock-audit')->value('id'),
-            'action'        => 'finished loading Van Inventory - Stock Audit data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-audit')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Van Inventory - Stock Audit data'
         ]);
 
     	return response()->json($data);
@@ -582,9 +591,10 @@ class VanInventoryPresenter extends PresenterCore
     	$data['reference_num'] = $reference;
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
-            'action'        => 'finished loading Van Inventory - Actual Count Replenishment data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Van Inventory - Actual Count Replenishment data'
         ]);
 
     	return response()->json($data);
@@ -629,9 +639,10 @@ class VanInventoryPresenter extends PresenterCore
     	$data['reference_num'] = $reference;
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
-            'action'        => 'finished loading Van Inventory - Adjustment Replenishment data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Van Inventory - Adjustment Replenishment data'
         ]);
 
     	return response()->json($data);
@@ -657,9 +668,10 @@ class VanInventoryPresenter extends PresenterCore
     	}
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','flexi-deal')->value('id'),
-            'action'        => 'finished loading Van Inventory - Flexi Deal data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','flexi-deal')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Van Inventory - Flexi Deal data'
         ]);
     	
     	return response()->json($data);
@@ -1616,9 +1628,10 @@ class VanInventoryPresenter extends PresenterCore
 //     	return $this->view('replenishmentExport');
     	$navigation = ModelFactory::getInstance('Navigation')->where('slug','=','actual-count-replenishment')->first();
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => $navigation->id,
-            'action'        => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => $navigation->id,
+            'action_identifier' => 'downloading',
+            'action'            => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
         ]);
 
     	if(in_array($type,['xls','xlsx']))
@@ -1664,9 +1677,10 @@ class VanInventoryPresenter extends PresenterCore
     		
             $navigation = ModelFactory::getInstance('Navigation')->where('slug','=','adjustment-replenishment')->first();
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => $navigation->id,
-                'action'        => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => $navigation->id,
+                'action_identifier' => 'downloading',
+                'action'            => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
             ]);
 
     		if(in_array($type,['xls','xlsx']))

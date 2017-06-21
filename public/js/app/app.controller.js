@@ -3633,9 +3633,9 @@
 	 * Profile Controller
 	 */
 
-	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache',Profile]);
+	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache','$http','$routeParams',Profile]);
 
-	function Profile($scope, $resource, $location,$uibModal,$window, $log,$route,$templateCache)
+	function Profile($scope, $resource, $location,$uibModal,$window, $log,$route,$templateCache,$http,$routeParams)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -3644,7 +3644,11 @@
 		$scope.to = null;
 		$scope.id = 0;
 
-		var API = $resource('/user/myprofile');
+		var url = '/user/myprofile';
+		if($routeParams.hasOwnProperty('id')){
+			url += '?user_id=' + $routeParams.id
+		}
+		var API = $resource(url);
 		var params = {};
 
 		API.get(params,function(data){
@@ -3658,11 +3662,47 @@
 				$scope.from = new Date(data.location_assignment_from)
 			if(data.location_assignment_to != '0000-00-00 00:00:00' && data.location_assignment_to != null)
 				$scope.to = new Date(data.location_assignment_to)
-
 		});
 
 		// Save user profile
 		saveUser($scope,$resource,$location ,$uibModal,$window,$log);
+
+		$scope.downloadUserStatistics = function(){
+			var image_src = angular.element("#chart-image-div").attr('src');
+		    var base64_string = image_src.replace("data:image/png;base64,", "");
+
+			return $http.post(
+						'/user/statistics/download/' + $routeParams.id,
+						{
+							'image_string' : base64_string
+						},
+						{responseType:'arraybuffer'}
+			        ).success(function (data, status, headers) {
+				        headers = headers();
+
+				        var contentType = headers['content-type'];
+
+				        var linkElement = document.createElement('a');
+				        try {
+				            var blob = new Blob([data], { type: contentType });
+				            var url = window.URL.createObjectURL(blob);
+
+				            linkElement.setAttribute('href', url);
+				            linkElement.setAttribute("download", 'user-statistics.pdf');
+
+				            var clickEvent = new MouseEvent("click", {
+				                "view": window,
+				                "bubbles": true,
+				                "cancelable": false
+				            });
+				            linkElement.dispatchEvent(clickEvent);
+				        } catch (ex) {
+				            console.log(ex);
+				        }
+				    }).error(function (data) {
+				        console.log(data);
+				    });
+		}
 	}
 
 	/**

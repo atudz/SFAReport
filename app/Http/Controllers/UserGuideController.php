@@ -19,17 +19,19 @@ class UserGuideController extends ControllerCore
     {
         try {
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-                'action'        => 'User id' . auth()->user()->id .' uploading file for User Guide'
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'User id' . auth()->user()->id .' uploading file for User Guide'
             ]);
 
             $file = $request->all();
             if ($file['file']->getClientOriginalExtension() != 'pdf') {
                 ModelFactory::getInstance('UserActivityLog')->create([
-                    'user_id'       => auth()->user()->id,
-                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-                    'action'        => 'User id' . auth()->user()->id .' uploading file error for User Guide - The files must be a file of type: pdf.'
+                    'user_id'           => auth()->user()->id,
+                    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+                    'action_identifier' => '',
+                    'action'            => 'User id' . auth()->user()->id .' uploading file error for User Guide - The files must be a file of type: pdf.'
                 ]);
 
                 return response()->json('The files must be a file of type: pdf.', 422);
@@ -55,18 +57,20 @@ class UserGuideController extends ControllerCore
             $userGruop = $userGuideFile->with('file')->where('name', '!=', 'Supper Admin')->get();
 
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-                'action'        => 'User id' . auth()->user()->id .' done uploading file for User Guide'
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+                'action_identifier' => 'uploading',
+                'action'            => 'User id' . auth()->user()->id .' done uploading file for User Guide'
             ]);
 
             return response()->json($userGruop);
 
         } catch (Exception $e) {
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-                'action'        => 'User id' . auth()->user()->id .' error uploading file for User Guide'
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'User id' . auth()->user()->id .' error uploading file for User Guide'
             ]);
             return response()->json('Error in uploading file.', 500);
         }
@@ -84,9 +88,10 @@ class UserGuideController extends ControllerCore
         $file = $file->find($id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-            'action'        => 'preparing to download file ' . $file->filename . ' - User Guide'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'preparing to download file ' . $file->filename . ' - User Guide'
         ]);
 
         $contentType = 'Content-Type: application/' . explode('.', $file->path)[1];
@@ -96,9 +101,10 @@ class UserGuideController extends ControllerCore
         $download = storage_path($file->path);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
-            'action'        => 'preparation done downloading file ' . $file->filename . ' - User Guide'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-guide')->value('id'),
+            'action_identifier' => 'downlading',
+            'action'            => 'preparation done downloading file ' . $file->filename . ' - User Guide'
         ]);
         return Response::download($download, $file->filename, $headers);
     }

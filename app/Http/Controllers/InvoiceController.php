@@ -65,9 +65,10 @@ class InvoiceController extends ControllerCore
 //     	if($messages = $this->validateInvoice($request->invoice_start, $request->invoice_end, $request->id))
 //     		return response()->json($messages,422);
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => '',
+            'action'            => (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
         ]);
 
         $invoice = ModelFactory::getInstance('Invoice')->findOrNew($id);        
@@ -81,18 +82,20 @@ class InvoiceController extends ControllerCore
         $invoice->area_code = $areas ? array_shift($areas) : '';
         if(!$invoice->save()){
         	ModelFactory::getInstance('UserActivityLog')->create([
-	            'user_id'       => auth()->user()->id,
-	            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-	            'action'        => 'error ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
+	            'user_id'           => auth()->user()->id,
+	            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+                'action_identifier' => '',
+	            'action'            => 'error ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping ' . (!empty($id) || !is_null($id) ? 'id ' . $id : '')
 	        ]);
 
         	return response()->json(['success'=>false,'msg'=>'Server error']);
     	}
 
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'done ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping id ' . (!empty($id) || !is_null($id) ? $id : $invoice->id) 
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => (!empty($id) || !is_null($id) ? 'updating' : 'creating'),
+            'action'            => 'done ' . (!empty($id) || !is_null($id) ? 'updating' : 'creating') . ' Invoice Series Mapping id ' . (!empty($id) || !is_null($id) ? $id : $invoice->id) 
         ]);
 
         return response()->json(['success'=>true]);
@@ -107,9 +110,10 @@ class InvoiceController extends ControllerCore
     public function destroy(InvoiceDelete $request, $id)
     {	
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'deleting Invoice Series Mapping id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'deleting Invoice Series Mapping id ' . $id
         ]);
 
         $invoice = ModelFactory::getInstance('Invoice')->find($id);
@@ -117,40 +121,45 @@ class InvoiceController extends ControllerCore
         $invoice->save();
 
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'saving remarks for deleting Invoice Series Mapping id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'saving remarks for deleting Invoice Series Mapping id ' . $id
         ]);
 
         if(!$invoice->save()){
 	    	ModelFactory::getInstance('UserActivityLog')->create([
-	            'user_id'       => auth()->user()->id,
-	            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-	            'action'        => 'error saving remarks for deleting Invoice Series Mapping id ' . $id
+	            'user_id'           => auth()->user()->id,
+	            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+                'action_identifier' => '',
+	            'action'            => 'error saving remarks for deleting Invoice Series Mapping id ' . $id
 	        ]);
 
         	return response()->json(['success'=>false,'msg'=>'Server error']);
         }
         if(!$invoice->delete()){
 	    	ModelFactory::getInstance('UserActivityLog')->create([
-	            'user_id'       => auth()->user()->id,
-	            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-	            'action'        => 'error deleting Invoice Series Mapping id ' . $id
+	            'user_id'           => auth()->user()->id,
+	            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+                'action_identifier' => '',
+	            'action'            => 'error deleting Invoice Series Mapping id ' . $id
 	        ]);
 
         	return response()->json(['success'=>false,'msg'=>'Server error']);
         }
 
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'done saving remarks for deleting Invoice Series Mapping id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done saving remarks for deleting Invoice Series Mapping id ' . $id
         ]);
 
     	ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'done deleting Invoice Series Mapping id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => 'deleting',
+            'action'            => 'done deleting Invoice Series Mapping id ' . $id
         ]);
         
         return response()->json(['success'=>true]);

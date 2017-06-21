@@ -24,6 +24,7 @@ class UserActivityLogPresenter extends PresenterCore
         ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'       => $user_id,
             'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
+            'action_identifier' => 'visit',
             'action'        => 'visit User Management - User Activity Log'
         ]);
 

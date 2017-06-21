@@ -63,6 +63,10 @@
 									@if($navigationActions['show_delete_button'] && $navigationActions['can_delete'])
 										<a style="cursor:pointer" ng-click="remove(record.id)"><i class="fa fa-times fa-lg" uib-tooltip="Delete"></i></a>
 									@endif
+
+									@if($navigationActions['show_user_statistics_button'])
+										<a style="cursor:pointer" href="#/user-statistics/[[record.id]]"><span class="glyphicon glyphicon-user"></span></a>
+									@endif
 								</td>
 							</tr>						
 						</tbody>

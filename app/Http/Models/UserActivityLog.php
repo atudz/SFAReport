@@ -16,7 +16,7 @@ class UserActivityLog extends ModelCore
      * Required fields
      * @var $fillable
      */
-    protected $fillable = ['user_id','navigation_id','action'];
+    protected $fillable = ['user_id','navigation_id','action_identifier','action'];
 
     /**
      * formatting created_at
