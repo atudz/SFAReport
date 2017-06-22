@@ -8,14 +8,7 @@
 
 				<div class="visible-md-block visible-lg-block" style="width: 400px; height: 400px; position: absolute; right: -22px; top: 0;">
 					<div id="chart-div"></div>
-					<div class="btn-group" style="position: absolute; bottom: 0; left: 156px;">
-					    <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-					        <i class="fa fa-download"></i> Download<span class="caret"></span>
-					    </button>
-					    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
-					    	<li role="menuitem"><a href="" ng-click="downloadUserStatistics()">Print to PDF</a></li>
-					    </ul>
-			        </div>
+					<button type="button" class="btn btn-success" style="position: absolute; bottom: 0; left: 156px;" ng-click="downloadUserStatistics()">Print to PDF</button>
 				</div>
 				<div style="width: 400px; height: 400px; position: absolute; right: 11px; top: 0; display: none;">
 					<img id="chart-image-div" src="" alt="">
@@ -104,14 +97,7 @@
 
 					<div class="visible-sm visible-xs-block" style="position: relative; overflow: scroll;">
 						<div id="chart-mobile-div"></div>
-						<div class="btn-group" style="position: absolute; bottom: 0; left: 156px;">
-						    <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-						        <i class="fa fa-download"></i> Download<span class="caret"></span>
-						    </button>
-						    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
-						    	<li role="menuitem"><a href="" ng-click="downloadUserStatistics()">Print to PDF</a></li>
-						    </ul>
-				        </div>
+						<button type="button" class="btn btn-success" style="position: absolute; bottom: 0; left: 156px;" ng-click="downloadUserStatistics()">Print to PDF</button>
 					</div>
 					<hr />
 
