@@ -63,7 +63,7 @@ Html::macro('topen', function($options=[]) {
 			$html .= '
 					<li role="separator" class="divider"></li>
 					<li><a href="" ng-click="seedHeader()">Seed Header</a></li>
-					<li><a href="" ng-click="seedData()">Seed Data</a></li>
+					<li><a href="" ng-click="seedData()">Seed Detail</a></li>
     				<li><a href="" ng-click="exportXls()">Seed Excel File</a></li>
 					<li><a href="" ng-click="postData()">Seed Post</a></li>
 					<li><a href="" ng-click="clearData()">Seed Clear</a></li>
