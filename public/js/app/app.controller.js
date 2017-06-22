@@ -39,6 +39,22 @@
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
+		$scope.options = [
+			{
+				value : 'invoice_date',
+				name  : 'Invoice Date'
+			},
+			{
+				value : 'or_date',
+				name  : 'Collection Date'
+			},
+			{
+				value : 'check_date',
+				name  : 'Check Date'
+			}
+		];
+		//mass edit
+		massEdit($scope, $uibModal, 'report');
 	}
 	
 	
@@ -212,6 +228,14 @@
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
+		$scope.options = [
+			{
+				value : 'transfer_date',
+				name  : 'Transaction Date'
+			}
+		];
+		//mass edit
+		massEdit($scope, $uibModal, 'stock-transfer');
 	}
 	
 	
@@ -1062,6 +1086,20 @@
 		//var selectAPI = '/reports/getdata/conditioncodes';
 		var options = {GOOD:'GOOD',BAD:'BAD'};
 		editTable($scope, $uibModal, $resource, $window, options, $log);
+
+		$scope.options = [
+			{
+				value : 'invoice_return_date',
+				name  : 'Invoice Date/Return Date'
+			},
+			{
+				value : 'invoice_return_posting_date',
+				name  : 'Invoice/Return Posting Date'
+			},
+		];
+
+		//mass edit
+		massEdit($scope, $uibModal, 'per-material');
 	}
 
 	/**
@@ -1089,6 +1127,20 @@
 		reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
 
 		editTable($scope, $uibModal, $resource, $window, {}, $log);
+
+		$scope.options = [
+			{
+				value : 'invoice_return_date',
+				name  : 'Invoice Date/Return Date'
+			},
+			{
+				value : 'invoice_return_posting_date',
+				name  : 'Invoice/Return Posting Date'
+			},
+		];
+
+		//mass edit
+		massEdit($scope, $uibModal, 'peso-value');
 	}
 
 
@@ -2444,6 +2496,7 @@
 				document.getElementById("editErrorInvoice").style.display = "block";
 				error = true;
 			} else if ($('#comment').val() == '') {
+				console.log($('#comment').val());
 				document.getElementById("editError").style.display = "block";
 				error = true;
 			}
@@ -2477,6 +2530,8 @@
 						}
 					}
 				});
+
+				$('table.table').floatThead('destroy');
 
 				$uibModalInstance.dismiss('cancel');
 			}
@@ -4464,5 +4519,378 @@
 
 			window.open('/controller/user-activity-log/load' + uri + '&download=pdf', '_blank');
 		}
+	}
+
+	// Mass Edit
+	function massEdit(scope,modal,slug){
+		scope.showMassEdit = false;
+		scope.hasChecked = false;
+		scope.checkedRecords = [];
+
+		function updateCheckedRecords(){
+			scope.checkedRecords = scope.records.filter(function(value,index){
+				if(value.selected_checkbox){
+					value.scope_index = index;
+					return value;
+				}
+			});
+
+			scope.hasChecked = scope.checkedRecords.length > 0 ? true : false;
+		}
+
+		scope.checkAll = function(){
+			if(scope.records.length > 0){
+				angular.forEach(scope.records, function(value, key){
+					scope.records[key].selected_checkbox = !scope.hasChecked ? 1 : 0;
+				});
+				scope.hasChecked = !scope.hasChecked ? true : false;
+				updateCheckedRecords();
+			}
+		}
+
+		scope.checkRecord = function(key,status){
+			scope.records[key].selected_checkbox = scope.records[key].selected_checkbox ? true : false;
+			updateCheckedRecords();
+		}
+
+		scope.showMassEditPage = function(){
+			if(!angular.element('#mass-edit-btn').attr('disabled')){
+				var modalInstance = modal.open({
+					animation: true,
+					scope: scope,
+					templateUrl: 'MassEdit',
+					controller: 'MassEditRecord',
+					windowClass: 'center-modal',
+					size: 'lg',
+					resolve: {
+						params: function () {
+							return {
+								slug: slug
+							};
+						}
+					}
+				});
+			}
+		}
+	}
+
+	/**
+	 * Mass Edit Record controller
+	 */
+	app.controller('MassEditRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable','$route','$templateCache','$uibModal', MassEditRecord]);
+
+	function MassEditRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable,$route,$templateCache,$uibModal) {
+		deletePreviousCache($route,$templateCache);
+
+		var url = window.location.href;
+		url = url.split("/");
+
+		var reportType = '';
+		var report = '';
+
+		switch (url[4]) {
+			case "salescollection.report":
+				reportType = "Sales & Collection - Report";
+				report = 'salescollectionreport';
+				break;
+			case "vaninventory.canned":
+				reportType = "Van Inventory - Canned & Mixes";
+				report = 'vaninventorycanned';
+				break;
+			case "vaninventory.frozen":
+				reportType = "Van Inventory - Frozen & Kassel";
+				report = 'vaninventoryfrozen';
+				break;
+			case "salesreport.permaterial":
+				reportType = "Sales Report - Per Material";
+				report = 'salesreportpermaterial';
+				break;
+			case "salesreport.pesovalue":
+				reportType = "Sales Report - Peso Value";
+				report = 'salesreportperpeso';
+				break;
+			case "vaninventory.stocktransfer":
+				reportType = "Van Inventory - Stock Transfer";
+				report = 'stocktransfer';
+				break;			
+			case 'cashpayments':
+				reportType = "Cash Payments";
+				report = 'cashpayments';
+				break;
+		}
+
+		$scope.$watchCollection("checkedRecords",function(newValue, oldValue) {
+			if(newValue.length == 0){
+				$uibModalInstance.dismiss('cancel');
+			}
+        });
+
+		$scope.mass_edit = {};
+
+		$scope.format = 'MM/dd/yyyy';
+
+		function dateFormattedValue(dateValue){
+			return addTrailingZero(dateValue.getMonth() + 1) + '/' + addTrailingZero(dateValue.getDate()) + '/' + addTrailingZero(dateValue.getFullYear())
+		}
+
+		function timeFormattedValue(dateValue){
+			return addTrailingZero(dateValue.getHours()) + ':' + addTrailingZero(dateValue.getMinutes()) + ':' + addTrailingZero(dateValue.getSeconds());
+		}
+
+		function updateCheckedRecordMessage(index,dateValue){
+			var message = '';
+
+			if($scope.mass_edit.edit_field.value == 'invoice_date' || $scope.mass_edit.edit_field.value == 'invoice_return_date'){
+				message = 'Invoice Date: ' + dateFormattedValue(dateValue) + '<br/><br/> Please confirm if the Invoice Date ' + dateFormattedValue(dateValue) + ' is correct?';
+			}
+
+			if($scope.mass_edit.edit_field.value == 'or_date'){
+				message = 'Collection Date: ' + dateFormattedValue(dateValue) + '<br/><br/> Please confirm if the Collection Date ' + dateFormattedValue(dateValue) + ' is correct?';
+			}
+
+			if($scope.mass_edit.edit_field.value == 'check_date'){
+				message = 'Check Date: ' + dateFormattedValue(dateValue) + '<br/><br/> Please confirm if the Check Date ' + dateFormattedValue(dateValue) + ' is correct?';
+			}
+
+			if($scope.mass_edit.edit_field.value == 'invoice_return_posting_date'){
+				message = 'Posting Date: ' + dateFormattedValue(dateValue) + '<br/><br/> Please confirm if the Posting Date ' + dateFormattedValue(dateValue) + ' is correct?';
+			}
+
+			if($scope.mass_edit.edit_field.value == 'transfer_date'){
+				message = 'Transfer Date: ' + dateFormattedValue(dateValue) + '<br/><br/> Please confirm if the Transfer Date ' + dateFormattedValue(dateValue) + ' is correct?';
+			}
+
+			$scope.checkedRecords[index].message = message;
+		}
+
+		function updateCheckedRecordValueToUse(index,newDateValue){
+			var oldDateValue = '';
+
+			if($scope.mass_edit.edit_field.value == 'invoice_date' || $scope.mass_edit.edit_field.value == 'invoice_return_date'){
+				oldDateValue = $scope.checkedRecords[index].invoice_date;
+			}
+
+			if($scope.mass_edit.edit_field.value == 'or_date'){
+				oldDateValue = $scope.checkedRecords[index].or_date;
+			}
+
+			if($scope.mass_edit.edit_field.value == 'check_date'){
+				oldDateValue = $scope.checkedRecords[index].check_date;
+			}
+
+			if($scope.mass_edit.edit_field.value == 'invoice_return_posting_date'){
+				oldDateValue = $scope.checkedRecords[index].invoice_posting_date;
+			}
+
+			if($scope.mass_edit.edit_field.value == 'transfer_date'){
+				oldDateValue = $scope.checkedRecords[index].transfer_date;
+			}
+
+			$scope.checkedRecords[index].value_to_use = dateFormattedValue(newDateValue) + ' ' + (oldDateValue != '' ? oldDateValue.split(" ")[1] : timeFormattedValue(newDateValue));
+		}
+
+		$scope.open = function($event, index) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.checkedRecords[index].opened = true;
+		};
+
+		$scope.setDataToChange =  function(){
+			angular.forEach($scope.checkedRecords,function(value,index){
+				var value_to_use = '';
+
+				if($scope.mass_edit.edit_field.value == 'invoice_date' || $scope.mass_edit.edit_field.value == 'invoice_return_date'){
+					value_to_use = value.invoice_date;
+					$scope.checkedRecords[index].id_to_use = ($scope.mass_edit.edit_field.value == 'invoice_return_date' ? $scope.checkedRecords[index].invoice_pk_id : $scope.checkedRecords[index].invoice_date_id);
+					$scope.checkedRecords[index].table_to_use = ($scope.mass_edit.edit_field.value == 'invoice_return_date' ? $scope.checkedRecords[index].invoice_table : $scope.checkedRecords[index].invoice_date_table);
+					$scope.checkedRecords[index].column_to_use = ($scope.mass_edit.edit_field.value == 'invoice_return_date' ? $scope.checkedRecords[index].invoice_date_column : $scope.checkedRecords[index].invoice_date_col);
+					$scope.checkedRecords[index].column_to_update = 'invoice_date_updated';
+				}
+
+				if($scope.mass_edit.edit_field.value == 'or_date'){
+					value_to_use = value.or_date;
+					$scope.checkedRecords[index].id_to_use = $scope.checkedRecords[index].collection_header_id;
+					$scope.checkedRecords[index].table_to_use = 'txn_collection_header';
+					$scope.checkedRecords[index].column_to_use = 'or_date';
+					$scope.checkedRecords[index].column_to_update = 'or_date_updated';
+				}
+
+				if($scope.mass_edit.edit_field.value == 'check_date'){
+					value_to_use = value.check_date;
+					$scope.checkedRecords[index].id_to_use = $scope.checkedRecords[index].collection_detail_id;
+					$scope.checkedRecords[index].table_to_use = 'txn_collection_detail';
+					$scope.checkedRecords[index].column_to_use = 'check_date';
+					$scope.checkedRecords[index].column_to_update = 'check_date_updated';
+				}
+
+				if($scope.mass_edit.edit_field.value == 'invoice_return_posting_date'){
+					value_to_use = value.invoice_posting_date;
+					$scope.checkedRecords[index].id_to_use = $scope.checkedRecords[index].invoice_pk_id;
+					$scope.checkedRecords[index].table_to_use = $scope.checkedRecords[index].invoice_table;
+					$scope.checkedRecords[index].column_to_use = $scope.checkedRecords[index].invoice_posting_date_column;
+					$scope.checkedRecords[index].column_to_update = 'invoice_posting_date_updated';
+				}
+
+				if($scope.mass_edit.edit_field.value == 'transfer_date'){
+					value_to_use = value.transfer_date;
+					$scope.checkedRecords[index].id_to_use = $scope.checkedRecords[index].stock_transfer_in_header_id;
+					$scope.checkedRecords[index].table_to_use = 'txn_stock_transfer_in_header';
+					$scope.checkedRecords[index].column_to_use = 'transfer_date';
+					$scope.checkedRecords[index].column_to_update = 'transfer_date_updated';
+				}
+
+				$scope.checkedRecords[index].dateFrom = (value_to_use == null || value_to_use == '' ? new Date() : new Date(value_to_use));
+				updateCheckedRecordMessage(index,$scope.checkedRecords[index].dateFrom);
+				updateCheckedRecordValueToUse(index,$scope.checkedRecords[index].dateFrom);
+			});
+		};
+
+		$scope.change = function (index,dateFrom){
+			$scope.checkedRecords[index].dateFrom = dateFrom;
+
+			updateCheckedRecordMessage(index,dateFrom);
+			updateCheckedRecordValueToUse(index,dateFrom);
+		}
+
+		$scope.disabledButton =  function(){
+			var mass_edit_field_length = Object.keys($scope.mass_edit).length;
+
+			if(mass_edit_field_length > 0){
+				var checked_records_length = $scope.checkedRecords.length;
+
+				var not_changed_count = 0;
+
+				var date_to_use = '';
+
+				for (var i = 0; i < checked_records_length; i++) {
+					if($scope.mass_edit.edit_field != 'undefined' && ($scope.mass_edit.edit_field.value == 'invoice_date' || $scope.mass_edit.edit_field.value == 'invoice_return_date')){
+						date_to_use = new Date($scope.checkedRecords[i].invoice_date);
+					}
+
+					if($scope.mass_edit.edit_field != 'undefined' && $scope.mass_edit.edit_field.value == 'or_date'){
+						date_to_use = new Date($scope.checkedRecords[i].or_date);
+					}
+
+					if($scope.mass_edit.edit_field != 'undefined' && $scope.mass_edit.edit_field.value == 'check_date'){
+						date_to_use = new Date($scope.checkedRecords[i].check_date);
+					}
+
+					if($scope.mass_edit.edit_field != 'undefined' && $scope.mass_edit.edit_field.value == 'invoice_return_posting_date'){
+						date_to_use = new Date($scope.checkedRecords[i].invoice_posting_date);
+					}
+
+					if($scope.mass_edit.edit_field != 'undefined' && $scope.mass_edit.edit_field.value == 'transfer_date'){
+						date_to_use = new Date($scope.checkedRecords[i].transfer_date);
+					}
+
+					if($scope.checkedRecords[i].dateFrom.valueOf() !== date_to_use.valueOf()){
+						not_changed_count += 1;
+					}
+				}
+
+				return not_changed_count == checked_records_length ? false : true;
+			}
+
+			return true;
+		}
+
+		$scope.save = function(){
+			if(!angular.element('#btnsub').attr('disabled')){
+				angular.forEach($scope.checkedRecords,function(value){
+					$uibModal.open({
+						animation: true,
+						scope: $scope,
+						templateUrl: 'ConfirmationTemplate',
+						controller: 'ConfirmMassEdit',
+						windowClass: 'center-modal',
+						size: 'lg',
+						resolve: {
+							params: function () {
+								return {
+									id 				   : value.id_to_use,
+									column 			   : value.column_to_use,
+									table 			   : value.table_to_use,
+									value 			   : value.value_to_use,
+									comment 		   : $scope.mass_edit.comment,
+									report_type 	   : reportType,
+									report 			   : report,
+									slug			   : params.slug,
+									scope_index 	   : value.scope_index,
+									column_to_update   : value.column_to_update,
+									message            : value.message
+								};
+							}
+						}
+					});
+				});
+			}
+		}
+
+		$scope.cancelMassEdit = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	}
+
+	/**
+	 * ConfirmMassEdit controller
+	 */
+	app.controller('ConfirmMassEdit', ['$scope', '$sce', '$uibModalInstance', 'params', '$resource', '$log', 'EditableFixTable','$route','$templateCache','toaster', 'TableFix', ConfirmMassEdit]);
+
+	function ConfirmMassEdit($scope, $sce, $uibModalInstance, params, $resource, $log, EditableFixTable,$route,$templateCache,toaster, TableFix) {
+		$scope.params = params;
+		$scope.params.message = $sce.trustAsHtml($scope.params.message);
+
+		$scope.ok = function (){
+			var API = $resource('controller/reports/save');
+
+			API.save($scope.params, function (data) {
+				var checked_records_length = $scope.checkedRecords.length;
+
+				for (var i = 0; i < checked_records_length; i++) {
+					if($scope.params.scope_index == $scope.checkedRecords[i].scope_index){
+						$scope.checkedRecords.splice(i,1);
+						break;
+					}
+				}
+
+				$scope.records[$scope.params.scope_index][$scope.params.column_to_update] = 'modified';
+				$scope.records[$scope.params.scope_index].selected_checkbox = false;
+				$scope.hasChecked = false;
+
+				if($scope.params.column_to_update == 'invoice_date_updated'){
+					$scope.records[$scope.params.scope_index].invoice_date = $scope.params.value;
+				}
+
+				if($scope.params.column_to_update == 'or_date_updated'){
+					$scope.records[$scope.params.scope_index].or_date = $scope.params.value;
+				}
+
+				if($scope.params.column_to_update == 'check_date_updated'){
+					$scope.records[$scope.params.scope_index].check_date = $scope.params.value;
+				}
+
+				if($scope.params.column_to_update == 'invoice_posting_date_updated'){
+					$scope.records[$scope.params.scope_index].invoice_posting_date = $scope.params.value;
+				}
+
+				if($scope.params.column_to_update == 'transfer_date_updated'){
+					$scope.records[$scope.params.scope_index].transfer_date = $scope.params.value;
+				}
+
+				$('table.table').floatThead('destroy');
+
+				toaster.pop('success', 'Success', 'Successfuly Updated Date');
+
+				$uibModalInstance.dismiss('cancel');
+			});
+		};
+
+		$scope.cancelConfirmation = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	}
+
+	function addTrailingZero(value){
+		return value.length == 1 ? ('0' + value) : value;
 	}
 })();

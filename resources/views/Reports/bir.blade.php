@@ -27,7 +27,9 @@
 						'show_print'    => $navigationActions['show_print'],
 						'show_search'   => $navigationActions['show_search_field'],
 					])!!}
-						{!!Html::theader($tableHeaders,$navigationActions['can_sort_columns'])!!}
+						{!!Html::theader($tableHeaders,[
+							'can_sort' => $navigationActions['can_sort_columns']
+						])!!}
 						<tbody>
 						<tbody ng-repeat="item in items">
 							<tbody>

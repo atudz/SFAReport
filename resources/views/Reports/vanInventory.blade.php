@@ -172,7 +172,7 @@
 																			
 						</tbody>	
 						<tr id="no_records_div" style="background-color:white;">
-							<td colspan="{{8+count($itemCodes)}}">
+							<td colspan="{{ ($navigationActions['show_mass_edit_button'] ? 9 : 8) + count($itemCodes)}}">
 									No records found.
 							</td>
 						</tr>

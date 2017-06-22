@@ -77,6 +77,15 @@ Html::macro('topen', function($options=[]) {
 	}
 	
 	
+
+	if(array_key_exists('show_mass_edit_button', $options) && $options['show_mass_edit_button'])
+	{
+		$html .= '
+						<div class="pull-left" style="padding:0px 5px 0px 10px">
+							<a id="mass-edit-btn" class="btn btn-primary btn-sm" ng-click="showMassEditPage()" ng-disabled="!hasChecked">Edit</a>
+				      	</div>';
+	}
+
 	$html .= '<div class="col-sm-7 col-sm-offset-5 '.$loading.'" id="loading_div">
 					<span><i class="fa fa-spinner fa-lg fa-pulse"></i> Loading..</span>
 				</div>				
@@ -107,6 +116,5 @@ Html::macro('topen', function($options=[]) {
 			</div>			
 			<div class="wrapper">							
 			<table class="table table-striped table-condensed table-bordered"'.Html::attributes($options).'>';
-
 	return $html;
 });

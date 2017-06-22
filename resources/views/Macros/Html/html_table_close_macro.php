@@ -227,6 +227,61 @@ Html::macro('tclose', function($paginate=true) {
 					</form>   										 					
 				</div>			    			
     		</script>
+
+    		<script type="text/ng-template" id="MassEdit">
+			    <div class="modal-header">
+			        <h3 class="modal-title" id="modal-title">Mass Edit</h3>
+			    </div>
+			    <div class="modal-body">
+			        <form class="form-horizontal">
+			            <div class="form-group">
+			                <label class="control-label col-sm-3"></label>
+			                <div class="col-sm-9">
+			                    <select class="form-control" ng-model="mass_edit.edit_field" ng-options="option.name for option in options track by option.value" ng-change="setDataToChange()"></select>
+			                </div>
+			            </div>
+			            <div class="form-group" ng-if="mass_edit.edit_field" ng-repeat="record in checkedRecords track by $index">
+			                <label class="control-label col-sm-3">Date [[ $index+1 ]]:</label>
+			                <div class="col-sm-9">
+			                <input type="hidden" id="atayui" value=""/>
+			                    <p class="input-group col-sm-12">
+			                        <input type="date" id="hdate_value" class="form-control ng-hide"/>
+			                        <input required type="text" id="date_value[[ $index+1 ]]" name="date_value[[ $index+1 ]]" show-weeks="true" ng-click="open($event, $index)" class="form-control" uib-datepicker-popup="[[format]]" ng-model="record.dateFrom" is-open="record.opened" datepicker-options="{formatYear: \'yy\', startingDay: 0, initDate: record.dateFrom}" close-text="Close" onkeydown="return false;" ng-change="change($index,record.dateFrom)"/>
+			                        <span class="input-group-btn">
+			                            <button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event, $index)" ><i class="glyphicon glyphicon-calendar"></i></button>
+			                        </span>
+			                    </p>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Remarks:</label>
+			                <div class="col-sm-9">
+			                    <textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="mass_edit.comment" name="comment" rows="5" id="comment"></textarea>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <div class="col-sm-12">
+			                    <div class="pull-right">
+			                        <button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" ng-disabled="disabledButton() || !mass_edit.hasOwnProperty(\'comment\')">Submit</button>
+			                        <button class="btn btn-warning" type="button btn-sm" ng-click="cancelMassEdit()">Cancel</button>
+			                    </div>
+			                </div>
+			            </div>
+			        </form>
+			    </div>
+			</script>
+
+    		<script type="text/ng-template" id="ConfirmationTemplate">
+			    <div class="modal-header">
+			        <h3 class="modal-title" id="modal-title">Confirmation</h3>
+			    </div>
+			    <div class="modal-body" ng-bind-html="params.message">
+			    </div>
+		        <div class="modal-footer">
+		            <button class="btn btn-primary" type="button" ng-click="ok()">Confirm</button>
+		            <button class="btn btn-warning" type="button" ng-click="cancelConfirmation()">Cancel</button>
+		        </div>
+			</script>
 			
 			';
 	if($paginate)
