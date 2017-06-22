@@ -2957,9 +2957,9 @@
 				var value = $.trim($(item).val());
 				if (value == "") {
 					if (field == "mobile" || field == 'telephone') {
-						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " number is required.");
+						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " number is a required field.");
 					} else {
-						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " is required.");
+						contactErrors.push(field.charAt(0).toUpperCase() + field.substring(1) + " is a required field.");
 					}
 				}
 				if ((field == 'email' && value != "") && !rgxEmail.test(value)) {
