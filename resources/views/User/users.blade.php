@@ -65,7 +65,7 @@
 									@endif
 
 									@if($navigationActions['show_user_statistics_button'])
-										<a style="cursor:pointer" href="#/user-statistics/[[record.id]]"><span class="glyphicon glyphicon-user"></span></a>
+										<a style="cursor:pointer" href="#/user-statistics/[[record.id]]"><i class="fa fa-user fa-lg" uib-tooltip="User Statistics"></i></a>
 									@endif
 								</td>
 							</tr>						

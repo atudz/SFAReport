@@ -3672,7 +3672,7 @@
 		    var base64_string = image_src.replace("data:image/png;base64,", "");
 
 			return $http.post(
-						'/user/statistics/download/' + $routeParams.id,
+						'/user/statistics/download/' + ($routeParams.hasOwnProperty('id') ? $routeParams.id : $scope.id),
 						{
 							'image_string' : base64_string
 						},
