@@ -61,7 +61,7 @@
 					</div>
 					
 					<div class="form-group row">
-						<label class="col-sm-2" for="age">Age</label>
+						<label class="col-sm-2" for="age">Age *</label>
 						<div class="col-sm-5">
 					      <input ng-model="age" type="number" name="age" id="age" class="form-control" placeholder="" min="0" {{$readOnly}}>
 					    </div>
