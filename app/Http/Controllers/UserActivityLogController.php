@@ -24,9 +24,10 @@ class UserActivityLogController extends ControllerCore
         $user_id = $request->has('user_id') ? $request->get('user_id') : auth()->user()->id;
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
-            'action'        => 'preparing data logs for User Management - User Activity Log id ' . $user_id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'preparing data logs for User Management - User Activity Log id ' . $user_id
         ]);
 
         $logs = $this->log->with('user','user.area','user.group','navigation')->where('user_id','=',$user_id);
@@ -55,18 +56,20 @@ class UserActivityLogController extends ControllerCore
             $pdf = PDF::loadView('UserActivityLog.print', $data)->setPaper('legal','portrait');
 
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
-                'action'        => 'done preparing data logs for User Management - User Activity Log id ' . $user_id . ' download proceeding'
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
+                'action_identifier' => 'downloading',
+                'action'            => 'done preparing data logs for User Management - User Activity Log id ' . $user_id . ' download proceeding'
             ]);
 
             return $pdf->download('User Activity Logs.pdf');
         }
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
-            'action'        => 'done preparing data logs for User Management - User Activity Log id ' . $user_id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','user-activity-log')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done preparing data logs for User Management - User Activity Log id ' . $user_id
         ]);
 
         return response()->json($data);

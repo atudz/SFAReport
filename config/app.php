@@ -149,6 +149,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Khill\Lavacharts\Laravel\LavachartsServiceProvider::class
+
     ],
 
     /*
@@ -201,7 +203,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
     	'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     	'PDF' => Barryvdh\DomPDF\Facade::class,
-
+        'Lava' => Khill\Lavacharts\Laravel\LavachartsFacade::class
     ],
 
 ];

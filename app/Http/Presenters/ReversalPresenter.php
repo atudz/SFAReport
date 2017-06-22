@@ -27,9 +27,10 @@ class ReversalPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('summary-of-reversal',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
-            'action'        => 'visit Summary of Reversal'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Summary of Reversal'
         ]);
 
     	return $this->view('index');
@@ -109,9 +110,10 @@ class ReversalPresenter extends PresenterCore
     	$data['total'] = $result->total();
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
-            'action'        => 'finished loading Summary of Reversal data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','summary-of-reversal')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Summary of Reversal data'
         ]);
 
     	return response()->json($data);

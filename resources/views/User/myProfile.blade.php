@@ -4,7 +4,23 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
-			<div class="panel-body">
+			<div class="panel-body" style="overflow: hidden; position: relative;">
+
+				<div class="visible-md-block visible-lg-block" style="width: 400px; height: 400px; position: absolute; right: -22px; top: 0;">
+					<div id="chart-div"></div>
+					<div class="btn-group" style="position: absolute; bottom: 0; left: 156px;">
+					    <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+					        <i class="fa fa-download"></i> Download<span class="caret"></span>
+					    </button>
+					    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
+					    	<li role="menuitem"><a href="" ng-click="downloadUserStatistics()">Print to PDF</a></li>
+					    </ul>
+			        </div>
+				</div>
+				<div style="width: 400px; height: 400px; position: absolute; right: 11px; top: 0; display: none;">
+					<img id="chart-image-div" src="" alt="">
+				</div>
+
 				<h4>Personal Information</h4>
 				{!!Html::error('personalInfoError','error_list_personal')!!}
 				<div class="pull-left col-sm-12 alert-success" ng-show="success" style="margin-bottom:10px">
@@ -85,7 +101,18 @@
 					      <input ng-model="records.salesman_code" type="text" name="mobile" id="mobile" class="form-control" placeholder="" {{$readOnly}}>
 					    </div>
 					</div>
-					
+
+					<div class="visible-sm visible-xs-block" style="position: relative; overflow: scroll;">
+						<div id="chart-mobile-div"></div>
+						<div class="btn-group" style="position: absolute; bottom: 0; left: 156px;">
+						    <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+						        <i class="fa fa-download"></i> Download<span class="caret"></span>
+						    </button>
+						    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
+						    	<li role="menuitem"><a href="" ng-click="downloadUserStatistics()">Print to PDF</a></li>
+						    </ul>
+				        </div>
+					</div>
 					<hr />
 
 					<h4>Credentials</h4>
@@ -174,3 +201,6 @@
 		</div>
 	</div>
 </div>
+
+@piechart('Desktop', 'chart-div')
+@piechart('Mobile', 'chart-mobile-div')

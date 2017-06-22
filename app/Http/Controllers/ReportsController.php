@@ -22,9 +22,10 @@ class ReportsController extends ControllerCore
 		$id = $request->get('id');
 		$column = $request->get('column');
 		ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
-            'action'        => 'saving editable column ' . $column . ' data having id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'action_identifier' => '',
+            'action'            => 'updating editable column ' . $column . ' data having id ' . $id
         ]);
 
 		$table = $request->get('table');
@@ -190,9 +191,10 @@ class ReportsController extends ControllerCore
 		}
 		
 		ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
-            'action'        => 'done saving editable column ' . $column . ' data having id ' . $id
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'action_identifier' => 'updating',
+            'action'            => 'done updating editable column ' . $column . ' data having id ' . $id
         ]);
 		$data['success'] = true;
 		return response()->json($data);	
@@ -205,18 +207,20 @@ class ReportsController extends ControllerCore
 	public function sync()
 	{
 		ModelFactory::getInstance('UserActivityLog')->create([
-			'user_id'       => auth()->user()->id,
-		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
-		    'action'        => 'loading Sync Data data'
+			'user_id'           => auth()->user()->id,
+		    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
+            'action_identifier' => '',
+		    'action'            => 'loading Sync Data data'
 		]);
 
 		$result = LibraryFactory::getInstance('Sync')->sync();		
 		$data['logs'] = $result ? true : '';		
 
 		ModelFactory::getInstance('UserActivityLog')->create([
-			'user_id'       => auth()->user()->id,
-		    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
-		    'action'        => 'finished loading Sync Data data'
+			'user_id'           => auth()->user()->id,
+		    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','sync-data')->value('id'),
+            'action_identifier' => 'syncing',
+		    'action'            => 'done loading Sync Data data'
 		]);
 		return response()->json($data);
 	}

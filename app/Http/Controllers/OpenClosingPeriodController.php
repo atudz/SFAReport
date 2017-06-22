@@ -27,17 +27,19 @@ class OpenClosingPeriodController extends ControllerCore
                 ]);
 
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                'action'        => 'updating status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($period->period_year .'-' . $period->period_month . '-01')) . ' to ' . $request_data['period_status']
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                'action_identifier' => 'updating',
+                'action'            => 'done updating status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($period->period_year .'-' . $period->period_month . '-01')) . ' to ' . $request_data['period_status']
             ]);
 
             return response()->json(['success'=>true,'data'=>$request_data]);
         } catch (Exception $e) {
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                'action'        => 'error updating status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($period->period_year .'-' . $period->period_month . '-01')) . ' to ' . $request_data['period_status']
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'error updating status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($period->period_year .'-' . $period->period_month . '-01')) . ' to ' . $request_data['period_status']
             ]);
 
             return response()->json(['success'=> false]);
@@ -59,22 +61,25 @@ class OpenClosingPeriodController extends ControllerCore
 
         try{
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                'action'        => 'processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
             ]);
 
             if(is_null($request_data['period_id'])){
                 ModelFactory::getInstance('UserActivityLog')->create([
-                    'user_id'       => auth()->user()->id,
-                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                    'action'        => 'not found - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                    'user_id'           => auth()->user()->id,
+                    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                    'action_identifier' => '',
+                    'action'            => 'not found - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
                 ]);
 
                 ModelFactory::getInstance('UserActivityLog')->create([
-                    'user_id'       => auth()->user()->id,
-                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                    'action'        => 'creating - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                    'user_id'           => auth()->user()->id,
+                    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                    'action_identifier' => '',
+                    'action'            => 'creating - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
                 ]);
 
                 $period = ModelFactory::getInstance('Period')->create([
@@ -86,9 +91,10 @@ class OpenClosingPeriodController extends ControllerCore
                 ]);
 
                 ModelFactory::getInstance('UserActivityLog')->create([
-                    'user_id'       => auth()->user()->id,
-                    'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                    'action'        => 'finished creating - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                    'user_id'           => auth()->user()->id,
+                    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                    'action_identifier' => '',
+                    'action'            => 'done creating - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
                 ]);
 
                 $request_data['period_id'] = $period->id;
@@ -97,9 +103,10 @@ class OpenClosingPeriodController extends ControllerCore
             foreach ($dates as $key_date => $value_date) {
                 if(ModelFactory::getInstance('PeriodDate')->wherePeriodId($request_data['period_id'])->wherePeriodDate($key_date)->first()){
                     ModelFactory::getInstance('UserActivityLog')->create([
-                        'user_id'       => auth()->user()->id,
-                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                        'action'        => 'updating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
+                        'user_id'           => auth()->user()->id,
+                        'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                        'action_identifier' => '',
+                        'action'            => 'updating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
                     ]);
 
                     ModelFactory::getInstance('PeriodDate')
@@ -108,21 +115,24 @@ class OpenClosingPeriodController extends ControllerCore
                         ->update(['period_date_status' => $value_date]);
 
                     ModelFactory::getInstance('UserActivityLog')->create([
-                        'user_id'       => auth()->user()->id,
-                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                        'action'        => 'finished updating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
+                        'user_id'           => auth()->user()->id,
+                        'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                        'action_identifier' => '',
+                        'action'            => 'done updating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
                     ]);
                 } else {
                     ModelFactory::getInstance('UserActivityLog')->create([
-                        'user_id'       => auth()->user()->id,
-                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                        'action'        => 'not found - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date))
+                        'user_id'           => auth()->user()->id,
+                        'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                        'action_identifier' => '',
+                        'action'            => 'not found - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date))
                     ]);
 
                     ModelFactory::getInstance('UserActivityLog')->create([
-                        'user_id'       => auth()->user()->id,
-                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                        'action'        => 'creating period status- ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date))
+                        'user_id'           => auth()->user()->id,
+                        'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                        'action_identifier' => '',
+                        'action'            => 'creating period status- ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date))
                     ]);
 
                     ModelFactory::getInstance('PeriodDate')
@@ -133,26 +143,29 @@ class OpenClosingPeriodController extends ControllerCore
                         ]);
 
                     ModelFactory::getInstance('UserActivityLog')->create([
-                        'user_id'       => auth()->user()->id,
-                        'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                        'action'        => 'finished creating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
+                        'user_id'           => auth()->user()->id,
+                        'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                        'action_identifier' => '',
+                        'action'            => 'done creating period status - ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-' . $key_date)) . ' to ' . $value_date
                     ]);
                 }
             }
 
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                'action'        => 'finished processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                'action_identifier' => 'updating',
+                'action'            => 'done processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
             ]);
 
             $request_data['dates'] = $dates;
             return response()->json(['success'=>true,'data'=>$request_data]);
         } catch (Exception $e) {
             ModelFactory::getInstance('UserActivityLog')->create([
-                'user_id'       => auth()->user()->id,
-                'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-                'action'        => 'error processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'error processing ' . $navigation->name . ' Open/Closing Period data for ' . date('F Y',strtotime($request_data['period_year'] .'-' . $request_data['period_month'] . '-01'))
             ]);
             return response()->json(['success'=> false]);
         }

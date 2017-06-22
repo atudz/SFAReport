@@ -10,7 +10,9 @@
         "laravelcollective/html": "5.1.*",
         "barryvdh/laravel-dompdf": "0.6.*",
         "maatwebsite/excel": "2.0.*",
-        "guzzlehttp/guzzle": "~5.3|~6.0"
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "doctrine/dbal": "^2.5",
+        "khill/lavacharts" : "3.0.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

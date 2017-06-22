@@ -287,6 +287,14 @@
 					/*controllerAs: 'sync'*/
 				})
 
+				.when('/user-statistics/:id',{
+					templateUrl: function(params) {
+					    return '/profile?user_id=' + params.id ;
+					},
+					controller: 'Profile',
+					/*controllerAs: 'sync'*/
+				})
+
 				.otherwise({
 			        redirectTo: '/home'
 			    });

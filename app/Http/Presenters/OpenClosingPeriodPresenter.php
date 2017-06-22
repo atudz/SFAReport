@@ -26,9 +26,10 @@ class OpenClosingPeriodPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('open-closing-period',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-            'action'        => 'visit Open/Closing Period'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Open/Closing Period'
         ]);
 
         return $this->view('index');
@@ -213,9 +214,10 @@ class OpenClosingPeriodPresenter extends PresenterCore
      */
     public function processNavigationReports($navigation_ids,$month,$year,$company_code){
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-            'action'        => 'loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
         ]);
 
         $day_limit = $this->calculateDayLimit($month,$year);
@@ -273,9 +275,10 @@ class OpenClosingPeriodPresenter extends PresenterCore
         }
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
-            'action'        => 'finished loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Open/Closing Period data for ' . date('F',strtotime($year .'-' . $month . '-01')) . ' ' . $year
         ]);
 
         return $navigation_reports;
@@ -294,6 +297,13 @@ class OpenClosingPeriodPresenter extends PresenterCore
         ];
 
         $pdf = PDF::loadView('OpenClosingPeriod.print', $data)->setPaper('legal', 'landscape');
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','open-closing-period')->value('id'),
+            'action_identifier' => 'downloading',
+            'action'            => 'done preparing data for downloading Open/Closing Period data for ' . date('F',strtotime($this->request->get('year') .'-' . $this->request->get('month') . '-01')) . ' ' . $this->request->get('year') . '- proceeding download'
+        ]);
 
         return $pdf->download('period-' . str_replace(' ', '',$this->request->get('period_label')) . '.pdf');
     }

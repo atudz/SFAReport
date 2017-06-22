@@ -25,9 +25,10 @@ class InvoicePresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'visit Invoice Series Mapping'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Invoice Series Mapping'
         ]);
 
         return $this->view('invoice');
@@ -50,9 +51,10 @@ class InvoicePresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'visit Invoice Series Mapping (Add)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Invoice Series Mapping (Add)'
         ]);
 
     	return $this->view('create');
@@ -75,9 +77,10 @@ class InvoicePresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'visit Invoice Series Mapping (Edit)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Invoice Series Mapping (Edit)'
         ]);
 
     	return $this->view('create');
@@ -106,9 +109,10 @@ class InvoicePresenter extends PresenterCore
     	$data['id'] = $reference;
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
-            'action'        => 'finished loading Invoice Series Mapping data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','invoice-series-mapping')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Invoice Series Mapping data'
         ]);
 
     	return response()->json($data);

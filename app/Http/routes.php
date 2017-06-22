@@ -119,6 +119,8 @@ Route::group(['prefix' => 'user'],function(){
 	Route::get('/group/rights', ['as'=>'user-group-rights', 'uses'=>'UserPresenter@userGroupRights']);
 	Route::get('/myprofile', ['as'=>'user-profile', 'uses'=>'UserPresenter@myProfile']);
 	Route::get('/userGuide', ['as'=>'user-guide', 'uses'=>'UserGuidePresenter@userGuide']);
+	Route::post('/statistics/download/{user_id}', ['as'=>'user-statistics-download', 'uses'=>'UserPresenter@statisticsDownload']);
+	/*Route::get('/statistics/download/{id}', ['as'=>'user-statistics-download', 'uses'=>'UserPresenter@statisticsDownload']);*/
 });
 
 	Route::get('contact-us', ['as' => 'contact-us-status', 'uses' => 'UserController@userContactUsActionOrStatus']);

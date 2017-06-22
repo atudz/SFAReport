@@ -28,9 +28,10 @@ class BounceCheckPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
-            'action'        => 'visit Bounce Check Report'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Bounce Check Report'
         ]);
 
     	return $this->view('index');
@@ -57,9 +58,10 @@ class BounceCheckPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
-            'action'        => 'visit Bounce Check Report (Add)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Bounce Check Report (Add)'
         ]);
 
         return $this->view('create');
@@ -94,9 +96,10 @@ class BounceCheckPresenter extends PresenterCore
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => $user_id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
-            'action'        => 'visit Bounce Check Report (Edit)'
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Bounce Check Report (Edit)'
         ]);
 
     	return $this->view('create');
@@ -113,9 +116,10 @@ class BounceCheckPresenter extends PresenterCore
     	$data['total'] = count($data['records']);
 
         ModelFactory::getInstance('UserActivityLog')->create([
-            'user_id'       => auth()->user()->id,
-            'navigation_id' => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
-            'action'        => 'finished loading Bounce Check Report data'
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading Bounce Check Report data'
         ]);
 
     	return response()->json($data);

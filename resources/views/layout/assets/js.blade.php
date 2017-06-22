@@ -72,4 +72,10 @@
 			}
 		}
 	}
+
+    function getImageCallback (event, chart) {
+        $('#chart-image-div').attr('src',chart.getImageURI());
+    }
+
+	getImageCallback('ready', 'IMDB');
 </script>
