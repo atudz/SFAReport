@@ -20,6 +20,7 @@ class InvoicePresenter extends PresenterCore
         $user_id = auth()->user()->id;
 
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
+    	$this->view->areas = $reportsPresenter->getArea();
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getInvoiceSeriesColumns();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('invoice-series-mapping',$user_group_id,$user_id);
