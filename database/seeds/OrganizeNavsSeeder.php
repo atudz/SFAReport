@@ -25,19 +25,19 @@ class OrganizeNavsSeeder extends Seeder
         $invoiceSeriesNav = ModelFactory::getInstance('Navigation')->where('name','Invoice Series Mapping')->first();
         if($invoiceSeriesNav)
         {
-        	$invoiceSeriesNav->parent_id = 2;
-        	$invoiceSeriesNav->order = 6;
-        	$invoiceSeriesNav->class = 'glyphicon glyphicon-share-alt';
+        	$invoiceSeriesNav->parent_id = 0;
+        	$invoiceSeriesNav->order = 16;
+        	$invoiceSeriesNav->class = 'glyphicon glyphicon-file';
         	$invoiceSeriesNav->save();
         }
         
-        $bounceCheckNav = ModelFactory::getInstance('Navigation')->where('name','Bounce Check Report')->first();
+        $bounceCheckNav = ModelFactory::getInstance('Navigation')->where('name','Bounce Check')->first();
         if($bounceCheckNav)
         {
         	$bounceCheckNav->name = 'Bounce Check';
-        	$bounceCheckNav->parent_id = 2;
-        	$bounceCheckNav->order = 7;
-        	$bounceCheckNav->class = 'glyphicon glyphicon-share-alt';
+        	$bounceCheckNav->parent_id = 0;
+        	$bounceCheckNav->order = 17;
+        	$bounceCheckNav->class = 'glyphicon glyphicon-check';
         	$bounceCheckNav->save();
         }
     }
