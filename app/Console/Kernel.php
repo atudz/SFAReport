@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\PatchReversal;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     	\App\Console\Commands\ChangeAdminPassword::class,
     	\App\Console\Commands\CleanSalesmanRecords::class,
     	\App\Console\Commands\FixTableLogs::class,
+    	PatchReversal::class,
     ];
 
     /**

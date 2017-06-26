@@ -63,6 +63,30 @@ return [
             'prefix'    => '',
             'strict'    => false,
         ],
+    		
+    	'sfa_backup' => [
+    		'driver'    => 'mysql',
+    		'host'      => env('DB_HOST', 'localhost'),
+    		'database'  => 'sfa_report20170621',
+    		'username'  => env('DB_USERNAME', 'forge'),
+    		'password'  => env('DB_PASSWORD', ''),
+    		'charset'   => 'utf8',
+    		'collation' => 'utf8_unicode_ci',
+    		'prefix'    => '',
+    		'strict'    => false,
+    	],
+    		
+		'sfa_patch' => [
+    		'driver'    => 'mysql',
+			'host'      => env('DB_HOST', 'localhost'),
+			'database'  => 'sfa_patch',
+			'username'  => env('DB_USERNAME', 'forge'),
+			'password'  => env('DB_PASSWORD', ''),
+    		'charset'   => 'utf8',
+    		'collation' => 'utf8_unicode_ci',
+    		'prefix'    => '',
+    		'strict'    => false,
+    	],
 
         'pgsql' => [
             'driver'   => 'pgsql',
