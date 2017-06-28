@@ -725,7 +725,7 @@ class ReportsPresenter extends PresenterCore
 
                 $data['records'][$key]->invoice_date_updated = '';
                 if(!empty($value->invoice_date_id) || !is_null($value->invoice_date_id)){
-                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','invoice_date')->where('pk_id','=',$value->invoice_date_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->invoice_date_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header')->where('column','=','so_date')->where('pk_id','=',$value->invoice_date_id)->count() ? 'modified' : '';
                 }
 
                 $data['records'][$key]->ref_no_updated = '';

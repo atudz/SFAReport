@@ -30,7 +30,9 @@
 						'show_add_button' => $navigationActions['show_add_button'],
 						'add_link'        =>'bouncecheck.add'
 					])!!}
-						{!!Html::theader($tableHeaders,$navigationActions['can_sort_columns'])!!}
+						{!!Html::theader($tableHeaders,[
+							'can_sort' => $navigationActions['can_sort_columns']
+						])!!}
 							<tbody>
 								<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
 									<td>[[record.txn_number]]</td>
