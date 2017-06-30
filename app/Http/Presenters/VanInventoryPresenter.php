@@ -1757,4 +1757,74 @@ class VanInventoryPresenter extends PresenterCore
     	    	
     }
     
+    /**
+     * Auditor's List Page
+     * @return Blade View
+     */
+    public function auditorsList()
+    {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
+        $this->view->title = 'Auditors List';
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('auditors-list',$user_group_id,$user_id);
+
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $this->view->areas = $reportsPresenter->getArea();
+        $this->view->salesman = $reportsPresenter->getSalesman(true);
+        $this->view->auditors = PresenterFactory::getInstance('UserAccessMatrix')->getUserList();
+
+        $this->view->tableHeaders = [
+            [
+                'name' => 'Auditor',
+                'sort' => 'auditor_id',
+            ],
+            [
+                'name' => 'Period Covered',
+                'sort' => 'period_from',
+            ],
+            [
+                'name' => 'Type',
+                'sort' => 'type',
+            ],
+            [
+                'name' => 'Salesman',
+                'sort' => 'salesman_code',
+            ],
+            [
+                'name' => 'Salesman Area',
+                'sort' => 'area_code',
+            ],
+            [
+                'name' => 'Options'
+            ]
+        ];
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Auditors List'
+        ]);
+        return $this->view('auditorsList');
+    }
+
+    /**
+     * Auditor's List Form for Create/Update
+     * @return Blade View
+     */
+    public function auditorsListAdd()
+    {
+        $user_group_id = auth()->user()->group->id;
+        $user_id = auth()->user()->id;
+
+        $this->view->title = 'Auditors List';
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $this->view->areas = $reportsPresenter->getArea();
+        $this->view->salesman = $reportsPresenter->getSalesman(true);
+        $this->view->auditors = PresenterFactory::getInstance('UserAccessMatrix')->getUserList();
+        $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('auditors-list',$user_group_id,$user_id);
+        $this->view->state = $this->request->has('id') ? 'Edit Row' : 'Add Row';
+        return $this->view('addAuditorsList');
+    }
 }

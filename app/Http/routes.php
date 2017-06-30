@@ -135,6 +135,10 @@ Route::get('/role-access-matrix', ['as'=>'role-access-matrix', 'uses'=>'UserAcce
 
 Route::get('/user-activity-log', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogPresenter@index']);
 
+Route::get('/auditors-list', ['as'=>'auditors-list', 'uses'=>'VanInventoryPresenter@auditorsList']);
+
+Route::get('/auditors-list/add', ['as'=>'auditors-list-add', 'uses'=>'VanInventoryPresenter@auditorsListAdd']);
+
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -187,6 +191,18 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::get('/user-activity-log/load', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogController@loadLogs']);
 
 	Route::post('/user-activity-log/load', ['as'=>'user-activity-log', 'uses'=>'UserActivityLogController@loadLogs']);
+
+	Route::group(['prefix' => 'auditors-list'],function(){
+		Route::get('/',['as'=>'auditors-list-index', 'uses'=>'AuditorListController@index']);
+
+		Route::get('/{id}',['as'=>'auditors-list-show', 'uses'=>'AuditorListController@show']);
+
+		Route::post('/add',['as'=>'auditors-list-index-add', 'uses'=>'AuditorListController@store']);
+
+		Route::post('/{id}/update',['as'=>'auditors-list-index-update', 'uses'=>'AuditorListController@update']);
+
+		Route::get('/{id}/delete',['as'=>'auditors-list-index-destroy', 'uses'=>'AuditorListController@destroy']);
+	});
 });
 
 
