@@ -4890,7 +4890,223 @@
 		};
 	}
 
+	// Add Zero if below 10 used for Date or Time Format
 	function addTrailingZero(value){
 		return value.length == 1 ? ('0' + value) : value;
+	}
+
+	app.controller('AuditorsList',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',AuditorsList]);
+
+	function AuditorsList($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.toggleFilter = true;
+		$scope.records = [];
+		var sortColumn = '';
+		var sortOrder = '';
+
+		var uri = '';
+
+		function loadAuditorList(){
+			toggleLoading(true);
+
+			$http
+				.get('/controller/auditors-list' + uri)
+				.then(function(response){
+					$scope.records = response.data;
+
+					toggleLoading(false);
+
+					$("table.table").floatThead({
+						position: "absolute",
+						autoReflow: true,
+						zIndex: "2",
+						scrollContainer: function($table){
+							return $table.closest(".wrapper");
+						}
+					});
+
+					if(sortColumn != ''){
+						angular.element('.sortable i').removeClass('fa-sort-asc').removeClass('fa-sort-desc');
+
+						angular.element('#'+sortColumn + ' i')
+							.removeClass(sortOrder == 'asc' ? 'fa-sort-asc' : 'fa-sort-desc')
+							.addClass(sortOrder == 'asc' ? 'fa-sort-desc' : 'fa-sort-asc');
+					}
+				}, function(){
+
+				});
+		}
+
+		function processSearchFilter(){
+			uri = '';
+
+			if(angular.element('#auditor_id').val()){
+				uri += (uri == '' ? '?' : '&') + 'auditor_id=' + angular.element('#auditor_id').val();
+			}
+
+	        if(angular.element('#salesman_code').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'salesman_code=' + angular.element('#salesman_code').val();
+	        }
+
+	        if(angular.element('#area_code').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'area_code=' + angular.element('#area_code').val();
+	        }
+
+	        if(angular.element('#type').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'type=' + angular.element('#type').val();
+	        }
+
+	        if(angular.element('#period_from').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'period_from=' + angular.element('#period_from').val();
+	        }
+
+	        if(angular.element('#period_to').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'period_to=' + angular.element('#period_to').val();
+	        }
+		}
+
+		$scope.remove = function(id,index){
+			$http
+			.get('/controller/auditors-list/' + id + '/delete')
+			.then(function(response){
+				$scope.records.splice(index,1);
+				toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+			}, function(){
+
+			});
+		}
+
+		$scope.filter = function(){
+			processSearchFilter();
+
+	        loadAuditorList();
+		}
+
+		$scope.reset = function(){
+			uri = '';
+
+			loadAuditorList();
+		}
+
+		$scope.sort = function(column_name){
+			processSearchFilter();
+
+			sortColumn = column_name;
+			uri += (uri == '' ? '?' : '&') + 'order_by=' + sortColumn;
+
+			if(angular.element('#'+sortColumn + ' i').hasClass('fa-sort-desc')){
+				sortOrder = 'desc';
+			} else {
+				sortOrder = 'asc';
+			}
+			uri += (uri == '' ? '?' : '&') + 'order=' + sortOrder;
+
+			loadAuditorList();
+		}
+
+		$scope.download = function(download_type){
+			processSearchFilter();
+			uri += (uri == '' ? '?' : '&') + 'download_type=' + download_type;
+			window.location = '/controller/auditors-list' + uri;
+		}
+
+		loadAuditorList();
+	}
+
+	app.controller('AuditorsListAdd',['$scope','$resource','$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', AuditorsListAdd]);
+
+	function AuditorsListAdd($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.save = function(){
+			var data = {
+				auditor_id    : angular.element('#auditor_id').val(),
+		        salesman_code : angular.element('#salesman_code').val(),
+		        area_code     : angular.element('#area_code').val(),
+		        type          : angular.element('#type').val(),
+		        period_from   : angular.element('#period_from').val(),
+		        period_to     : angular.element('#period_to').val(),
+			};
+
+			$http
+				.post('/controller/auditors-list/add',data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfuly Created Auditor\'s List', 5000);
+						$location.path('auditors.list');
+					}
+				}, function(response){
+					if(response.status == 422){
+						var error_list = '<ul>';
+						angular.forEach(response.data, function(value, key) {
+							error_list += '<li>' + value + '</li>';
+						});
+						error_list += '</ul>';
+						toaster.pop({
+					        type: 'error',
+					        title: 'Error',
+					        body: error_list,
+					        bodyOutputType: 'trustedHtml'
+						});
+					}
+				});
+		}
+	}
+
+	app.controller('AuditorsListEdit',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', AuditorsListEdit]);
+
+	function AuditorsListEdit($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.save = function(){
+			var data = {
+				auditor_id    : angular.element('#auditor_id').val(),
+		        salesman_code : angular.element('#salesman_code').val(),
+		        area_code     : angular.element('#area_code').val(),
+		        type          : angular.element('#type').val(),
+		        period_from   : angular.element('#period_from').val(),
+		        period_to     : angular.element('#period_to').val(),
+			};
+
+			$http
+				.post('/controller/auditors-list/' + $routeParams.id + '/update',data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfuly Updated Auditor\'s List', 5000);
+						$location.path('auditors.list');
+					}
+				}, function(response){
+					if(response.status == 422){
+						var error_list = '<ul>';
+						angular.forEach(response.data, function(value, key) {
+							error_list += '<li>' + value + '</li>';
+						});
+						error_list += '</ul>';
+						toaster.pop({
+					        type: 'error',
+					        title: 'Error',
+					        body: error_list,
+					        bodyOutputType: 'trustedHtml'
+						});
+					}
+				});
+		}
+		$http
+			.get('/controller/auditors-list/' + $routeParams.id)
+			.then(function(response){
+				var data = response.data;
+				angular.element('#auditor_id').val(data.auditor_id),
+		        angular.element('#salesman_code').val(data.salesman_code),
+		        angular.element('#area_code').val(data.area_code),
+		        angular.element('#type').val(data.type),
+		        angular.element('#period_from').val(data.period_from),
+		        angular.element('#period_to').val(data.period_to)
+			}, function(){
+
+			});
 	}
 })();

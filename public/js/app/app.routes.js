@@ -295,6 +295,26 @@
 					/*controllerAs: 'sync'*/
 				})
 
+				.when('/auditors.list',{
+					templateUrl: '/auditors-list',
+					controller: 'AuditorsList',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/auditors.list.add',{
+					templateUrl: '/auditors-list/add',
+					controller: 'AuditorsListAdd',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/auditors.list.edit/:id',{
+					templateUrl: function(params) {
+					    return '/auditors-list/add?id=' + params.id ;
+					},
+					controller: 'AuditorsListEdit',
+					/*controllerAs: 'sync'*/
+				})
+
 				.otherwise({
 			        redirectTo: '/home'
 			    });
