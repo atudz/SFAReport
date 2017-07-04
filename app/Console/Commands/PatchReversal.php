@@ -39,7 +39,7 @@ class PatchReversal extends Command
     public function handle()
     {
     	DB::beginTransaction();
-    	$this->fixLogs();
+    	//$this->fixLogs();
     	$this->patch();	
     	DB::commit();
     }
@@ -96,6 +96,11 @@ class PatchReversal extends Command
     							->where($pk,$row->pk_id)
     							->first();
     			if($data) {
+    				if(!is_null($data->updated_at)) {
+    					$this->info('Data updated already '.$row->table.' : '.$row->pk_id.', '. $row->column.' : '.$row->before);
+    					continue;
+    				}
+    				
     				$updates = [
     						'updated_at' => $row->created_at,
     						'updated_by' => $row->updated_by,
@@ -147,6 +152,11 @@ class PatchReversal extends Command
     					
     					$result = $prepare->first();
     					if($result) {
+    						if(!is_null($result->updated_at)) {
+    							$this->info('Data updated already '.$row->table.' : '.$row->pk_id.', '. $row->column.' : '.$row->before);
+    							continue;
+    						}
+    						
     						$updates = [
     								'updated_at' => $row->created_at,
     								'updated_by' => $row->updated_by,
@@ -173,7 +183,14 @@ class PatchReversal extends Command
     						$exist = DB::connection('sfa_patch')->table($row->table)->where($pk,$reference->{$pk})->first();
     						if(!$exist) {
     							DB::connection('sfa_patch')->table($row->table)->insert($records);
-    						}    						
+    						}    
+    						
+    						$count = DB::table('table_logs')
+			    						->where('table', $row->table)
+			    						->where('column', $row->column)
+			    						->where('pk_id', $row->pk_id)
+			    						->delete();
+							$this->info('Deleted table log '.$row->table.' : '.$row->pk_id.' : '. $row->column.', deleted : '.$count);
     					}   
     					
     				} else {    					
