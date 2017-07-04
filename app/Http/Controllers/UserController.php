@@ -189,7 +189,7 @@ class UserController extends ControllerCore
 			    		->onlyTrashed()
 			    		->where('username','like',$deletedUsername.'%')
 			    		->count();
-    		if($user->name)
+			if($user->username)
     			$user->username = !$count ? $deletedUsername : $deletedUsername.($count+1);
     		$user->save();
     		$user->delete();    		
