@@ -4918,21 +4918,27 @@
 
 					toggleLoading(false);
 
-					$("table.table").floatThead({
-						position: "absolute",
-						autoReflow: true,
-						zIndex: "2",
-						scrollContainer: function($table){
-							return $table.closest(".wrapper");
+					if($scope.records.length){
+						$('#no_records_div').hide();
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						if(sortColumn != ''){
+							angular.element('.sortable i').removeClass('fa-sort-asc').removeClass('fa-sort-desc');
+
+							angular.element('#'+sortColumn + ' i')
+								.removeClass(sortOrder == 'asc' ? 'fa-sort-asc' : 'fa-sort-desc')
+								.addClass(sortOrder == 'asc' ? 'fa-sort-desc' : 'fa-sort-asc');
 						}
-					});
-
-					if(sortColumn != ''){
-						angular.element('.sortable i').removeClass('fa-sort-asc').removeClass('fa-sort-desc');
-
-						angular.element('#'+sortColumn + ' i')
-							.removeClass(sortOrder == 'asc' ? 'fa-sort-asc' : 'fa-sort-desc')
-							.addClass(sortOrder == 'asc' ? 'fa-sort-desc' : 'fa-sort-asc');
+					} else {
+						$('#no_records_div').show();
 					}
 				}, function(){
 
@@ -4968,14 +4974,43 @@
 		}
 
 		$scope.remove = function(id,index){
-			$http
-			.get('/controller/auditors-list/' + id + '/delete')
-			.then(function(response){
-				$scope.records.splice(index,1);
-				toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
-			}, function(){
-
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
 			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get('/controller/auditors-list/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
 		}
 
 		$scope.filter = function(){
@@ -5467,6 +5502,20 @@
 				});
 			});
 	}
+
+
+	app.controller('ModalInstanceCtrl',['$scope','$uibModalInstance','params',ModalInstanceCtrl]);
+    function ModalInstanceCtrl($scope, $uibModalInstance, params) {
+        $scope.params = params;
+
+        $scope.ok = function(data) {
+            $uibModalInstance.close(data);
+        }
+
+        $scope.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
+        }
+    }
 
 	/**
 	 * Error Callback

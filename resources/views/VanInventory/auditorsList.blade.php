@@ -25,12 +25,13 @@
                         'show_print'      => $navigationActions['show_print'],
                         'show_add_button' => $navigationActions['show_add_button'],
                         'add_link'        => 'auditors.list.add',
+                        'show_search'     => true,
                     ])!!}
                         {!!Html::theader($tableHeaders,[
                             'can_sort' => $navigationActions['can_sort_columns']
                         ])!!}
                         <tbody>
-                            <tr ng-repeat="record in records track by $index" id=[[$index]] class=[[record.updated]]>
+                            <tr ng-repeat="record in records|filter:query track by $index" id=[[$index]] class=[[record.updated]]>
                                 <td>[[ record.user.firstname + ' ' + record.user.lastname ]]</td>
                                 <td>[[ (record.period_from | date:'longDate') + ' - ' + (record.period_to | date:'longDate') ]]</td>
                                 <td>[[ record.type | uppercase ]]</td>
