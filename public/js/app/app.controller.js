@@ -5242,8 +5242,8 @@
 		deletePreviousCache($route,$templateCache);
 
 		$scope.form = {
-			remittance: true,
-			expenses: false,
+			remittance: false,
+			expenses: true,
 			cash_breakdown: false
 		};
 
