@@ -314,6 +314,27 @@
 					controller: 'AuditorsListEdit',
 					/*controllerAs: 'sync'*/
 				})
+				
+				
+				.when('/remittance.expenses.report',{
+					templateUrl: '/remittance-expenses-report',
+					controller: 'RemittanceExpenses',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/remittance.expenses.report.add',{
+					templateUrl: '/remittance-expenses-report/add',
+					controller: 'RemittanceExpensesAdd',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/remittance.expenses.report.edit/:id',{
+					templateUrl: function(params) {
+					    return '/remittance-expenses-report/add?id=' + params.id ;
+					},
+					controller: 'RemittanceExpensesEdit',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'
