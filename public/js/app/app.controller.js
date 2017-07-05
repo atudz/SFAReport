@@ -5039,19 +5039,7 @@
 						$location.path('auditors.list');
 					}
 				}, function(response){
-					if(response.status == 422){
-						var error_list = '<ul>';
-						angular.forEach(response.data, function(value, key) {
-							error_list += '<li>' + value + '</li>';
-						});
-						error_list += '</ul>';
-						toaster.pop({
-					        type: 'error',
-					        title: 'Error',
-					        body: error_list,
-					        bodyOutputType: 'trustedHtml'
-						});
-					}
+					erroCallback(toaster,response);
 				});
 		}
 	}
@@ -5080,33 +5068,425 @@
 						$location.path('auditors.list');
 					}
 				}, function(response){
-					if(response.status == 422){
-						var error_list = '<ul>';
-						angular.forEach(response.data, function(value, key) {
-							error_list += '<li>' + value + '</li>';
-						});
-						error_list += '</ul>';
-						toaster.pop({
-					        type: 'error',
-					        title: 'Error',
-					        body: error_list,
-					        bodyOutputType: 'trustedHtml'
-						});
-					}
+					erroCallback(toaster,response);
 				});
 		}
+
 		$http
 			.get('/controller/auditors-list/' + $routeParams.id)
 			.then(function(response){
 				var data = response.data;
-				angular.element('#auditor_id').val(data.auditor_id),
-		        angular.element('#salesman_code').val(data.salesman_code),
-		        angular.element('#area_code').val(data.area_code),
-		        angular.element('#type').val(data.type),
-		        angular.element('#period_from').val(data.period_from),
-		        angular.element('#period_to').val(data.period_to)
+				angular.element('#auditor_id').val(data.auditor_id);
+		        angular.element('#salesman_code').val(data.salesman_code);
+		        angular.element('#area_code').val(data.area_code);
+		        angular.element('#type').val(data.type);
+		        angular.element('#period_from').val(data.period_from);
+		        angular.element('#period_to').val(data.period_to);
 			}, function(){
 
 			});
+	}
+
+	app.controller('RemittanceExpenses',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',RemittanceExpenses]);
+
+	function RemittanceExpenses($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var uri = '';
+
+		$scope.toggleFilter = true;
+
+		$scope.records = [];
+
+		function loadRemittance(){
+			toggleLoading(true);
+
+			$http
+				.get('/controller/remittance-expenses-report' + uri)
+				.then(function(response){
+					$scope.records = response.data;
+					toggleLoading(false);
+					if($scope.records.length){
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function processSearchFilter(){
+			uri = '';
+
+			if(angular.element('#salesman_code').val()){
+				uri += (uri == '' ? '?' : '&') + 'sr_salesman_code=' + angular.element('#salesman_code').val();
+			}
+
+	        if(angular.element('#jr_salesman').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'jr_salesman_code=' + angular.element('#jr_salesman').val();
+	        }
+
+	        if(angular.element('#date_from').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'date_from=' + angular.element('#date_from').val();
+	        }
+
+	        if(angular.element('#date_to').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'date_to=' + angular.element('#date_to').val();
+	        }
+		}
+
+		$scope.filter = function(){
+			processSearchFilter();
+
+	        loadRemittance();
+		}
+
+		$scope.remove = function(index,id){
+			$http
+				.get('/controller/remittance-expenses-report/' + id + '/delete')
+				.then(function(response){
+					toaster.pop('success', 'Success', 'Successfuly Deleted Remittance');
+					$scope.records.splice(index,1);
+				});
+		}
+
+		loadRemittance();
+	}
+
+	app.controller('RemittanceExpensesAdd',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster','$location',RemittanceExpensesAdd]);
+
+	function RemittanceExpensesAdd($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster,$location)
+	{
+		deletePreviousCache($route,$templateCache);
+		console.log($location.path());
+		$scope.remittance = {};
+
+		$scope.form = {
+			remittance: true,
+			expenses: false,
+			cash_breakdown: false
+		};
+
+		function sum(){
+			var cash_amount = (typeof $scope.remittance.cash_amount == 'undefined') || $scope.remittance.cash_amount == '' ? 0 : parseFloat($scope.remittance.cash_amount);
+			var check_amount = (typeof $scope.remittance.check_amount == 'undefined') || $scope.remittance.check_amount == '' ? 0 : parseFloat($scope.remittance.check_amount);
+			return (cash_amount + check_amount);
+		}
+
+		$scope.totalAmount = function(){
+			angular.element('#total_amount').val(sum());
+		}
+
+		$scope.next_expenses = function(){
+			var data = {
+		        sr_salesman_code : angular.element('#form_salesman_code').val(),
+		        jr_salesman_code : angular.element('#form_jr_salesman').val(),
+		        cash_amount : angular.element('#form_cash_amount').val(),
+		        check_amount : angular.element('#form_check_amount').val(),
+		        date_from   : angular.element('#form_date_from').val(),
+		        date_to     : angular.element('#form_date_to').val(),
+			};
+
+			$http
+				.post('/controller/remittance-expenses-report/create',data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfuly Created Remittance');
+						$location.path('/remittance.expenses.report.edit/' + response.data.data.id);
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+	}
+
+	app.controller('RemittanceExpensesEdit',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster','$routeParams',RemittanceExpensesEdit]);
+
+	function RemittanceExpensesEdit($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster,$routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.form = {
+			remittance: true,
+			expenses: false,
+			cash_breakdown: false
+		};
+
+		$scope.remittance = {};
+
+		$scope.createExpense = [{
+			expenses: '',
+			amount: '',
+		}];
+
+		$scope.createCashBreakdown = [{
+			denomination: '',
+			pieces: '',
+		}];
+
+		function sum(){
+			var cash_amount = (typeof $scope.remittance.cash_amount == 'undefined') || $scope.remittance.cash_amount == '' ? 0 : parseFloat($scope.remittance.cash_amount);
+			var check_amount = (typeof $scope.remittance.check_amount == 'undefined') || $scope.remittance.check_amount == '' ? 0 : parseFloat($scope.remittance.check_amount);
+			return (cash_amount + check_amount);
+		}
+
+		$scope.totalAmount = function(){
+			angular.element('#total_amount').val(sum());
+		}
+
+		$scope.next_expenses = function(){
+			var data = {
+		        sr_salesman_code : angular.element('#form_salesman_code').val(),
+		        jr_salesman_code : angular.element('#form_jr_salesman').val(),
+		        cash_amount : angular.element('#form_cash_amount').val(),
+		        check_amount : angular.element('#form_check_amount').val(),
+		        date_from   : angular.element('#form_date_from').val(),
+		        date_to     : angular.element('#form_date_to').val(),
+			};
+
+			var uri = 'create';
+			if($scope.remittance.hasOwnProperty('id'))
+			{
+				uri = $scope.remittance.id + '/update';
+			}
+
+			$http
+				.post('/controller/remittance-expenses-report/' + $routeParams.id + '/update',data)
+				.then(function(response){
+					if(response.data.success){
+						$scope.form.remittance = false;
+						$scope.form.expenses = true;
+						$scope.form.cash_breakdown = false;
+
+						angular.forEach(data, function(value, key) {
+							$scope.remittance[key] = value;
+						});
+						toaster.pop('success', 'Success', 'Successfuly Updated Remittance');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		//Expenses Page
+		$scope.back_remittance = function(){
+			angular.element('#form_salesman_code').val($scope.remittance.sr_salesman_code);
+	        angular.element('#form_jr_salesman').val($scope.remittance.jr_salesman_code);
+	        angular.element('#form_cash_amount').val($scope.remittance.cash_amount);
+	        angular.element('#form_check_amount').val($scope.remittance.check_amount);
+	        angular.element('#form_date_from').val($scope.remittance.date_from);
+	        angular.element('#form_date_to').val($scope.remittance.date_to);
+	        angular.element('#total_amount').val(sum());
+			$scope.form.remittance = true;
+			$scope.form.expenses = false;
+			$scope.form.cash_breakdown = false;
+		}
+
+		$scope.addExpense = function(){
+			$scope.createExpense.push({
+				expense: '',
+				amount: '',
+			});
+		}
+
+		$scope.removeExpense = function(index){
+			$scope.createExpense.splice(index,1);
+			if($scope.createExpense.length == 0){
+				$scope.createExpense.push({
+					expense: '',
+					amount: ''
+				});
+			}
+		}
+
+		$scope.saveExpense = function(index,create_expense,remittance_id){
+			create_expense.remittance_id = remittance_id;
+
+			$http
+				.post('/controller/remittance-expenses-report/' + remittance_id + '/expenses/create' ,create_expense)
+				.then(function(response){
+					if(response.data.success){
+						if(index == 0){
+							$scope.createExpense[0].expense = '';
+							$scope.createExpense[0].amount = '';
+						} else {
+							$scope.createExpense.splice(index,1);
+						}
+
+						var expenses = [];
+						if($scope.remittance.hasOwnProperty('expenses')){
+							expenses = angular.copy($scope.remittance.expenses);
+						}
+						expenses.push(response.data.data);
+
+						$scope.remittance.expenses = expenses;
+						toaster.pop('success', 'Success', 'Successfuly Created Remittance-Expense');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		$scope.updateExpense = function(index,update_expense){
+			$http
+				.post('/controller/remittance-expenses-report/' + update_expense.remittance_id + '/expenses/' + update_expense.id + '/update' ,update_expense)
+				.then(function(response){
+					if(response.data.success){
+						$scope.remittance.expenses[index].expense = update_expense.expense;
+						$scope.remittance.expenses[index].amount = update_expense.amount;
+						toaster.pop('success', 'Success', 'Successfuly Updated Remittance-Expense');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		$scope.deleteExpense = function(index,update_expense){
+			$http
+				.get('/controller/remittance-expenses-report/' + update_expense.remittance_id + '/expenses/' + update_expense.id + '/delete')
+				.then(function(response){
+					if(response.data.success){
+						$scope.remittance.expenses.splice(index,1);
+						toaster.pop('success', 'Success', 'Successfuly Deleted Remittance-Expense');
+					}
+				});
+		}
+
+		$scope.next_cash_breakdown = function(){
+			$scope.form.remittance = false;
+			$scope.form.expenses = false;
+			$scope.form.cash_breakdown = true;
+		}
+
+		//Cash Breakdown
+		$scope.back_expenses =  function(){
+			$scope.form.remittance = false;
+			$scope.form.expenses = true;
+			$scope.form.cash_breakdown = false;
+		}
+
+		$scope.breakDownTotalAmount = function(index,status,cash_breakdown){
+			var denomination = (cash_breakdown.denomination == '' ? 0 : parseFloat(cash_breakdown.denomination));
+			var pieces = (cash_breakdown.pieces == '' ? 0 : parseFloat(cash_breakdown.pieces));
+			if(status == 'update'){
+				$scope.remittance.cash_breakdown[index].amount = denomination * pieces;
+			}
+
+			if(status == 'create'){
+				$scope.createCashBreakdown[index].amount = denomination * pieces;
+			}
+		}
+
+		$scope.addCashBreakdown = function(){
+			$scope.createCashBreakdown.push({
+				denomination: '',
+				pieces: '',
+			});
+		}
+
+		$scope.removeCashBreakdown = function(index){
+			$scope.createCashBreakdown.splice(index,1);
+			if($scope.createCashBreakdown.length == 0){
+				$scope.createCashBreakdown.push({
+					denomination: '',
+					pieces: '',
+				});
+			}
+		}
+
+		$scope.saveCashBreakdown = function(index,create_cash_breakdown,remittance_id){
+			create_cash_breakdown.remittance_id = remittance_id;
+
+			$http
+				.post('/controller/remittance-expenses-report/' + remittance_id + '/cash-breakdown/create' ,create_cash_breakdown)
+				.then(function(response){
+					if(response.data.success){
+						var cash_breakdown = [];
+						if($scope.remittance.hasOwnProperty('cash_breakdown')){
+							cash_breakdown = angular.copy($scope.remittance.cash_breakdown);
+						}
+						response.data.data.amount = parseFloat(create_cash_breakdown.denomination) * parseFloat(create_cash_breakdown.pieces);
+						cash_breakdown.push(response.data.data);
+
+						$scope.remittance.cash_breakdown = cash_breakdown;
+
+						if(index == 0){
+							$scope.createCashBreakdown[0].denomination = '';
+							$scope.createCashBreakdown[0].pieces = '';
+						} else {
+							$scope.createCashBreakdown.splice(index,1);
+						}
+						angular.element('#create-amount-' + index).val('');
+						toaster.pop('success', 'Success', 'Successfuly Created Remittance-Cash Breakdown');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		$scope.updateCashBreakdown = function(index,update_cash_breakdown){
+			$http
+				.post('/controller/remittance-expenses-report/' + update_cash_breakdown.remittance_id + '/cash-breakdown/' + update_cash_breakdown.id + '/update' ,update_cash_breakdown)
+				.then(function(response){
+					if(response.data.success){
+						$scope.remittance.cash_breakdown[index].denomination = update_cash_breakdown.denomination;
+						$scope.remittance.cash_breakdown[index].pieces = update_cash_breakdown.pieces;
+						toaster.pop('success', 'Success', 'Successfuly Updated Remittance-Cash Breakdown');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		$scope.deleteCashBreakdown = function(index,update_cash_breakdown){
+			$http
+				.get('/controller/remittance-expenses-report/' + update_cash_breakdown.remittance_id + '/cash-breakdown/' + update_cash_breakdown.id + '/delete')
+				.then(function(response){
+					if(response.data.success){
+						$scope.remittance.cash_breakdown.splice(index,1);
+						toaster.pop('success', 'Success', 'Successfuly Deleted Remittance-Cash Breakdown');
+					}
+				});
+		}
+
+		$http
+			.get('/controller/remittance-expenses-report/' + $routeParams.id)
+			.then(function(response){
+				$scope.remittance = response.data;
+
+				angular.element('#form_salesman_code').val($scope.remittance.sr_salesman_code);
+		        angular.element('#form_jr_salesman').val($scope.remittance.jr_salesman_code);
+		        angular.element('#form_cash_amount').val($scope.remittance.cash_amount);
+		        angular.element('#form_check_amount').val($scope.remittance.check_amount);
+		        angular.element('#form_date_from').val($scope.remittance.date_from);
+		        angular.element('#form_date_to').val($scope.remittance.date_to);
+		        angular.element('#total_amount').val(sum());
+
+				angular.forEach($scope.remittance.cash_breakdown, function(value, key) {
+					$scope.remittance.cash_breakdown[key].amount = parseFloat($scope.remittance.cash_breakdown[key].denomination) * parseFloat($scope.remittance.cash_breakdown[key].pieces);
+				});
+			});
+	}
+
+	/**
+	 * Error Callback
+	 * @param  toaster
+	 * @param  response
+	 * @return show toaster message
+	 */
+	function erroCallback(toaster,response){
+		if(response.status == 422){
+			var error_list = '<ul>';
+			angular.forEach(response.data, function(value, key) {
+				error_list += '<li>' + value + '</li>';
+			});
+			error_list += '</ul>';
+			toaster.pop({
+		        type: 'error',
+		        title: 'Error',
+		        body: error_list,
+		        bodyOutputType: 'trustedHtml'
+			});
+		}
 	}
 })();

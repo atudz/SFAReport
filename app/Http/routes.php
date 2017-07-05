@@ -139,6 +139,10 @@ Route::get('/auditors-list', ['as'=>'auditors-list', 'uses'=>'VanInventoryPresen
 
 Route::get('/auditors-list/add', ['as'=>'auditors-list-add', 'uses'=>'VanInventoryPresenter@auditorsListAdd']);
 
+Route::get('/remittance-expenses-report', ['as'=>'remittance-expenses-report', 'uses'=>'RemittanceExpensesPresenter@index']);
+
+Route::get('/remittance-expenses-report/add', ['as'=>'remittance-expenses-report-add', 'uses'=>'RemittanceExpensesPresenter@add']);
+
 /*
  * Add routes to Controller below. The URL should contain /controller 
  * at the first. This serves as an identifier for the controller. The controller
@@ -202,6 +206,42 @@ Route::group(['prefix' => 'controller'],function(){
 		Route::post('/{id}/update',['as'=>'auditors-list-index-update', 'uses'=>'AuditorListController@update']);
 
 		Route::get('/{id}/delete',['as'=>'auditors-list-index-destroy', 'uses'=>'AuditorListController@destroy']);
+	});
+
+
+
+	Route::group(['prefix' => 'remittance-expenses-report'],function(){
+		Route::get('/', ['as'=>'remittance-expenses-report-index', 'uses'=>'RemittanceExpensesController@index']);
+
+		Route::post('/create', ['as'=>'remittance-expenses-report-create', 'uses'=>'RemittanceExpensesController@createRemittance']);
+
+		Route::group(['prefix' => '{remittance_id}'],function(){
+			Route::get('/',['as'=>'remittance-expenses-report-show', 'uses'=>'RemittanceExpensesController@show']);
+
+			Route::post('/update', ['as'=>'remittance-expenses-report-update', 'uses'=>'RemittanceExpensesController@updateRemittance']);
+
+			Route::get('/delete', ['as'=>'remittance-expenses-report-delete', 'uses'=>'RemittanceExpensesController@deleteRemittance']);
+
+			Route::group(['prefix' => 'expenses'],function(){
+				Route::post('/create', ['as'=>'remittance-expenses-report-create-expense', 'uses'=>'RemittanceExpensesController@createExpense']);
+
+				Route::group(['prefix' => '{expense_id}'],function(){
+					Route::post('/update', ['as'=>'remittance-expenses-report-update-expense', 'uses'=>'RemittanceExpensesController@updateExpense']);
+
+					Route::get('/delete', ['as'=>'remittance-expenses-report-delete-expense', 'uses'=>'RemittanceExpensesController@deleteExpense']);
+				});
+			});
+
+			Route::group(['prefix' => 'cash-breakdown'],function(){
+				Route::post('/create', ['as'=>'remittance-expenses-report-create-cash-breakdown', 'uses'=>'RemittanceExpensesController@createCashBreakdown']);
+
+				Route::group(['prefix' => '{cash_breakdown_id}'],function(){
+					Route::post('/update', ['as'=>'remittance-expenses-report-update-cash-breakdown', 'uses'=>'RemittanceExpensesController@updateCashBreakdown']);
+
+					Route::get('/delete', ['as'=>'remittance-expenses-report-delete-cash-breakdown', 'uses'=>'RemittanceExpensesController@deleteCashBreakdown']);
+				});
+			});
+		});
 	});
 });
 
