@@ -33,7 +33,9 @@
                         <div class="row form-input-field">
                             {!!Html::select('area_code','Area <span class="required">*</span>', $areas,'')!!}
                         </div>
+                    </div>
 
+                    <div class="pull-right col-sm-5 col-sm-offset-1 well">
                         <div class="row form-input-field">
                             {!!Html::select('type','Type <span class="required">*</span>',['canned' => 'Canned & Mixes', 'frozen' => 'Frozen & Kassel'],'')!!}
                         </div>
