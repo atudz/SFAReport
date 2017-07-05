@@ -21,27 +21,29 @@
                     
                     </div>
 
-                    <div class="pull-left col-sm-6 well">
-                        <div class="row form-input-field">
-                            {!!Html::select('auditor_id','Auditor <span class="required">*</span>', $auditors,'')!!}
-                        </div>
+                    <div class="col-md-12 well">
+                        <div class="row">
+                            <div class ="col-md-8">
+                                <div class="row form-input-field">
+                                    {!!Html::select('auditor_id','Auditor <span class="required">*</span>', $auditors,'')!!}
+                                </div>
 
-                        <div class="row form-input-field">
-                            {!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,'',[])!!}
-                        </div>
+                                <div class="row form-input-field">
+                                    {!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,'',[])!!}
+                                </div>
 
-                        <div class="row form-input-field">
-                            {!!Html::select('area_code','Area <span class="required">*</span>', $areas,'')!!}
-                        </div>
-                    </div>
+                                <div class="row form-input-field">
+                                    {!!Html::select('area_code','Area <span class="required">*</span>', $areas,'')!!}
+                                </div>
 
-                    <div class="pull-right col-sm-5 col-sm-offset-1 well">
-                        <div class="row form-input-field">
-                            {!!Html::select('type','Type <span class="required">*</span>',['canned' => 'Canned & Mixes', 'frozen' => 'Frozen & Kassel'],'')!!}
-                        </div>
+                                <div class="row form-input-field">
+                                    {!!Html::select('type','Type <span class="required">*</span>',['canned' => 'Canned & Mixes', 'frozen' => 'Frozen & Kassel'],'')!!}
+                                </div>
 
-                        <div class="row form-input-field">
-                            {!!Html::datepicker('period','Period <span class="required">*</span>','true')!!}
+                                <div class="row form-input-field">
+                                    {!!Html::datepicker('period','Period <span class="required">*</span>','true')!!}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
