@@ -92,9 +92,9 @@
 	 * Sales & Collection Summary controller
 	 */
 
-	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionSummary]);
+	app.controller('SalesCollectionSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','$http','toaster',SalesCollectionSummary]);
 
-	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function SalesCollectionSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,$http,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -108,6 +108,8 @@
 
 		// main controller
 		reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
+
+		monthlySummaryNewFeatures($scope,$uibModal,$http,toaster);
 	}
 	
 	/**
@@ -5537,5 +5539,261 @@
 		        bodyOutputType: 'trustedHtml'
 			});
 		}
+	}
+
+	/**
+	 * Added Total Controller
+	 */
+	app.controller('AddedTotal',['$scope','$http','$log','$route','$templateCache','$uibModalInstance','toaster','params', AddedTotal]);
+
+	function AddedTotal($scope, $http, $log,$route,$templateCache,$uibModalInstance,toaster,params)
+	{
+		$scope.params = params;
+
+		deletePreviousCache($route,$templateCache);
+
+		$scope.open = function($event){
+			$scope.params.open = true;
+		}
+
+		$scope.change = function(){
+			$scope.params.summary_date = angular.element('#date_value').val();
+		}
+
+        $scope.save = function() {
+        	$scope.params.summary = {
+	        	updated_total_collected_amount : $scope.summary.updated_total_collected_amount,
+	        	updated_sales_tax : $scope.summary.updated_sales_tax,
+	        	updated_amount_for_commission : $scope.summary.updated_amount_for_commission,
+        	};
+
+        	var url  = '/controller/salescollection/monthlysummary/added-total';
+			if($scope.params.hasOwnProperty('id')){
+				url += '/' + $scope.params.id + '/update';
+			}
+
+			$http
+				.post(url,$scope.params)
+				.then(function(response){
+					if(response.data.success){
+						if($scope.params.hasOwnProperty('id')){
+							$scope.summary.added_updates[$scope.params.index].remarks = $scope.params.remarks;
+							$scope.summary.added_updates[$scope.params.index].summary_date = $scope.params.summary_date;
+							$scope.summary.added_updates[$scope.params.index].total_collected_amount = $scope.params.total_collected_amount;
+							$scope.summary.added_updates[$scope.params.index].sales_tax = $scope.params.sales_tax;
+							$scope.summary.added_updates[$scope.params.index].amount_for_commission = $scope.params.amount_for_commission;
+						} else {
+							var added_updates = [];
+							if($scope.summary.hasOwnProperty('added_updates')){
+								added_updates = angular.copy($scope.summary.added_updates);
+							}
+							added_updates.push(response.data.data);
+							$scope.summary.added_updates = added_updates;
+						}
+
+						$scope.summary.updated_amount_for_commission = response.data.added_total.updated_amount_for_commission;
+						$scope.summary.updated_sales_tax = response.data.added_total.updated_sales_tax;
+						$scope.summary.updated_total_collected_amount = response.data.added_total.updated_total_collected_amount;
+						toaster.pop('success', 'Success', 'Successfuly ' + ($scope.params.hasOwnProperty('id') ? 'Updated' : 'Added') + ' Monthly Summary Update');
+            			$uibModalInstance.close();
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+        }
+
+        $scope.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
+        }
+	}
+
+	function monthlySummaryNewFeatures(scope,uibModal,http,toaster){
+		scope.addedTotal = function(){
+			uibModal.open({
+				animation: true,
+				scope: scope,
+				templateUrl: 'AddedTotal',
+				controller: 'AddedTotal',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return {
+							salesman_code: angular.element('#salesman').val()
+						};
+					}
+				}
+			});
+		}
+
+		scope.updateAddedTotal = function(index,data){
+			data.index = index;
+			data.old_total_collected_amount = data.total_collected_amount;
+			data.old_sales_tax = data.sales_tax;
+			data.old_amount_for_commission = data.amount_for_commission;
+
+			uibModal.open({
+				animation: true,
+				scope: scope,
+				templateUrl: 'AddedTotal',
+				controller: 'AddedTotal',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return data;
+					}
+				}
+			});
+		}
+
+		scope.removeAddedTotal = function(index,id){
+			var modalInstance = uibModal.open({
+				scope: scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				http
+					.get('/controller/salescollection/monthlysummary/added-total/' + id + '/delete')
+					.then(function(response){
+						var added_updates = angular.copy(scope.summary.added_updates[index]);
+
+						scope.summary.updated_amount_for_commission = scope.summary.updated_amount_for_commission - added_updates.amount_for_commission;
+						scope.summary.updated_sales_tax = scope.summary.updated_sales_tax - added_updates.sales_tax;
+						scope.summary.updated_total_collected_amount = scope.summary.updated_total_collected_amount-added_updates.total_collected_amount;
+						scope.summary.added_updates.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		}
+
+		scope.addedNotes = function(){
+			uibModal.open({
+				animation: true,
+				scope: scope,
+				templateUrl: 'AddedNotes',
+				controller: 'AddedNotes',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return {
+							salesman_code: angular.element('#salesman').val()
+						};
+					}
+				}
+			});
+		}
+
+		scope.removeAddedNotes = function(index,id){
+			var modalInstance = uibModal.open({
+				scope: scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				http
+					.get('/controller/salescollection/monthlysummary/added-notes/' + id + '/delete')
+					.then(function(response){
+						scope.summary.added_notes.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		}
+	}
+
+
+	/**
+	 * Added Notes Controller
+	 */
+	app.controller('AddedNotes',['$scope','$http','$log','$route','$templateCache','$uibModalInstance','toaster','params', AddedNotes]);
+
+	function AddedNotes($scope, $http, $log,$route,$templateCache,$uibModalInstance,toaster,params)
+	{
+		$scope.params = params;
+
+		deletePreviousCache($route,$templateCache);
+
+		$scope.open = function($event){
+			$scope.params.open = true;
+		}
+
+		$scope.change = function(){
+			$scope.params.summary_date = angular.element('#date_value').val();
+		}
+
+        $scope.save = function() {
+			$http
+				.post('/controller/salescollection/monthlysummary/added-notes',$scope.params)
+				.then(function(response){
+					console.log(response.data);
+					if(response.data.success){
+						var added_notes = [];
+						if($scope.summary.hasOwnProperty('added_notes')){
+							added_notes = angular.copy($scope.summary.added_notes);
+						}
+						added_notes.push(response.data.data);
+						$scope.summary.added_notes = added_notes;
+
+						toaster.pop('success', 'Success', 'Successfuly Added Notes');
+            			$uibModalInstance.close();
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+        }
+
+        $scope.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
+        }
 	}
 })();

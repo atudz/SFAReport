@@ -187,11 +187,38 @@
 					@endif
 				@endforeach
 			</tr>
+			@if(isset($report) && $report == 'salescollectionsummary' && $summary->added_updates)
+				@foreach($summary->added_updates as $update)
+					<tr>
+						<td colspan="3" style="color: red;"> {{ $update->remarks }} </td>
+						<td style="color: red;">{{ number_format($update->total_collected_amount,2,'.',',') }}</td>
+						<td style="color: red;">{{ number_format($update->sales_tax,2,'.',',') }}</td>
+						<td style="color: red;">{{ number_format($update->amount_for_commission,2,'.',',') }}</td>
+					</tr>
+				@endforeach
+				<tr>
+					<th style="color: red;">Total</th>
+					<th></th>
+					<th></th>
+					<th style="color: red; text-align: left;">{{ number_format($summary->updated_total_collected_amount,2,'.',',') }}</th>
+					<th style="color: red; text-align: left;">{{ number_format($summary->updated_sales_tax,2,'.',',') }}</th>
+					<th style="color: red; text-align: left;">{{ number_format($summary->updated_amount_for_commission,2,'.',',') }}</th>
+				</tr>
+			@endif
 		@endif
 		</tbody>
 	</table>
 	</div>
 	<br>
+
+	@if(isset($report) && $report == 'salescollectionsummary' && $summary->added_notes)
+		<ul>
+			@foreach($summary->added_notes as $note)
+				<li>{{ $note->notes }}</li>
+			@endforeach
+		</ul>
+	@endif
+
 	<table class="no-border">
 		<tbody>
 			<tr align="left">

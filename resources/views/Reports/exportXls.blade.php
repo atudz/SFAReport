@@ -31,7 +31,7 @@
 						<th align="center" style="wrap-text:true">{!!$column['name']!!}</th>
 					@endforeach
 				</tr>
-			@endif			
+			@endif
 			@foreach($records as $record)
 				<tr>
 					@foreach($rows as $row)
@@ -113,10 +113,41 @@
 						@endif						
 					@endforeach
 				</tr>			
+
+				@if(isset($report) && $report == 'salescollectionsummary' && $summary->added_updates)
+					@foreach($summary->added_updates as $update)
+						<tr>
+							<td colspan="3" style="color: #F9243F;"> {{ $update->remarks }} </td>
+							<td align="left" style="color: #F9243F;"> {{ number_format($update->total_collected_amount,2,'.',',') }}</td>
+							<td align="left" style="color: #F9243F;"> {{ number_format($update->sales_tax,2,'.',',') }}</td>
+							<td align="left" style="color: #F9243F;"> {{ number_format($update->amount_for_commission,2,'.',',') }}</td>
+						</tr>
+					@endforeach
+					<tr>
+						<th style="color: #F9243F;">Total</th>
+						<th></th>
+						<th></th>
+						<th align="left" style="color: #F9243F;">{{ number_format($summary->updated_total_collected_amount,2,'.',',') }}</th>
+						<th align="left" style="color: #F9243F;">{{ number_format($summary->updated_sales_tax,2,'.',',') }}</th>
+						<th align="left" style="color: #F9243F;">{{ number_format($summary->updated_amount_for_commission,2,'.',',') }}</th>
+					</tr>
+				@endif
 			@endif			
 		</tbody>
 	</table>
 	
+	<table>
+		<tbody>
+			@if(isset($report) && $report == 'salescollectionsummary' && $summary->added_notes)
+				@foreach($summary->added_notes as $note)
+					<tr>
+						<td colspan="3">{{ $note->notes }}</td>
+					</tr>
+				@endforeach
+			@endif
+		</tbody>
+	</table>
+
 	<table>
 		<tbody>
 			<tr>

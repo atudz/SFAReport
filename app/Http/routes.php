@@ -243,6 +243,22 @@ Route::group(['prefix' => 'controller'],function(){
 			});
 		});
 	});
+
+	Route::group(['prefix' => 'salescollection/monthlysummary'],function(){
+		Route::group(['prefix' => 'added-total'],function(){
+			Route::post('/', ['as'=>'salescollection-monthlysummary-added-total', 'uses'=>'MonthlySummaryUpdatesController@addedTotal']);
+
+			Route::post('/{id}/update', ['as'=>'salescollection-monthlysummary-added-total-update', 'uses'=>'MonthlySummaryUpdatesController@updateAddedTotal']);
+
+			Route::get('/{id}/delete', ['as'=>'salescollection-monthlysummary-added-total-delete', 'uses'=>'MonthlySummaryUpdatesController@deleteAddedTotal']);
+		});
+
+		Route::group(['prefix' => 'added-notes'],function(){
+			Route::post('/', ['as'=>'salescollection-monthlysummary-added-notes', 'uses'=>'MonthlySummaryUpdatesController@addedNotes']);
+
+			Route::get('/{id}/delete', ['as'=>'salescollection-monthlysummary-added-notes-delete', 'uses'=>'MonthlySummaryUpdatesController@deleteAddedNotes']);
+		});
+	});
 });
 
 
