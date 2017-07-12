@@ -1659,19 +1659,19 @@
 			if (typeof $('#newSelected').val() !== "undefined" && ($('#oldSelected').val() != $('#newSelected').val())) {
 				$('#btnsub').attr('disabled', false);
 			}
-			else if (typeof $('#date_value').val() !== "undefined") {
-				var date = new Date($('#date_value').val());
-				var oldDate = new Date($scope.params.oldval);
-				date = date.getDate() + date.getMonth() + date.getFullYear();
-				oldDate = oldDate.getDate() + oldDate.getMonth() + oldDate.getFullYear();
-				if (date !== oldDate) {
-					$('#btnsub').attr('disabled', false);
-				} else {
-					$('#btnsub').attr('disabled', 'disabled');
-				}
-			} else {
-				$('#btnsub').attr('disabled', 'disabled');
-			}
+//			else if (typeof $('#date_value').val() !== "undefined") {
+//				var date = new Date($('#date_value').val());
+//				var oldDate = new Date($scope.params.oldval);
+//				date = date.getDate() + date.getMonth() + date.getFullYear();
+//				oldDate = oldDate.getDate() + oldDate.getMonth() + oldDate.getFullYear();
+//				if (date !== oldDate) {
+//					$('#btnsub').attr('disabled', false);
+//				} else {
+//					$('#btnsub').attr('disabled', 'disabled');
+//				}
+//			} else {
+//				$('#btnsub').attr('disabled', 'disabled');
+//			}
 		};
 
 		$scope.params = params;

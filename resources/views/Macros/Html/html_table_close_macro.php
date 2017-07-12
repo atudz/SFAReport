@@ -177,7 +177,7 @@ Html::macro('tclose', function($paginate=true) {
 						<div class="form-group">
 							<div class="col-sm-12">
 								<div class="pull-right">
-									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub" disabled="disabled">Submit</button>
+									<button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub">Submit</button>
 									<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 								</div>
 							</div>
