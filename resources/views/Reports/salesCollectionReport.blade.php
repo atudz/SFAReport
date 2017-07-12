@@ -40,7 +40,7 @@
 	  					@endif
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
-						@if($isAdmin || $isAuditor)
+						@if($isAdmin)
 							<a href="" class="editable-click" ng-click="editColumn('text',record.sales_order_table,'invoice_number',record.sales_order_header_id,record.invoice_number,$index,'Invoice Number','invoice_number')">
 	    						[[ record.invoice_number | uppercase ]]
 	  						</a>
