@@ -10,6 +10,18 @@
 				<th colspan="2" align="center">{{$header}}</th>
 			</tr>
 			@endif
+			@if(!empty($reference_number))
+				<tr>
+					<td><strong style="color: #F9243F;">Reference #:</strong> </td>
+					<td style="color: #F9243F;">{{ $reference_number }}</td>
+				</tr>
+			@endif
+			@if(!empty($revision_number))
+				<tr>
+					<td><strong style="color: #F9243F;">Revision #:</strong></td>
+					<td style="color: #F9243F;">{{ $revision_number }}</td>
+				</tr>
+			@endif
 			@if(isset($filters))
 				@foreach($filters as $label=>$val)
 					<tr>

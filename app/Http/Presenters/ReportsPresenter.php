@@ -12,6 +12,7 @@ use App\Factories\ModelFactory;
 use Mockery\Exception;
 use PHPExcel_Shared_Date;
 
+
 class ReportsPresenter extends PresenterCore
 {
 	/**
@@ -6270,10 +6271,15 @@ class ReportsPresenter extends PresenterCore
     	$vaninventory = false;
     	$salesSummary = false;
 		$summaryOfIncident = false;
+        $has_reference_number = false;
+        $reference_number = '';
+        $report_type = '';
+        $has_revision_number = false;
+        $revision_number = '';
     	
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
-    	
+
     	switch($report)
     	{
     		case 'salescollectionreport':
@@ -6343,6 +6349,7 @@ class ReportsPresenter extends PresenterCore
     			$vaninventory = true;
     			$fontSize = '7px';
                 $navigation_slug = 'report';
+                $report_type = 'SCR';
     			break;
     		case 'salescollectionposting':
     			$columns = $this->getTableColumns($report);
@@ -6473,6 +6480,7 @@ class ReportsPresenter extends PresenterCore
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
                 $navigation_slug = 'canned-and-mixes';
+                $report_type = 'VICM';
 	    		break;
     		case 'vaninventoryfrozen';
     		
@@ -6498,6 +6506,7 @@ class ReportsPresenter extends PresenterCore
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
                 $navigation_slug = 'frozen-and-kassel';
+                $report_type = 'VIFK';
     			break; 
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
@@ -6513,6 +6522,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Sales Report Per Material';
     			$fontSize = '7px';
                 $navigation_slug = 'per-material';
+                $report_type = 'SRPM';
     			break;
     		case 'salesreportperpeso':
     			$columns = $this->getTableColumns($report);
@@ -6524,6 +6534,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Sales Report Per Peso';
     			$fontSize = '7px';
                 $navigation_slug = 'peso-value';
+                $report_type = 'SRPV';
     			break;
     		case 'returnpermaterial':
     			$columns = $this->getTableColumns($report);
@@ -6594,6 +6605,7 @@ class ReportsPresenter extends PresenterCore
 				$filters = $vanInventoryPresenter->getStockTransferFilterData();
 				$filename = 'Stock Transfer Report';
                 $navigation_slug = 'stock-transfer';
+                $report_type = 'VIST';
 				break;
 				
 			case 'stockaudit':
@@ -6668,6 +6680,7 @@ class ReportsPresenter extends PresenterCore
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
                 $navigation_slug = 'cash-payments';
+                $report_type = 'SCCAP';
 				break;
 				
 			case 'checkpayment':
@@ -6692,6 +6705,7 @@ class ReportsPresenter extends PresenterCore
 				$filters = $salesCollectionPresenter->getCheckPaymentFilterData();
 				$filename = 'List of Check Payment';
                 $navigation_slug = 'check-payments';
+                $report_type = 'SCCHP';
 				break;
 				
 			case 'reversalsummary':
@@ -6761,19 +6775,116 @@ class ReportsPresenter extends PresenterCore
 		} else {
 			$current = $this->validateInvoiceNumber($current);
 		}
-    	  
+
         $navigation = ModelFactory::getInstance('Navigation')->where('slug','=',$navigation_slug)->first();
+        $navigation_id = $navigation->id;
+        $navigation_ids_to_check = [9,40,41,12,13,25,14,15];
+
+        if(in_array($navigation_id, $navigation_ids_to_check)){
+            if($this->request->has('salesman')){
+                $salesman_code = $this->request->get('salesman');
+
+                if(!ModelFactory::getInstance('ReportReferenceRevision')->where('navigation_id','=',$navigation_id)->where('salesman_code','=',$salesman_code)->count()){
+                    ModelFactory::getInstance('ReportReferenceRevision')->create([
+                        'navigation_id' => $navigation_id,
+                        'salesman_code' => $salesman_code
+                    ]);
+                } else {
+                    $result = ModelFactory::getInstance('ReportReferenceRevision')->where('navigation_id','=',$navigation_id)->where('salesman_code','=',$salesman_code)->first();
+                    if($navigation_slug != 'report'){
+                        $revision_number = str_pad($result->revision_number_counter, 10, "0", STR_PAD_LEFT);
+                    }
+                }
+
+                ModelFactory::getInstance('ReportReferenceRevision')
+                    ->where('navigation_id','=',$navigation_id)
+                    ->where('salesman_code','=',$salesman_code)
+                    ->increment('reference_number_counter');
+
+                $reference_number_increment = ModelFactory::getInstance('ReportReferenceRevision')
+                    ->where('navigation_id','=',$navigation_id)
+                    ->where('salesman_code','=',$salesman_code)
+                    ->value('reference_number_counter');
+                $reference_number = $report_type . '-' . str_pad($reference_number_increment, 10, "0", STR_PAD_LEFT);
+
+                if($navigation_slug == 'report'){
+                    if($hasDateFilter){
+                        if(!$from->eq($to)){
+                            if($from->diffInDays($to) > 6){
+                                $date_format = $from->format('FY');
+                            } else {
+                                $date_format = $from->format('md') . '-' . $to->format('dy');
+                            }
+                        } else {
+                            $date_format = $from->format('mdy');
+                        }
+
+                        $revision_count = 0;
+
+                        $salesman_report_tables = [
+                            [
+                                'table'  => 'txn_evaluated_objective',
+                                'column' => 'salesman_code',
+                                'id'     => 'evaluated_objective_id'
+                            ],
+                            [
+                                'table'  => 'txn_sales_order_header',
+                                'column' => 'salesman_code',
+                                'id'     => 'sales_order_header_id'
+                            ],
+                            [
+                                'table'  => 'txn_return_header',
+                                'column' => 'salesman_code',
+                                'id'     => 'return_header_id'
+                            ],
+                            [
+                                'table'  => 'txn_collection_header',
+                                'column' => 'salesman_code',
+                                'id'     => 'collection_header_id'
+                            ],
+                            [
+                                'table'  => 'txn_collection_detail',
+                                'column' => 'modified_by',
+                                'id'     => 'collection_detail_id'
+                            ],
+                            [
+                                'table'  => 'txn_sales_order_header_discount',
+                                'column' => 'modified_by',
+                                'id'     => 'reference_num'
+                            ]
+                        ];
+
+                        foreach ($salesman_report_tables as $table) {
+                            $returned_ids = \DB::table($table['table'])->where($table['column'],'=',$salesman_code)->lists($table['id']);
+
+                            $modified_table = \DB::table('table_logs')->where('table','=',$table['table'])->where('report_type','=','Sales & Collection - Report')->whereIn('pk_id',$returned_ids);
+
+                            if(!$from->eq($to)){
+                                $modified_table = $modified_table->whereBetween('created_at',[$from->setTime(00, 00, 00),$to->setTime(23, 59, 59)]);
+                            } else {
+                                $modified_table = $modified_table->whereBetween('created_at',[$from->setTime(00, 00, 00),$from->setTime(23, 59, 59)]);
+                            }
+
+                           $revision_count += $modified_table->count();
+                        }
+
+                        $revision_number = $date_format . $report_type . str_pad($reference_number_increment, 4, "0", STR_PAD_LEFT) . '-' . $revision_count;
+                    }
+                }
+            }
+        }
+
         ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'           => auth()->user()->id,
-            'navigation_id'     => $navigation->id,
+            'navigation_id'     => $navigation_id,
             'action_identifier' => 'downloading',
             'action'            => 'preparation done ' . $navigation->name . ' for ' . $type . ' download; download proceeding'
         ]);
 
     	if(in_array($type,['xls','xlsx']))
     	{    
-	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area){
-	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area){
+	    	\Excel::create($filename, function($excel) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary,$scr,$area,$reference_number,$revision_number){
+	    		$excel->sheet('Sheet1', function($sheet) use ($columns,$rows,$records,$summary,$header,$filters,$theadRaw, $report,$current,$currentSummary,$previous,$previousSummary, $scr,$area,$reference_number,$revision_number){
 
 					$datas = ($records) ? $records : $current;
 					if ($report == 'vaninventorycanned' || $report == 'vaninventoryfrozen') {
@@ -6795,7 +6906,9 @@ class ReportsPresenter extends PresenterCore
 	    			$params['currentSummary'] = $currentSummary;
 	    			$params['previousSummary'] = $previousSummary;
 	    			$params['area'] = $area;
-	    			$params['report'] = $report;
+                    $params['report'] = $report;
+                    $params['reference_number'] = $reference_number;
+	    			$params['revision_number'] = $revision_number;
 
 	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
 	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
@@ -6821,6 +6934,8 @@ class ReportsPresenter extends PresenterCore
     		$params['previousSummary'] = $previousSummary;
     		$params['area'] = $area;
     		$params['report'] = $report;
+            $params['reference_number'] = $reference_number;
+            $params['revision_number'] = $revision_number;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		if(in_array($report,['salescollectionsummary','stockaudit','invoiceseries','reversalsummary']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
@@ -7240,6 +7355,38 @@ class ReportsPresenter extends PresenterCore
     	switch($report)
     	{
     		case 'salescollectionreport';
+                $from = new Carbon($this->request->get('collection_date_from'));
+                $to = new Carbon($this->request->get('collection_date_to'));
+                $date_range_status = false;
+                $message = '';
+
+                if($from->diffInDays($to) != 1){
+                    if($from->diffInDays($to) > 6){
+                        $startOfMonth = (new Carbon($this->request->get('collection_date_from')))->startOfMonth();
+                        $endOfMonth = (new Carbon($this->request->get('collection_date_from')))->endOfMonth();
+
+                        if(!($startOfMonth->eq($from) && $endOfMonth->eq($to->setTime(23, 59, 59)))){
+                            $date_range_status = true;
+                            $message = 'Invalid date range for monthly report.';
+                        }
+                    } else {
+                        $startOfWeek = (new Carbon($this->request->get('collection_date_from')))->startOfWeek();
+                        $endOfWeek = (new Carbon($this->request->get('collection_date_from')))->endOfWeek();
+
+                        if(!($startOfWeek->eq($from) && $endOfWeek->eq($to->setTime(23, 59, 59)))){
+                            $date_range_status = true;
+                            $message = 'Invalid date range for weekly report!';
+                        }
+                    }
+                    
+                    if($date_range_status){
+                         return response()->json([
+                            'wrong_date_range_status' => $date_range_status,
+                            'message'                 => $message
+                        ]);
+                    }
+                }
+
 	    		$prepare = $this->getPreparedSalesCollection();    			
     			$collection1 = $prepare->get();
     			 
