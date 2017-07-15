@@ -4173,6 +4173,7 @@
 
 		$scope.toggleFilter = true;
 		$scope.success = false;
+		$scope.can_override = false;
 		$scope.savePermissionData = {};
 		$scope.navigations = [];
 		$scope.navs = [];
@@ -4267,6 +4268,18 @@
 			}
 		}
 
+		function userAccessPermitted(data){
+			var overrides_length = $scope.nav_overrides.length;
+			if(overrides_length > 0){
+				if(data.status == 'denied' || (data.status == 'inherit' && $scope.navs.indexOf(data.id) == '-1')){
+					return false;
+				}
+				return true;
+			} else {
+				return data.status;
+			}
+		}
+
 		// reset the filter
 		$scope.reset =  function(){
 			$scope.navigations = [];
@@ -4297,6 +4310,7 @@
 					$scope.nav_actions = response.data.user_nav_actions;
 					$scope.nav_overrides = response.data.user_nav_overrides;
 					$scope.nav_action_overrides = response.data.user_nav_action_overrides;
+					$scope.can_override = response.data.can_override;
 					processPermissionStatus();
 				}, function(){
 
@@ -4358,8 +4372,16 @@
 		$scope.savePermission = function(){
 			var allowed_navs = [];
 			var allowed_nav_actions = [];
-			var user_navs = [];
-			var user_nav_actions = [];
+			var user_navs = {
+				inherit : [],
+				allowed : [],
+				denied : [],
+			};
+			var user_nav_actions = {
+				inherit : [],
+				allowed : [],
+				denied : [],
+			};
 
 			var navigations_length = $scope.navigations.length;
 			for (var navigations_ctr = 0; navigations_ctr < navigations_length; navigations_ctr++) {
@@ -4369,7 +4391,7 @@
 					}
 				}
 				if($scope.savePermissionData.type == 'user'){
-					user_navs.push({
+					user_navs[$scope.navigations[navigations_ctr].status].push({
 						id : $scope.navigations[navigations_ctr].id,
 						status: $scope.navigations[navigations_ctr].status
 					});
@@ -4382,7 +4404,7 @@
 							allowed_navs.push($scope.navigations[navigations_ctr].children[children_ctr].id);
 						}
 						if($scope.savePermissionData.type == 'user'){
-							user_navs.push({
+							user_navs[$scope.navigations[navigations_ctr].children[children_ctr].status].push({
 								id : $scope.navigations[navigations_ctr].children[children_ctr].id,
 								status: $scope.navigations[navigations_ctr].children[children_ctr].status
 							});
@@ -4395,7 +4417,7 @@
 									allowed_nav_actions.push($scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].id);
 								}
 								if($scope.savePermissionData.type == 'user'){
-									user_nav_actions.push({
+									user_nav_actions[$scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].status].push({
 										id : $scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].id,
 										status: $scope.navigations[navigations_ctr].children[children_ctr].action[children_action_ctr].status
 									});
@@ -4412,7 +4434,7 @@
 							allowed_nav_actions.push($scope.navigations[navigations_ctr].action[action_ctr].id);
 						}
 						if($scope.savePermissionData.type == 'user'){
-							user_nav_actions.push({
+							user_nav_actions[$scope.navigations[navigations_ctr].action[action_ctr].status].push({
 								id : $scope.navigations[navigations_ctr].action[action_ctr].id,
 								status: $scope.navigations[navigations_ctr].action[action_ctr].status
 							});
@@ -4443,7 +4465,45 @@
 				.then(function(response){
 					if(response.data.success){
 						toaster.pop('success', 'Success', 'Permission Saved',3000);
-						window.location.reload();
+
+						if($scope.can_override){
+							var menu_html = '';
+							var counter =  2;
+
+							var navigations_length = $scope.navigations.length;
+							for (var navigations_ctr = 0; navigations_ctr < navigations_length; navigations_ctr++) {
+								if(userAccessPermitted($scope.navigations[navigations_ctr])){
+									var children_length = $scope.navigations[navigations_ctr].children.length;
+									menu_html += 	'<li class="parent" href="#sub-item-' + counter + '">' +
+									
+														'<a href="' + ($scope.navigations[navigations_ctr].url != '' ? '#' + $scope.navigations[navigations_ctr].url : 'javascript:void(0)') + '">' +
+															'<span class="' + $scope.navigations[navigations_ctr].class + '"></span>' +
+															$scope.navigations[navigations_ctr].name;
+															if(children_length > 0){
+									menu_html +=				'<span class="icon pull-right"><em class="glyphicon glyphicon-s glyphicon-plus"></em></span>';
+															}
+									menu_html +=		'</a>';
+
+									if(children_length > 0){
+										menu_html+= 	'<ul class="children collapse" id="sub-item-'+ counter +'">';
+										for(var children_ctr = 0; children_ctr < children_length; children_ctr++){
+											if(userAccessPermitted($scope.navigations[navigations_ctr].children[children_ctr])){
+												menu_html += '<li>' +
+																'<a href="#' + $scope.navigations[navigations_ctr].children[children_ctr].url + '"><span class="'+ $scope.navigations[navigations_ctr].children[children_ctr].class +'"></span>' + $scope.navigations[navigations_ctr].children[children_ctr].name + '</a>' +
+															 '</li>';
+											}
+										}
+										menu_html+=		'</ul>';
+									}
+									menu_html += 	'</li>';
+								}
+								counter++;
+							}
+
+							if(menu_html != ''){
+								angular.element('.nav.menu').html(menu_html);
+							}
+						}
 					}
 				}, function(){
 
