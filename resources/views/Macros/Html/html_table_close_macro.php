@@ -282,6 +282,98 @@ Html::macro('tclose', function($paginate=true) {
 		            <button class="btn btn-warning" type="button" ng-click="cancelConfirmation()">Cancel</button>
 		        </div>
 			</script>
+
+			<script type="text/ng-template" id="AddedTotal">
+			    <div class="modal-header">
+			        <h3 class="modal-title" id="modal-title">Added Total</h3>
+			    </div>
+			    <div class="modal-body">
+			        <form class="form-horizontal">
+			            <div class="form-group">
+			                <label class="col-sm-3">Remarks:</label>
+			                <div class="col-sm-9">
+			                    <textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.remarks" name="comment" rows="5" id="comment"></textarea>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Summary Date:</label>
+			                <div class="col-sm-9">
+			                <input type="hidden" id="atayui" value=""/>
+			                    <p class="input-group col-sm-12">
+			                        <input type="date" id="hdate_value"  class="form-control ng-hide"/>
+			                        <input type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event)" class="form-control" uib-datepicker-popup="MM/yyyy" ng-model="params.summary_date" is-open="params.open" datepicker-options="{minMode: \'month\'}" close-text="Close" onkeydown="return false;" ng-change="change()"/>
+			                         <span class="input-group-btn">
+			                             <button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
+			                         </span>
+			                    </p>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Total Collected Amount:</label>
+			                <div class="col-sm-9">
+			                    <input type="text" ng-model="params.total_collected_amount" placeholder="0.00" class="form-control regEx">
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Sales Tax:</label>
+			                <div class="col-sm-9">
+			                    <input type="text" ng-model="params.sales_tax" placeholder="0.00" class="form-control regEx">
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Amount Subject To Commission:</label>
+			                <div class="col-sm-9">
+			                    <input type="text" ng-model="params.amount_for_commission" placeholder="0.00" class="form-control regEx">
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <div class="col-sm-12">
+			                    <div class="pull-right">
+			                        <button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub">Submit</button>
+			                        <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+			                    </div>
+			                </div>
+			            </div>
+			        </form>
+			    </div>
+			</script>
+
+			<script type="text/ng-template" id="AddedNotes">
+			    <div class="modal-header">
+			        <h3 class="modal-title" id="modal-title">Added Notes</h3>
+			    </div>
+			    <div class="modal-body">
+			        <form class="form-horizontal">
+			            <div class="form-group">
+			                <label class="col-sm-3">Remarks:</label>
+			                <div class="col-sm-9">
+			                    <textarea class="form-control inner-addon fxresize" maxlength="150" ng-model="params.notes" name="comment" rows="5" id="comment"></textarea>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <label class="col-sm-3">Summary Date:</label>
+			                <div class="col-sm-9">
+			                <input type="hidden" id="atayui" value=""/>
+			                    <p class="input-group col-sm-12">
+			                        <input type="date" id="hdate_value"  class="form-control ng-hide"/>
+			                        <input type="text" id="date_value" name="date_value" show-weeks="true" ng-click="open($event)" class="form-control" uib-datepicker-popup="MM/yyyy" ng-model="params.summary_date" is-open="params.open" datepicker-options="{minMode: \'month\'}" close-text="Close" onkeydown="return false;" ng-change="change()"/>
+			                         <span class="input-group-btn">
+			                             <button style="height:34px" type="button" class="btn btn-default btn-sm" ng-click="open($event,\'date_value\')"><i class="glyphicon glyphicon-calendar"></i></button>
+			                         </span>
+			                    </p>
+			                </div>
+			            </div>
+			            <div class="form-group">
+			                <div class="col-sm-12">
+			                    <div class="pull-right">
+			                        <button class="btn btn-success" type="button btn-sm" ng-click="save()" id="btnsub">Submit</button>
+			                        <button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
+			                    </div>
+			                </div>
+			            </div>
+			        </form>
+			    </div>
+			</script>
 			
 			';
 	if($paginate)

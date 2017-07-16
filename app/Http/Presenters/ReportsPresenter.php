@@ -2125,6 +2125,19 @@ class ReportsPresenter extends PresenterCore
     	{
     		$prepare = $this->getPreparedSalesCollectionSummary(true);
     		$data['summary'] = $prepare->first();
+            if(!empty($data['summary'])){
+                $data['summary']->updated_total_collected_amount = $data['summary']->total_collected_amount;
+                $data['summary']->updated_sales_tax              = $data['summary']->sales_tax;
+                $data['summary']->updated_amount_for_commission  = $data['summary']->amt_to_commission;
+                $data['summary']->added_updates = $this->getAddedMonthlySummaryUpdates();
+                $data['summary']->added_notes = $this->getAddedMonthlySummaryNotes();
+
+                foreach ($data['summary']->added_updates as $value) {
+                    $data['summary']->updated_total_collected_amount += $value->total_collected_amount;
+                    $data['summary']->updated_sales_tax              += $value->sales_tax;
+                    $data['summary']->updated_amount_for_commission  += $value->amount_for_commission;
+                }
+            }
     	}
     	    	 
     	$data['total'] = $result->total();
@@ -2449,7 +2462,8 @@ class ReportsPresenter extends PresenterCore
     			SUM(collection.amt_to_commission) amt_to_commission				
     			';
     	}
-    	
+
+
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))
     					->selectRaw($select);
     	
@@ -6381,7 +6395,6 @@ class ReportsPresenter extends PresenterCore
     			//$columns = $this->getTableColumns($report);
     			$theadRaw = '
     					<tr>
-							<th rowspan="2" align="center">SCR#</th>
 							<th colspan="2" align="center">Invoice Number</th>
 							<th rowspan="2" align="center">Invoice Date</th>
 							<th rowspan="2" align="center" style="wrap-text:true">Total Collected Amount</th>
@@ -6389,10 +6402,6 @@ class ReportsPresenter extends PresenterCore
 							<th rowspan="2" align="center" style="wrap-text:true">Amount Subject To Commission</th>
 						</tr>
     					<tr>';
-    			
-    			if(in_array($type,['xls','xlsx']))
-					$theadRaw .= '<th align="center"></th>';
-							
     			$theadRaw .= '
     						<th align="center">From</th>
 							<th align="center">To</th>    						
@@ -6400,6 +6409,19 @@ class ReportsPresenter extends PresenterCore
     			$prepare = $this->getPreparedSalesCollectionSummary();
     			$rows = $this->getSalesCollectionSummarySelectColumns();
     			$summary = $this->getPreparedSalesCollectionSummary(true)->first();
+                if(!empty($summary)){
+                    $summary->updated_total_collected_amount = $summary->total_collected_amount;
+                    $summary->updated_sales_tax              = $summary->sales_tax;
+                    $summary->updated_amount_for_commission  = $summary->amt_to_commission;
+                    $summary->added_updates = $this->getAddedMonthlySummaryUpdates();
+                    $summary->added_notes = $this->getAddedMonthlySummaryNotes();
+
+                    foreach ($summary->added_updates as $value) {
+                        $summary->updated_total_collected_amount += $value->total_collected_amount;
+                        $summary->updated_sales_tax              += $value->sales_tax;
+                        $summary->updated_amount_for_commission  += $value->amount_for_commission;
+                    }
+                }
     			$header = 'Monthly Summary of Sales';
     			$filters = $this->getSalesCollectionSummaryFilterData();
     			$filename = 'Monthly Summary of Sales';
@@ -6774,6 +6796,7 @@ class ReportsPresenter extends PresenterCore
 	    			$params['previousSummary'] = $previousSummary;
 	    			$params['area'] = $area;
 	    			$params['report'] = $report;
+
 	    			$view = $report == 'salescollectionreport' ? 'exportSalesCollection' : 'exportXls';  
 	    			$sheet->loadView('Reports.'.$view, $params);	    				    		
 	    		});
@@ -6807,7 +6830,7 @@ class ReportsPresenter extends PresenterCore
 				$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio');
     		unset($params,$records,$prepare);	    		
 
-    		return $pdf->download($filename.'.pdf');
+            return $pdf->download($filename.'.pdf');
     	}    		
     }
     
@@ -7171,7 +7194,6 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummarySelectColumns()
     {
     	return [
-    			'scr_number',
     			'invoice_number_from',
     			'invoice_number_to',
     			'invoice_date',
@@ -8441,5 +8463,41 @@ class ReportsPresenter extends PresenterCore
     public function vanInventoryItemCode($type)
     {
         return response()->json($this->getVanInventoryItems($type,'item_code'));
+    }
+
+    /**
+     * Montly Summary Updates for Salesman
+     * @return Object Collection
+     */
+    public function getAddedMonthlySummaryUpdates()
+    {
+        $salesman = $this->request->get('salesman');
+
+        $added_updates = ModelFactory::getInstance('MonthlySummaryUpdate')
+                            ->where('salesman_code','=',$salesman);
+
+        if($this->request->has('invoice_date_from')){
+            $added_updates = $added_updates->where('summary_date','=',date('Y-m-d',strtotime($this->request->get('invoice_date_from'))));
+        }
+
+        return $added_updates->get();
+    }
+
+    /**
+     * Montly Summary Notes for Salesman
+     * @return Object Collection
+     */
+    public function getAddedMonthlySummaryNotes()
+    {
+        $salesman = $this->request->get('salesman');
+
+        $added_notes = ModelFactory::getInstance('MonthlySummaryNote')
+                            ->where('salesman_code','=',$salesman);
+
+        if($this->request->has('invoice_date_from')){
+            $added_notes = $added_notes->where('summary_date','=',date('Y-m-d',strtotime($this->request->get('invoice_date_from'))));
+        }
+
+        return $added_notes->get();
     }
 }
