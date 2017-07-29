@@ -12,9 +12,9 @@
 	var defaultDate = '';
 	var fetch = true;
 	
-	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionReport]);
+	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SalesCollectionReport]);
 	
-	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -34,7 +34,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'salescollectionreport',params,$log,toaster, TableFix);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
@@ -62,9 +62,9 @@
 	 * Sales & Collection Posting controller
 	 */
 
-	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SalesCollectionPosting]);
+	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SalesCollectionPosting]);
 	
-	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{		
 		deletePreviousCache($route,$templateCache);
 
@@ -83,7 +83,7 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log,toaster, TableFix);
 
 	}
 
@@ -107,7 +107,7 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,TableFix);
+		reportController($scope,$resource,$uibModal,$window,'salescollectionsummary',params,$log,toaster,TableFix);
 
 		monthlySummaryNewFeatures($scope,$uibModal,$http,toaster);
 	}
@@ -115,9 +115,9 @@
 	/**
 	 * Cash payments controller
 	 */
-	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',CashPaymentsReport]);
+	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',CashPaymentsReport]);
 	
-	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -134,7 +134,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'cashpayment',params,$log,toaster, TableFix);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
@@ -144,9 +144,9 @@
 	/**
 	 * Check payments controller
 	 */
-	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',CheckPaymentsReport]);
+	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',CheckPaymentsReport]);
 	
-	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -163,7 +163,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'checkpayment',params,$log,toaster, TableFix);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
@@ -206,9 +206,9 @@
 	/**
 	 * Van Inventory Stock Transfer Report
 	 */
-	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',StockTransfer]);
+	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',StockTransfer]);
 	
-	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -225,7 +225,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'stocktransfer',params,$log,toaster, TableFix);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
@@ -244,9 +244,9 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',StockAudit]);
+	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',StockAudit]);
 	
-	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -262,7 +262,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log,toaster, TableFix);
 
 	}
 	
@@ -270,9 +270,9 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',FlexiDeal]);
+	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',FlexiDeal]);
 	
-	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -288,7 +288,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log,toaster, TableFix);
 
 	}
 	
@@ -296,9 +296,9 @@
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
-	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',ActualCount]);
+	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',ActualCount]);
 	
-	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -313,7 +313,7 @@
 
 		];
 
-	    reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log, TableFix);
+	    reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log,toaster, TableFix);
 
 	}
 	
@@ -508,9 +508,9 @@
 	/**
 	 * Van Inventory Adjustment Adjustment
 	 */
-	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',Adjustment]);
+	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',Adjustment]);
 	
-	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -527,7 +527,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log,toaster, TableFix);
 
 	}
 	
@@ -661,7 +661,7 @@
 		];
 
 	    // main controller codes
-	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log, TableFix);
+	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log,toaster, TableFix);
 	    
 	    executeReplenishment($scope, $resource, $uibModal, params,$log,toaster);
 
@@ -717,9 +717,9 @@
 	/**
 	 * Van Inventory Replenishment Adjustment
 	 */
-	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',InvoiceSeries]);
+	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',InvoiceSeries]);
 	
-	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -732,7 +732,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log,toaster, TableFix);
 
 	}
 	
@@ -840,9 +840,9 @@
 	/**
 	 * Bounce Check Controller
 	 */
-	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',BounceCheck]);
+	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',BounceCheck]);
 	
-	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -858,7 +858,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log,toaster, TableFix);
 
 	}
 	
@@ -1035,9 +1035,9 @@
 	/**
 	 * Unpaid Report
 	 */
-	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',Unpaid]);
+	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',Unpaid]);
 
-	function Unpaid($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function Unpaid($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1051,15 +1051,15 @@
 			];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log,toaster);
 	}
 
 	/**
 	 * Sales Report Per Material
 	 */
-	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesReportPerMaterial]);
+	app.controller('SalesReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',SalesReportPerMaterial]);
 
-	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function SalesReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1078,7 +1078,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'salesreportpermaterial',params,$log,toaster);
 
 		var API = '';
 		$scope.conditionCodes = function(){
@@ -1112,9 +1112,9 @@
 	/**
 	 * Sales Report Per Peso
 	 */
-	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesReportPerPeso]);
+	app.controller('SalesReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',SalesReportPerPeso]);
 
-	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function SalesReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1131,7 +1131,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'salesreportperpeso',params,$log,toaster);
 
 		editTable($scope, $uibModal, $resource, $window, {}, $log);
 
@@ -1154,9 +1154,9 @@
 	/**
 	 * Return Report Per Material
 	 */
-	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',ReturnReportPerMaterial]);
+	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',ReturnReportPerMaterial]);
 
-	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1175,16 +1175,16 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log,toaster);
 	}
 
 
 	/**
 	 * Return Report Per Peso
 	 */
-	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',ReturnReportPerPeso]);
+	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',ReturnReportPerPeso]);
 
-	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1203,15 +1203,15 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log,toaster);
 	}
 
 	/**
 	 * Customer List
 	 */
-	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',CustomerList]);
+	app.controller('CustomerList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',CustomerList]);
 
-	function CustomerList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function CustomerList($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1227,16 +1227,16 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'customerlist',params,$log,toaster);
 	}
 
 
 	/**
 	 * Salesman List
 	 */
-	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',SalesmanList]);
+	app.controller('SalesmanList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',SalesmanList]);
 
-	function SalesmanList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function SalesmanList($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1250,16 +1250,16 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'salesmanlist',params,$log,toaster);
 
 	}
 
 	/**
 	 * Material Price List
 	 */
-	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',MaterialPriceList]);
+	app.controller('MaterialPriceList',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',MaterialPriceList]);
 
-	function MaterialPriceList($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function MaterialPriceList($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1278,7 +1278,7 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'materialpricelist',params,$log,toaster);
 
 	}
 
@@ -1286,9 +1286,9 @@
 	 * Bir controller
 	 */
 
-	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache',Bir]);
+	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',Bir]);
 
-	function Bir($scope, $resource, $uibModal, $window, $log,$route,$templateCache)
+	function Bir($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1302,7 +1302,7 @@
 		];
 
 		// main controller
-		reportController($scope,$resource,$uibModal,$window,'bir',params,$log);
+		reportController($scope,$resource,$uibModal,$window,'bir',params,$log,toaster);
 	}
 
 
@@ -2201,7 +2201,7 @@
 	/**
 	 * Export report
 	 */
-	function downloadReport(scope, modal, resource, window, report, filter, log)
+	function downloadReport(scope, modal, resource, window, report, filter, log,toaster)
 	{
 		scope.download = function(type){
 
@@ -2228,56 +2228,60 @@
 
 			var API = resource(url);
 			API.get({}, function(data){
-
-				//log.info(data);
-				if(!data.total)
-				{
-					var params = {message:'No data to export.'};
-					var modalInstance = modal.open({
-						animation: true,
-						templateUrl: 'Info',
-						controller: 'Info',
-						windowClass: 'center-modal',
-						size: 'sm',
-						resolve: {
-							params: function () {
-								return params;
-							}
-						}
-					});
-				}
-				else if(data.max_limit)
-				{
-					scope.params = {
-							chunks: data.staggered,
-							title: 'Export ' + angular.uppercase(type),
-							limit: data.limit,
-							exportType: type,
-							report: report,
-							filter: filter,
-							sort: scope.sortColumn,
-							order: scope.sortDirection,
-					};
-
-					var modalInstance = modal.open({
+				 if(data.wrong_date_range_status)
+				 {
+				 	toaster.pop('error', 'Error', data.message, 5000);
+				 } else {
+					//log.info(data);
+					if(!data.total)
+					{
+						var params = {message:'No data to export.'};
+						var modalInstance = modal.open({
 							animation: true,
-							templateUrl: 'exportModal',
-							controller: 'ExportReport',
+							templateUrl: 'Info',
+							controller: 'Info',
+							windowClass: 'center-modal',
+							size: 'sm',
 							resolve: {
 								params: function () {
-									return scope.params;
+									return params;
 								}
 							}
-					});
-				 }
-				 else
-				 {
-					 var exportUrl = '/reports/export/'+type+'/'+report+query;
-					 if(scope.sortColumn)
-						 exportUrl += '&'+'sort='+scope.sortColumn;
-					 if(scope.sortDirection)
-						 exportUrl += '&'+'order='+scope.sortDirection;
-					 window.location.href = exportUrl;
+						});
+					}
+					else if(data.max_limit)
+					{
+						scope.params = {
+								chunks: data.staggered,
+								title: 'Export ' + angular.uppercase(type),
+								limit: data.limit,
+								exportType: type,
+								report: report,
+								filter: filter,
+								sort: scope.sortColumn,
+								order: scope.sortDirection,
+						};
+
+						var modalInstance = modal.open({
+								animation: true,
+								templateUrl: 'exportModal',
+								controller: 'ExportReport',
+								resolve: {
+									params: function () {
+										return scope.params;
+									}
+								}
+						});
+					 }
+					 else
+					 {
+						 var exportUrl = '/reports/export/'+type+'/'+report+query;
+						 if(scope.sortColumn)
+							 exportUrl += '&'+'sort='+scope.sortColumn;
+						 if(scope.sortDirection)
+							 exportUrl += '&'+'order='+scope.sortDirection;
+						 window.location.href = exportUrl;
+					}
 				}
 			});
 		}
@@ -2286,7 +2290,7 @@
 	/**
 	 * Centralized controller codes
 	 */
-	function reportController(scope, resource, modal, window, report, filter, log, TableFix)
+	function reportController(scope, resource, modal, window, report, filter, log, toaster, TableFix)
 	{
 		// Filter flag
 		scope.toggleFilter = true;
@@ -2342,7 +2346,7 @@
 		pagination(scope,API,params,log, TableFix);
 
 		// Download report
-		downloadReport(scope, modal, resource, window, report, filter, log);
+		downloadReport(scope, modal, resource, window, report, filter, log, toaster);
 
 		// Format date
 		formatDate(scope);
@@ -3785,9 +3789,9 @@
 		  $scope.var1 = '07-2013';
 		});
 	
-	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',ReversalSummary]);
+	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',ReversalSummary]);
 	
-	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{	    	
 		deletePreviousCache($route,$templateCache);
 
@@ -3801,7 +3805,7 @@
 		];
 
 		// main controller codes
-		reportController($scope,$resource,$uibModal,$window,'reversalsummary',params,$log, TableFix);
+		reportController($scope,$resource,$uibModal,$window,'reversalsummary',params,$log,toaster, TableFix);
 
 		//editable rows
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);

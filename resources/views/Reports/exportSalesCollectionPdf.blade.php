@@ -112,6 +112,16 @@
 				</td>
 				<td width="28%" valign="top">
 					<div class="clear">
+						@if(!empty($reference_number))
+							<div class="row pull-right indent-right label" style="color: #F9243F;">
+								<strong>Reference #:</strong> {{ $reference_number }}
+							</div>
+						@endif
+						@if(!empty($revision_number))
+							<div class="row pull-right indent-right label" style="color: #F9243F;">
+								<strong>Revision #:</strong> {{ $revision_number }}
+							</div>
+						@endif
 						<div class="row pull-right indent-right label">
 							<strong>SCR No.:</strong>@if($scr) <span class="value">{{$scr}}</span> @else <span>______________</span> @endif
 						</div>

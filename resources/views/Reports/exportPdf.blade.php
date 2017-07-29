@@ -66,11 +66,14 @@
 			@endif
 		</div>
 	@endif
-	@if($revision = latest_revision($report) && false)
-		<div class="revision" align="right">
-			<div class="rev-label">
-				<span><strong>Revision No.</strong> {{$revision}}</span>
-			</div>								
+	@if(!empty($reference_number))
+		<div style="text-align: right; color: #F9243F;">
+			<strong>Reference #:</strong> {{ $reference_number }}
+		</div>
+	@endif
+	@if(!empty($revision_number))
+		<div style="text-align: right; color: #F9243F;">
+			<strong>Revision #:</strong> {{ $revision_number }}
 		</div>
 	@endif
 	<table class="no-border clear">

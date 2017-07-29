@@ -21,14 +21,17 @@ class ReportsController extends ControllerCore
 	{
 		$id = $request->get('id');
 		$column = $request->get('column');
+		$table = $request->get('table');
+
+		$navigation_id = ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id');
+
 		ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'           => auth()->user()->id,
-            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'navigation_id'     => $navigation_id,
             'action_identifier' => '',
             'action'            => 'updating editable column ' . $column . ' data having id ' . $id
         ]);
 
-		$table = $request->get('table');
 		if(false === strpos($column,'date'))
 			$value = $request->get('value');
 		else 
@@ -189,10 +192,28 @@ class ReportsController extends ControllerCore
 			 	\DB::table('table_logs')->insert($insertData);			 			  
 			}
 		}
-		
+
+		$syncTables2 = config('sync.sync_tables');
+		$search_column = array_shift($syncTables2[$table]);
+
+		$salesman_code = $this->getSalesmanCodeByTable($table,$search_column,$id);
+		if(!$this->checkIfExistInReportReference($navigation_id,$salesman_code)){
+			ModelFactory::getInstance('ReportReferenceRevision')->create([
+				'navigation_id' => $navigation_id,
+				'salesman_code' => $salesman_code
+			]);
+		}
+
+		if($request->get('slug') != 'report'){
+			ModelFactory::getInstance('ReportReferenceRevision')
+				->where('navigation_id','=',$navigation_id)
+				->where('salesman_code','=',$salesman_code)
+				->increment('revision_number_counter');
+		}
+
 		ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'           => auth()->user()->id,
-            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=',$request->get('slug'))->value('id'),
+            'navigation_id'     => $navigation_id,
             'action_identifier' => 'updating',
             'action'            => 'done updating editable column ' . $column . ' data having id ' . $id
         ]);
@@ -225,4 +246,35 @@ class ReportsController extends ControllerCore
 		return response()->json($data);
 	}
 	
+
+	/**
+	 * Get Salesman Code By Table
+	 * @param  $table  [table to search]
+	 * @param  $column [column name id to reference in where]
+	 * @param  $id     [the id value]
+	 * @return String
+	 */
+	public function getSalesmanCodeByTable($table,$column,$id){
+		$column_to_retrieve = 'salesman_code';
+
+		if($table == 'txn_sales_order_header_discount' || $table == 'txn_collection_detail' || $table == 'txn_sales_order_detail'){
+			$column_to_retrieve = 'modified_by';
+		}
+
+		return \DB::table($table)->where($column,$id)->value($column_to_retrieve);
+	}
+
+	/**
+	 * Check if Exist In Report Reference
+	 * @param  $navigation_id
+	 * @param  $salesman_code
+	 * @return Boolean
+	 */
+	public function checkIfExistInReportReference($navigation_id,$salesman_code){
+		if(!ModelFactory::getInstance('ReportReferenceRevision')->where('navigation_id','=',$navigation_id)->where('salesman_code','=',$salesman_code)->count()){
+			return false;
+		}
+
+		return true;
+	}
 }

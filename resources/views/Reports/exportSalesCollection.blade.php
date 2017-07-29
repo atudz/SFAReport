@@ -13,9 +13,24 @@
 			<tr>
 				<th colspan="21"></th>
 				<th>Sales & Collection Report</th>
-				<th></th>
-				<th></th>
-				<th></th>
+				<th colspan="5"></th>
+			</tr>
+			@if(!empty($reference_number))
+			<tr>
+				<th colspan="25"></th>
+				<th align="right" style="color: #F9243F;">Reference #:</th>
+				<th style="color: #F9243F;">{{ $reference_number }}</th>
+			</tr>
+			@endif
+			@if(!empty($revision_number))
+			<tr>
+				<th colspan="25"></th>
+				<th align="right" style="color: #F9243F;">Revision #:</th>
+				<th style="color: #F9243F;">{{ $revision_number }}</th>
+			</tr>
+			@endif
+			<tr>
+				<th colspan="25"></th>
 				<th align="right">SCR No.:</th>
 				@if($scr) 
 					<th style="text-decoration: underline">{{$scr}}</th>
