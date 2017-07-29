@@ -320,9 +320,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('ActualCountAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', ActualCountAdd]);
+	app.controller('ActualCountAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache','toaster', ActualCountAdd]);
 
-	function ActualCountAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache) {
+	function ActualCountAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache,toaster) {
 		
 		deletePreviousCache($route,$templateCache);
 
@@ -374,6 +374,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
+					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Actual Count Record', 3000);
 					$location.path('vaninventory.actualcount');
 				}, function(error){
 					if(error.data){
@@ -533,9 +534,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', '$route', '$templateCache', AdjustmentAdd]);
+	app.controller('AdjustmentAdd',['$scope','$resource','$location','$window','$uibModal','$log', '$route', '$templateCache','toaster', AdjustmentAdd]);
 
-	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
+	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.save = function (){
@@ -567,6 +568,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
+					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Adjustment Record', 3000);
 					$location.path('vaninventory.adjustment');
 				}, function(error){
 					if(error.data){
@@ -668,9 +670,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', StockTransferAdd]);
+	app.controller('StockTransferAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache','toaster', StockTransferAdd]);
 
-	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache) {
+	function StockTransferAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache,toaster) {
 
 		deletePreviousCache($route,$templateCache);
 
@@ -692,6 +694,7 @@
 			};
 			
 			API.save(params).$promise.then(function(data){
+				toaster.pop('success', 'Success', 'Successfuly Created Stock Transfer Record', 3000);
 				$location.path('vaninventory.stocktransfer');
 			}, function(error){
 				if(error.data){
@@ -736,9 +739,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('InvoiceSeriesAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', InvoiceSeriesAdd]);
+	app.controller('InvoiceSeriesAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route','toaster', InvoiceSeriesAdd]);
 
-	function InvoiceSeriesAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
+	function InvoiceSeriesAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		var currentPageTemplate = $route.current.loadedTemplateUrl;
@@ -758,6 +761,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
+					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Invoice Series Record', 3000);
 					$location.path('invoiceseries.mapping');
 				}, function(error){
 					if(error.data){
@@ -861,9 +865,9 @@
 	/**
 	 * BounceCheck Add Controller
 	 */
-	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', BounceCheckAdd]);
+	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route','toaster', BounceCheckAdd]);
 
-	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
+	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.save = function (){
@@ -893,6 +897,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
+					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Bounce Check Record', 3000);
 					$location.path('bounce.check');
 				}, function(error){
 					if(error.data){
@@ -2442,9 +2447,9 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable','$route','$templateCache', EditTableRecord]);
+	app.controller('EditTableRecord', ['$scope', '$uibModalInstance', '$resource', 'params', '$log', 'EditableFixTable','$route','$templateCache','toaster', EditTableRecord]);
 
-	function EditTableRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable,$route,$templateCache) {
+	function EditTableRecord($scope, $uibModalInstance, $resource, params, $log, EditableFixTable,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.change = function () {
@@ -2531,6 +2536,7 @@
 							EditableFixTable.eft();
 						}
 					}
+					toaster.pop('success', 'Success', 'Successfuly Updated Column', 5000);
 				});
 
 				$('table.table').floatThead('destroy');
@@ -2894,9 +2900,9 @@
 	/**
 	 * User Contact us controller
 	 */
-	app.controller('ContactUs', ['$scope', '$resource', '$http','$route','$templateCache', ContactUs]);
+	app.controller('ContactUs', ['$scope', '$resource', '$http','$route','$templateCache','toaster', ContactUs]);
 
-	function ContactUs($scope, $resource, $http,$route,$templateCache) {
+	function ContactUs($scope, $resource, $http,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.success = false;
@@ -2958,7 +2964,7 @@
 		$scope.toMail = function (data) {
 			var apiMail = $resource('/controller/user/contact/mail/' + data.id);
 			apiMail.get({}, function (data) {
-				$scope.success = true;
+				toaster.pop('success', 'Success', 'Successfuly sent!', 3000);
 				$scope.loading = false;
 			}, function (data) {
 				$scope.loading = false;
@@ -3129,9 +3135,9 @@
 	/**
 	 * User Guide.
 	 */
-	app.controller('UserGuide', ['$scope', '$resource', '$window', '$http','$route','$templateCache', UserGuide]);
+	app.controller('UserGuide', ['$scope', '$resource', '$window', '$http','$route','$templateCache','toaster', UserGuide]);
 
-	function UserGuide($scope, $resource, $window, $http,$route,$templateCache) {
+	function UserGuide($scope, $resource, $window, $http,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.logged = $window.user;
@@ -3171,12 +3177,8 @@
 				headers: {'Content-Type': undefined},
 				transformRequest: angular.identity
 			}).success(function (data) {
-				$scope.alerts = {
-					uploading: false,
-					success: true
-				};
+				toaster.pop('success', 'Success', 'Successfuly Uploaded File for User Guide', 3000);
 				$scope.records = data;
-				setTimeoutUserGuide()
 			}).error(function (data) {
 				$scope.alerts = {
 					uploading: false,
@@ -3502,6 +3504,7 @@
 					}
 					else
 					{
+						toaster.pop('success', 'Success', 'Successfuly ' + (editMode ? 'Created' : 'Updated') + ' User Record', 3000);
 						scope.success = true;
 						if(!profile)
 							location.path('user.list');
@@ -3554,9 +3557,9 @@
 	/**
 	 * User Action Controller
 	 */
-	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log','$route','$templateCache', UserAction]);
+	app.controller('UserAction',['$scope','$uibModalInstance','$window','$resource','params','$log','$route','$templateCache','toaster', UserAction]);
 
-	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log,$route,$templateCache) {
+	function UserAction($scope, $uibModalInstance, $window, $resource, params, $log,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
@@ -3568,18 +3571,18 @@
 				case 'activate':
 					var API = $resource('/controller/user/activate/'+$scope.params.id);
 					API.get({}, function () {
-						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+						/*$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
 							$("#table_success").slideUp(500);
-						});
+						});*/
 					});
 					$scope.$parent.records[$scope.params.row].active = true;
 					break;
 				case 'deactivate':
 					var API = $resource('/controller/user/deactivate/'+$scope.params.id);
 					API.get({}, function () {
-						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+						/*$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
 							$("#table_success").slideUp(500);
-						});
+						});*/
 					});
 					$scope.$parent.records[$scope.params.row].active = false;
 					break;
@@ -3588,9 +3591,9 @@
 					API.get({},function(data){
 						$('#'+$scope.params.id).remove();
 						//$log.info(data);
-						$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
+						/*$("#table_success").fadeTo(2000, 500).slideUp(500, function () {
 							$("#table_success").slideUp(500);
-						});
+						});*/
 					});
 					break;
 				case 'guide':
@@ -3598,8 +3601,8 @@
 					break;
 			}
 
-			$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
-
+			//$('#table_success').removeClass('hide').html('User successfully '+$scope.params.action+'d.');
+			toaster.pop('success', 'Success', 'User successfully '+$scope.params.action+'d.', 3000);
 			$uibModalInstance.dismiss('cancel');
 		};
 
@@ -3808,9 +3811,9 @@
 	/**
 	 * Open and Closing Period controller
 	 */
-	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',OpenClosingPeriod]);
+	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',OpenClosingPeriod]);
 	
-	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -3836,8 +3839,10 @@
 				.then(function(response){
 					var result = response.data;
 					if(result.success == true){
+						toaster.pop('success', 'Success', 'Successfuly Updated Period Status', 3000);
 						$scope.navigation_reports[index].period_status = result.data.period_status;
 					} else {
+						toaster.pop('error', 'Error', 'Error Updating Period Status', 3000);
 						$scope.navigation_reports[index].period_status = status_value == 1 ? 0 : 1;
 					}
 				}, function(){
@@ -3860,6 +3865,7 @@
 				.then(function(response){
 					var result = response.data;
 					if(result.success == true){
+						toaster.pop('success', 'Success', 'Successfuly Updated Period Date Status', 3000);
 						if($scope.navigation_reports[index].period_id == null){
 							$scope.navigation_reports[index].period_id = result.data.period_id;
 							$scope.navigation_reports[index].company_code = result.data.company_code;
@@ -3868,6 +3874,7 @@
 							$scope.navigation_reports[index].navigation_id = result.data.navigation_id;
 						}
 					} else {
+						toaster.pop('error', 'Error', 'Error Updating Period Date Status', 3000);
 						if(update_all){
 							for(var day = 1; day <= $scope.filter.limit_day; day++){
 								$scope.navigation_reports[index].dates[day] = 'close';
