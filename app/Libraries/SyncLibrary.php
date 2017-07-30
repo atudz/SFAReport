@@ -105,7 +105,7 @@ class SyncLibrary extends LibraryCore
 					$offset = 0;
 					
 					while($offset <= $totalRecords) {
-						$limitQuery.= ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
+						$limitQuery = ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
 						$getQuery .= $limitQuery;
 						$stmt = $dbh->prepare($getQuery);
 						$stmt->execute();
