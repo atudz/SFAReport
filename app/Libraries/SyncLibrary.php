@@ -57,7 +57,7 @@ class SyncLibrary extends LibraryCore
 
 			$configTables = config('sync.sync_tables');
 			$tables = array_keys($configTables);
-			$limit = 5000;			
+			$limit = 1000;			
 			$pageLimit = 25000;
 			
 			foreach($tables as $table)
@@ -77,7 +77,7 @@ class SyncLibrary extends LibraryCore
 					}
 				}
 				
-				if(!$keys) {
+				if(!$pKey) {
 					continue;
 				}
 				
@@ -104,8 +104,8 @@ class SyncLibrary extends LibraryCore
 					}
 					$offset = 0;
 					
-					while($totalRecords > 0 && $offset <= $totalRecords) {
-						$limitQuery.= ' ORDER BY '.$keys.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
+					while($offset <= $totalRecords) {
+						$limitQuery.= ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
 						$getQuery .= $limitQuery;
 						$stmt = $dbh->prepare($getQuery);
 						$stmt->execute();
