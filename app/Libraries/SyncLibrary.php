@@ -88,10 +88,10 @@ class SyncLibrary extends LibraryCore
 				$result  = $stmt->fetchAll(PDO::FETCH_ASSOC);	
 				
 				$getQuery = sprintf($query,'*');
-				if($ids) {
-					//exclude records
-					$getQuery.= ' WHERE '.$pKey.' NOT IN('.implode(',', $ids).')';
-				}
+// 				if($ids) {
+// 					//exclude records
+// 					$getQuery.= ' WHERE '.$pKey.' NOT IN('.implode(',', $ids).')';
+// 				}
 				
 				if($result) {
 					$totalRecords = array_shift($result);
@@ -110,7 +110,7 @@ class SyncLibrary extends LibraryCore
 						$stmt = $dbh->prepare($newQuery);
 						$stmt->execute();
 						$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-						$data = $this->formatData($data);
+						$data = $this->formatData($data,$pKey,$ids);
 						
 						$count = count($data);
 						if($count > $limit)
@@ -182,12 +182,17 @@ class SyncLibrary extends LibraryCore
 	 * @param unknown $data
 	 * @return multitype:
 	 */
-	public function formatData($data)
+	public function formatData($data, $pkey, $modified)
 	{
 		foreach($data as $key=>$value)
 		{
 			foreach($value as $col=>$val)
 			{
+				if($col == $pkey && in_array($val, $modified)) {
+					unset($data[$key]);
+					break;
+				}
+				
 				if(false !== strpos($col, 'date'))
 				{
 					$data[$key][$col] = new \DateTime($val);
