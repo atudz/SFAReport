@@ -57,7 +57,8 @@ class SyncLibrary extends LibraryCore
 
 			$configTables = config('sync.sync_tables');
 			$tables = array_keys($configTables);
-			$limit = 1000;
+			$limit = 15000;			
+			$pageLimit = 25000;
 			
 			foreach($tables as $table)
 			{
@@ -76,40 +77,66 @@ class SyncLibrary extends LibraryCore
 					}
 				}
 				
-				$query = 'SELECT * FROM '.$table;
-				if($ids)
-				{
-					//exclude records
-				 	$query .= ' WHERE '.$pKey.' NOT IN('.implode(',', $ids).')';
-				}			
-					
-				$stmt = $dbh->prepare($query);
+				if(!$keys) {
+					continue;
+				}
+				
+				$query = 'SELECT %s FROM '.$table;		
+				$countQuery = sprintf($query,'COUNT(*)');
+				$stmt = $dbh->prepare($countQuery);
 				$stmt->execute();
-				$data = $stmt->fetchAll(PDO::FETCH_ASSOC);		
+				$result  = $stmt->fetchAll(PDO::FETCH_ASSOC);	
 				
-				$data = $this->formatData($data);
+				$getQuery = sprintf($query,'*');
+				if($ids) {
+					//exclude records
+					$getQuery.= ' WHERE '.$pKey.' NOT IN('.implode(',', $ids).')';
+				}
 				
-				$count = count($data);
-				if($count > $limit)
-				{
-					foreach(array_chunk($data,$limit,true) as $row)
-					{
-						// Import data to local database						
-						\DB::table($table)->insert($row);
-					}					
-					$msg = "$table : inserted ". count($data)." records.\n";
-					$this->log($msg);
-					if($display) echo $msg;
-				}
-				else
-				{
-					// Import data to local database					
-					\DB::table($table)->insert($data);
-					$msg = "$table : inserted ". count($data)." records.\n";
-					$this->log($msg);
-					if($display) echo $msg;
-				}
-				unset($data);
+				if($result) {
+					$totalRecords = array_shift($result);
+					$totalRecords = array_shift($totalRecords);
+					if(!$totalRecords) {
+						$msg = "$table : inserted 0 records \n";
+						$this->log($msg);
+						if($display) echo $msg;
+						continue;
+					}
+					$offset = 0;
+					
+					while($totalRecords > 0 && $offset <= $totalRecords) {
+						$limitQuery.= ' ORDER BY '.$keys.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
+						$getQuery .= $limitQuery;
+						$stmt = $dbh->prepare($getQuery);
+						$stmt->execute();
+						$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+						$data = $this->formatData($data);
+						
+						$count = count($data);
+						if($count > $limit)
+						{
+							foreach(array_chunk($data,$limit,true) as $row)
+							{
+								// Import data to local database
+								\DB::table($table)->insert($row);
+							}
+							$msg = "$table : inserted ". count($data)." records, page ".$offset.":".$pageLimit."\n";
+							$this->log($msg);
+							if($display) echo $msg;
+						}
+						else
+						{
+							// Import data to local database
+							\DB::table($table)->insert($data);
+							$msg = "$table : inserted ". count($data)." records, page ".$offset.":".$pageLimit."\n";
+							$this->log($msg);
+							if($display) echo $msg;
+						}
+						unset($data);
+						
+						$offset += $pageLimit;
+					}
+				}							
 			}			
 			
 		} catch (PDOException $e) {
