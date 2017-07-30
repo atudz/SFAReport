@@ -120,7 +120,7 @@ class SyncLibrary extends LibraryCore
 								// Import data to local database
 								\DB::table($table)->insert($row);
 							}
-							$msg = "$table : inserted ". count($data)." records, page ".$offset.":".$pageLimit."\n";
+							$msg = "$table : inserted ". count($data)." records, total:".$totalRecords." page ".$offset.":".$pageLimit."\n";
 							$this->log($msg);
 							if($display) echo $msg;
 						}
@@ -128,7 +128,7 @@ class SyncLibrary extends LibraryCore
 						{
 							// Import data to local database
 							\DB::table($table)->insert($data);
-							$msg = "$table : inserted ". count($data)." records, page ".$offset.":".$pageLimit."\n";
+							$msg = "$table : inserted ". count($data)." records, total:".$totalRecords." page ".$offset.":".$pageLimit."\n";
 							$this->log($msg);
 							if($display) echo $msg;
 						}
