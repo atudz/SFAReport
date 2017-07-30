@@ -106,8 +106,8 @@ class SyncLibrary extends LibraryCore
 					
 					while($offset <= $totalRecords) {
 						$limitQuery = ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
-						$getQuery .= $limitQuery;
-						$stmt = $dbh->prepare($getQuery);
+						$newQuery = $getQuery.$limitQuery;
+						$stmt = $dbh->prepare($newQuery);
 						$stmt->execute();
 						$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 						$data = $this->formatData($data);
