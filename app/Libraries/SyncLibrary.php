@@ -57,7 +57,7 @@ class SyncLibrary extends LibraryCore
 
 			$configTables = config('sync.sync_tables');
 			$tables = array_keys($configTables);
-			$limit = 15000;			
+			$limit = 5000;			
 			$pageLimit = 25000;
 			
 			foreach($tables as $table)
