@@ -104,9 +104,10 @@ class SyncLibrary extends LibraryCore
 					}
 					$offset = 0;
 					
-					while($offset <= $totalRecords) {
-						$limitQuery = ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
-						$newQuery = $getQuery.$limitQuery;
+					//while($offset <= $totalRecords) {
+// 						$limitQuery = ' ORDER BY '.$pKey.' OFFSET '.$offset.' ROWS FETCH NEXT '.$pageLimit.' ROWS ONLY';
+// 						$newQuery = $getQuery.$limitQuery;
+						$newQuery = $getQuery;
 						$stmt = $dbh->prepare($newQuery);
 						$stmt->execute();
 						$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -134,8 +135,8 @@ class SyncLibrary extends LibraryCore
 						}
 						unset($data);
 						
-						$offset += $pageLimit;
-					}
+						//$offset += $pageLimit;
+					//}
 				}							
 			}			
 			
