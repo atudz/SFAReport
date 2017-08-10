@@ -8254,7 +8254,13 @@ class ReportsPresenter extends PresenterCore
 		$customerCode = $this->getCustomerAreaCode($customer, $isVan)->area_code;
 		$code = (int)explode('_', $customer)[0];
 		$invoice_key = config('system.invoice_key');
-		$invoiceCode = $invoice_key[$code] . $areaCodes[$customerCode];
+		$invoiceCode = '';
+		if(isset($invoice_key[$code])) {
+			$invoiceCode = $invoice_key[$code];
+		}
+		if(isset($areaCodes[$customerCode])) {
+			$invoiceCode .= $areaCodes[$customerCode];
+		}		
 		return $invoiceCode;
 	}
     
