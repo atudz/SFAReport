@@ -374,7 +374,30 @@ Html::macro('tclose', function($paginate=true) {
 			        </form>
 			    </div>
 			</script>
-			
+
+			<script type="text/ng-template" id="exportModalSFI">
+        			<div class="modal-header">
+            			<h3 class="modal-title">Export Modal SFI</h3>
+        			</div>
+			        <div class="modal-body">
+						<p class="indent">
+							<em>Please choose the appropriate range of data to export below.</em>
+						</p>
+			            <ul class="list-inline list-unstyled">
+			                <li ng-repeat="item in params.range track by $index">
+			                    <div class="radio">
+			  						<label>
+			    						<input type="radio" name="exportdoc" value="[[$index]]"> [[item.from]] - [[item.to]]
+			  						</label>
+								</div>
+			                </li>
+			            </ul>
+			        </div>
+			        <div class="modal-footer">
+			            <button class="btn btn-success" type="button" ng-click="download()">Download</button>
+			            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+			        </div>
+    			</script>
 			';
 	if($paginate)
 	{

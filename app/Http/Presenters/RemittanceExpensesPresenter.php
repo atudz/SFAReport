@@ -45,6 +45,14 @@ class RemittanceExpensesPresenter extends PresenterCore
         $this->view->salesman = PresenterFactory::getInstance('Reports')->getSalesman(true);
         $this->view->jrSalesmans = PresenterFactory::getInstance('VanInventory')->getJrSalesman();
         $this->view->state = $this->request->has('id') ? 'Edit Row' : 'Add Row';
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','remittance-expenses-report')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Remittance/Expenses Report ' . ($this->request->has('id') ? 'Edit' : 'Add')
+        ]);
+
         return $this->view('form');
     }
 }

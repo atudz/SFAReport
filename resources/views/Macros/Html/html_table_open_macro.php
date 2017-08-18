@@ -56,7 +56,9 @@ Html::macro('topen', function($options=[]) {
 		if(!isset($options['no_xls']) || !$options['no_xls'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'xlsx\')">Excel</a></li>';
 		if(array_key_exists('show_print', $options) && $options['show_print'])
-			$html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
+            $html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
+		if(array_key_exists('show_tab_delimited', $options) && $options['show_tab_delimited'])
+			$html .= '<li role="menuitem"><a href="" ng-click="download(\'txt\')">Tab Delimited</a></li>';
 		
 		if(isset($options['execute']) && $options['execute'])
 		{
@@ -76,7 +78,21 @@ Html::macro('topen', function($options=[]) {
 		      	';
 	}
 	
-	
+	if(array_key_exists('show_convert_sfi', $options) && $options['show_convert_sfi']){
+		$html .= '<div class="pull-right" style="height: 30px; overflow: hidden;">
+		<div class="form-group">
+		<div class="col-xs-3 control-label"><label for="" style="line-height: 30px;">Convert</label></div>
+		<div class="col-xs-9">
+		<select id="convert" class="form-control pull-right" ng-model="convert" ng-change="selectConvert()" style="height: 30px;">
+			<option value="">Select</option>
+			<option value="header">SAP Header</option>
+			<option value="detail">SAP Detail</option>
+			<option value="both">Both</option>
+		</select>
+		</div>
+		</div>
+		</div>';
+	}
 
 	if(array_key_exists('show_mass_edit_button', $options) && $options['show_mass_edit_button'])
 	{

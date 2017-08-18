@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Core\ControllerCore;
+use App\Factories\ModelFactory;
 use App\Http\Models\AuditorList;
 use App\Http\Models\User;
 use App\Http\Models\AppSalesman;
@@ -108,6 +109,20 @@ class AuditorListController extends ControllerCore
         if($request->has('download_type')){
             $auditorLists['download_type'] = $request->get('download_type');
 
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => $navigation->id,
+                'action_identifier' => '',
+                'action'            => 'preparing Auditors List for ' . $auditorLists['download_type'] . ' download; download proceeding'
+            ]);
+
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                'action_identifier' => 'downloading',
+                'action'            => 'preparation done Auditors List for ' . $auditorLists['download_type'] . ' download; download proceeding'
+            ]);
+
             if($auditorLists['download_type'] == 'xlsx'){
                 Excel::create('AuditorsList', function($excel) use ($auditorLists){
                     $excel->sheet('Sheet1', function($sheet) use ($auditorLists){
@@ -120,7 +135,21 @@ class AuditorListController extends ControllerCore
                 $pdf = PDF::loadView('VanInventory.exportAuditorsList', $auditorLists)->setPaper('legal', 'landscape');
                 return $pdf->download('AuditorsList.pdf');
             }
+        } else {
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'loading data for Auditors List'
+            ]);
         }
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading data for Auditors List'
+        ]);
 
         return response()->json($auditorLists['records']);
     }
@@ -132,7 +161,21 @@ class AuditorListController extends ControllerCore
      */
     public function show($id)
     {
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'loading data for Auditors List id ' . $id
+        ]);
+
         $auditorList = AuditorList::with('user','salesman','area')->where('id','=',$id)->first();
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'done loading data for Auditors List id ' . $id
+        ]);
         return response()->json($auditorList);
     }
 
@@ -143,6 +186,13 @@ class AuditorListController extends ControllerCore
      */
     public function store(AuditorListRequest $request)
     {
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'creating for Auditor List'
+        ]);
+
         try {
             $list = AuditorList::create(
                 $request->only([
@@ -155,8 +205,22 @@ class AuditorListController extends ControllerCore
                 ])
             );
 
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','segment-codes')->value('id'),
+                'action_identifier' => 'creating',
+                'action'            => 'done creating for Auditor List'
+            ]);
+
             return response()->json(['success'=> true]);
         } catch (Exception $e) {
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','segment-codes')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'error creating for Auditor List'
+            ]);
+
             return response()->json(['success'=> false]);
         }
     }
@@ -169,6 +233,13 @@ class AuditorListController extends ControllerCore
      */
     public function update(AuditorListRequest $request,$id)
     {
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'updating for Auditor List id ' . $id
+        ]);
+
         try {
             AuditorList::where('id','=',$id)->update(
                 $request->only([
@@ -181,8 +252,22 @@ class AuditorListController extends ControllerCore
                 ])
             );
 
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                'action_identifier' => 'updating',
+                'action'            => 'done updating for Auditor List id ' . $id
+            ]);
+
             return response()->json(['success'=> true]);
         } catch (Exception $e) {
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'error updating for Auditor List id ' . $id
+            ]);
+
             return response()->json(['success'=> false]);
         }
     }
@@ -194,11 +279,32 @@ class AuditorListController extends ControllerCore
      */
     public function destroy($id)
     {
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => auth()->user()->id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+            'action_identifier' => '',
+            'action'            => 'deleting for Auditor List id ' . $id
+        ]);
+
         try {
             if(AuditorList::where('id','=',$id)->delete()){
+                ModelFactory::getInstance('UserActivityLog')->create([
+                    'user_id'           => auth()->user()->id,
+                    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                    'action_identifier' => 'deleting',
+                    'action'            => 'done deleting for Auditor List id ' . $id
+                ]);
+
                 return response()->json(['success'=> true]);
             }
         } catch (Exception $e) {
+            ModelFactory::getInstance('UserActivityLog')->create([
+                'user_id'           => auth()->user()->id,
+                'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','auditors-list')->value('id'),
+                'action_identifier' => '',
+                'action'            => 'error deleting for Auditor List id ' . $id
+            ]);
+
             return response()->json(['success'=> false]);
         }
     }
