@@ -31,4 +31,9 @@ class AppCustomer extends ModelCore
 	{
 		return $this->belongsTo('App\Http\Models\AppSalesmanCustomer', 'customer_code', 'customer_code');
 	}
+
+	public function area()
+	{
+		return $this->belongsTo('App\Http\Models\AppArea', 'area_code', 'area_code');
+	}
 }

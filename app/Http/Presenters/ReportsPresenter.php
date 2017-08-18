@@ -6096,10 +6096,20 @@ class ReportsPresenter extends PresenterCore
 	 * Get Customers
 	 * @return multitype:
 	 */
-	public function getCustomer($strictSalesman = true)
+	public function getCustomer($strictSalesman = true,$exclude=[])
 	{
 		$prepare = ModelFactory::getInstance('AppCustomer')->where('status', '=', 'A')
 			->orderBy('customer_name');
+
+        if(!empty($exclude)){
+            $prepare->whereNotIn('customer_name',[
+                '1000_Adjustment',
+                '2000_Adjustment',
+                '1000_Van to Warehouse Transaction',
+                '2000_Van to Warehouse Transaction',
+            ]);
+        }
+
 		if ($strictSalesman && $this->isSalesman()) {
 			$customers = \DB::table('app_salesman_customer')->distinct()
 				->select(['salesman_customer_id', 'customer_code'])

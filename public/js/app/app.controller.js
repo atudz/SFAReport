@@ -374,7 +374,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
-					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Actual Count Record', 3000);
+					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Actual Count Record', 3000);
 					$location.path('vaninventory.actualcount');
 				}, function(error){
 					if(error.data){
@@ -568,7 +568,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
-					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Adjustment Record', 3000);
+					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Adjustment Record', 3000);
 					$location.path('vaninventory.adjustment');
 				}, function(error){
 					if(error.data){
@@ -694,7 +694,7 @@
 			};
 			
 			API.save(params).$promise.then(function(data){
-				toaster.pop('success', 'Success', 'Successfuly Created Stock Transfer Record', 3000);
+				toaster.pop('success', 'Success', 'Successfully Created Stock Transfer Record', 3000);
 				$location.path('vaninventory.stocktransfer');
 			}, function(error){
 				if(error.data){
@@ -761,7 +761,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
-					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Invoice Series Record', 3000);
+					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Invoice Series Record', 3000);
 					$location.path('invoiceseries.mapping');
 				}, function(error){
 					if(error.data){
@@ -897,7 +897,7 @@
 				};
 				
 				API.save(params).$promise.then(function(data){
-					toaster.pop('success', 'Success', 'Successfuly ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Bounce Check Record', 3000);
+					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Bounce Check Record', 3000);
 					$location.path('bounce.check');
 				}, function(error){
 					if(error.data){
@@ -2540,7 +2540,7 @@
 							EditableFixTable.eft();
 						}
 					}
-					toaster.pop('success', 'Success', 'Successfuly Updated Column', 5000);
+					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
 				});
 
 				$('table.table').floatThead('destroy');
@@ -2968,7 +2968,7 @@
 		$scope.toMail = function (data) {
 			var apiMail = $resource('/controller/user/contact/mail/' + data.id);
 			apiMail.get({}, function (data) {
-				toaster.pop('success', 'Success', 'Successfuly sent!', 3000);
+				toaster.pop('success', 'Success', 'Successfully sent!', 3000);
 				$scope.loading = false;
 			}, function (data) {
 				$scope.loading = false;
@@ -3181,7 +3181,7 @@
 				headers: {'Content-Type': undefined},
 				transformRequest: angular.identity
 			}).success(function (data) {
-				toaster.pop('success', 'Success', 'Successfuly Uploaded File for User Guide', 3000);
+				toaster.pop('success', 'Success', 'Successfully Uploaded File for User Guide', 3000);
 				$scope.records = data;
 			}).error(function (data) {
 				$scope.alerts = {
@@ -3508,7 +3508,7 @@
 					}
 					else
 					{
-						toaster.pop('success', 'Success', 'Successfuly ' + (editMode ? 'Created' : 'Updated') + ' User Record', 3000);
+						toaster.pop('success', 'Success', 'Successfully ' + (editMode ? 'Created' : 'Updated') + ' User Record', 3000);
 						scope.success = true;
 						if(!profile)
 							location.path('user.list');
@@ -3843,7 +3843,7 @@
 				.then(function(response){
 					var result = response.data;
 					if(result.success == true){
-						toaster.pop('success', 'Success', 'Successfuly Updated Period Status', 3000);
+						toaster.pop('success', 'Success', 'Successfully Updated Period Status', 3000);
 						$scope.navigation_reports[index].period_status = result.data.period_status;
 					} else {
 						toaster.pop('error', 'Error', 'Error Updating Period Status', 3000);
@@ -3869,7 +3869,7 @@
 				.then(function(response){
 					var result = response.data;
 					if(result.success == true){
-						toaster.pop('success', 'Success', 'Successfuly Updated Period Date Status', 3000);
+						toaster.pop('success', 'Success', 'Successfully Updated Period Date Status', 3000);
 						if($scope.navigation_reports[index].period_id == null){
 							$scope.navigation_reports[index].period_id = result.data.period_id;
 							$scope.navigation_reports[index].company_code = result.data.company_code;
@@ -4083,7 +4083,7 @@
 			
 			API.save(params).$promise.then(function(data){
 				if(data.success){
-					toaster.pop('success', 'Success', 'Successfuly Seeded Header', 5000);
+					toaster.pop('success', 'Success', 'Successfully Seeded Header', 5000);
 				} else {
 					toaster.pop('error', 'Error', data.msg, 5000);
 				}
@@ -4105,7 +4105,7 @@
 			
 			API.save(params).$promise.then(function(data){
 				if(data.success){
-					toaster.pop('success', 'Success', 'Successfuly Seeded Data', 5000);
+					toaster.pop('success', 'Success', 'Successfully Seeded Data', 5000);
 				} else {
 					toaster.pop('error', 'Error', data.msg, 5000);
 				}
@@ -4127,7 +4127,7 @@
 			
 			API.save(params).$promise.then(function(data){
 				if(data.success){
-					toaster.pop('success', 'Success', 'Successfuly Cleared', 5000);
+					toaster.pop('success', 'Success', 'Successfully Cleared', 5000);
 				} else {
 					toaster.pop('error', 'Error', data.msg, 5000);
 				}
@@ -4159,7 +4159,7 @@
 			$http.post(url,postData)
 			.success(function (data) {
 				if(data.success){
-					toaster.pop('success', 'Success', 'Successfuly Posted Data', 5000);
+					toaster.pop('success', 'Success', 'Successfully Posted Data', 5000);
 				} else {
 					toaster.pop('error', 'Error', data.msg, 5000);
 				}
@@ -4952,7 +4952,7 @@
 
 				$('table.table').floatThead('destroy');
 
-				toaster.pop('success', 'Success', 'Successfuly Updated Date');
+				toaster.pop('success', 'Success', 'Successfully Updated Date');
 
 				$uibModalInstance.dismiss('cancel');
 			});
@@ -5079,7 +5079,7 @@
 							}
 						});
 
-						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
 					}, function(){
 
 					});
@@ -5143,7 +5143,7 @@
 				.post('/controller/auditors-list/add',data)
 				.then(function(response){
 					if(response.data.success){
-						toaster.pop('success', 'Success', 'Successfuly Created Auditor\'s List', 5000);
+						toaster.pop('success', 'Success', 'Successfully Created Auditor\'s List', 5000);
 						$location.path('auditors.list');
 					}
 				}, function(response){
@@ -5172,7 +5172,7 @@
 				.post('/controller/auditors-list/' + $routeParams.id + '/update',data)
 				.then(function(response){
 					if(response.data.success){
-						toaster.pop('success', 'Success', 'Successfuly Updated Auditor\'s List', 5000);
+						toaster.pop('success', 'Success', 'Successfully Updated Auditor\'s List', 5000);
 						$location.path('auditors.list');
 					}
 				}, function(response){
@@ -5253,7 +5253,7 @@
 			$http
 				.get('/controller/remittance-expenses-report/' + id + '/delete')
 				.then(function(response){
-					toaster.pop('success', 'Success', 'Successfuly Deleted Remittance');
+					toaster.pop('success', 'Success', 'Successfully Deleted Remittance');
 					$scope.records.splice(index,1);
 				});
 		}
@@ -5299,7 +5299,7 @@
 				.post('/controller/remittance-expenses-report/create',data)
 				.then(function(response){
 					if(response.data.success){
-						toaster.pop('success', 'Success', 'Successfuly Created Remittance');
+						toaster.pop('success', 'Success', 'Successfully Created Remittance');
 						$location.path('/remittance.expenses.report.edit/' + response.data.data.id);
 					}
 				}, function(response){
@@ -5369,7 +5369,7 @@
 						angular.forEach(data, function(value, key) {
 							$scope.remittance[key] = value;
 						});
-						toaster.pop('success', 'Success', 'Successfuly Updated Remittance');
+						toaster.pop('success', 'Success', 'Successfully Updated Remittance');
 					}
 				}, function(response){
 					erroCallback(toaster,response);
@@ -5428,7 +5428,7 @@
 						expenses.push(response.data.data);
 
 						$scope.remittance.expenses = expenses;
-						toaster.pop('success', 'Success', 'Successfuly Created Remittance-Expense');
+						toaster.pop('success', 'Success', 'Successfully Created Remittance-Expense');
 					}
 				}, function(response){
 					erroCallback(toaster,response);
@@ -5442,7 +5442,7 @@
 					if(response.data.success){
 						$scope.remittance.expenses[index].expense = update_expense.expense;
 						$scope.remittance.expenses[index].amount = update_expense.amount;
-						toaster.pop('success', 'Success', 'Successfuly Updated Remittance-Expense');
+						toaster.pop('success', 'Success', 'Successfully Updated Remittance-Expense');
 					}
 				}, function(response){
 					erroCallback(toaster,response);
@@ -5455,7 +5455,7 @@
 				.then(function(response){
 					if(response.data.success){
 						$scope.remittance.expenses.splice(index,1);
-						toaster.pop('success', 'Success', 'Successfuly Deleted Remittance-Expense');
+						toaster.pop('success', 'Success', 'Successfully Deleted Remittance-Expense');
 					}
 				});
 		}
@@ -5525,7 +5525,7 @@
 							$scope.createCashBreakdown.splice(index,1);
 						}
 						angular.element('#create-amount-' + index).val('');
-						toaster.pop('success', 'Success', 'Successfuly Created Remittance-Cash Breakdown');
+						toaster.pop('success', 'Success', 'Successfully Created Remittance-Cash Breakdown');
 					}
 				}, function(response){
 					erroCallback(toaster,response);
@@ -5539,7 +5539,7 @@
 					if(response.data.success){
 						$scope.remittance.cash_breakdown[index].denomination = update_cash_breakdown.denomination;
 						$scope.remittance.cash_breakdown[index].pieces = update_cash_breakdown.pieces;
-						toaster.pop('success', 'Success', 'Successfuly Updated Remittance-Cash Breakdown');
+						toaster.pop('success', 'Success', 'Successfully Updated Remittance-Cash Breakdown');
 					}
 				}, function(response){
 					erroCallback(toaster,response);
@@ -5552,7 +5552,7 @@
 				.then(function(response){
 					if(response.data.success){
 						$scope.remittance.cash_breakdown.splice(index,1);
-						toaster.pop('success', 'Success', 'Successfuly Deleted Remittance-Cash Breakdown');
+						toaster.pop('success', 'Success', 'Successfully Deleted Remittance-Cash Breakdown');
 					}
 				});
 		}
@@ -5665,7 +5665,7 @@
 						$scope.summary.updated_amount_for_commission = response.data.added_total.updated_amount_for_commission;
 						$scope.summary.updated_sales_tax = response.data.added_total.updated_sales_tax;
 						$scope.summary.updated_total_collected_amount = response.data.added_total.updated_total_collected_amount;
-						toaster.pop('success', 'Success', 'Successfuly ' + ($scope.params.hasOwnProperty('id') ? 'Updated' : 'Added') + ' Monthly Summary Update');
+						toaster.pop('success', 'Success', 'Successfully ' + ($scope.params.hasOwnProperty('id') ? 'Updated' : 'Added') + ' Monthly Summary Update');
             			$uibModalInstance.close();
 					}
 				}, function(response){
@@ -5756,7 +5756,7 @@
 							}
 						});
 
-						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
 					}, function(){
 
 					});
@@ -5814,7 +5814,7 @@
 							}
 						});
 
-						toaster.pop('success', 'Success', 'Successfuly Deleted Record', 5000);
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
 					}, function(){
 
 					});
@@ -5855,7 +5855,7 @@
 						added_notes.push(response.data.data);
 						$scope.summary.added_notes = added_notes;
 
-						toaster.pop('success', 'Success', 'Successfuly Added Notes');
+						toaster.pop('success', 'Success', 'Successfully Added Notes');
             			$uibModalInstance.close();
 					}
 				}, function(response){
@@ -5866,5 +5866,694 @@
         $scope.cancel = function() {
             $uibModalInstance.dismiss('cancel');
         }
+	}
+
+	/**
+	 * SFI Transaction Data Controller
+	 */
+	app.controller('SFITransactionData',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SFITransactionData]);
+
+	function SFITransactionData($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var uri = '';
+
+		$scope.toggleFilter = true;
+
+		$scope.records = [];
+
+		$scope.range = [];
+
+		$scope.total = [];
+
+		$scope.convert = [];
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get('/controller/sfi-transaction-data' + uri)
+				.then(function(response){
+					$scope.records = response.data.data;
+					$scope.range = response.data.range;
+					$scope.total = response.data.total;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function processSearchFilter(){
+			uri = '';
+
+			if(angular.element('#salesman_code').val()){
+				uri += (uri == '' ? '?' : '&') + 'salesman_code=' + angular.element('#salesman_code').val();
+			}
+
+			if(angular.element('#area_code').val()){
+				uri += (uri == '' ? '?' : '&') + 'area_code=' + angular.element('#area_code').val();
+			}
+
+			if(angular.element('#customer_code').val()){
+				uri += (uri == '' ? '?' : '&') + 'customer_code=' + angular.element('#customer_code').val();
+			}
+
+			if(angular.element('#company_code').val()){
+				uri += (uri == '' ? '?' : '&') + 'company_code=' + angular.element('#company_code').val();
+			}
+
+	        if(angular.element('#so_date_from').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'so_date_from=' + angular.element('#so_date_from').val();
+	        }
+
+	        if(angular.element('#so_date_to').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'so_date_to=' + angular.element('#so_date_to').val();
+	        }
+
+	        if(angular.element('#posting_date_from').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'posting_date_from=' + angular.element('#posting_date_from').val();
+	        }
+
+	        if(angular.element('#invoice_number').val()){
+	        	uri += (uri == '' ? '?' : '&') + 'invoice_number=' + angular.element('#invoice_number').val();
+	        }
+
+			if(angular.element('#convert').val()){
+				uri += (uri == '' ? '?' : '&') + 'convert=' + angular.element('#convert').val();
+				angular.element('.dropdown-toggle').removeAttr('disabled');
+			} else {
+				angular.element('.dropdown-toggle').attr('disabled','disabled');
+			}
+		}
+
+		$scope.filter = function(){
+			processSearchFilter();
+
+	        load();
+		}
+
+		$scope.selectConvert = function(){
+			processSearchFilter();
+		}
+
+		$scope.download = function(type){
+			processSearchFilter();
+
+			uri += (uri == '' ? '?' : '&') + 'download_type=' + type;
+			var url = '/controller/sfi-transaction-data/download';
+
+			if($scope.total > 1000){
+				$uibModal.open({
+						animation: true,
+						templateUrl: 'exportModalSFI',
+						controller: 'SFITransactionDataModalController',
+						resolve: {
+							params: function () {
+								return {
+									url : url,
+									uri : uri,
+									range: $scope.range,
+								};
+							}
+						}
+				});
+			} else if($scope.total < 1000){
+				$window.location.href = url + uri;
+			} else {
+				$uibModal.open({
+					animation: true,
+					templateUrl: 'Info',
+					controller: 'Info',
+					windowClass: 'center-modal',
+					size: 'sm',
+					resolve: {
+						params: function () {
+							return {
+								message: 'No data to export.'
+							};
+						}
+					}
+				});
+			}
+		}
+
+		function activate(){
+			uri = '?salesman_code=' + angular.element('#salesman_code').val();
+			load();
+			formatDate($scope);
+			angular.element('.dropdown-toggle').attr('disabled','disabled');
+		}
+
+		activate();
+	}
+
+	/**
+	 * SFI Transaction Data Modal Controller
+	 */
+	app.controller('SFITransactionDataModalController',['$scope','$uibModalInstance','$window','params','$log','$route','$templateCache', SFITransactionDataModalController]);
+
+	function SFITransactionDataModalController($scope, $uibModalInstance, $window, params, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
+		$scope.params = params;
+		$scope.offset = 0;
+
+		var uri = $scope.params.uri;
+
+		$scope.download = function () {
+			$uibModalInstance.close(true);
+			var range_selected = angular.element("input:radio[name=exportdoc]:checked").val();
+
+			uri += (uri == '' ? '?' : '&') + 'offset=' + ($scope.params.range[range_selected].from -1);
+
+			$window.location.href = $scope.params.url + uri;
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	};
+
+	/**
+	 * Profit Centers Controller
+	 */
+	app.controller('ProfitCenter',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',ProfitCenter]);
+
+	function ProfitCenter($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/profit-centers';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Profit Center Form 
+	 */
+	app.controller('ProfitCenterForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', ProfitCenterForm]);
+
+	function ProfitCenterForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/profit-centers';
+
+		$scope.save = function(){
+			var data = {
+				profit_center : angular.element('#profit_center').val(),
+		        area_name : angular.element('#area_name').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfully ' + ($routeParams.hasOwnProperty('id') ? 'Updated' : 'Created') + ' Profit Center', 5000);
+						$location.path('profit.centers');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#profit_center').val(data.profit_center);
+			        angular.element('#area_name').val(data.area_name);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * GL Accounts Controller
+	 */
+	app.controller('GLAccount',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',GLAccount]);
+
+	function GLAccount($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/gl-accounts';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * GL Account Form 
+	 */
+	app.controller('GLAccountForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', GLAccountForm]);
+
+	function GLAccountForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/gl-accounts';
+
+		$scope.save = function(){
+			var data = {
+				code : angular.element('#code').val(),
+		        description : angular.element('#description').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfully ' + ($routeParams.hasOwnProperty('id') ? 'Updated' : 'Created') + ' GL Account', 5000);
+						$location.path('gl.accounts');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#code').val(data.code);
+			        angular.element('#description').val(data.description);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * Segment Codes Controller
+	 */
+	app.controller('SegmentCode',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SegmentCode]);
+
+	function SegmentCode($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/segment-codes';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Segment Code Form 
+	 */
+	app.controller('SegmentCodeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', SegmentCodeForm]);
+
+	function SegmentCodeForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/segment-codes';
+
+		$scope.save = function(){
+			var data = {
+				segment_code : angular.element('#segment_code').val(),
+		        description : angular.element('#description').val(),
+		        abbreviation : angular.element('#abbreviation').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfully ' + ($routeParams.hasOwnProperty('id') ? 'Updated' : 'Created') + ' Segment Code', 5000);
+						$location.path('segment.codes');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#segment_code').val(data.segment_code);
+			        angular.element('#description').val(data.description);
+			        angular.element('#abbreviation').val(data.abbreviation);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * Document Types Controller
+	 */
+	app.controller('DocumentType',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',DocumentType]);
+
+	function DocumentType($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/document-types';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+						toaster.pop('success', 'Success', 'Successfully Deleted Record', 5000);
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Document Type Form 
+	 */
+	app.controller('DocumentTypeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', DocumentTypeForm]);
+
+	function DocumentTypeForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, toaster, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/document-types';
+
+		$scope.save = function(){
+			var data = {
+				type : angular.element('#type').val(),
+		        description : angular.element('#description').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){
+						toaster.pop('success', 'Success', 'Successfully ' + ($routeParams.hasOwnProperty('id') ? 'Updated' : 'Created') + ' Document Type', 5000);
+						$location.path('document.types');
+					}
+				}, function(response){
+					erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#type').val(data.type);
+			        angular.element('#description').val(data.description);
+				}, function(){
+
+				});
+		}
 	}
 })();

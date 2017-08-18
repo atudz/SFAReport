@@ -1825,6 +1825,14 @@ class VanInventoryPresenter extends PresenterCore
         $this->view->auditors = PresenterFactory::getInstance('UserAccessMatrix')->getUserList();
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('auditors-list',$user_group_id,$user_id);
         $this->view->state = $this->request->has('id') ? 'Edit Row' : 'Add Row';
+
+        ModelFactory::getInstance('UserActivityLog')->create([
+            'user_id'           => $user_id,
+            'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','remittance-expenses-report')->value('id'),
+            'action_identifier' => 'visit',
+            'action'            => 'visit Van Inventory - Auditors List ' . ($this->request->has('id') ? 'Edit' : 'Add')
+        ]);
+
         return $this->view('addAuditorsList');
     }
 }

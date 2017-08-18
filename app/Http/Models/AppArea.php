@@ -21,4 +21,9 @@ class AppArea extends ModelCore
 	{
 		return $this->belongsTo('App\Http\Models\ContactUs');
 	}
+
+	public function profit_center()
+	{
+		return $this->hasOne('App\Http\Models\ProfitCenter','area_name','area');
+	}
 }
