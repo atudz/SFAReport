@@ -7651,19 +7651,19 @@ class ReportsPresenter extends PresenterCore
     {
     	foreach ($records as &$record) {
     		if (is_array($record) && array_key_exists('invoice_date', $record)) {
-    			$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['invoice_date']));
+    			$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record['invoice_date']));
     		} elseif (isset($record->invoice_date)) {
-    			$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+    			$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->invoice_date));
     		}
     		if (is_array($record) && array_key_exists('transaction_date', $record)) {
-    			$record['transaction_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['transaction_date']));
+    			$record['transaction_date'] = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record['transaction_date']));
     		} elseif (isset($record->transaction_date)) {
-    			$record->transaction_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->transaction_date));
+    			$record->transaction_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->transaction_date));
     		}
     		if (is_array($record) && array_key_exists('replenishment_date', $record)) {
-    			$record['replenishment_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['replenishment_date']));
+    			$record['replenishment_date'] = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record['replenishment_date']));
     		} elseif (isset($record->replenishment_date)) {
-    			$record->replenishment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->replenishment_date));
+    			$record->replenishment_date = PHPExcel_Shared_Date::PHPToExcel(new Carbon($record->replenishment_date));
     		}
     	}
     
