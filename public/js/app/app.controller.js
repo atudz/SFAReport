@@ -2811,9 +2811,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache', UserAdd]);
+	app.controller('UserAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache','toaster', UserAdd]);
 
-	function UserAdd($scope, $resource, $location, $window, $uibModal, $log,$route,$templateCache) {
+	function UserAdd($scope, $resource, $location, $window, $uibModal, $log,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.id = 0;
@@ -2838,7 +2838,7 @@
 		//};
 
 		// Save user profile
-		saveUser($scope,$resource,$location, $uibModal, $window, $log);
+		saveUser($scope,$resource,$location, $uibModal, $window, $log, toaster);
 	};
 
 
@@ -2846,9 +2846,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log','$route','$templateCache', UserEdit]);
+	app.controller('UserEdit',['$scope','$resource','$routeParams','$location', '$uibModal','$window','$log','$route','$templateCache','toaster', UserEdit]);
 
-	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log,$route,$templateCache) {
+	function UserEdit($scope, $resource, $routeParams, $location ,$uibModal,$window, $log,$route,$templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.regExemail = function(){
@@ -2890,7 +2890,7 @@
 		});
 
 		// Save user profile
-		saveUser($scope,$resource,$location,$uibModal,$window, $log);
+		saveUser($scope,$resource,$location,$uibModal,$window, $log,toaster);
 
 		$scope.req_salesman = 'hidden';
 		$scope.checkRole = function(){
@@ -3205,7 +3205,7 @@
 	/**
 	 * Save user profile
 	 */
-	function saveUser(scope, resource, location, modal, window, log)
+	function saveUser(scope, resource, location, modal, window, log, toaster)
 	{
 		scope.regExemail = function(){
 			var email = $('#email').val();
@@ -3697,9 +3697,9 @@
 	 * Profile Controller
 	 */
 
-	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache','$http','$routeParams',Profile]);
+	app.controller('Profile',['$scope','$resource','$location','$uibModal','$window','$log','$route','$templateCache','$http','$routeParams','toaster',Profile]);
 
-	function Profile($scope, $resource, $location,$uibModal,$window, $log,$route,$templateCache,$http,$routeParams)
+	function Profile($scope, $resource, $location,$uibModal,$window, $log,$route,$templateCache,$http,$routeParams,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -3729,7 +3729,7 @@
 		});
 
 		// Save user profile
-		saveUser($scope,$resource,$location ,$uibModal,$window,$log);
+		saveUser($scope,$resource,$location ,$uibModal,$window,$log,toaster);
 
 		$scope.downloadUserStatistics = function(){
 			var image_src = angular.element("#chart-image-div").attr('src');
