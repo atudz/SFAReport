@@ -865,15 +865,24 @@
 	/**
 	 * BounceCheck Add Controller
 	 */
-	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route','toaster', BounceCheckAdd]);
+	app.controller('BounceCheckAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route','toaster','$filter', BounceCheckAdd]);
 
-	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route,toaster) {
+	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route,toaster,$filter) {
 		deletePreviousCache($route,$templateCache);
+		$scope.bouncecheck = {
+			original_amount : 0,
+			payment_amount : 0,
+			balance_amount : 0
+		};
+
+		$scope.$watch('bouncecheck.balance_amount', function (newValue, oldValue, scope) {
+		    $('#balance_amount').val($filter('number')($('#balance_amount').val(),2));
+		});
 
 		$scope.save = function (){
 			var hasError = false;						
 			if(!hasError){
-				
+
 				var API = $resource('controller/bouncecheck/save');				
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
@@ -887,11 +896,11 @@
 					'cheque_date_from': $('#cheque_date_from').val(),
 					'account_number': $('#account_number').val(),
 					'reason': $('#reason').val(),
-					'original_amount': $('#original_amount').val(),
-					'payment_amount': $('#payment_amount').val(),
+					'original_amount': $('#original_amount').val().split(",").join(""),
+					'payment_amount': $('#payment_amount').val().split(",").join(""),
 					'payment_date_from': $('#payment_date_from').val(),
 					'remarks': $('#remarks').val(),
-					'balance_amount': $('#balance_amount').val(),
+					'balance_amount': $('#balance_amount').val().split(",").join(""),
 					'txn_number': $('#txn_number').val(),
 					'id' : $('#id').val()
 				};

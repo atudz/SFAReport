@@ -40,25 +40,25 @@
 									<td>[[record.jr_salesman]]</td>
 									<td>[[record.area_name]]</td>
 									<td>[[record.customer_name]]</td>
-									<td>[[record.original_amount]]</td>
-									<td>[[record.balance_amount]]</td>
-									<td>[[record.payment_amount]]</td>
+									<td>[[record.original_amount | number:2]]</td>
+									<td>[[record.balance_amount | number:2]]</td>
+									<td>[[record.payment_amount | number:2]]</td>
 									<td>
 										<span ng-bind="payment_date = (formatDate(record.payment_date) | date:'MM/dd/yyyy hh:mm a')"></span>
 									</td>
 									<td>[[record.remarks]]</td>
 									<td>[[record.dm_number]]</td>
 									<td>
-										<span ng-bind="dm_date = (formatDate(record.dm_date) | date:'MM/dd/yyyy hh:mm a')"></span>
+										<span ng-bind="dm_date = (formatDate(record.dm_date) | date:'MM/dd/yyyy')"></span>
 									</td>
 									<td>[[record.invoice_number]]</td>
 									<td>
-										<span ng-bind="invoice_date = (formatDate(record.invoice_date) | date:'MM/dd/yyyy hh:mm a')"></span>
+										<span ng-bind="invoice_date = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 									</td>
 									<td>[[record.bank_name]]</td>							
 									<td>[[record.cheque_number]]</td>
 									<td>
-										<span ng-bind="cheque_date = (formatDate(record.cheque_date) | date:'MM/dd/yyyy hh:mm a')"></span>
+										<span ng-bind="cheque_date = (formatDate(record.cheque_date) | date:'MM/dd/yyyy')"></span>
 									</td>
 									
 									<td>[[record.account_number]]</td>														
