@@ -61,6 +61,8 @@
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@elseif(ctype_alnum($record->$row))
 									{!!strtoupper($record->$row)!!}
+								@elseif(in_array($row,['discount_rate','collective_discount_rate']))
+									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
 								@endif
@@ -77,6 +79,8 @@
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@elseif(ctype_alnum($record[$row]))
 									{!!strtoupper($record[$row])!!}
+								@elseif(in_array($row,['discount_rate','collective_discount_rate']))
+									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
 								@endif								

@@ -8335,12 +8335,6 @@ class ReportsPresenter extends PresenterCore
 			case 'salesreportpermaterial':
 				$sheet->setColumnFormat([
 					'N:O' => 'MM/DD/YYYY',
-					'V:W' => '0,0.00',
-					'X'   => '0%',
-					'Y'   => '0,0.00',
-					'Z'   => '0%',
-					'AA'  => '0,0.00',
-					'AD'  => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
@@ -8366,46 +8360,30 @@ class ReportsPresenter extends PresenterCore
 			case 'returnperpeso':
 				$sheet->setColumnFormat([
 					'N:O' => 'MM/DD/YYYY',
-					'P:Q' => '0,0.00',
-					'R'   => '0%',
-					'S'   => '0,0.00',
-					'T'   => '0%',
-					'U'   => '0,0.00',
-					'X'   => '0,0.00',
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'returnpermaterial':
 				$sheet->setColumnFormat([
 					'N:O' => 'MM/DD/YYYY',
-					'V:W' => '0,0.00',
-					'X'   => '0%',
-					'Y'   => '0,0.00',
-					'Z'   => '0%',
-					'AA'  => '0,0.00',
-					'AD'  => '0,0.00',
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'unpaidinvoice':
 				$sheet->setColumnFormat([
 					'H'   => 'MM/DD/YYYY',
-					'I:J' => '0,0.00',
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'salescollectionsummary':
 				$sheet->setColumnFormat([
 					'D'   => 'MM/DD/YYYY',
-					'E:G' => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'salescollectionposting':
 				$sheet->setColumnFormat([
-					'G'   => '0,0.00',
 					'H:I' => 'MM/DD/YYYY',
-					'K'   => '0,0.00',
 					'L:M' => 'MM/DD/YYYY',
 					'J'   => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
 					'F'   => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
@@ -8416,13 +8394,8 @@ class ReportsPresenter extends PresenterCore
 			case 'salescollectionreport':
 				$sheet->setColumnFormat([
 					'F'     => 'MM/DD/YYYY',
-					'G:J'   => '0,0.00',
-					'L'     => '0,0.00',
-					'N:Q'   => '0,0.00',
 					'R'     => 'MM/DD/YYYY',
-					'T:U'   => '0,0.00',
 					'X'     => 'MM/DD/YYYY',
-					'AA:AB' => '0,0.00',
 					'V'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT,
 					'D'     => \PHPExcel_Style_NumberFormat::FORMAT_TEXT
 
@@ -8432,19 +8405,11 @@ class ReportsPresenter extends PresenterCore
 			case 'bir':
 				$sheet->setColumnFormat([
 					'A'   => 'MM/DD/YYYY',
-					'H'   => '0,0.00',
-					'J:O' => '0,0.00',
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'salesreportperpeso':
 				$sheet->setColumnFormat([
-					'R'   => '0%',
-					'T'   => '0%',
-					'P:Q' => '0,0.00',
-					'S'   => '0,0.00',
-					'U'   => '0,0.00',
-					'X'   => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
@@ -8460,18 +8425,15 @@ class ReportsPresenter extends PresenterCore
 			case 'flexideal':
 				$sheet->setColumnFormat([
 					'F' => 'MM/DD/YYYY',
-					'N' => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'stockaudit':
 				$sheet->setColumnFormat([
-					'C:D' => '0,0.00'
 				]);
 				break;
 			case 'bouncecheck':
 				$sheet->setColumnFormat([
-					'F:H' => '0,0.00',
 					'I'   => 'MM/DD/YYYY',
 					'L'   => 'MM/DD/YYYY',
 					'N'   => 'MM/DD/YYYY',
@@ -8488,19 +8450,15 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'cashpayment':
 				$sheet->setColumnFormat([
-					'G' => '0,0.00',
 					'F' => 'MM/DD/YYYY',
 					'H' => 'MM/DD/YYYY',
-					'J' => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
 			case 'checkpayment':
 				$sheet->setColumnFormat([
-					'G' => '0,0.00',
 					'F' => 'MM/DD/YYYY',
 					'L' => 'MM/DD/YYYY',					
-					'M' => '0,0.00'
 				]);
 				$this->formatValueForExcel($report, $records);
 				break;
@@ -8544,8 +8502,10 @@ class ReportsPresenter extends PresenterCore
 				case 'salesreportperpeso':
 				case 'returnperpeso':
 				case 'returnpermaterial':
-					$record->discount_rate = ($record->discount_rate) ? $record->discount_rate / 100 : 0;
-					$record->collective_discount_rate = ($record->collective_discount_rate) ? $record->collective_discount_rate / 100 : 0;
+                    $discount_rate = str_replace(array('%',')','(', ','),'', $record->discount_rate);
+                    $collective_discount_rate = str_replace(array('%',')','(', ','),'', $record->collective_discount_rate);
+					$record->discount_rate = ($record->discount_rate) ? $discount_rate / 100 : 0;
+					$record->collective_discount_rate = ($record->collective_discount_rate) ? $collective_discount_rate / 100 : 0;
 					break;
 				case 'materialpricelist':
 				case 'customerlist':
