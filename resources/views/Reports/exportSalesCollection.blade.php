@@ -156,7 +156,7 @@
 							@if(is_object($record) && isset($record->$row))
 								@if(false !== strpos($row,'date') && $record->$row)
 									{{ $record->$row }}
-								@elseif(false !== strpos($record->$row,'.') && is_numeric($record->$row))	
+								@elseif((false !== strpos($record->$row,'.') && is_numeric($record->$row)) || strpos($record->$row, '%'))	
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}	
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record->$row)!!}
@@ -164,7 +164,7 @@
 							@elseif(is_array($record) && isset($record[$row]))
 								@if(false !== strpos($row,'date') && $record[$row])
 									{{ $record[$row] }}
-								@elseif(false !== strpos($record[$row],'.') && is_numeric($record[$row]))	
+								@elseif((false !== strpos($record[$row],'.') && is_numeric($record[$row])) || strpos($record[$row], '%'))	
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}	
 								@else
 									{!!str_replace(array('%',')','(', ','),'', $record[$row])!!}
