@@ -64,10 +64,10 @@
 								{!!Html::input('text','reason','Reason <span class="required">*</span>',$bounceCheck->reason,['onblur'=>'validate(this)'])!!}								
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('number','original_amount','Original Amount <span class="required">*</span>',$bounceCheck->original_amount,['onblur'=>'validate(this)','oninput'=>'compute_balance()'])!!}								
+								{!!Html::input('text','original_amount','Original Amount <span class="required">*</span>',$bounceCheck->original_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.original_amount = ' . $bounceCheck->original_amount,'ng-model' => '$scope.bouncecheck.original_amount','price'])!!}								
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('number','payment_amount','Payment Amount <span class="required">*</span>',$bounceCheck->payment_amount,['onblur'=>'validate(this)','oninput'=>'compute_balance()'])!!}								
+								{!!Html::input('text','payment_amount','Payment Amount <span class="required">*</span>',$bounceCheck->payment_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.payment_amount = ' . $bounceCheck->payment_amount,'ng-model' => '$scope.bouncecheck.payment_amount','price'])!!}								
 							</div>
 							<div class="row form-input-field">								
 								{!!Html::datepicker('payment_date','Payment Date <span class="required">*</span>',false,false,$bounceCheck->payment_date)!!}
@@ -76,7 +76,7 @@
 								{!!Html::input('text','remarks','Remarks <span class="required">*</span>',$bounceCheck->remarks,['onblur'=>'validate(this)'])!!}								
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('number','balance_amount','Balance Amount',(int)$bounceCheck->balance_amount,['onblur'=>'validate(this)','disabled'=>true])!!}								
+								{!!Html::input('number','balance_amount','Balance Amount',(int)$bounceCheck->balance_amount,['onblur'=>'validate(this)','disabled'=>true,'ng-init' =>'$scope.bouncecheck.balance_amount = ' . $bounceCheck->balance_amount,'ng-model' => '$scope.bouncecheck.balance_amount'])!!}								
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','txn_number','Transaction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}								
@@ -286,13 +286,15 @@
 			var counter = parseInt(chunks[1]) + 1;
 			$('#txn_number').val(chunks[0]+'-'+count);
 		}
+		$('#original_amount').attr('disabled','disabled');
 	}
 	
 	function compute_balance()
 	{
-		var payments = {{$payments}};
-		var original_amount = parseFloat($('#original_amount').val());
-		var payment_amount = parseFloat($('#payment_amount').val());
+		var payments = parseFloat({{$payments}});
+		var original_amount = parseFloat($('#original_amount').val().split(",").join(""));
+		var payment_amount = parseFloat($('#payment_amount').val().split(",").join(""));
+		console.log(original_amount + '-' + payment_amount + '-' + payments);
 		var balance = original_amount - payment_amount - payments;		
 		$('#balance_amount').val(balance.toFixed(2));
 	}
