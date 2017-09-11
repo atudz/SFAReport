@@ -429,7 +429,6 @@ class ReportsPresenter extends PresenterCore
     			if(isset($rec->total_collected_amount))
     			{
 	    			$total += $rec->total_collected_amount;
-	    			$rec->total_collected_amount = null;
     			}
     			
     			$rec->rowspan = 1;
@@ -444,7 +443,7 @@ class ReportsPresenter extends PresenterCore
     				$formatted[$index]->rowspan = $row;
     				$formatted[$index]->show = true;
     			}
-    			 
+                $rec->total_collected_amount = null;
     		}
     	}
     	//dd($formatted);
