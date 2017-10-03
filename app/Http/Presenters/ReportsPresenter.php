@@ -311,8 +311,11 @@ class ReportsPresenter extends PresenterCore
     	$cols = array_keys($summary);
     	foreach($data as $val)
     	{
-    		foreach($cols as $key)    		
-    			$summary[$key] += $val->$key;
+    		foreach($cols as $key){    		
+    			if(isset($val->$key)){
+                    $summary[$key] += (float) ((!empty($val->$key) || !is_null($val->$key) || $val->$key != "" || is_numeric($val->$key)) ? $val->$key : 0);
+                }
+            }
     	}
     	    	
     	return $summary;	
@@ -877,7 +880,9 @@ class ReportsPresenter extends PresenterCore
     						$model2->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
     						$model2->orWhere(function($query2) use($self) {    							
     							$query2->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
-    							$query2->whereBetween('collection.total_invoice_net_amount',[0.01,0.99]);
+                                $query2->orWhere(function($query3) use($self) {
+    							     $query3->whereBetween('collection.total_invoice_net_amount',[0.01,0.99]);
+                                });
     						});
     						
     					});
