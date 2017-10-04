@@ -1502,27 +1502,8 @@
 	    
 	    var API = resource('/reports/getdata/'+report);
 	    var params = {};
-	    var reports = ["salescollectionreport","salescollectionposting","salescollectionsummary","cashpayment","checkpayment"];
-	    	    
-	    if($.inArray(report,reports) || report == 'salescollectionreport')
-	    {
-	    	params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
-	    }	    
 
-	    toggleLoading(true);
-	    API.get(params,function(data){
-	    	scope.records = data.records;
-	    	scope.summary = data.summary;
-	    	scope.total = data.total;
-	    	//log.info(data);	    	
-	    	toggleLoading();
-	    	
-	    	if(typeof TableFix !== "undefined"){
-	    		TableFix.tableload();
-	    	}
-
-	    	togglePagination(data.total);
-	    });	    	    
+	    toggleLoading(false);
 	    
 	    params = filter;
 	    
