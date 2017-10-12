@@ -3884,11 +3884,8 @@ class ReportsPresenter extends PresenterCore
     		$prepare->where('sales.salesman_code',auth()->user()->salesman_code);
     	}
 
-    	if(!$this->request->has('sort'))
-    	{
-    		$prepare->orderBy('sales.invoice_date','desc');
-    		$prepare->orderBy('sales.invoice_number');
-    	}
+    	$prepare->orderBy('sales.invoice_date');
+    	$prepare->orderBy('sales.invoice_number');
 
     	return $prepare;
     }
