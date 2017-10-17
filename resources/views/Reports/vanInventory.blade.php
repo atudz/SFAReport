@@ -38,14 +38,12 @@
 							<!-- Beginning balance -->
 							<tr ng-show="item.first_upload">
 								<td class="bold">Beginning Balance</td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
 								<td class="bold">
 									<span ng-bind="item.replenishment.replenishment_date_formatted = (formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy')"></span>
 								</td>
+								<td class="bold"></td>
+								<td class="bold"></td>
+								<td class="bold"></td>
 								<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 								@foreach($itemCodes as $item)
 									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
@@ -54,9 +52,6 @@
 							
 							<!-- Stock count -->
 							<tr ng-repeat="stock in item.stocks|filter:query" ng-show="item.show_stocks" id="[[$parent.$index]]_[[$index]]">
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
 								<td class="bold"></td>
 								<td class="bold" id="[[$parent.$index]]_[[$index]]-transaction_date_updated" ng-class="[stock.transaction_date_updated]">
 									@if($navigationActions['show_transaction_date_column'] && $navigationActions['edit_transaction_date_column'])
@@ -70,6 +65,8 @@
 		  								<span ng-bind="stock.transaction_date_formatted = (formatDate(stock.transaction_date) | date:'MM/dd/yyyy')"></span>
 		  							@endif								
 								</td>
+								<td class="bold"></td>
+								<td class="bold"></td>								
 								<td id="[[$parent.$index]]_[[$index]]-stock_transfer_number_updated" class=[[stock.stock_transfer_number_updated]]>
 									@if($navigationActions['show_stock_transfer_number_column'] && $navigationActions['edit_stock_transfer_number_column'])
 										<a href="" class="editable-click" ng-click="editColumn('text','txn_stock_transfer_in_header','stock_transfer_number',stock.stock_transfer_in_header_id,stock.stock_transfer_number,$index,'Stock Transfer No.','stock_transfer_number',false,$parent.$index,'','stock_transfer_number_updated','{{ $slug }}')" ng-if="stock.closed_period == 0">
@@ -82,7 +79,6 @@
 		  								[[stock.stock_transfer_number | uppercase]]
 		  							@endif
 								</td>
-								<td class="bold"></td>
 								<td class="bold"></td>
 
 
@@ -101,22 +97,33 @@
 								<td>[[record.return_slip_num | uppercase]]</td>
 								<td></td>
 								<td></td>
-								<td></td>
-								<td></td>
 								@foreach($itemCodes as $item)
 									<td ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')"> [[record.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 							</tr>							
 
+							<!-- Adjustment -->
+							<tr style="background-color:#edc4c4;" ng-show="item.showAdjustment">
+								<td class="bold">Adjustment</td>
+								<td class="bold">
+									<span ng-bind="item.adjustment.replenishment_date_formatted = (formatDate(item.adjustment.replenishment_date) | date:'MM/dd/yyyy')"></span>
+								</td>
+								<td class="bold"></td>
+								<td class="bold"></td>
+								<td class="bold"></td>
+								<td class="bold">[[item.adjustment.reference_number | uppercase]]</td>								
+								@foreach($itemCodes as $item)
+									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.adjustment.{{'code_'.$item->item_code}}]]</td>
+								@endforeach
+							</tr>
+							
 							<!-- Stock on Hand -->
 							<tr style="background-color: #ccffcc" ng-show="item.showBody">
 								<td class="bold">Stock On Hand</td>
 								<td class="bold"></td>
 								<td class="bold"></td>
 								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
+								<td class="bold"></td>								
 								<td class="bold"></td>
 								@foreach($itemCodes as $item)
 									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
@@ -126,14 +133,12 @@
 							<!-- Actual Count -->
 							<tr style="background-color:#ccccff;" ng-show="item.showReplenishment">
 								<td class="bold">Actual Count</td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
 								<td class="bold">
 									<span ng-bind="item.replenishment.replenishment_date_formatted = (formatDate(item.replenishment.replenishment_date) | date:'MM/dd/yyyy')"></span>
 								</td>
+								<td class="bold"></td>
+								<td class="bold"></td>
+								<td class="bold"></td>
 								<td class="bold">[[item.replenishment.reference_number | uppercase]]</td>
 								@foreach($itemCodes as $item)
 									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
@@ -146,9 +151,7 @@
 								<td class="bold"></td>
 								<td class="bold"></td>
 								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
-								<td class="bold"></td>
+								<td class="bold"></td>								
 								<td class="bold"></td>
 								@foreach($itemCodes as $item)
 									<td class="bold" ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
@@ -158,8 +161,6 @@
 							<!-- Beginning balance -->
 							<tr ng-show="item.showReplenishment">
 								<td class="bold">Beginning Balance</td>
-								<td class="bold"></td>
-								<td class="bold"></td>
 								<td class="bold"></td>
 								<td class="bold"></td>
 								<td class="bold"></td>

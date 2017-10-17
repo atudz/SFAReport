@@ -2519,6 +2519,77 @@ class ReportsPresenter extends PresenterCore
     }
 
     
+    /**
+     * Get Actual Count Data
+     * @return unknown
+     */
+    public function getActualAcount($date)
+    {
+        // Beginning Balance / Actual Count
+        // Get Replenishment data
+        $prepare = \DB::table('txn_replenishment_header')
+                        ->selectRaw('txn_replenishment_header.replenishment_date, UPPER(txn_replenishment_header.reference_number) reference_number')
+                        ->leftJoin('app_salesman_van', function($join){
+                            $join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+                            $join->where('app_salesman_van.status','=','A');
+                        })
+                        ->leftJoin('replenishment', 'replenishment.reference_number','=','txn_replenishment_header.reference_number');
+        
+        $prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$date);
+        $prepare->where(function($query) {
+                $query->whereNull('replenishment.id');
+                $query->Orwhere('replenishment.type','=','actual_count');
+        });
+            
+        $prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
+        $prepare->orderBy('txn_replenishment_header.replenishment_header_id','desc');
+            
+        $referenceNumFilter = FilterFactory::getInstance('Text');
+        $prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+            
+        if($this->request->has('salesman_code'))
+        {
+            $prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
+        }
+            
+        return $prepare->first();
+    }
+    
+    /**
+     * Get Adjustment Data
+     * @return unknown
+     */
+    public function getAdjustment($from, $to=null)
+    {
+        $prepare = \DB::table('txn_replenishment_header')
+                        ->selectRaw('txn_replenishment_header.replenishment_date, UPPER(txn_replenishment_header.reference_number) reference_number')
+                        ->join('replenishment', function($join){
+                            $join->on('replenishment.reference_number','=','txn_replenishment_header.reference_number');
+                            $join->where('replenishment.type','=','adjustment');
+                        })
+                        ->leftJoin('app_salesman_van', function($join){
+                            $join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
+                            $join->where('app_salesman_van.status','=','A');
+                        });
+        if($from && $to) {
+            $prepare->whereBetween('txn_replenishment_header.replenishment_date',[$from, $to]);
+        } else {
+            $prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$from);
+        }                        
+        
+        $prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
+        $prepare->orderBy('txn_replenishment_header.replenishment_header_id','desc');
+            
+        $referenceNumFilter = FilterFactory::getInstance('Text');
+        $prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
+            
+        if($this->request->has('salesman_code'))
+        {
+            $prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
+        }
+         
+        return $from && $to ? $prepare->get() : $prepare->first();        
+    }
     
     /**
      * Get Van & Inventory records
@@ -2569,29 +2640,7 @@ class ReportsPresenter extends PresenterCore
     		$codes[] = $item->item_code;
     	}
     	
-    	// Beginning Balance / Actual Count
-    	// Get Replenishment data 
-    	$prepare = \DB::table('txn_replenishment_header')    					
-    					->selectRaw('replenishment_date, UPPER(reference_number) reference_number')
-    					->leftJoin('app_salesman_van', function($join){
-    						$join->on('app_salesman_van.van_code','=','txn_replenishment_header.van_code');
-    						$join->where('app_salesman_van.status','=','A');
-    					});
-    	
-    	$prepare->where(\DB::raw('DATE(txn_replenishment_header.replenishment_date)'),'=',$to->format('Y-m-d'));
-    	$prepare->orderBy('txn_replenishment_header.replenishment_date','desc');
-    	$prepare->orderBy('txn_replenishment_header.replenishment_header_id','desc');
-    	
-    	$referenceNumFilter = FilterFactory::getInstance('Text');
-    	$prepare = $referenceNumFilter->addFilter($prepare,'reference_number');
-    	
-    	if($this->request->has('salesman_code'))
-    	{
-    		$prepare = $prepare->where('app_salesman_van.salesman_code','=',$this->request->get('salesman_code'));
-    	}    	    
-    	    	
-    	$replenishment = $prepare->first();
-    	
+    	$replenishment = $this->getActualAcount($to->format('Y-m-d'));    	
     	$firstUpload = false;
     	
     	if($replenishment)
@@ -2820,6 +2869,39 @@ class ReportsPresenter extends PresenterCore
 	    	}
     	}
     	
+    	
+    	// Get adjustment data
+    	$adjustment = $this->getAdjustment($to->format('Y-m-d'));
+    	$adjustmentItems = [];
+    	$tempAdjustments = [];
+    	$hasAdjustment = false;
+    	if($adjustment)
+    	{
+    	    $adjustmentItems = \DB::table('txn_replenishment_detail')
+                                	    ->select(['item_code','quantity'])
+                                	    ->whereIn('item_code',$codes)
+                                	    ->where('reference_number','=',$adjustment->reference_number)
+                                	    ->get();
+            foreach($adjustmentItems as $item)
+    	    {
+    	        $adjustment->{'code_'.$item->item_code} = $item->quantity;
+    	        $tempAdjustments['code_'.$item->item_code] = $item->quantity;
+    	    }
+    	    
+    	    $adjustment->total = 1;
+    	    $hasAdjustment = true;
+    	}
+    	else
+    	{
+    	    $adjustment['total'] = 0;
+    	}
+    	$data['adjustment'] = (array)$adjustment;
+    	if($reports && $hasAdjustment)
+    	{
+    	    $reportRecords[] = array_merge(['customer_name'=>'<strong>Adjustment</strong>'],(array)$adjustment);
+    	}
+    	
+    	
     	// Compute Stock on Hand
     	$stockOnHand = [];    	
     	$hasStockOnHand = false; 
@@ -2836,11 +2918,13 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices[$code] = 0;
     		if(!isset($tempPrevStockTransfer[$code]))	
     			$tempPrevStockTransfer[$code] = 0;
+            if(!isset($tempAdjustments[$code]))
+    		    $tempAdjustments[$code] = 0;
     		
     		if($firstUpload)
-    			$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		    $stockOnHand[$code] = (int)$tempActualCount[$code] + (int)$tempStockTransfer[$code] + (int)$tempAdjustments[$code] + (int)$tempReturns[$code] - (int)$tempInvoices[$code];
     		else
-    			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		    $stockOnHand[$code] = (int)$tempPrevStockTransfer[$code] + (int)$tempStockTransfer[$code] + (int)$tempAdjustments[$code] + (int)$tempReturns[$code] - (int)$tempInvoices[$code];
     		//$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		//$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
@@ -3110,6 +3194,25 @@ class ReportsPresenter extends PresenterCore
     			$tempInvoices['code_'.$item->item_code] -= $item->quantity;    			
     		}
     	}
+    	
+    	
+    	// Get adjustment data
+    	$adjustments = $this->getAdjustment($dateStart, $dateFrom);
+    	$tempAdjustments = [];
+    	foreach($adjustments as $adjustment) {
+    	    $adjusts = \DB::table('txn_replenishment_detail')
+    	                       ->select(['item_code','quantity'])
+    	                       ->whereIn('item_code',$codes)
+    	                       ->where('reference_number','=',$adjustment->reference_number)
+    	                       ->get();
+    	    
+            foreach($adjusts as $item)
+    	    {
+    	        if(!isset($tempInvoices['code_'.$item->item_code]))
+    	            $tempAdjustments['code_'.$item->item_code] = 0;
+    	        $tempAdjustments['code_'.$item->item_code] += $item->quantity;
+    	    }
+    	}
 
     	// Compute Stock on Hand
     	$stockOnHand = [];    	 
@@ -3120,12 +3223,12 @@ class ReportsPresenter extends PresenterCore
     			$tempActualCount[$code] = 0;
     		if(!isset($tempStockTransfer[$code]))
     			$tempStockTransfer[$code] = 0;
-    		/* if(!isset($tempReturns[$code]))
-    			$tempReturns[$code] = 0; */
+            if(!isset($tempAdjustments[$code]))
+    		    $tempAdjustments[$code] = 0; 
     		if(!isset($tempInvoices[$code]))
     			$tempInvoices[$code] = 0;
     		
-    		$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] - $tempInvoices[$code];
+            $stockOnHand[$code] = (int)$tempActualCount[$code] + (int)$tempStockTransfer[$code] + (int)$tempAdjustments[$code] - (int)$tempInvoices[$code];
     		$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];    		
     	}
     	 
@@ -5771,13 +5874,11 @@ class ReportsPresenter extends PresenterCore
     {
     	$headers = [
     			['name'=>'Customer'],
-    			['name'=>'Invoice Date'],
+    			['name'=>'Date/Time'],
     			['name'=>'Invoice No.'],    			 
     			['name'=>'Return Slip No.'],
-    			['name'=>'Transaction Date'],
     			['name'=>'Stock Transfer No.'],
-    			['name'=>'Replenishment Date'],
-    			['name'=>'Replenishment Number']
+    			['name'=>'Reference No'],    			
     	];
     	
     	$items = $this->getVanInventoryItems($type,'CONCAT(item_code,\'<br>\',description) name',$status);
@@ -7010,9 +7111,7 @@ class ReportsPresenter extends PresenterCore
     			'invoice_date',
     			'invoice_number',
     			'return_slip_num',
-    			'transaction_date',
-    			'stock_transfer_number',
-    			'replenishment_date',
+    			'stock_transfer_number',    			
     			'reference_number',    			
     	];
     	
@@ -8416,9 +8515,7 @@ class ReportsPresenter extends PresenterCore
 			case 'vaninventoryfrozen':
 			case 'vaninventorycanned':
 				$sheet->setColumnFormat([
-					'B' => 'MM/DD/YYYY',
-					'E' => 'MM/DD/YYYY',
-					'G' => 'MM/DD/YYYY',
+					'B' => 'MM/DD/YYYY',					
 				]);
 				$records = $this->formatValueExcelVanInventory($records);
 				break;
@@ -8477,25 +8574,25 @@ class ReportsPresenter extends PresenterCore
 		foreach ($records as &$record) {
 			switch ($report) {
 				case 'bir':
-					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->document_date));
+					$record->document_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->document_date));
 					break;
 				case 'salescollectionreport':
-					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
+					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->check_date));
 					break;
 				case 'salescollectionposting':
-					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->collection_posting_date));
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
-					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					$record->collection_posting_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->collection_posting_date));
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_date));
+					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_posting_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->or_date));
 					break;
 				case 'returnpermaterial':
 				case 'returnperpeso':
-					$record->return_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_date));
-					$record->return_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->return_posting_date));
+					$record->return_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->return_date));
+					$record->return_posting_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->return_posting_date));
 					break;
 				case 'materialpricelist':
-					$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_to));
-					$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->effective_date_from));
+					$record->effective_date_to = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->effective_date_to));
+					$record->effective_date_from = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->effective_date_from));
 					break;
 
 				case 'salesreportpermaterial':
@@ -8510,23 +8607,23 @@ class ReportsPresenter extends PresenterCore
 				case 'materialpricelist':
 				case 'customerlist':
 				case 'salesmanlist':
-					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->sfa_modified_date));
+					$record->sfa_modified_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->sfa_modified_date));
 					break;
 				case 'salescollectionreport':
 				case 'salescollectionposting':
-					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->or_date));
 					break;
 				case 'salescollectionposting':
 				case 'salesreportpermaterial':
-					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_posting_date));
+					$record->invoice_posting_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_posting_date));
 					break;
 				case 'bouncecheck':
-					$record->cheque_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cheque_date));
-					$record->dm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->dm_date));
-					$record->payment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->payment_date));
+					$record->cheque_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->cheque_date));
+					$record->dm_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->dm_date));
+					$record->payment_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->payment_date));
 					break;
 				case 'invoiceseries';
-					$record->created_at = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->created_at));
+					$record->created_at = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->created_at));
 					break;
 					
 				case 'salesreportpermaterial':
@@ -8536,18 +8633,18 @@ class ReportsPresenter extends PresenterCore
 				case 'unpaidinvoice':
 				case 'flexideal':
 				case 'bouncecheck':
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_date));
 					break;
 					
 				case 'cashpayment';
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->or_date));
 					break;
 				case 'checkpayment';
-					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
-					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->or_date));
-					$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->cm_date));
-					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->check_date));
+					$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_date));
+					$record->or_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->or_date));
+					$record->cm_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->cm_date));
+					$record->check_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->check_date));
 					break;
 							
 			}
@@ -8564,19 +8661,19 @@ class ReportsPresenter extends PresenterCore
 	{
 		foreach ($records as &$record) {
 			if (is_array($record) && array_key_exists('invoice_date', $record)) {
-				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['invoice_date']));
+				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record['invoice_date']));
 			} elseif (isset($record->invoice_date)) {
-				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->invoice_date));
+				$record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->invoice_date));
 			}
 			if (is_array($record) && array_key_exists('transaction_date', $record)) {
-				$record['transaction_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['transaction_date']));
+				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record['transaction_date']));
 			} elseif (isset($record->transaction_date)) {
-				$record->transaction_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->transaction_date));
+			    $record->invoice_date = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->transaction_date));
 			}
 			if (is_array($record) && array_key_exists('replenishment_date', $record)) {
-				$record['replenishment_date'] = PHPExcel_Shared_Date::PHPToExcel(strtotime($record['replenishment_date']));
+				$record['invoice_date'] = PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record['replenishment_date']));
 			} elseif (isset($record->replenishment_date)) {
-				$record->replenishment_date = PHPExcel_Shared_Date::PHPToExcel(strtotime($record->replenishment_date));
+			    $record->invoice_date= PHPExcel_Shared_Date::PHPToExcel(new \DateTime($record->replenishment_date));
 			}
 		}
 

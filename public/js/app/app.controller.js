@@ -1518,8 +1518,10 @@
 						stocks: data.stocks,
 						show_stocks: data.total_stocks,
 						replenishment: data.replenishment,
+						adjustment: data.adjustment,
 						showBody: data.total,
 						showReplenishment: !data.first_upload && data.replenishment.total,
+						showAdjustment: data.adjustment.total > 0,
 						short_over_stocks: data.short_over_stocks,
 						stock_on_hand: data.stock_on_hand,
 						first_upload: data.first_upload
