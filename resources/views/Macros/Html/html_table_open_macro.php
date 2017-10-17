@@ -23,7 +23,7 @@ Html::macro('topen', function($options=[]) {
 	{
 		$html .= '
 						<div class="pull-left" style="padding:0px 5px 0px 10px">
-							<a href="#'.$options['add_link'].'" class="btn btn-primary btn-sm">Add</a>
+							<a href="#'.$options['add_link'].'" class="btn btn-primary btn-sm">Create</a>
 				      	</div>';
 	}
 	

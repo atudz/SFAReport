@@ -362,6 +362,24 @@ function salesman_sheet_refno($salesmanCode, $type='actual_count')
 }
 
 /**
+ * Get salesman Sheet date
+ * @param unknown $salesmanCode
+ * @param string $type
+ * @return unknown
+ */
+function salesman_sheet_date($salesmanCode, $ref, $type='actual_count')
+{
+    $replenishment = ModelFactory::getInstance('Replenishment')
+                ->where('modified_by',$salesmanCode)
+                ->where('reference_number',$ref)
+                ->where('type',$type)
+                ->first();
+                
+    return $replenishment ? $replenishment->replenishment_date : '';
+    
+}
+
+/**
  * Replenishment types
  * @return string[]
  */

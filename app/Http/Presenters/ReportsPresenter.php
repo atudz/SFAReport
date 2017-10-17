@@ -6948,7 +6948,7 @@ class ReportsPresenter extends PresenterCore
             $params['revision_number'] = $revision_number;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
     		if(in_array($report,['salescollectionsummary','stockaudit','invoiceseries','reversalsummary']))
-    			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio')->setOrientation('portrait');
+    		    $pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('folio','portrait');
     		elseif($report == 'salescollectionreport')
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setPaper('legal');
 			else

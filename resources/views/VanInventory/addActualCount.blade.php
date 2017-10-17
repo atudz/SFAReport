@@ -32,7 +32,17 @@
 								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
+								{!!Html::datepicker('replenishment_date','Count date <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
+							</div>
+							<div class="row form-input-field">
+								<div class="form-group">
+                            		<div class="col-xs-12 col-md-4 col-sm-4 control-label">
+                                		<label for="name" class="">Call From <span class="required">*</span></label>
+                            		</div>
+                            		<div class="col-xs-12 col-sm-8">
+                                		<input class="timepicker text-center form-control" name="replenishment_time" id="replenishment_time" data-required="true">
+                            		</div>
+                        		</div>								
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','reference_number','Count Sheet No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}
@@ -252,6 +262,7 @@
 
 	function addTd() {
 		var tr = $('#table_items > tbody > tr:last').clone();
+		tr.find('input[id="quantity"]').val(0);
 		$('#table_items > tbody > tr:last').after(tr);
 		
 	}

@@ -9,6 +9,7 @@ use DB;
 use Carbon\Carbon;
 use App\Factories\ModelFactory;
 use App\Http\Models\Replenishment;
+use PDF;
 
 class VanInventoryPresenter extends PresenterCore
 {
@@ -1523,7 +1524,7 @@ class VanInventoryPresenter extends PresenterCore
     	$params['overages'] = $overages;
     	$params['ref'] = $ref;
 
-    	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('folio')->setOrientation('portrait');   
+    	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('folio','portrait'); 
     	return $pdf->download('Van Inventory and History Report Statement of Shortages and Overages.pdf');
     }
     
@@ -1621,7 +1622,7 @@ class VanInventoryPresenter extends PresenterCore
     	$replenishment->jr_salesman = jr_salesman($this->request->get('salesman_code'));
     	$replenishment->van_code = salesman_van($this->request->get('salesman_code'));    	
     	$replenishment->items = $prepare->get();
-    	$replenishment->replenish_date = (new Carbon($this->request->get('replenishment_date_from')))->toDateTimeString();
+    	$replenishment->replenish_date = salesman_sheet_date($this->request->get('salesman_code'), $this->request->get('reference_number'));
     	$replenishment->replenish = $this->getReplenishment($this->request->get('reference_number'));
     	
 //     	$this->view->replenishment = $replenishment;
@@ -1645,7 +1646,7 @@ class VanInventoryPresenter extends PresenterCore
     	}
     	elseif($type == 'pdf')
     	{    		
-    		$pdf = \PDF::loadView('VanInventory.actualCountPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;    		
+    	    $pdf = PDF::loadView('VanInventory.actualCountPdfExport', compact('replenishment'))->setPaper('folio','portrait');		
     		return $pdf->download('Actual Count Replenishment Report.pdf');
     	}
     }
@@ -1694,7 +1695,7 @@ class VanInventoryPresenter extends PresenterCore
     		}
     		elseif($type == 'pdf')
     		{
-    			$pdf = \PDF::loadView('VanInventory.adjustmentPdfExport', compact('replenishment'))->setPaper('folio')->setOrientation('portrait');;
+    		    $pdf = \PDF::loadView('VanInventory.adjustmentPdfExport', compact('replenishment'))->setPaper('folio','portrait');
     			return $pdf->download('Adjustment Replenishment Report.pdf');
     		}
     }

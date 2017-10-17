@@ -9,9 +9,9 @@
 					<!-- Filter -->
 					{!!Html::fopen('Toggle Filter')!!}
 						<div class="col-md-8">	
-							{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'set_sheet(this)'])!!}
-							{!!Html::datepicker('replenishment_date','Count date/time <span class="required">*</span>',false)!!}
-							{!!Html::select('reference_number','Count Sheet No. <span class="required">*</span>',[],'Select Salesman',['disabled'=>'disabled'])!!}
+							{!!Html::select('salesman_code','Salesman <span class="required">*</span>', $salesman,$isSalesman ? '' : 'Select Salesman',['onblur'=>'validate(this)','onchange'=>'set_sheet(this)'])!!}							
+							{!!Html::select('reference_number','Count Sheet No. <span class="required">*</span>',[],'Select Salesman',['disabled'=>'disabled','onchange'=>'set_sheet_date(this)'])!!}
+							{!!Html::input('text','replenishment_date','Count date/time','',['disabled'=>true])!!}
 						</div>			
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
@@ -59,12 +59,29 @@
 						.attr("value", k).text(v));
 				});
 				$('#reference_number').removeAttr('disabled');
+				$('#reference_number').trigger('change');
 			} else {				
 				$('#reference_number').empty();
 				$('#reference_number').append($("<option></option>").attr("value", '').text('No Count Sheet No.'));
 				$('#reference_number').attr('disabled','disabled');
+				$('#replenishment_date').val('');
 			}							
 		});
 			
 	}	
+
+	function set_sheet_date(el)
+	{
+		var salesman = $('#salesman_code').val();
+		var sheetNum = $(el).val();
+		var url = 'reports/salesman/sheet/'+salesman+'/'+sheetNum;
+		console.log(url);
+		$.get(url,function(data){
+			if(data){
+				$('#replenishment_date').val(data);
+			} else {				
+				$('#replenishment_date').val('');
+			}							
+		});
+	}
 </script>
