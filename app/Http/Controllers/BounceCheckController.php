@@ -69,10 +69,12 @@ class BounceCheckController extends ControllerCore
                         ->where('txn_number','like',$txnNumber.'%')
                         ->get();
         $balance  = 0;
+        $originalAmount = $bounceCheck->original_amount;
         foreach($payments as $payment) {
             if($balance == 0) {
                 $balance = $payment->original_amount;
             }            
+            $payment->original_amount = $originalAmount;
             $payment->balance_amount = bcsub($balance, $payment->payment_amount, 2);
             $payment->save();
             $balance = $payment->balance_amount;
