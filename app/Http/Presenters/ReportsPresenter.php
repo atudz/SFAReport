@@ -5715,7 +5715,7 @@ class ReportsPresenter extends PresenterCore
 			case 'flexideal':
 				return PresenterFactory::getInstance('VanInventory')->getFlexiDealColumns();
 			case 'invoiceseries':
-				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns();
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns($export);
 			case 'bouncecheck':
 				return PresenterFactory::getInstance('BounceCheck')->getBounceCheckColumns(true);
 			case 'cashpayment':
@@ -6750,7 +6750,7 @@ class ReportsPresenter extends PresenterCore
 				break;
 			case 'invoiceseries':
 				$invoicePresenter = PresenterFactory::getInstance('Invoice');				
-				$columns = $this->getTableColumns($report);
+				$columns = $this->getTableColumns($report, true);
 				$prepare = $invoicePresenter->getPreparedInvoiceSeries();
 				$rows = $invoicePresenter->getInvoiceSeriesSelectColumns();
 				$header = 'Invoice Series Mapping';
