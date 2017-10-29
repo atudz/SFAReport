@@ -43,7 +43,11 @@ class BounceCheckController extends ControllerCore
         $txnNumber = $bounceCheck->txn_number;
         if(false !== strpos($txnNumber,'-'))
         	$txnNumber = explode('-', $txnNumber)[0];
-        $payments = ModelFactory::getInstance('BounceCheck')->where('txn_number','like',$txnNumber.'%')->sum('payment_amount');
+        
+        $payments = 0;        	
+        if(!$id) {
+            $payments = ModelFactory::getInstance('BounceCheck')->where('txn_number','like',$txnNumber.'%')->sum('payment_amount');
+        }        
         $total1 = bcsub($bounceCheck->original_amount, $bounceCheck->payment_amount, 2);
         $bounceCheck->balance_amount = bcsub($total1, $payments, 2);
         
@@ -60,6 +64,20 @@ class BounceCheckController extends ControllerCore
         	return response()->json(['success'=>0,'msg'=>'Server error']);
         }
 
+        // Recompute payments
+        $payments = ModelFactory::getInstance('BounceCheck')
+                        ->where('txn_number','like',$txnNumber.'%')
+                        ->get();
+        $balance  = 0;
+        foreach($payments as $payment) {
+            if($balance == 0) {
+                $balance = $payment->original_amount;
+            }            
+            $payment->balance_amount = bcsub($balance, $payment->payment_amount, 2);
+            $payment->save();
+            $balance = $payment->balance_amount;
+        }
+        
         ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'           => auth()->user()->id,
             'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','bounce-check-report')->value('id'),

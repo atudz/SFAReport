@@ -295,7 +295,14 @@
 		var original_amount = parseFloat($('#original_amount').val().split(",").join(""));
 		var payment_amount = parseFloat($('#payment_amount').val().split(",").join(""));
 		console.log(original_amount + '-' + payment_amount + '-' + payments);
-		var balance = original_amount - payment_amount - payments;		
+		var balance = 0;
+		if($('#id').val() != 0) {
+			balance = original_amount - payment_amount;
+		} else {
+			balance = original_amount - payment_amount - payments;			
+		}
+
+		console.log(balance);
 		$('#balance_amount').val(balance.toFixed(2));
 	}
 	
