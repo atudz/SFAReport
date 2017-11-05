@@ -115,11 +115,11 @@ class SfiTransactionDataController extends ControllerCore
                 case 'header':
                     $file_name = 'SAP-HEADER.txt';
                     break;
-                
+
                 case 'detail':
                     $file_name = 'SAP-DETAIL.txt';
                     break;
-                
+
                 default:
                     $file_name = 'SAP-HEADER-AND-DETAIL.txt';
                     break;
@@ -303,22 +303,24 @@ class SfiTransactionDataController extends ControllerCore
         }
 
         if(request()->has('so_date_from') && !request()->has('so_date_to')){
-            $so_date_from = date('Y-m-d',strtotime(request()->get('so_date_from')));
+            $so_date_from = date('Y-m-d H:i:s',strtotime(request()->get('so_date_from') . ' 00:00:00'));
+            $so_date_from = date('Y-m-d H:i:s',strtotime(request()->get('so_date_from') . ' 23:59:59'));
 
-            $so_numbers = $so_numbers->where('so_date','=',$so_date_from);
+            $so_numbers = $so_numbers->whereBetween('so_date',[$so_date_from,$so_date_to]);
         }
 
         if(request()->has('so_date_from') && request()->has('so_date_to')){
-            $so_date_from = date('Y-m-d',strtotime(request()->get('so_date_from')));
-            $so_date_to = date('Y-m-d',strtotime(request()->get('so_date_to')));
+            $so_date_from = date('Y-m-d H:i:s',strtotime(request()->get('so_date_from') . ' 00:00:00'));
+            $so_date_to = date('Y-m-d H:i:s',strtotime(request()->get('so_date_to') . ' 23:59:59'));
 
             $so_numbers = $so_numbers->whereBetween('so_date',[$so_date_from,$so_date_to]);
         }
 
         if(request()->has('posting_date_from')){
-            $posting_date_from = date('Y-m-d',strtotime(request()->get('posting_date_from')));
+            $posting_date_from = date('Y-m-d H:i:s',strtotime(request()->get('posting_date_from') . ' 00:00:00'));
+            $posting_date_to = date('Y-m-d H:i:s',strtotime(request()->get('posting_date_from') . ' 23:59:59'));
 
-            $so_numbers = $so_numbers->where('sfa_modified_date','=',$posting_date_from);
+            $so_numbers = $so_numbers->whereBetween('sfa_modified_date',[$posting_date_from,$posting_date_to]);
         }
 
         if(request()->has('invoice_number')){
