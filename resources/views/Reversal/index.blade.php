@@ -7,18 +7,19 @@
 			<div class="panel-body">
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
-					<div class="col-md-6">	
+					<div class="col-md-6">
+						{!!Html::select('salesman','Salesman', $salesman,'All')!!}
 						{!!Html::select('report','Reports', get_reports(),'All')!!}
 						{!!Html::select('branch','Branch', $areas)!!}
-						{!!Html::select('updated_by','User', get_users())!!}																										
-					</div>			
-					<div class="col-md-6">	
-						{!!Html::datepicker('created_at','Modified Date',true)!!}
-						{!!Html::input('text','revision','Reversal No.')!!}																
+						{!!Html::select('updated_by','User', get_users())!!}
+					</div>
+					<div class="col-md-6">
+						{!!Html::datepicker('created_at','Reversal Date',true)!!}
+						{!!Html::input('text','revision','Reversal No.')!!}
 					</div>
 				{!!Html::fclose()!!}
 				<!-- End Filter -->
-				
+
 				{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>($isGuest1 || $isManager)])!!}
 					{!!Html::theader($tableHeaders)!!}
 					<tbody>
@@ -33,12 +34,12 @@
 							<td>[[record.before]]</td>
 							<td>[[record.value]]</td>
 							<td>[[record.comment]]</td>
-							<td>[[record.username]]</td>														
-						</tr>									
-					</tbody>				
+							<td>[[record.username]]</td>
+						</tr>
+					</tbody>
 					{!!Html::tfooter(true,20)!!}
-				{!!Html::tclose()!!}			
-			</div>			
+				{!!Html::tclose()!!}
+			</div>
 		</div>
 	</div>
 </div>
