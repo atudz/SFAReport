@@ -22,7 +22,7 @@ class ReversalPresenter extends PresenterCore
     	$this->view->tableHeaders = $this->getSummaryReversalColumns();
     	$this->view->areas = $reportsPresenter->getArea(true);
     	$this->view->customers = $reportsPresenter->getCustomer();
-
+    	
     	return $this->view('index');
     }
 
@@ -36,19 +36,19 @@ class ReversalPresenter extends PresenterCore
     	$headers = [
     			['name'=>'Reversal No.','sort'=>'revision_number'],
     			['name'=>'Reversal Date','sort'=>'created_at'],
-    			['name'=>'Type of Report','sort'=>'report_type'],
+    			['name'=>'Type of Report','sort'=>'report_type'],    			
     			['name'=>'Area'],
     			['name'=>'Salesman Name'],
     			['name'=>'Original','sort'=>'before'],
     			['name'=>'Edited','sort'=>'value'],
-    			['name'=>'Reason of Reversal','sort'=>'comment'],
+    			['name'=>'Reason of Reversal','sort'=>'comment'],    			
     			['name'=>'Username','sort'=>'username'],
     	];
-
+    
     	return $headers;
     }
-
-
+    
+    
     /**
      * Get Cash Payment Select Columns
      * @return string[][]
@@ -63,11 +63,11 @@ class ReversalPresenter extends PresenterCore
     			'salesman_name',
     			'before',
     			'value',
-    			'comment',
+    			'comment',    
     			'username',
     	];
     }
-
+    
     /**
      * get Cash Payment Filter Data
      * @return string[]|unknown[]
@@ -75,23 +75,23 @@ class ReversalPresenter extends PresenterCore
     public function getSummaryReversalFilterData()
     {
     	$reportPresenter = PresenterFactory::getInstance('Reports');
-    	$report = $this->request->get('report') ? get_reports()[$this->request->get('report')] : 'All';
+    	$report = $this->request->get('report') ? get_reports()[$this->request->get('report')] : 'All';    	
     	$branch = $this->request->get('branch') ? $reportPresenter->getArea()[$this->request->get('branch')] : 'All';
     	$user = $this->request->get('updated_by') ? get_users(false)[$this->request->get('updated_by')] : 'All';
-    	$mDate = ($this->request->get('created_at_from') && $this->request->get('created_at_to')) ? $this->request->get('created_at_from').' - '.$this->request->get('created_at_to') : 'All';
+    	$mDate = ($this->request->get('created_at_from') && $this->request->get('created_at_to')) ? $this->request->get('created_at_from').' - '.$this->request->get('created_at_to') : 'All';    	
     	$revision = $this->request->get('revision') ?  $this->request->get('revision') : 'All';
-
+    	
     	$filters = [
     			'Report' => $report,
     			'Branch' => $branch,
     			'User' => $user,
     			'Modified Date' => $mDate,
-    			'Revision' => $revision,
-    	];
-
+    			'Revision' => $revision,    			    		
+    	];    	
+    
     	return $filters;
     }
-
+    
     /**
      * Get summary of reversal report
      * @return \Illuminate\Http\JsonResponse
@@ -100,13 +100,13 @@ class ReversalPresenter extends PresenterCore
     {
     	$prepare = $this->getPreparedSummaryReversal();
     	$result = $this->paginate($prepare);
-
+    	
     	$records = $this->addSalesmanDetails($result->items());
     	$data['records'] = $records;
     	$data['total'] = $result->total();
     	return response()->json($data);
     }
-
+    
     /**
      * Add salesman details
      * @param unknown $records
@@ -119,14 +119,14 @@ class ReversalPresenter extends PresenterCore
     		$pkColumn = array_shift($syncTables[$record->table]);
     		if(!$pkColumn)
     			continue;
-
+    		
     		switch($record->table)
     		{
     			case 'txn_collection_header':
-    			case 'txn_sales_order_header':
+    			case 'txn_sales_order_header':	
     			case 'txn_return_header':
     			case 'txn_evaluated_objective':
-    			case 'txn_stock_transfer_in_header':
+    			case 'txn_stock_transfer_in_header':    				
     				$row = DB::table($record->table)->where($pkColumn,$record->pk_id)->first();
     				if($row)
     				{
@@ -135,11 +135,11 @@ class ReversalPresenter extends PresenterCore
     					{
     						$record->salesman_name = $details->salesman_name;
     						$record->area_name = $details->area_name;
-    					}
-    				}
+    					}    							    				
+    				}    				
     				break;
     			case 'txn_collection_detail':
-    			case 'txn_collection_invoice':
+    			case 'txn_collection_invoice':    				
     				$row = DB::table($record->table)
 		    					->select('txn_collection_header.salesman_code')
 		    					->join('txn_collection_header','txn_collection_header.reference_num','=',$record->table.'.reference_num')
@@ -152,7 +152,7 @@ class ReversalPresenter extends PresenterCore
     					{
     						$record->salesman_name = $details->salesman_name;
     						$record->area_name = $details->area_name;
-    					}
+    					}    					
     				}
     				break;
     			case 'txn_return_detail':
@@ -169,7 +169,7 @@ class ReversalPresenter extends PresenterCore
     						$record->salesman_name = $details->salesman_name;
     						$record->area_name = $details->area_name;
     					}
-
+    				
     				}
     				break;
     			case 'txn_sales_order_deal':
@@ -189,7 +189,7 @@ class ReversalPresenter extends PresenterCore
     							$record->salesman_name = $details->salesman_name;
     							$record->area_name = $details->area_name;
     						}
-
+    				
     				}
     				break;
     			case 'txn_stock_transfer_in_detail':
@@ -206,14 +206,14 @@ class ReversalPresenter extends PresenterCore
     						$record->salesman_name = $details->salesman_name;
     						$record->area_name = $details->area_name;
     					}
-
+    				
     				}
     				break;
     		}
     	}
     	return $records;
     }
-
+    
     public function getSalesmanDetails($salesmanCode, $select='app_salesman.salesman_name,app_area.area_name')
     {
 
@@ -228,10 +228,10 @@ class ReversalPresenter extends PresenterCore
 			    	->where('app_salesman.salesman_code','=',$salesmanCode)
 			    	->groupBy('app_salesman.salesman_code')
 			    	->groupBy('app_salesman.salesman_name')
-			    	->groupBy('app_area.area_code')
+			    	->groupBy('app_area.area_code')			    	
 			    	->first();
     }
-
+    
     /**
      * Get prepared statement summary of reversal
      * @return unknown
@@ -243,8 +243,7 @@ class ReversalPresenter extends PresenterCore
     			   table_logs.created_at,
     			   table_logs.report_type,
     			   table_logs.table,
-                   table_logs.pk_id,
-    			   table_logs.salesman_code,
+    			   table_logs.pk_id,
     			   CONCAT(user.firstname,\' \',user.lastname) username,
     			   table_logs.before,
     			   table_logs.value,
@@ -252,55 +251,50 @@ class ReversalPresenter extends PresenterCore
     			   \'\' salesman_name,
     			   \'\' area_name
     			';
-
+    	
     	$prepare = \DB::table('report_revisions')
     					->selectRaw($select)
     					->leftJoin('table_logs','table_logs.id','=','report_revisions.table_log_id')
 				    	->leftJoin('user','user.id','=','table_logs.updated_by');
-
-        $salesmanFilter = FilterFactory::getInstance('Select');
-        $prepare = $salesmanFilter->addFilter($prepare,'salesman',
-                function($self, $model){
-                    return $model->where('table_logs.salesman_code','=',$self->getValue());
-                });
-
+    	    	
+    	
     	$reportFilter = FilterFactory::getInstance('Select');
     	$prepare = $reportFilter->addFilter($prepare,'report',
     			function($self, $model){
     				return $model->where('report_revisions.report',$self->getValue());
     			});
-
+    	
     	$branchFilter = FilterFactory::getInstance('Text');
     	$prepare = $branchFilter->addFilter($prepare,'branch',
     			function($self, $model){
     				return $model->where('user.location_assignment_code',$self->getValue());
     			});
-
+    	 
     	$userFilter = FilterFactory::getInstance('Select');
-    	$prepare = $userFilter->addFilter($prepare,'updated_by',
+    	$prepare = $userFilter->addFilter($prepare,'updated_by', 
     			function($self, $model){
     				return $model->where('table_logs.updated_by',$self->getValue());
     			});
-
+    	 
     	$mDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $mDateFilter->addFilter($prepare,'created_at',
     			function($self, $model){
     				return $model->whereBetween('table_logs.created_at',$self->formatValues($self->getValue()));
     			});
-
+    	 
     	$revNumFilter = FilterFactory::getInstance('Date');
     	$prepare = $revNumFilter->addFilter($prepare,'revision',
     			function($self, $model){
     				return $model->where('report_revisions.revision_number','LIKE','%'.$self->getValue().'%');
     			});
-
+    	 
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('table_logs.created_at','desc');
     	}
 
     	$prepare->whereNull('user.deleted_at');
-
+    	
     	return $prepare;
     }
 }
