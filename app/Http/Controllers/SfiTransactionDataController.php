@@ -401,14 +401,15 @@ class SfiTransactionDataController extends ControllerCore
             ])
             ->select(
                 'so_number',
-                'item_code',
                 'reference_num',
-                'gross_served_amount',
-                'vat_amount',
-                'discount_rate',
-                'discount_amount'
+                DB::raw('SUM(gross_served_amount) as gross_served_amount'),
+                DB::raw('SUM(vat_amount) as vat_amount'),
+                DB::raw('SUM(discount_rate) as discount_rate'),
+                DB::raw('SUM(discount_amount) as discount_amount')
             )
-            ->whereIn('so_number',$so_numbers);
+            ->distinct()
+            ->whereIn('so_number',$so_numbers)
+            ->groupBy('reference_num');
 
 
         if(request()->has('offset')){
