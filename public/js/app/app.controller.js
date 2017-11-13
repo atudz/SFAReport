@@ -11,11 +11,11 @@
 	var app = angular.module('app');
 	var defaultDate = '';
 	var fetch = true;
-	
+
 	app.controller('SalesCollectionReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SalesCollectionReport]);
-	
+
 	function SalesCollectionReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
@@ -56,16 +56,16 @@
 		//mass edit
 		massEdit($scope, $uibModal, 'report');
 	}
-	
-	
+
+
 	/**
 	 * Sales & Collection Posting controller
 	 */
 
 	app.controller('SalesCollectionPosting',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SalesCollectionPosting]);
-	
+
 	function SalesCollectionPosting($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{		
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
@@ -111,14 +111,14 @@
 
 		monthlySummaryNewFeatures($scope,$uibModal,$http,toaster);
 	}
-	
+
 	/**
 	 * Cash payments controller
 	 */
 	app.controller('CashPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',CashPaymentsReport]);
-	
+
 	function CashPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
@@ -126,7 +126,7 @@
 				  'customer_code',
 				  'area_code',
 				  'invoice_date_from',
-				  'invoice_date_to',		          
+				  'invoice_date_to',
 				  'or_date_from',
 				  'or_date_to',
 				  'salesman',
@@ -140,14 +140,14 @@
 		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
-	
+
 	/**
 	 * Check payments controller
 	 */
 	app.controller('CheckPaymentsReport',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',CheckPaymentsReport]);
-	
+
 	function CheckPaymentsReport($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
@@ -155,7 +155,7 @@
 				  'customer_code',
 				  'area_code',
 				  'invoice_date_from',
-				  'invoice_date_to',		          
+				  'invoice_date_to',
 				  'or_date_from',
 				  'or_date_to',
 				  'salesman',
@@ -207,9 +207,9 @@
 	 * Van Inventory Stock Transfer Report
 	 */
 	app.controller('StockTransfer',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',StockTransfer]);
-	
+
 	function StockTransfer($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
@@ -219,8 +219,8 @@
 				  'segment',
 				  'item_code',
 				  'transfer_date_from',
-				  'transfer_date_to',		          		          
-				  'stock_transfer_number'		          
+				  'transfer_date_to',
+				  'stock_transfer_number'
 
 		];
 
@@ -239,25 +239,25 @@
 		//mass edit
 		massEdit($scope, $uibModal, 'stock-transfer');
 	}
-	
-	
+
+
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
 	app.controller('StockAudit',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',StockAudit]);
-	
+
 	function StockAudit($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
-				  'salesman_code',		          
+				  'salesman_code',
 				  'area',
 				  'month_from',
 				  'year_from',
 				  'period_from',
-				  'period_to',		          		          
-				  'reference_number'		          
+				  'period_to',
+				  'reference_number'
 
 		];
 
@@ -265,25 +265,25 @@
 		reportController($scope,$resource,$uibModal,$window,'stockaudit',params,$log,toaster, TableFix);
 
 	}
-	
-	
+
+
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
 	app.controller('FlexiDeal',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',FlexiDeal]);
-	
+
 	function FlexiDeal($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
-				  'salesman_code',		          
+				  'salesman_code',
 				  'area_code',
 				  'customer_code',
 				  'company_code',
 				  'invoice_date_from',
-				  'invoice_date_to',		          		          
-				  'item_code'		          
+				  'invoice_date_to',
+				  'item_code'
 
 		];
 
@@ -291,38 +291,38 @@
 		reportController($scope,$resource,$uibModal,$window,'flexideal',params,$log,toaster, TableFix);
 
 	}
-	
-	
+
+
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
 	app.controller('ActualCount',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',ActualCount]);
-	
+
 	function ActualCount($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		$scope.editHide = 'hidden'
 		$scope.url = '#actualcount.edit/';
 		$scope.editUrl = '';
-		
+
 		var params = [
-				  'salesman_code',		          
-				  'reference_number'		          		          
+				  'salesman_code',
+				  'reference_number'
 
 		];
 
 	    reportController($scope,$resource,$uibModal,$window,'actualcount',params,$log,toaster, TableFix);
 
 	}
-	
+
 	/**
 	 * User List controller
 	 */
 	app.controller('ActualCountAdd',['$scope','$resource','$location','$window','$uibModal','$log','$route','$templateCache','toaster', ActualCountAdd]);
 
 	function ActualCountAdd($scope, $resource, $location, $window, $uibModal, $log,$route, $templateCache,toaster) {
-		
+
 		deletePreviousCache($route,$templateCache);
 
 		$('.timepicker').timepicker({
@@ -336,31 +336,31 @@
 			dropdown: true,
 			scrollbar: true
 		});
-		
-		$scope.preview = function (){		
+
+		$scope.preview = function (){
 			var modalInstance = $uibModal.open({
 				animation: true,
 				templateUrl: 'ActualCountPreview',
 				controller: 'ActualCountPreview',
 				windowClass: 'center-modal',
 				size: 'lg'
-			});	
+			});
 		};
-		
+
 		$scope.save = function (){
 			var hasError = false;
-			
+
 			$('input[name^=quantity]').each(function(){
 				if($(this).val()<0){
 					$(this).next('span').html('Quantity must not be negative.');
 					$(this).parent().parent().addClass('has-error');
 				}
 			});
-			
+
 			if(!hasError){
-				
+
 				var API = $resource('controller/vaninventory/actualcount');
-				
+
 				var items = $("select[name^='item_code']").map(function (idx, el) {
 								return $(el).val();
 							}).get();
@@ -383,7 +383,7 @@
 					'quantity': quantities,
 					'id': $('#id').val()
 				};
-				
+
 				API.save(params).$promise.then(function(data){
 					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Actual Count Record', 3000);
 					$location.path('vaninventory.actualcount');
@@ -397,15 +397,15 @@
 							} else {
 								$('[id='+index+']').next('.help-block').html(val);
 								$('[id='+index+']').parent().parent().addClass('has-error');
-							}						
+							}
 						});
 					}
 				});
-			}			
+			}
 		}
-		
-		
-		$scope.remove = function () {			
+
+
+		$scope.remove = function () {
 			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
 				animation: true,
@@ -422,15 +422,15 @@
 			});
 		}
 	};
-	
+
 	/**
 	 * Actual Count Preview
 	 */
 	app.controller('ActualCountPreview',['$scope','$http','$uibModalInstance','$log',ActualCountPreview]);
-	
+
 	function ActualCountPreview($scope, $http, $uibModalInstance, $log)
 	{
-		
+
 		var replenishment = '';
 		if(angular.element('#replenishment_date_from').val()){
 			// @todo: add date format with time
@@ -448,7 +448,7 @@
 		if(angular.element('#van_code').val()){
 			van_code = angular.element('#van_code option:selected').text();
 		}
-		
+
 		var details = {
 				'salesman_name' : salesman,
 				'jr_salesman' : jr_salesman,
@@ -457,9 +457,9 @@
 				'reference' : angular.element('#reference_number').val(),
 		};
 		$scope.details = details;
-		
+
 		var items = new Array();
-		
+
 		angular.element('#table_items').find('tr[id^=items]').each(function(i,el){
 				var tds = $(this).find('td');
 				items.push({
@@ -468,33 +468,33 @@
 						item_qty: tds.eq(2).find("input").val()
 					});
 		});
-		
+
 		$scope.items = items;
 		$log.info(details);
 		$log.info(items);
-		
+
 		$scope.close = function(){
 			$uibModalInstance.dismiss('cancel');
 		}
 	}
-	
+
 
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
 	app.controller('ActualCountDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',ActualCountDelete]);
-	
+
 	function ActualCountDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
-		
-		$scope.save = function (){			
+
+		$scope.save = function (){
 			var API = $resource('controller/vaninventory/actualcount/delete/'+$scope.params.id);
 			var params = {
-					'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()
 				};
-			
+
 			API.save(params).$promise.then(function(data){
 				$location.path('vaninventory.actualcount');
 			}, function(error){
@@ -503,34 +503,34 @@
 					$('.help-block').html('');
 					$.each(error.data, function(index, val){
 						$('[id='+index+']').next('.help-block').html(val);
-						$('[id='+index+']').parent().parent().addClass('has-error');												
+						$('[id='+index+']').parent().parent().addClass('has-error');
 					});
 				}
 			});
-			
+
 		}
-		
+
 		$scope.cancel = function (){
 			$uibModalInstance.dismiss('cancel');
 		}
 	}
 
-	
+
 	/**
 	 * Van Inventory Adjustment Adjustment
 	 */
 	app.controller('Adjustment',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',Adjustment]);
-	
+
 	function Adjustment($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		$scope.editHide = 'hidden'
 		$scope.url = '#adjustment.edit/';
 		$scope.editUrl = '';
-		
+
 		var params = [
-				  'salesman_code',		          
+				  'salesman_code',
 				  'replenishment_date_from',
 				  'reference_number',
 				  'adjustment_reason'
@@ -541,7 +541,7 @@
 		reportController($scope,$resource,$uibModal,$window,'adjustment',params,$log,toaster, TableFix);
 
 	}
-	
+
 	/**
 	 * User List controller
 	 */
@@ -551,12 +551,12 @@
 		deletePreviousCache($route,$templateCache);
 
 		$scope.save = function (){
-			var hasError = false;			
-			
+			var hasError = false;
+
 			if(!hasError){
-				
+
 				var API = $resource('controller/vaninventory/adjustment');
-				
+
 				var items = $("select[name^='item_code']").map(function (idx, el) {
 								return $(el).val();
 							}).get();
@@ -566,18 +566,18 @@
 				var brands = $("select[name^='brands']").map(function (idx, el) {
 									return $(el).val();
 							}).get();
-				
+
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 					'replenishment_date_from': $('#replenishment_date_from').val(),
 					'reference_number': $('#reference_number').val(),
-					'adjustment_reason': $('#adjustment_reason').val(),					
+					'adjustment_reason': $('#adjustment_reason').val(),
 					'item_code': items,
 					'quantity': quantities,
 					'brands': brands,
 					'id': $('#id').val()
 				};
-				
+
 				API.save(params).$promise.then(function(data){
 					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Adjustment Record', 3000);
 					$location.path('vaninventory.adjustment');
@@ -591,15 +591,15 @@
 							} else {
 								$('[id='+index+']').next('.help-block').html(val);
 								$('[id='+index+']').parent().parent().addClass('has-error');
-							}						
+							}
 						});
 					}
 				});
-			}			
+			}
 		}
-		
-		
-		$scope.remove = function () {			
+
+
+		$scope.remove = function () {
 			var params = { id:$('#id').val(), reference_num: $('#reference_number').val() };
 			var modalInstance = $uibModal.open({
 				animation: true,
@@ -616,24 +616,24 @@
 			});
 		}
 	};
-	
+
 
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
 	app.controller('AdjustmentDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',AdjustmentDelete]);
-	
+
 	function AdjustmentDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
-		
-		$scope.save = function (){			
+
+		$scope.save = function (){
 			var API = $resource('controller/vaninventory/adjustment/delete/'+$scope.params.id);
 			var params = {
-					'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()
 				};
-			
+
 			API.save(params).$promise.then(function(data){
 				$location.path('vaninventory.adjustment');
 			}, function(error){
@@ -642,28 +642,28 @@
 					$('.help-block').html('');
 					$.each(error.data, function(index, val){
 						$('[id='+index+']').next('.help-block').html(val);
-						$('[id='+index+']').parent().parent().addClass('has-error');												
+						$('[id='+index+']').parent().parent().addClass('has-error');
 					});
 				}
 			});
-			
+
 		}
-		
+
 		$scope.cancel = function (){
 			$uibModalInstance.dismiss('cancel');
 		}
 	}
-	
+
 	/**
 	 * Van Inventory Stock Audit Report
 	 */
 	app.controller('Replenishment',['$scope','$resource','$uibModal','$window','$log','TableFix','toaster',Replenishment]);
-	
+
 	function Replenishment($scope, $resource, $uibModal, $window, $log, TableFix, toaster)
-	{	    	
-		
+	{
+
 		var params = [
-	    		  'salesman_code',		          
+	    		  'salesman_code',
 		          'replenishment_date',
 		          'reference_number',
 		          'type',
@@ -673,11 +673,11 @@
 
 	    // main controller codes
 	    reportController($scope,$resource,$uibModal,$window,'replenishment',params,$log,toaster, TableFix);
-	    
+
 	    executeReplenishment($scope, $resource, $uibModal, params,$log,toaster);
 
 	}
-	
+
 	/**
 	 * User List controller
 	 */
@@ -687,10 +687,10 @@
 
 		deletePreviousCache($route,$templateCache);
 
-		
+
 		$scope.save = function (){
 			var API = $resource('controller/vaninventory/stocktransfer');
-			
+
 			var params = {
 				'stock_transfer_number': $('#stock_transfer_number').val(),
 				'stock_transfer_id': $('#stock_transfer_id').val(),
@@ -703,7 +703,7 @@
 				'uom_code': $('#uom_code').val(),
 				'quantity': $('#quantity').val(),
 			};
-			
+
 			API.save(params).$promise.then(function(data){
 				toaster.pop('success', 'Success', 'Successfully Created Stock Transfer Record', 3000);
 				$location.path('vaninventory.stocktransfer');
@@ -717,25 +717,25 @@
 						} else {
 							$('[id='+index+']').next('.help-block').html(val);
 							$('[id='+index+']').parent().parent().addClass('has-error');
-						}						
+						}
 					});
 				}
 			});
 		}
 	};
-	
-	
+
+
 	/**
 	 * Van Inventory Replenishment Adjustment
 	 */
 	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',InvoiceSeries]);
-	
+
 	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
-				  'salesman_code',		          
+				  'salesman_code',
 				  'invoice_start',
 				  'invoice_end',
 				  'status'
@@ -746,7 +746,7 @@
 		reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log,toaster, TableFix);
 
 	}
-	
+
 	/**
 	 * User List controller
 	 */
@@ -759,10 +759,10 @@
 		$templateCache.remove(currentPageTemplate);
 
 		$scope.save = function (){
-			var hasError = false;						
+			var hasError = false;
 			if(!hasError){
-				
-				var API = $resource('controller/invoiceseries/save');				
+
+				var API = $resource('controller/invoiceseries/save');
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 					'invoice_start': $('#invoice_start').val(),
@@ -770,7 +770,7 @@
 					'status': $('#status').val(),
 					'id' : $('#id').val()
 				};
-				
+
 				API.save(params).$promise.then(function(data){
 					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Invoice Series Record', 3000);
 					$location.path('invoiceseries.mapping');
@@ -784,15 +784,15 @@
 							} else {
 								$('[id='+index+']').next('.help-block').html(val);
 								$('[id='+index+']').parent().parent().addClass('has-error');
-							}						
+							}
 						});
 					}
 				});
-			}			
+			}
 		}
-		
-		
-		$scope.remove = function () {			
+
+
+		$scope.remove = function () {
 			var params = { id:$('#id').val(), id: $('#id').val() };
 			var modalInstance = $uibModal.open({
 				animation: true,
@@ -809,24 +809,24 @@
 			});
 		}
 	};
-	
+
 
 	/**
 	 * Van Inventory Replenishment Delete
 	 */
 	app.controller('InvoiceSeriesDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',InvoiceSeriesDelete]);
-	
+
 	function InvoiceSeriesDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
-		
-		$scope.save = function (){			
+
+		$scope.save = function (){
 			var API = $resource('controller/invoiceseries/delete/'+$scope.params.id);
 			var params = {
-					'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()
 				};
-			
+
 			API.save(params).$promise.then(function(data){
 				$location.path('invoiceseries.mapping');
 			}, function(error){
@@ -835,30 +835,30 @@
 					$('.help-block').html('');
 					$.each(error.data, function(index, val){
 						$('[id='+index+']').next('.help-block').html(val);
-						$('[id='+index+']').parent().parent().addClass('has-error');												
+						$('[id='+index+']').parent().parent().addClass('has-error');
 					});
 				}
 			});
-			
+
 		}
-		
+
 		$scope.cancel = function (){
 			$uibModalInstance.dismiss('cancel');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Bounce Check Controller
 	 */
 	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',BounceCheck]);
-	
+
 	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
-				  'salesman_code',		          
+				  'salesman_code',
 				  'area_code',
 				  'customer_code',
 				  'txn_number',
@@ -872,7 +872,7 @@
 		reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log,toaster, TableFix);
 
 	}
-	
+
 	/**
 	 * BounceCheck Add Controller
 	 */
@@ -891,10 +891,10 @@
 		});
 
 		$scope.save = function (){
-			var hasError = false;						
+			var hasError = false;
 			if(!hasError){
 
-				var API = $resource('controller/bouncecheck/save');				
+				var API = $resource('controller/bouncecheck/save');
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 					'customer_code': $('#customer_code').val(),
@@ -915,7 +915,7 @@
 					'txn_number': $('#txn_number').val(),
 					'id' : $('#id').val()
 				};
-				
+
 				API.save(params).$promise.then(function(data){
 					toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Bounce Check Record', 3000);
 					$location.path('bounce.check');
@@ -929,15 +929,15 @@
 							} else {
 								$('[id='+index+']').next('.help-block').html(val);
 								$('[id='+index+']').parent().parent().addClass('has-error');
-							}						
+							}
 						});
 					}
 				});
-			}			
+			}
 		}
-		
-		
-		$scope.remove = function () {			
+
+
+		$scope.remove = function () {
 			var params = { txn_number: $('#txn_number').val() };
 			var modalInstance = $uibModal.open({
 				animation: true,
@@ -954,24 +954,24 @@
 			});
 		}
 	};
-	
+
 
 	/**
 	 * Bounce Check Delete
 	 */
 	app.controller('BounceCheckDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',BounceCheckDelete]);
-	
+
 	function BounceCheckDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
 		deletePreviousCache($route,$templateCache);
 
 		$scope.params = params;
-		
-		$scope.save = function (){			
+
+		$scope.save = function (){
 			var API = $resource('controller/bouncecheck/delete/'+$scope.params.txn_number);
 			var params = {
-					'remarks': $('#remarks').val()					
+					'remarks': $('#remarks').val()
 				};
-			
+
 			API.save(params).$promise.then(function(data){
 				$location.path('bounce.check');
 			}, function(error){
@@ -980,18 +980,18 @@
 					$('.help-block').html('');
 					$.each(error.data, function(index, val){
 						$('[id='+index+']').next('.help-block').html(val);
-						$('[id='+index+']').parent().parent().addClass('has-error');												
+						$('[id='+index+']').parent().parent().addClass('has-error');
 					});
 				}
 			});
-			
+
 		}
-		
+
 		$scope.cancel = function (){
 			$uibModalInstance.dismiss('cancel');
 		}
 	}
-	
+
 	/**
 	 * Van Inventory Controller
 	 */
@@ -1367,9 +1367,9 @@
 			startingDay: 0
 		};
 
-		$scope.format = 'MM/dd/yyyy';		  
+		$scope.format = 'MM/dd/yyyy';
 	}
-	
+
 	/**
 	 * Date Input Controller
 	 */
@@ -1411,9 +1411,9 @@
 			startingDay: 0
 		};
 
-		$scope.format = 'MMM/yyyy';			  
+		$scope.format = 'MMM/yyyy';
 	}
-	
+
 	/**
 	 * Date Input Controller
 	 */
@@ -1455,7 +1455,7 @@
 			startingDay: 0
 		};
 
-		$scope.format = 'yyyy';			  
+		$scope.format = 'yyyy';
 	}
 
 	/**
@@ -1535,7 +1535,7 @@
 								scope.item_codes.push(key);
 							}
 						});
-					} 
+					}
 
 					var stocks_length = item.stocks.length;
 					if(item.show_stocks > 0 && stocks_length > 0)
@@ -1751,9 +1751,9 @@
 	function filterSubmit(scope, API, filter, log, report, TableFix)
 	{
 		var params = {};
-		
+
 		scope.filter = function(){
-				
+
 			var exclude = ['salescollectionsummary','stockaudit','actualcount','adjustment','bouncecheck'];
 			var formatReport = ['salescollectionsummary','stockaudit'];
 			var formatField = ['invoice_date_from','month_from','year_from'];
@@ -1774,7 +1774,7 @@
 					var from = $('#'+val).val();
 					var to = $('#'+val.replace('_from','_to')).val();
 
-					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to)))) 
+					if(((from && !to) || (!from && to) || (new Date(from) > (new Date(to))))
 						&& -1 == $.inArray(report,exclude))
 					{
 						hasError = true;
@@ -1803,7 +1803,7 @@
 						$('#'+val).parent().next('span').html('This field is required.');
 					} else {
 						$('#'+val).next('span').html('This field is required.');
-					}					
+					}
 					hasError = true;
 				} else {
 					if(val.indexOf('_from') != -1){
@@ -1812,8 +1812,8 @@
 						//$('#'+val).next('span').html('');
 					}
 				}
-				
-				
+
+
 				if(-1 !== $.inArray(report,formatReport) && -1 !== $.inArray(val,formatField)){
 					var date = new Date($('#'+val).val());
 					if(date && $('#'+val).val().trim()){
@@ -1842,7 +1842,7 @@
 						TableFix.tableload();
 					}
 					togglePagination(data.total);
-					
+
 					if(-1 !== $.inArray(report,exclude) && data.reference_num){
 						scope.editHide = '';
 						scope.editUrl = scope.url + data.reference_num;
@@ -1869,7 +1869,7 @@
 					angular.element($('#'+val)).scope().setTo(new Date());
 				}
 				params[val] = '';
-				
+
 				if(val.indexOf('_from') != -1){
 					$('#'+val).parent().next('span').html('');
 				} else {
@@ -2095,7 +2095,7 @@
 				var reportType = "";
 				var report = "";
 				var updated = false;
-				
+
 				var commentLists = [];
 				if (typeof data.sync_data.com[0] !== "undefined") {
 					angular.forEach(data.sync_data.com, function (comment) {
@@ -2127,7 +2127,7 @@
 					case "vaninventory.stocktransfer":
 						reportType = "Van Inventory - Stock Transfer";
 						report = 'stocktransfer';
-						break;			
+						break;
 					case 'cashpayments':
 						reportType = "Cash Payments";
 						report = 'cashpayments';
@@ -2140,11 +2140,11 @@
 				var total = column;
 				if(alias)
 					total = alias;
-				
+
 				scope.oldVal = '';
 				if(getTotal)
 					scope.oldVal = value;
-							
+
 				var template = '';
 				var inputType = '';
 				if(data.sync_data.sync == 1)
@@ -2164,15 +2164,15 @@
 						case 'select':
 							template = 'EditColumnSelect';
 							break;
-						case 'number':	
+						case 'number':
 							template = 'EditColumnText';
 							inputType = 'number';
 							value = Number(value);
 							break;
-						default:	
+						default:
 							template = 'EditColumnText';
 							inputType = 'text';
-							break;	
+							break;
 					}
 				}
 				var params = {
@@ -2198,8 +2198,8 @@
 						toUpdate: toUpdate,
 						slug: slug
 				};
-				
-				
+
+
 				var modalInstance = modal.open({
 					animation: true,
 					scope: scope,
@@ -2213,13 +2213,13 @@
 						}
 					}
 				});
-					
+
 			});
 
 		}
 
 	}
-	
+
 	/**
 	 * Export report
 	 */
@@ -3311,7 +3311,7 @@
 				scope.generateJrSalesmanCode(scope.records.id);
 			}
 		};
-		
+
 		scope.generateJrSalesmanCode = function (id) {
 			var API = resource('/controller/user/generate/' + $('#salesman_code').val());
 			if (id) {
@@ -3384,12 +3384,12 @@
 			{
 				personalInfoErrors.push('Email must be unique.');
 			}
-			
+
 			if($('#username').val() && $.inArray($('#username').val(),$scope.usernameList))
 			{
 				personalInfoErrors.push('Username must be unique.');
 			}*/
-			
+
 			/*var numeric = new RegExp('/^\d+$/');
 			if($('#telephone').val() && !numeric.test($('#telephone')))
 			{
@@ -3810,20 +3810,21 @@
 	app.controller('MainCtrl', function($scope) {
 		  $scope.var1 = '07-2013';
 		});
-	
+
 	app.controller('ReversalSummary',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',ReversalSummary]);
-	
+
 	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{	    	
+	{
 		deletePreviousCache($route,$templateCache);
 
 		var params = [
+				  'salesman',
 				  'report',
 				  'branch',
-				  'updated_by',		          
+				  'updated_by',
 				  'created_at_from',
 				  'created_ate_to',
-				  'revision'		          
+				  'revision'
 		];
 
 		// main controller codes
@@ -3838,7 +3839,7 @@
 	 * Open and Closing Period controller
 	 */
 	app.controller('OpenClosingPeriod',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',OpenClosingPeriod]);
-	
+
 	function OpenClosingPeriod($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
 	{
 		deletePreviousCache($route,$templateCache);
@@ -3918,7 +3919,7 @@
 				});
 		}
 
-		// creates 1 to 28,29,30 and 31 
+		// creates 1 to 28,29,30 and 31
 		$scope.rangeLimit =  function(limit){
 			var day = [];
 			for (var i = 1; i <= limit; i++) {
@@ -4057,8 +4058,8 @@
 			window.open('/period/print-report?limit_day=' + $scope.filter.limit_day + '&period_label=' + $scope.filter.period_label + '&navigations_ids=' + $('#navigation_ids').val() + '&year=' + $scope.filter.year + '&month=' + $scope.filter.month + '&company_code=' + $scope.filter.company_code, '_blank');
         }
 	}
-	
-	
+
+
 	/**
 	 * Execute Replenishment
 	 */
@@ -4074,35 +4075,35 @@
 			query += delimeter + val + '=' + $('#'+val).val();
 		});
 		url += query;
-		
-		scope.params = filter;	
+
+		scope.params = filter;
 		scope.urlQuery = query;
-		
-		scope.exportXls = function() {			
-			window.location.href = url;						
+
+		scope.exportXls = function() {
+			window.location.href = url;
 		}
-				
-		scope.postData = function(){		
+
+		scope.postData = function(){
 			var modalInstance = modal.open({
 				scope: scope,
 				animation: true,
 				templateUrl: 'ConfirmPost',
 				controller: 'ReplenishmentConfirm',
-				windowClass: 'center-modal',						
-			});		
+				windowClass: 'center-modal',
+			});
 		}
-		
-		scope.seedHeader = function(){		
+
+		scope.seedHeader = function(){
 			var API = resource('controller/vaninventory/replenishment/seed/header');
-			
+
 			var params = {
 				'salesman_code': $('#salesman_code').val(),
 				'type': $('#type').val(),
 				'area_code': $('#area_code').val(),
 				'reference_number': $('#reference_number').val(),
-				'replenishment_date': $('#replenishment_date').val()				
+				'replenishment_date': $('#replenishment_date').val()
 			};
-			
+
 			API.save(params).$promise.then(function(data){
 				if(data.success){
 					toaster.pop('success', 'Success', 'Successfully Seeded Header', 5000);
@@ -4113,18 +4114,18 @@
 				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
 			});
 		}
-		
-		scope.seedData = function(){		
+
+		scope.seedData = function(){
 			var API = resource('controller/vaninventory/replenishment/seed/detail');
-			
+
 			var params = {
 				'salesman_code': $('#salesman_code').val(),
 				'type': $('#type').val(),
 				'area_code': $('#area_code').val(),
 				'reference_number': $('#reference_number').val(),
-				'replenishment_date': $('#replenishment_date').val()				
+				'replenishment_date': $('#replenishment_date').val()
 			};
-			
+
 			API.save(params).$promise.then(function(data){
 				if(data.success){
 					toaster.pop('success', 'Success', 'Successfully Seeded Data', 5000);
@@ -4135,18 +4136,18 @@
 				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
 			});
 		}
-		
-		scope.clearData = function(){		
+
+		scope.clearData = function(){
 			var API = resource('controller/vaninventory/replenishment/seed/clear');
-			
+
 			var params = {
 				'salesman_code': $('#salesman_code').val(),
 				'type': $('#type').val(),
 				'area_code': $('#area_code').val(),
 				'reference_number': $('#reference_number').val(),
-				'replenishment_date': $('#replenishment_date').val()				
+				'replenishment_date': $('#replenishment_date').val()
 			};
-			
+
 			API.save(params).$promise.then(function(data){
 				if(data.success){
 					toaster.pop('success', 'Success', 'Successfully Cleared', 5000);
@@ -4158,17 +4159,17 @@
 			});
 		}
 	}
-	
+
 	/**
 	 * Open and Closing Period controller
 	 */
 	app.controller('ReplenishmentConfirm',['$scope','$http','$uibModalInstance','$window','$log','toaster',ReplenishmentConfirm]);
-	
+
 	function ReplenishmentConfirm($scope, $http, $uibModalInstance, $window, $log, toaster)
 	{
-		
+
 		$scope.ok = function () {
-			
+
 			var url = 'controller/vaninventory/replenishment/post';
 			var postData = {
 					salesman_code: $('#salesman_code').val(),
@@ -4188,20 +4189,20 @@
 			}).error(function (data) {
 				toaster.pop('error', 'Error', 'Server Error, Please contact System Administrator', 3000);
 			});
-			
+
 			$uibModalInstance.dismiss('cancel');
 		};
 
-		$scope.cancel = function () {		
+		$scope.cancel = function () {
 			$uibModalInstance.dismiss('cancel');
 		};
-	}	
+	}
 
 	/**
 	 * User Access Matrix controller
 	 */
 	app.controller('UserAccessMatrix',['$scope','$http','$uibModal','$window','$log','TableFix','toaster', '$route','$templateCache',UserAccessMatrix]);
-	
+
 	function UserAccessMatrix($scope, $http, $uibModal, $window, $log, TableFix, toaster, $route, $templateCache)
 	{
 		deletePreviousCache($route,$templateCache);
@@ -4510,7 +4511,7 @@
 								if(userAccessPermitted($scope.navigations[navigations_ctr])){
 									var children_length = $scope.navigations[navigations_ctr].children.length;
 									menu_html += 	'<li class="parent" href="#sub-item-' + counter + '">' +
-									
+
 														'<a href="' + ($scope.navigations[navigations_ctr].url != '' ? '#' + $scope.navigations[navigations_ctr].url : 'javascript:void(0)') + '">' +
 															'<span class="' + $scope.navigations[navigations_ctr].class + '"></span>' +
 															$scope.navigations[navigations_ctr].name;
@@ -4561,7 +4562,7 @@
 	 * User Activity Log controller
 	 */
 	app.controller('UserActivityLog',['$scope','$http','$uibModal','$window','$log','TableFix','toaster', '$route','$templateCache',UserActivityLog]);
-	
+
 	function UserActivityLog($scope, $http, $uibModal, $window, $log, TableFix, toaster, $route, $templateCache)
 	{
 		deletePreviousCache($route,$templateCache);
@@ -4707,7 +4708,7 @@
 			case "vaninventory.stocktransfer":
 				reportType = "Van Inventory - Stock Transfer";
 				report = 'stocktransfer';
-				break;			
+				break;
 			case 'cashpayments':
 				reportType = "Cash Payments";
 				report = 'cashpayments';
@@ -6155,7 +6156,7 @@
 	};
 
 	/**
-	 * Profit Center Form 
+	 * Profit Center Form
 	 */
 	app.controller('ProfitCenterForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', ProfitCenterForm]);
 
@@ -6282,7 +6283,7 @@
 	};
 
 	/**
-	 * GL Account Form 
+	 * GL Account Form
 	 */
 	app.controller('GLAccountForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', GLAccountForm]);
 
@@ -6409,7 +6410,7 @@
 	};
 
 	/**
-	 * Segment Code Form 
+	 * Segment Code Form
 	 */
 	app.controller('SegmentCodeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', SegmentCodeForm]);
 
@@ -6538,7 +6539,7 @@
 	};
 
 	/**
-	 * Document Type Form 
+	 * Document Type Form
 	 */
 	app.controller('DocumentTypeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', 'toaster', '$routeParams', DocumentTypeForm]);
 
