@@ -50,13 +50,13 @@ class ReversalPresenter extends PresenterCore
     			['name'=>'Username','sort'=>'username'],
     			['name'=>'Original','sort'=>'before'],
     			['name'=>'Edited','sort'=>'value'],
-    			['name'=>'Reason of Reversal','sort'=>'comment'],    			
+    			['name'=>'Reason of Reversal','sort'=>'comment'],
     	];
-    
+
     	return $headers;
     }
-    
-    
+
+
     /**
      * Get Cash Payment Select Columns
      * @return string[][]
@@ -70,10 +70,10 @@ class ReversalPresenter extends PresenterCore
     			'username',
     			'before',
     			'value',
-    			'comment'    			
+    			'comment'
     	];
     }
-    
+
     /**
      * get Cash Payment Filter Data
      * @return string[]|unknown[]
@@ -81,23 +81,23 @@ class ReversalPresenter extends PresenterCore
     public function getSummaryReversalFilterData()
     {
     	$reportPresenter = PresenterFactory::getInstance('Reports');
-    	$report = $this->request->get('report') ? get_reports()[$this->request->get('report')] : 'All';    	
+    	$report = $this->request->get('report') ? get_reports()[$this->request->get('report')] : 'All';
     	$branch = $this->request->get('branch') ? $reportPresenter->getArea()[$this->request->get('branch')] : 'All';
     	$user = $this->request->get('updated_by') ? get_users(false)[$this->request->get('updated_by')] : 'All';
-    	$mDate = ($this->request->get('created_at_from') && $this->request->get('created_at_to')) ? $this->request->get('created_at_from').' - '.$this->request->get('created_at_to') : 'All';    	
+    	$mDate = ($this->request->get('created_at_from') && $this->request->get('created_at_to')) ? $this->request->get('created_at_from').' - '.$this->request->get('created_at_to') : 'All';
     	$revision = $this->request->get('revision') ?  $this->request->get('revision') : 'All';
-    	
+
     	$filters = [
     			'Report' => $report,
     			'Branch' => $branch,
     			'User' => $user,
     			'Modified Date' => $mDate,
-    			'Revision' => $revision,    			    		
-    	];    	
-    
+    			'Revision' => $revision,
+    	];
+
     	return $filters;
     }
-    
+
     /**
      * Get summary of reversal report
      * @return \Illuminate\Http\JsonResponse
@@ -118,7 +118,7 @@ class ReversalPresenter extends PresenterCore
 
     	return response()->json($data);
     }
-    
+
     /**
      * Get prepared statement summary of reversal
      * @return unknown
@@ -129,49 +129,55 @@ class ReversalPresenter extends PresenterCore
     			   report_revisions.revision_number,
     			   table_logs.created_at,
     			   table_logs.report_type,
+                   table_logs.salesman_code,
     			   CONCAT(user.firstname,\' \',user.lastname) username,
     			   table_logs.before,
     			   table_logs.value,
     		 	   table_logs.comment
     			';
-    	
+
     	$prepare = \DB::table('table_logs')
     					->selectRaw($select)
     					->leftJoin('report_revisions','table_logs.id','=','report_revisions.table_log_id')
-				    	->leftJoin('user','user.id','=','table_logs.updated_by');				    	
-    	    	
-    	
+				    	->leftJoin('user','user.id','=','table_logs.updated_by');
+
+        $salesmanFilter = FilterFactory::getInstance('Select');
+        $prepare = $salesmanFilter->addFilter($prepare,'salesman',
+                function($self, $model){
+                    return $model->where('table_logs.salesman_code','=',$self->getValue());
+                });
+
     	$reportFilter = FilterFactory::getInstance('Select');
     	$prepare = $reportFilter->addFilter($prepare,'report',
     			function($self, $model){
     				return $model->where('report_revisions.report',$self->getValue());
     			});
-    	
+
     	$branchFilter = FilterFactory::getInstance('Text');
     	$prepare = $branchFilter->addFilter($prepare,'branch',
     			function($self, $model){
     				return $model->where('user.location_assignment_code',$self->getValue());
     			});
-    	 
+
     	$userFilter = FilterFactory::getInstance('Select');
     	$prepare = $userFilter->addFilter($prepare,'updated_by');
-    	 
+
     	$mDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $mDateFilter->addFilter($prepare,'created_at');
-    	 
+
     	$revNumFilter = FilterFactory::getInstance('Date');
     	$prepare = $revNumFilter->addFilter($prepare,'revision',
     			function($self, $model){
     				return $model->where('report_revisions.revision_number','LIKE','%'.$self->getValue().'%');
     			});
-    	 
+
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('table_logs.created_at','desc');
     	}
 
     	$prepare->whereNull('user.deleted_at');
-    	
+
     	return $prepare;
     }
 }

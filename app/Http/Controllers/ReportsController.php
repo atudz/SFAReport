@@ -34,12 +34,12 @@ class ReportsController extends ControllerCore
 
 		if(false === strpos($column,'date'))
 			$value = $request->get('value');
-		else 
+		else
 			$value = new \DateTime($request->get('value'));
 		$comment = $request->get('comment');
 		$report_type = $request->has('report_type') ? $request->get('report_type') : '';
 		$report = $request->has('report') ? $request->get('report') : '';
-		
+
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
 		$reference='';
@@ -50,7 +50,7 @@ class ReportsController extends ControllerCore
 			{
 				$stockTransNum = \DB::table($table)->where($pk,$id)->value($column);
 			}
-			
+
 			$prevData = \DB::table($table)->where($pk,$id)->first();
 			$before = isset($prevData->$column) ? $prevData->$column : '';
 			if($column == 'invoice_number')
@@ -58,7 +58,7 @@ class ReportsController extends ControllerCore
 				$prevInvoiceNum = $before;
 				$reference = isset($prevData->reference_num) ? $prevData->reference_num : '';
 			}
-						
+
 			\DB::table($table)->where($pk,$id)->lockForUpdate()->update([
 					$column => $value,
 					'updated_at' => new \DateTime(),
@@ -70,14 +70,15 @@ class ReportsController extends ControllerCore
 									'column' => $column,
 									'pk_id' => $id,
 									'before' => $before,
-									'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value, 
+									'value' => ($value instanceof \DateTime) ? $value->format('Y-m-d H:i:s') : $value,
 									'updated_at' => new \DateTime(),
 									'created_at' => new \DateTime(),
 									'updated_by' => auth()->user()->id,
 									'comment' => $comment,
 									'report_type' => $report_type,
+                                    'salesman_code' => $this->getSalesmanCode($table,$id)
 					]);
-			
+
 			if($logId)
 			{
 				\DB::table('report_revisions')->insert([
@@ -90,11 +91,11 @@ class ReportsController extends ControllerCore
 				]);
 			}
 		}
-		
+
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
 		{
-			$transfer = \DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->first();			
-			
+			$transfer = \DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->first();
+
 			if($transfer)
 			{
 				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->lockForUpdate()->update([
@@ -102,7 +103,7 @@ class ReportsController extends ControllerCore
 						'updated_at' => new \DateTime(),
 						'updated_by' => auth()->user()->id,
 				]);
-					
+
 				\DB::table('table_logs')->insertGetId([
 									'table' => 'txn_stock_transfer_in_detail',
 									'column' => $column,
@@ -113,13 +114,14 @@ class ReportsController extends ControllerCore
 									'created_at' => new \DateTime(),
 									'updated_by' => auth()->user()->id,
 									'comment' => $comment,
-									'report_type' => $report_type						
-							]);								
+									'report_type' => $report_type,
+                                    'salesman_code' => $this->getSalesmanCode('txn_stock_transfer_in_detail',$id)
+							]);
 			}
-			
+
 		}
-		
-		
+
+
 		if($column == 'invoice_number' && $prevInvoiceNum)
 		{
 			$insertData = [];
@@ -127,22 +129,22 @@ class ReportsController extends ControllerCore
 			if($data1)
 			{
 				$prepare = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum);
-				if($reference)		
+				if($reference)
 					$prepare->where('reference_num',$reference);
-				
+
 				$updated = $prepare->lockForUpdate()->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 				]);
-				
+
 				if(!$updated)
 					$updated = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
 													$column => $value,
 													'updated_at' => new \DateTime(),
 													'updated_by' => auth()->user()->id,
 								]);
-					
+
 				if($updated)
 				{
 					$insertData[] = [
@@ -155,12 +157,12 @@ class ReportsController extends ControllerCore
 							'created_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
-							'report_type' => $report_type,							
+							'report_type' => $report_type,
 					];
 				}
-			}			
-			
-			
+			}
+
+
 			if($table != 'txn_invoice')
 			{
 				$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
@@ -171,7 +173,7 @@ class ReportsController extends ControllerCore
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 					]);
-						
+
 					$insertData[] = [
 							'table' => 'txn_invoice',
 							'column' => $column,
@@ -186,17 +188,15 @@ class ReportsController extends ControllerCore
 					];
 				}
 			}
-			
+
 			if($insertData)
 			{
-			 	\DB::table('table_logs')->insert($insertData);			 			  
+                $insertData['salesman_code'] = $this->getSalesmanCode($table,$insertData['pk_id']);
+			 	\DB::table('table_logs')->insert($insertData);
 			}
 		}
 
-		$syncTables2 = config('sync.sync_tables');
-		$search_column = array_shift($syncTables2[$table]);
-
-		$salesman_code = $this->getSalesmanCodeByTable($table,$search_column,$id);
+		$salesman_code = $this->getSalesmanCode($table,$id);
 		if(!$this->checkIfExistInReportReference($navigation_id,$salesman_code)){
 			ModelFactory::getInstance('ReportReferenceRevision')->create([
 				'navigation_id' => $navigation_id,
@@ -218,9 +218,9 @@ class ReportsController extends ControllerCore
             'action'            => 'done updating editable column ' . $column . ' data having id ' . $id
         ]);
 		$data['success'] = true;
-		return response()->json($data);	
+		return response()->json($data);
 	}
-	
+
 	/**
 	 * Sync reports from SFA db
 	 * @return \Illuminate\Http\JsonResponse
@@ -234,8 +234,8 @@ class ReportsController extends ControllerCore
 		    'action'            => 'loading Sync Data data'
 		]);
 
-		$result = LibraryFactory::getInstance('Sync')->sync();		
-		$data['logs'] = $result ? true : '';		
+		$result = LibraryFactory::getInstance('Sync')->sync();
+		$data['logs'] = $result ? true : '';
 
 		ModelFactory::getInstance('UserActivityLog')->create([
 			'user_id'           => auth()->user()->id,
@@ -245,23 +245,82 @@ class ReportsController extends ControllerCore
 		]);
 		return response()->json($data);
 	}
-	
+
 
 	/**
-	 * Get Salesman Code By Table
+	 * Get Salesman Code
 	 * @param  $table  [table to search]
-	 * @param  $column [column name id to reference in where]
-	 * @param  $id     [the id value]
+	 * @param  $pk_id  [the primary key of the table]
 	 * @return String
 	 */
-	public function getSalesmanCodeByTable($table,$column,$id){
-		$column_to_retrieve = 'salesman_code';
+	public function getSalesmanCode($table,$pk_id){
+        $salesman_code = '';
+        $syncTables = config('sync.sync_tables');
+        $pkColumn = array_shift($syncTables[$table]);
+        switch($table)
+        {
+            case 'txn_collection_header':
+            case 'txn_sales_order_header':
+            case 'txn_return_header':
+            case 'txn_evaluated_objective':
+            case 'txn_stock_transfer_in_header':
+               $row = \DB::table($table)->where($pkColumn,$pk_id)->first();
+               if($row)
+               {
+                   return $row->salesman_code;
+               }
+               break;
+            case 'txn_collection_detail':
+            case 'txn_collection_invoice':
+               $row = \DB::table($table)
+                           ->select('txn_collection_header.salesman_code')
+                           ->join('txn_collection_header','txn_collection_header.reference_num','=',$table.'.reference_num')
+                           ->where($table.'.'.$pkColumn,$pk_id)
+                           ->first();
+               if($row)
+               {
+                   return $row->salesman_code;
+               }
+               break;
+            case 'txn_return_detail':
+               $row = \DB::table($table)
+                       ->select('txn_return_header.salesman_code')
+                       ->join('txn_return_header','txn_return_header.reference_num','=',$table.'.reference_num')
+                       ->where($table.'.return_detail_id',$pk_id)
+                       ->first();
+               $column = $table.'.return_detail_id';
+               if($row)
+               {
+                   return $row->salesman_code;
+               }
+               break;
+            case 'txn_sales_order_deal':
+            case 'txn_sales_order_header_discount':
+            case 'txn_sales_order_detail':
+               $row = \DB::table($table)
+                       ->select('txn_sales_order_header.salesman_code')
+                       ->join('txn_sales_order_header','txn_sales_order_header.reference_num','=',$table.'.reference_num')
+                       ->where($table.'.'.$pkColumn,$pk_id)
+                       ->first();
+               if($row)
+               {
+                   return $row->salesman_code;
+               }
+               break;
+            case 'txn_stock_transfer_in_detail':
+               $row = \DB::table($table)
+                       ->select('txn_stock_transfer_in_header.salesman_code')
+                       ->join('txn_stock_transfer_in_header','txn_stock_transfer_in_header.stock_transfer_number','=',$table.'.stock_transfer_number')
+                       ->where($table.'.stock_transfer_in_detail_id',$pk_id)
+                       ->first();
+               if($row)
+               {
+                   return $row->salesman_code;
+               }
+               break;
+        }
 
-		if($table == 'txn_sales_order_header_discount' || $table == 'txn_collection_detail' || $table == 'txn_sales_order_detail'){
-			$column_to_retrieve = 'modified_by';
-		}
-
-		return \DB::table($table)->where($column,$id)->value($column_to_retrieve);
+        return $salesman_code;
 	}
 
 	/**
