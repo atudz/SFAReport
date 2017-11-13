@@ -313,10 +313,14 @@ class ReportsPresenter extends PresenterCore
     	{
     		foreach($cols as $key){
     			if(isset($val->$key)){
-                    $summary[$key] += (float) ((!empty($val->$key) || !is_null($val->$key) || $val->$key != "" || is_numeric($val->$key)) ? $val->$key : 0);
+                    $summary[$key] += (!empty($val->$key) || !is_null($val->$key) || $val->$key != "" || is_numeric($val->$key) ? ((float) ($val->$key)) : 0);
                 }
             }
     	}
+
+        foreach ($summary as $key => $value) {
+            $summary[$key] = number_format($summary[$key],2,'.',',');
+        }
 
     	return $summary;
     }

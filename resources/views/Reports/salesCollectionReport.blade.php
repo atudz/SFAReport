@@ -4,25 +4,25 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="panel panel-default">
-		<div class="panel-body">		
-			<!-- Filter -->			
+		<div class="panel-body">
+			<!-- Filter -->
 			{!!Html::fopen('Toggle Filter')!!}
 				<div class="col-md-6">
 					{!!Html::select('salesman','Salesman', $salesman,'')!!}
 					{!!Html::select('company_code','Company Code', $companyCode,'')!!}
-					{!!Html::input('text','customer_name','Customer Name')!!}						
+					{!!Html::input('text','customer_name','Customer Name')!!}
 					{!!Html::input('text','invoice_number','Invoice #')!!}
 					{!!Html::input('text','or_number','OR #')!!}
-				</div>					
-				<div class="col-md-6">	
+				</div>
+				<div class="col-md-6">
 					{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
-					{!!Html::datepicker('collection_date','Collection Date','true')!!}																									 			
+					{!!Html::datepicker('collection_date','Collection Date','true')!!}
 					{!!Html::datepicker('posting_date','Previous Invoice Date','true')!!}
 
-				</div>			
+				</div>
 			{!!Html::fclose()!!}
 			<!-- End Filter -->
-			
+
 			{!!Html::topen(['no_download'=>$isGuest2,'no_pdf'=>($isGuest1 || $isManager)])!!}
 				{!!Html::theader($tableHeaders)!!}
 				<tbody>
@@ -52,7 +52,7 @@
 						@if($isAdmin || $isAuditor || $isAccounting)
 							<a href="" class="editable-click" ng-click="editColumn('date',record.invoice_date_table,record.invoice_date_col,record.invoice_date_id,record.invoice_date,$index,'Invoice Date','invoice_date')">
 	    						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
-	  						</a>						
+	  						</a>
 	  					@else
 	  						<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 	  					@endif
@@ -106,7 +106,7 @@
 						@if($isAdmin || $isAuditor || $isAccounting)
 							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_header','or_date',record.collection_header_id,record.or_date,$index,'Collection Date','or_date')">
 	    						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
-	  						</a>						
+	  						</a>
 	  					@else
 	  						<span ng-bind="record.or_date_formatted = (formatDate(record.or_date) | date:'MM/dd/yyyy')"></span>
 	  					@endif
@@ -124,14 +124,14 @@
 						<span ng-bind="record.cash_amount_formatted = negate(record.cash_amount)"></span>
 						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.cash_amount,$index,'Cash','cash_amount','','','0.01')">
 							<span ng-bind="formatNumber(record.cash_amount)"></span>
-  						</a> -->						
+  						</a> -->
 					</td>
 					<td>
 						<span ng-bind="record.check_amount_formatted = negate(record.check_amount)"></span>
 						<!-- <a href="" class="editable-click" ng-click="editColumn('number','txn_collection_detail','payment_amount',record.collection_detail_id,record.check_amount,$index,'Cash','check_amount','','','0.01')">
 							<span ng-bind="formatNumber(record.check_amount)"></span>
 						</a> -->
-					</td>				
+					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
 							<a href="" class="editable-click" ng-click="editColumn('text','txn_collection_detail','bank',record.collection_detail_id,record.bank,$index,'Bank Name','bank')">
@@ -154,10 +154,10 @@
 						@if($isAdmin || $isAuditor)
 							<a href="" class="editable-click" ng-click="editColumn('date','txn_collection_detail','check_date',record.collection_detail_id,record.check_date,$index,'Check Date','check_date')">
 	    						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
-	  						</a>						
+	  						</a>
 	  					@else
 	  						<span ng-bind="record.check_date_formatted = (formatDate(record.check_date) | date:'MM/dd/yyyy')"></span>
-	  					@endif	
+	  					@endif
 					</td>
 					<td>
 						@if($isAdmin || $isAuditor)
@@ -176,9 +176,9 @@
 					</td>
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="record.total_collected_amount_formatted = formatNumber(record.total_collected_amount)"></span>
-					</td>									
+					</td>
 				</tr>
-				
+
 				<!-- Summary -->
 				<tr id="total_summary">
 					<td class="bold">Total</td>
@@ -188,59 +188,59 @@
 					<td></td>
 					<td></td>
 					<td class="bold">
-						<span>[[formatNumber(summary.so_total_served)]]</span>					
+						<span>[[summary.so_total_served]]</span>
 					</td>
 					<td class="bold">
-						<span>[[formatNumber(summary.so_total_item_discount)]]</span>					
+						<span>[[summary.so_total_item_discount]]</span>
 					</td>
 					<td class="bold">
-						<span>[[formatNumber(summary.so_total_collective_discount)]]</span>				
+						<span>[[summary.so_total_collective_discount]]</span>
 					</td>
 					<td class="bold">
-						<span>[[formatNumber(summary.total_invoice_amount)]]</span>						
-					</td>
-					<td></td>
-					<td class="bold">
-						<span>[[formatNumber(summary.other_deduction_amount)]]</span>
+						<span>[[summary.total_invoice_amount]]</span>
 					</td>
 					<td></td>
 					<td class="bold">
-						<span>[[formatNumber(summary.RTN_total_gross)]]</span>				
-					</td>
-					<td class="bold">
-						<span>[[formatNumber(summary.RTN_total_collective_discount)]]</span>						
-					</td>
-					<td class="bold">
-						<span>[[formatNumber(summary.RTN_net_amount)]]</span>				
-					</td>
-					<td class="bold">
-						<span>[[formatNumber(summary.total_invoice_net_amount)]]</span>					
+						<span>[[summary.other_deduction_amount]]</span>
 					</td>
 					<td></td>
-					<td></td>
 					<td class="bold">
-						<span>[[formatNumber(summary.cash_amount)]]</span>					
+						<span>[[summary.RTN_total_gross]]</span>
 					</td>
 					<td class="bold">
-						<span>[[formatNumber(summary.check_amount)]]</span>					
+						<span>[[summary.RTN_total_collective_discount]]</span>
+					</td>
+					<td class="bold">
+						<span>[[summary.RTN_net_amount]]</span>
+					</td>
+					<td class="bold">
+						<span>[[summary.total_invoice_net_amount]]</span>
 					</td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
 					<td class="bold">
-						<span>[[formatNumber(summary.credit_amount)]]</span>
+						<span>[[summary.cash_amount]]</span>
 					</td>
 					<td class="bold">
-						<span">[[formatNumber(summary.total_collected_amount)]]</span>						
-					</td>									
+						<span>[[summary.check_amount]]</span>
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="bold">
+						<span>[[summary.credit_amount]]</span>
+					</td>
+					<td class="bold">
+						<span">[[summary.total_collected_amount]]</span>
+					</td>
 				</tr>
 				</tbody>
 				{!!Html::tfooter(true,28)!!}
 			{!!Html::tclose(false)!!}
-	
-		</div>		
-		</div>		
+
+		</div>
+		</div>
 	</div>
 </div>
