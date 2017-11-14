@@ -750,6 +750,7 @@
 
 		var params = [
 				  'salesman_code',
+				  'area_code',
 				  'invoice_start',
 				  'invoice_end',
 				  'status'

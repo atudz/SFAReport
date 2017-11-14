@@ -157,7 +157,7 @@ class InvoicePresenter extends PresenterCore
     	$areaFilter = FilterFactory::getInstance('Select');
     	$prepare = $areaFilter->addFilter($prepare,'area_code',
     			function($self, $model){
-    				return $model->where('app_customer.area_code',$self->getValue());
+    				return $model->where('app_area.area_code',$self->getValue());
     			});
     	
     	$statusFilter = FilterFactory::getInstance('Select');
@@ -232,7 +232,7 @@ class InvoicePresenter extends PresenterCore
     {
     	$reportPresenter = PresenterFactory::getInstance('Reports');
     	$salesman = $this->request->get('salesman_code') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
-    	$area = $this->request->get('area_code') ? $this->getArea()[$this->request->get('area_code')] : 'All';    	
+    	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';    	
     	$assignDate = $this->request->get('date_assigned_from') ? $this->request->get('date_assigned_from') : 'All';
     	$status = $this->request->get('status') ? statuses()[$this->request->get('status')] : 'All'; 
     	
