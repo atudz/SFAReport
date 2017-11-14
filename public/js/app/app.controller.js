@@ -330,7 +330,7 @@
 			interval: 30,
 			minTime: '12:00am',
 			maxTime: '11:30pm',
-			defaultTime: '7',
+			defaultTime: $('.timepicker').val(),
 			startTime: '07:00am',
 			dynamic: false,
 			dropdown: true,
@@ -549,6 +549,19 @@
 
 	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
+		
+		$('.timepicker').timepicker({
+			timeFormat: 'h:mm p',
+			interval: 30,
+			minTime: '12:00am',
+			maxTime: '11:30pm',
+			defaultTime: $('.timepicker').val(),
+			startTime: '07:00am',
+			dynamic: false,
+			dropdown: true,
+			scrollbar: true
+		});
+
 
 		$scope.save = function (){
 			var hasError = false;
@@ -570,6 +583,7 @@
 				var params = {
 					'salesman_code': $('#salesman_code').val(),
 					'replenishment_date_from': $('#replenishment_date_from').val(),
+					'replenishment_time': $('#replenishment_time').val(),
 					'reference_number': $('#reference_number').val(),
 					'adjustment_reason': $('#adjustment_reason').val(),
 					'item_code': items,

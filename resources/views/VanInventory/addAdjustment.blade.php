@@ -32,7 +32,17 @@
 								{!!Html::select('van_code','Van Code', $vanCodes, 'No Van Code',['disabled'=>1],van_salesman($replenishment->van_code))!!}
 							</div>						
 							<div class="row form-input-field">
-								{!!Html::datepicker('replenishment_date','Adjustment date/time <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
+								{!!Html::datepicker('replenishment_date','Adjustment date <span class="required">*</span>','','',$replenishment->replenishment_date)!!}
+							</div>
+							<div class="row form-input-field">
+								<div class="form-group">
+                            		<div class="col-xs-12 col-md-4 col-sm-4 control-label">
+                                		<label for="name" class="">Adjustment Time <span class="required">*</span></label>
+                            		</div>
+                            		<div class="col-xs-12 col-sm-8">
+                                		<input class="timepicker text-center form-control" name="replenishment_time" id="replenishment_time" data-required="true" value="{{ $replenishment->id ? get_time($replenishment->replenishment_date) : '7'}}">
+                            		</div>
+                        		</div>								
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','reference_number','Adjustment No. <span class="required">*</span>',$replenishment->reference_number,['onblur'=>'validate(this)'])!!}

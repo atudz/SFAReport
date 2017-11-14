@@ -37,10 +37,10 @@
 							<div class="row form-input-field">
 								<div class="form-group">
                             		<div class="col-xs-12 col-md-4 col-sm-4 control-label">
-                                		<label for="name" class="">Call From <span class="required">*</span></label>
+                                		<label for="name" class="">Count Time <span class="required">*</span></label>
                             		</div>
                             		<div class="col-xs-12 col-sm-8">
-                                		<input class="timepicker text-center form-control" name="replenishment_time" id="replenishment_time" data-required="true">
+                            			<input class="timepicker text-center form-control" name="replenishment_time" id="replenishment_time" data-required="true" value="{{ $replenishment->id ? get_time($replenishment->replenishment_date) : '7'}}">                                		
                             		</div>
                         		</div>								
 							</div>

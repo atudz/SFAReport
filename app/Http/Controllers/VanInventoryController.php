@@ -311,7 +311,9 @@ class VanInventoryController extends ControllerCore
 		$replenish->van_code = $vans ? array_shift($vans) : '';
 		if(is_null($replenish->van_code))
 			$replenish->van_code = '';
-		$replenish->replenishment_date = new Carbon($request->replenishment_date_from);
+		
+		$date = $request->replenishment_date_from.' '.$request->replenishment_time;
+		$replenish->replenishment_date = new Carbon($date);
 		$replenish->adjustment_reason = $request->adjustment_reason;
 	
 		$today = new Carbon();

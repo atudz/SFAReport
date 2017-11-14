@@ -462,3 +462,14 @@ function replenishment_next_pk($detail=false)
 		return $maxPk+1;
 	}		
 }
+
+/**
+ * Format date to time
+ * @param unknown $date
+ * @param string $format
+ * @return unknown
+ */
+function get_time($date, $format="g:i:A") 
+{
+    return date_format(date_create($date), $format);
+}
