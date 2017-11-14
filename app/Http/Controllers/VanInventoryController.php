@@ -133,7 +133,7 @@ class VanInventoryController extends ControllerCore
 			'user_id'           => auth()->user()->id,
 		    'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','stock-transfer')->value('id'),
             'action_identifier' => 'creating',
-		    'action'            => 'done creating Van Inventory - Stock Transfer Detail id ' . $stockTransfer->stock_transfer_in_detail_id
+		    'action'            => 'done creating Van Inventory - Stock Transfer Detail id ' . $stockDetail->stock_transfer_in_detail_id
 		]);
 
 		return $stockDetail->save();
