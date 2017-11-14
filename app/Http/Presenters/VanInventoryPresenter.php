@@ -1524,7 +1524,7 @@ class VanInventoryPresenter extends PresenterCore
     	$params['overages'] = $overages;
     	$params['ref'] = $ref;
 
-    	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('folio','portrait'); 
+    	$pdf = \PDF::loadView('VanInventory.shortagesPdf',$params)->setPaper('legal','portrait'); 
     	return $pdf->download('Van Inventory and History Report Statement of Shortages and Overages.pdf');
     }
     
@@ -1646,7 +1646,7 @@ class VanInventoryPresenter extends PresenterCore
     	}
     	elseif($type == 'pdf')
     	{    		
-    	    $pdf = PDF::loadView('VanInventory.actualCountPdfExport', compact('replenishment'))->setPaper('folio','portrait');		
+    	    $pdf = PDF::loadView('VanInventory.actualCountPdfExport', compact('replenishment'))->setPaper('legal','portrait');		
     		return $pdf->download('Actual Count Replenishment Report.pdf');
     	}
     }
@@ -1695,7 +1695,7 @@ class VanInventoryPresenter extends PresenterCore
     		}
     		elseif($type == 'pdf')
     		{
-    		    $pdf = \PDF::loadView('VanInventory.adjustmentPdfExport', compact('replenishment'))->setPaper('folio','portrait');
+    		    $pdf = \PDF::loadView('VanInventory.adjustmentPdfExport', compact('replenishment'))->setPaper('legal','portrait');
     			return $pdf->download('Adjustment Replenishment Report.pdf');
     		}
     }
