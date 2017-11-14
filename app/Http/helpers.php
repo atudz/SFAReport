@@ -3,6 +3,7 @@
 
 use Carbon\Carbon;
 use App\Factories\ModelFactory;
+use App\Factories\PresenterFactory;
 
 /**
  * Generate revision number,
@@ -260,6 +261,21 @@ function salesman_customer($salesman_code)
 					->orderBy('app_customer.customer_name');
 	
 	return $prepare->lists('app_customer.customer_name','app_customer.customer_code');
+}
+
+/**
+ * Get salesman area
+ * @param unknown $salesman_code
+ * @return unknown
+ */
+function salesman_area($salesman_code)
+{
+    $areas = PresenterFactory::getInstance('Reports')->getSalesmanArea($salesman_code);
+    if($areas) {
+        return ModelFactory::getInstance('AppArea')->whereIn('area_code',$areas)->lists('area_name','area_code');
+    }
+    
+    return [];    
 }
 
 

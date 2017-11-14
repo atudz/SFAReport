@@ -8,9 +8,9 @@
 				@if($navigationActions['show_filter'])
 					<!-- Filter -->
 					{!!Html::fopen('Toggle Filter')!!}
-						<div class="col-md-8">	
-							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'Select Salesman')!!}
-							{!!Html::select('area_code','Area', $areas,'Select Area')!!}
+						<div class="col-md-8">							
+							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'Select Salesman', ['onchange'=>'set_area(this)'])!!}
+							{!!Html::select('area_code','Area', [],'Select Salesman',['disabled'=>true])!!}
 							{!!Html::datepicker('replenishment_date','Date Assigned',false)!!}
 							{!!Html::select('status','Status', statuses(),'Select Status')!!}						
 						</div>			
@@ -53,3 +53,35 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	function set_area(el)
+	{
+		var sel = $(el).val();
+		if(!sel){
+			$('#area_code').empty();
+			$('#area_code')
+				.append($("<option></option>")
+				.attr("value", '').text('Select Salesman'));
+			$('#area_code').attr('disabled',true);						
+		}
+		else{
+			var url = 'reports/salesman/area/'+sel;
+			$.get(url,function(data){
+				if(data){
+					$('#area_code').empty();
+					$.each(data, function(k,v){
+						$('#area_code')
+							.append($("<option></option>")
+							.attr("value", k).text(v));
+					});
+					$('#area_code').removeAttr('disabled');
+				} else {
+					$('#area_code').empty();
+					$('#area_code').attr('disabled',true);
+				}			
+			});
+		}
+	}	
+
+</script>

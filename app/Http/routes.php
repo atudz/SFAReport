@@ -80,6 +80,10 @@ Route::group(['prefix' => 'reports'],function(){
 		return response()->json(salesman_customer($salesmanCode));
 	});
 	
+    Route::get('/salesman/area/{salesman_code}', function($salesmanCode){
+	   return response()->json(salesman_area($salesmanCode));
+    });
+	
 	Route::get('/salesman/sheet/{salesman_code}', function($salesmanCode){
 		return response()->json(salesman_sheet_refno($salesmanCode));
 	});
