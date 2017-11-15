@@ -2366,7 +2366,7 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$col = 'trade_served_qty';
 	    			if($export) {
-	    				$result->{'code_'.$deal->trade_item_code} = -1*$deal->{$col}+$deal->regular_order_qty;
+	    				$result->{'code_'.$deal->trade_item_code} = -1*($deal->{$col}+$deal->regular_order_qty);
 	    			} else {
 	    				$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->regular_order_qty).')';
 	    			}
@@ -2445,9 +2445,9 @@ class ReportsPresenter extends PresenterCore
     			$tempPrevStockTransfer[$code] = 0;
 
     		if($firstUpload)
-    			$stockOnHand[$code] = $tempActualCount[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		    $stockOnHand[$code] = (int)$tempActualCount[$code] + (int)$tempStockTransfer[$code] + (int)$tempReturns[$code] - (int)$tempInvoices[$code];
     		else
-    			$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
+    		    $stockOnHand[$code] = (int)$tempPrevStockTransfer[$code] + (int)$tempStockTransfer[$code] + (int)$tempReturns[$code] - (int)$tempInvoices[$code];
     		//$stockOnHand[$code] = $tempPrevStockTransfer[$code] + $tempStockTransfer[$code] + $tempReturns[$code] - $tempInvoices[$code];
     		//$stockOnHand[$code] = (!$stockOnHand[$code]) ? '' : $stockOnHand[$code];
     		$stockOnHand[$code] = $this->negate($stockOnHand[$code]);
