@@ -851,9 +851,9 @@
 	/**
 	 * Bounce Check Controller
 	 */
-	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',BounceCheck]);
+	app.controller('BounceCheck',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster','$location',BounceCheck]);
 
-	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	function BounceCheck($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster,$location)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -868,6 +868,8 @@
 
 		];
 
+		params.query_strings = $location.search();
+
 		// main controller codes
 		reportController($scope,$resource,$uibModal,$window,'bouncecheck',params,$log,toaster, TableFix);
 
@@ -880,6 +882,7 @@
 
 	function BounceCheckAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route,toaster,$filter) {
 		deletePreviousCache($route,$templateCache);
+
 		$scope.bouncecheck = {
 			original_amount : 0,
 			payment_amount : 0,
@@ -953,6 +956,8 @@
 				}
 			});
 		}
+
+		convertToQueryString($scope,$location.search());
 	};
 
 
@@ -1832,6 +1837,7 @@
 				$('p[id$="_error"]').addClass('hide');
 				scope.toggleFilter = true;
 				toggleLoading(true);
+				convertToQueryString(scope,params)
 				API.save(params,function(data){
 					//log.info(data);
 					scope.records = data.records;
@@ -2337,6 +2343,13 @@
 			params = {salesman:$('#salesman').val(),company_code:$('#company_code').val()};
 		}else if(report == 'replenishment') {
 			params = {type:$('#type').val()};
+		} else if(report == 'bouncecheck'){
+			if(Object.keys(filter.query_strings).length){
+				angular.forEach(filter.query_strings, function(value, key) {
+				  params[key] = value;
+				});
+				delete filter.query_strings;
+			}
 		}
 
 		toggleLoading(true);
@@ -6578,5 +6591,18 @@
 
 				});
 		}
+	}
+
+	/**
+	 * Filter Query to Query String
+	 */
+	function convertToQueryString(scope,params){
+		scope.filter_query_string = '';
+		var string_query = '';
+
+		angular.forEach(params, function(value, key) {
+		  string_query += (string_query == '' ? '?' : '&') + key + '=' + value;
+		});
+		scope.filter_query_string = string_query;
 	}
 })();

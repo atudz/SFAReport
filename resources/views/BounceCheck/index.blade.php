@@ -8,16 +8,16 @@
 				@if($navigationActions['show_filter'])
 					<!-- Filter -->
 					{!!Html::fopen('Toggle Filter')!!}
-						<div class="col-md-6">	
+						<div class="col-md-6">
 							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All',['onchange'=>'set_customer(this)'])!!}
 							{!!Html::select('area_code','Area', $areas)!!}
 							{!!Html::select('customer_code','Customer Name', $customers)!!}
-							{!!Html::input('text','txn_number','Transaction No.')!!}																					
-						</div>			
-						<div class="col-md-6">	
+							{!!Html::input('text','txn_number','Transaction No.')!!}
+						</div>
+						<div class="col-md-6">
 							{!!Html::datepicker('invoice_date','Invoice Date',false)!!}
-							{!!Html::datepicker('dm_date','DM Date',false)!!}	
-							{!!Html::input('text','reason','Reason')!!}										
+							{!!Html::datepicker('dm_date','DM Date',false)!!}
+							{!!Html::input('text','reason','Reason')!!}
 						</div>
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
@@ -55,26 +55,26 @@
 									<td>
 										<span ng-bind="invoice_date = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 									</td>
-									<td>[[record.bank_name]]</td>							
+									<td>[[record.bank_name]]</td>
 									<td>[[record.cheque_number]]</td>
 									<td>
 										<span ng-bind="cheque_date = (formatDate(record.cheque_date) | date:'MM/dd/yyyy')"></span>
 									</td>
-									
-									<td>[[record.account_number]]</td>														
-									<td>[[record.reason]]</td>							
+
+									<td>[[record.account_number]]</td>
+									<td>[[record.reason]]</td>
 									<td>[[record.username]]</td>
 									<td align="center">
 										@if($navigationActions['show_edit_button'])
-											<a href="#bouncecheck.edit/[[record.id]]"><i class="fa fa-pencil-square-o fa-lg"></i></a>								
+											<a href="#bouncecheck.edit/[[record.id + filter_query_string]]"><i class="fa fa-pencil-square-o fa-lg"></i></a>
 										@endif
 									</td>
-								</tr>									
-							</tbody>				
+								</tr>
+							</tbody>
 						{!!Html::tfooter(true,20)!!}
-					{!!Html::tclose()!!}			
+					{!!Html::tclose()!!}
 				@endif
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>
@@ -90,7 +90,7 @@
 				.attr("value", '').text('Select Salesman'));
 			$('#customer_code').attr('disabled',true);
 			$('#jr_salesman_code').val('No Jr. Salesman');
-			$('#area').val('');			
+			$('#area').val('');
 		}
 		else{
 			var url = 'reports/salesman/customer/'+sel;
@@ -104,20 +104,20 @@
 							.attr("value", k).text(v));
 					});
 					$('#customer_code').removeAttr('disabled');
-				}			
+				}
 			});
-	
+
 			var url2 = 'reports/salesman/jr/'+sel;
-			$.get(url2,function(data){				
+			$.get(url2,function(data){
 				if(data){
 					$('#jr_salesman_code').val(data);
 				} else {
 					$('#jr_salesman_code').val('No Jr. Salesman');
-				}			
+				}
 			});
-	
+
 			$('#customer_code').trigger('change');
 		}
-	}	
+	}
 
 </script>
