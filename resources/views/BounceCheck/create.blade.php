@@ -5,30 +5,30 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
-			
+
 				<div class="row">
 					<div class="col-md-12">
 						<div class="pull-left">
 							<h4>Bounce Check</h4>
-						</div>					
+						</div>
 						<div class="pull-right">
-				      		<a href="#bounce.check" class="btn btn-success btn-sm">Back to Bounce Check Report</a>
+				      		<a href="#bounce.check[[filter_query_string]]" class="btn btn-success btn-sm">Back to Bounce Check Report</a>
 				      	</div>
 					</div>
 				</div>
 				<div class="clearfix">
-				
+
 				<div class="col-md-12 well">
-					<div class="row">															
+					<div class="row">
 						<div class ="col-md-8">
 							<input id="id" type="hidden" name="id" value="{{(int)$bounceCheck->id}}">
 							<input id="area" type="hidden" name="id" value="{{$bounceCheck && $bounceCheck->area ? $bounceCheck->area->area_name : ''}}">
 							<div class="row form-input-field">
 								{!!Html::select('salesman_code','Sr. Salesman <span class="required">*</span>', $salesman, 'Select Sr. Salesman',['onblur'=>'validate(this)','onchange'=>'set_customer(this)'],$bounceCheck->salesman_code)!!}
-							</div>							
+							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','jr_salesman_code','Jr. Salesman',$bounceCheck->id && $bounceCheck->jr_salesman ? $bounceCheck->jr_salesman->fullname: 'No Jr.Salesman',['disabled'=>true])!!}								
-							</div>													
+								{!!Html::input('text','jr_salesman_code','Jr. Salesman',$bounceCheck->id && $bounceCheck->jr_salesman ? $bounceCheck->jr_salesman->fullname: 'No Jr.Salesman',['disabled'=>true])!!}
+							</div>
 							<div class="row form-input-field">
 								@if($bounceCheck->id)
 									{!!Html::select('customer_code','Customer <span class="required">*</span>', salesman_customer($bounceCheck->salesman_code), '',['onblur'=>'validate(this)','onchange'=>'set_area(this)'],$bounceCheck->customer_code)!!}
@@ -37,50 +37,50 @@
 								@endif
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','dm_number','DM No. <span class="required">*</span>',$bounceCheck->dm_number,['onblur'=>'validate(this)'])!!}								
+								{!!Html::input('text','dm_number','DM No. <span class="required">*</span>',$bounceCheck->dm_number,['onblur'=>'validate(this)'])!!}
 							</div>
-							<div class="row form-input-field">								
+							<div class="row form-input-field">
 								{!!Html::datepicker('dm_date','DM Date <span class="required">*</span>',false,false,$bounceCheck->dm_date)!!}
-							</div>							
-							<div class="row form-input-field">
-								{!!Html::input('text','invoice_number','Invoice No. <span class="required">*</span>',$bounceCheck->invoice_number,['onblur'=>'validate(this)'])!!}								
 							</div>
-							<div class="row form-input-field">								
+							<div class="row form-input-field">
+								{!!Html::input('text','invoice_number','Invoice No. <span class="required">*</span>',$bounceCheck->invoice_number,['onblur'=>'validate(this)'])!!}
+							</div>
+							<div class="row form-input-field">
 								{!!Html::datepicker('invoice_date','Invoice Date <span class="required">*</span>',false,false,$bounceCheck->dm_date)!!}
-							</div>							
-							<div class="row form-input-field">
-								{!!Html::input('text','bank_name','Bank Name <span class="required">*</span>',$bounceCheck->bank_name,['onblur'=>'validate(this)'])!!}								
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','cheque_number','Check No. <span class="required">*</span>',$bounceCheck->cheque_number,['onblur'=>'validate(this)'])!!}								
-							</div>
-							<div class="row form-input-field">								
-								{!!Html::datepicker('cheque_date','Check Date <span class="required">*</span>',false,false,$bounceCheck->cheque_date)!!}
+								{!!Html::input('text','bank_name','Bank Name <span class="required">*</span>',$bounceCheck->bank_name,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','account_number','Account No. <span class="required">*</span>',$bounceCheck->account_number,['onblur'=>'validate(this)'])!!}								
-							</div>							
-							<div class="row form-input-field">
-								{!!Html::input('text','reason','Reason <span class="required">*</span>',$bounceCheck->reason,['onblur'=>'validate(this)'])!!}								
+								{!!Html::input('text','cheque_number','Check No. <span class="required">*</span>',$bounceCheck->cheque_number,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','original_amount','Original Amount <span class="required">*</span>',$bounceCheck->original_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.original_amount = ' . $bounceCheck->original_amount,'ng-model' => '$scope.bouncecheck.original_amount','price'])!!}								
+								{!!Html::datepicker('cheque_date','Check Date <span class="required">*</span>',false,false,$bounceCheck->cheque_date,'','Calendar',false,$no_edit)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','payment_amount','Payment Amount <span class="required">*</span>',$bounceCheck->payment_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.payment_amount = ' . $bounceCheck->payment_amount,'ng-model' => '$scope.bouncecheck.payment_amount','price'])!!}								
+								{!!Html::input('text','account_number','Account No. <span class="required">*</span>',$bounceCheck->account_number,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
 							</div>
-							<div class="row form-input-field">								
+							<div class="row form-input-field">
+								{!!Html::input('text','reason','Reason <span class="required">*</span>',$bounceCheck->reason,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
+							</div>
+							<div class="row form-input-field">
+								{!!Html::input('text','original_amount','Original Amount <span class="required">*</span>',$bounceCheck->original_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.original_amount = ' . $bounceCheck->original_amount,'ng-model' => '$scope.bouncecheck.original_amount','price','ng-disabled'=>$no_edit])!!}
+							</div>
+							<div class="row form-input-field">
+								{!!Html::input('text','payment_amount','Payment Amount <span class="required">*</span>',$bounceCheck->payment_amount,['onblur'=>'validate(this)','onkeyup'=>'compute_balance()','ng-init' =>'$scope.bouncecheck.payment_amount = ' . $bounceCheck->payment_amount,'ng-model' => '$scope.bouncecheck.payment_amount','price'])!!}
+							</div>
+							<div class="row form-input-field">
 								{!!Html::datepicker('payment_date','Payment Date <span class="required">*</span>',false,false,$bounceCheck->payment_date)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','remarks','Remarks <span class="required">*</span>',$bounceCheck->remarks,['onblur'=>'validate(this)'])!!}								
+								{!!Html::input('text','remarks','Remarks <span class="required">*</span>',$bounceCheck->remarks,['onblur'=>'validate(this)'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('number','balance_amount','Balance Amount',(int)$bounceCheck->balance_amount,['onblur'=>'validate(this)','disabled'=>true,'ng-init' =>'$scope.bouncecheck.balance_amount = ' . $bounceCheck->balance_amount,'ng-model' => '$scope.bouncecheck.balance_amount'])!!}								
+								{!!Html::input('number','balance_amount','Balance Amount',(int)$bounceCheck->balance_amount,['onblur'=>'validate(this)','disabled'=>true,'ng-init' =>'$scope.bouncecheck.balance_amount = ' . $bounceCheck->balance_amount,'ng-model' => '$scope.bouncecheck.balance_amount'])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','txn_number','Transaction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}								
-							</div>	
+								{!!Html::input('text','txn_number','Transaction Number',$txn_code,['onblur'=>'validate(this)','disabled'=>true])!!}
+							</div>
 							<div class="row form-input-field">
 								<div class="col-md-8 col-md-offset-4">
 									<button class="btn btn-info" onclick="preview()">Preview</button> &nbsp;&nbsp;
@@ -88,13 +88,13 @@
 										<button class="btn btn-info" onclick="add_payment()">Add Payment</button>
 									@endif
 								</div>
-							</div>	
-							<input type="hidden" id="username" value="@if($bounceCheck->id) {{ $bounceCheck->creator ? $bounceCheck->creator->fullname: '' }} @else {{auth()->user()->fullname }} @endif">					
+							</div>
+							<input type="hidden" id="username" value="@if($bounceCheck->id) {{ $bounceCheck->creator ? $bounceCheck->creator->fullname: '' }} @else {{auth()->user()->fullname }} @endif">
 						</div>
 					</div>
-					
+
 					<div class="hidden" id="preview">
-					<h4>Table Preview</h4>					
+					<h4>Table Preview</h4>
 					<div class="row" id="preview">
 						<div class="col-md-12 table-responsive">
 							<table class="table table-striped table-condensed table-bordered" id="table_items">
@@ -106,72 +106,72 @@
 									</tr>
 								</thead>
 								<tbody>
-									
+
 									@if(isset($replenishment) && $replenishment->items)
 										@foreach($replenishment->items as $k=>$item)
-											<tr>
+											<tr class="payment-lists">
 												<td class="txn_number"></td>
 												<td class="salesman_code"></td>
 												<td class="jr_salesman_code"></td>
 												<td class="area"></td>
-												<td class="customer_code"></td>																								
+												<td class="customer_code"></td>
 												<td class="original_amount"></td>
 												<td class="balance_amount"></td>
 												<td class="payment_amount"></td>
 												<td class="payment_date_from"></td>
-												<td class="remarks"></td>												
+												<td class="remarks"></td>
 												<td class="dm_number"></td>
 												<td class="dm_date_from"></td>
 												<td class="invoice_date_from"></td>
-												<td class="invoice_number"></td>												
+												<td class="invoice_number"></td>
 												<td class="bank_name"></td>
 												<td class="cheque_date_from"></td>
-												<td class="cheque_number"></td>												
+												<td class="cheque_number"></td>
 												<td class="account_number"></td>
 												<td class="reason"></td>
-												<td class="username"></td>												
+												<td class="username"></td>
 											</tr>
 										@endforeach
 									@else
-										<tr>
+										<tr class="payment-lists">
 												<td class="txn_number"></td>
 												<td class="salesman_code"></td>
 												<td class="jr_salesman_code"></td>
 												<td class="area"></td>
-												<td class="customer_code"></td>												
+												<td class="customer_code"></td>
 												<td class="original_amount"></td>
 												<td class="balance_amount"></td>
 												<td class="payment_amount"></td>
 												<td class="payment_date_from"></td>
-												<td class="remarks"></td>												
+												<td class="remarks"></td>
 												<td class="dm_number"></td>
 												<td class="dm_date_from"></td>
 												<td class="invoice_date_from"></td>
-												<td class="invoice_number"></td>												
+												<td class="invoice_number"></td>
 												<td class="bank_name"></td>
 												<td class="cheque_date_from"></td>
-												<td class="cheque_number"></td>												
+												<td class="cheque_number"></td>
 												<td class="account_number"></td>
 												<td class="reason"></td>
 												<td class="username"></td>
 										</tr>
 									@endif
-								</tbody>								
-							</table>						
+								</tbody>
+							</table>
 						</div>
 					</div>
 					</div>
-					
+
 					<div class="col-md-4 col-md-offset-4" style="padding-top:10px;">
 						@if($navigationActions['can_save'] || $navigationActions['can_update'])
-							<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;						
+							<button class="btn btn-success" ng-click="save()">Save</button>&nbsp;&nbsp;
 						@endif
-						<a href="#bounce.check" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;						
+						<a href="#bounce.check" class="btn btn-warning">Cancel</a>&nbsp;&nbsp;
 						@if($navigationActions['can_delete'])
 							<button class="btn btn-danger" ng-click="remove()">Delete</button>&nbsp;&nbsp;
-						@endif						
-					</div>															
-			</div>		
+						@endif
+					</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -179,55 +179,55 @@
 @if($navigationActions['can_delete'])
 	<script type="text/ng-template" id="DeleteBounceCheck">
 	 	<div class="modal-body">
-			<form class="form-horizontal">	 
-				<h4>Deleting Bounce Check - [[params.txn_number]]</h4>       		 
+			<form class="form-horizontal">
+				<h4>Deleting Bounce Check - [[params.txn_number]]</h4>
 				<div class="form-group">
 					<label class="col-sm-3">Remarks:</label>
 					<div class="col-sm-9">
 						<textarea class="form-control inner-addon fxresize" maxlength="150" name="remarks" rows="5" id="remarks" onblur="validate(this)"></textarea>
 						<span class="help-block"></span>
 					</div>
-				</div>						  
+				</div>
 				<div class="form-group">
 					<div class="col-sm-12">
-						<div class="pull-right">	
+						<div class="pull-right">
 							<button class="btn btn-success" type="button btn-sm" ng-click="save()">Submit</button>
-							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>	
+							<button class="btn btn-warning" type="button btn-sm" ng-click="cancel()">Cancel</button>
 						</div>
 					</div>
 				</div>
-			</form>										 					
-		</div>			    			
+			</form>
+		</div>
 	</script>
 @endif
 
 <script>
-
+	console.log($('.payment-lists').length);
 	function set_area_by_code(code)
-	{		
+	{
 		var url = 'reports/customer/area/'+code;
-		$.get(url,function(data){				
-			if(data){										
-				$('#area').val(data);										
-			}			
-		});			
+		$.get(url,function(data){
+			if(data){
+				$('#area').val(data);
+			}
+		});
 	}
 
 	function set_area(el)
 	{
-		var sel = $(el).val();	
+		var sel = $(el).val();
 		if(!sel){
 			$('#area').val('');
 		}
 		else{
 			var url = 'reports/customer/area/'+sel;
-			$.get(url,function(data){				
-				if(data){										
-					$('#area').val(data);										
-				}			
-			});	
+			$.get(url,function(data){
+				if(data){
+					$('#area').val(data);
+				}
+			});
 		}
-		
+
 	}
 
 
@@ -241,7 +241,7 @@
 				.attr("value", '').text('Select Salesman'));
 			$('#customer_code').attr('disabled',true);
 			$('#jr_salesman_code').val('No Jr. Salesman');
-			$('#area').val('');			
+			$('#area').val('');
 		}
 		else{
 			var url = 'reports/salesman/customer/'+sel;
@@ -254,27 +254,27 @@
 							.attr("value", k).text(v));
 					});
 					$('#customer_code').removeAttr('disabled');
-				}			
+				}
 			});
 
 			var url2 = 'reports/salesman/jr/'+sel;
-			$.get(url2,function(data){				
+			$.get(url2,function(data){
 				if(data){
 					$('#jr_salesman_code').val(data);
 				} else {
 					$('#jr_salesman_code').val('No Jr. Salesman');
-				}			
+				}
 			});
 
 			$('#customer_code').trigger('change');
 		}
-		
+
 	}
 
 	function add_payment()
-	{		
+	{
 		$('#payment_amount').val('0.00');
-		$('#payment_date_from').val('');		
+		$('#payment_date_from').val('');
 		$('#remarks').val('');
 		$('#id').val(0);
 		var txn = $('#txn_number').val();
@@ -286,9 +286,10 @@
 			var counter = parseInt(chunks[1]) + 1;
 			$('#txn_number').val(chunks[0]+'-'+count);
 		}
+		console.log($('.payment-lists').length);
 		$('#original_amount').attr('disabled','disabled');
 	}
-	
+
 	function compute_balance()
 	{
 		var payments = parseFloat({{$payments}});
@@ -299,13 +300,13 @@
 		if($('#id').val() != 0) {
 			balance = original_amount - payment_amount;
 		} else {
-			balance = original_amount - payment_amount - payments;			
+			balance = original_amount - payment_amount - payments;
 		}
 
 		console.log(balance);
 		$('#balance_amount').val(balance.toFixed(2));
 	}
-	
+
 	function preview()
 	{
 		$('#preview').removeClass('hidden');
@@ -315,7 +316,7 @@
 			var val = $('#'+id).val();
 			if(val) {
 				$(this).text(val);
-			}			
+			}
 		});
 	}
 </script>

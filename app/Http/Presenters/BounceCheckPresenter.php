@@ -55,6 +55,7 @@ class BounceCheckPresenter extends PresenterCore
     	$this->view->payments = 0;
     	$this->view->txn_code = generate_txn_code();
     	$this->view->max_count = 0;
+        $this->view->no_edit = false;
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
@@ -81,7 +82,7 @@ class BounceCheckPresenter extends PresenterCore
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$this->view->salesman = $reportsPresenter->getSalesman(true);
     	$this->view->tableHeaders = $this->getBounceCheckColumns(true);
-    	$bounceCheck = ModelFactory::getInstance('BounceCheck')->find($id);    	
+    	$bounceCheck = ModelFactory::getInstance('BounceCheck')->find($id);
     	$this->view->bounceCheck = $bounceCheck;
     	$txnNumber = $bounceCheck->txn_number;
     	if(false !== strpos($txnNumber,'-'))
@@ -92,7 +93,8 @@ class BounceCheckPresenter extends PresenterCore
     	$count = 0;
     	if(false !== strpos($max,'-'))
     		$count = explode('-', $max)[1];
-    	$this->view->max_count = $count;
+        $this->view->max_count = $count;
+    	$this->view->no_edit = true;
         $this->view->navigationActions = PresenterFactory::getInstance('UserAccessMatrix')->getNavigationActions('bounce-check-report',$user_group_id,$user_id);
 
         ModelFactory::getInstance('UserActivityLog')->create([
@@ -104,7 +106,7 @@ class BounceCheckPresenter extends PresenterCore
 
     	return $this->view('create');
     }
-    
+
     /**
      * Get Bounce Check report
      * @return \App\Core\PaginatorCore
@@ -124,7 +126,7 @@ class BounceCheckPresenter extends PresenterCore
 
     	return response()->json($data);
     }
-    
+
     /**
      * Get prepared bounce check report
      * @return unknown
@@ -139,7 +141,7 @@ class BounceCheckPresenter extends PresenterCore
     			app_area.area_name,
     			app_customer.customer_name,
     			bounce_check.original_amount,
-    			bounce_check.balance_amount,
+    			(bounce_check.original_amount - bounce_check.payment_amount) as balance_amount,
     			bounce_check.payment_amount,
     			bounce_check.payment_date,
     			bounce_check.remarks,
@@ -154,7 +156,7 @@ class BounceCheckPresenter extends PresenterCore
     			bounce_check.reason,
     			CONCAT(creator.firstname,\' \',creator.lastname) username
     			';
-    	 
+
     	$prepare = \DB::table('bounce_check')
 				    	->selectRaw($select)
 				    	->leftJoin('app_salesman','app_salesman.salesman_code','=','bounce_check.salesman_code')
@@ -162,7 +164,7 @@ class BounceCheckPresenter extends PresenterCore
 				    	->leftJoin('app_area','app_area.area_code','=','bounce_check.area_code')
 				    	->leftJoin('user as jr','jr.id','=','bounce_check.jr_salesman_id')
 				    	->leftJoin('user as creator','creator.id','=','bounce_check.created_by');
-    	 
+
     	if($this->isSalesman())
     	{
     		$prepare->where('bounce_check.salesman_code',auth()->user()->salesman_code);
@@ -172,43 +174,43 @@ class BounceCheckPresenter extends PresenterCore
     		$salesmanFilter = FilterFactory::getInstance('Select');
     		$prepare = $salesmanFilter->addFilter($prepare,'salesman_code');
     	}
-    	 
+
     	$areaFilter = FilterFactory::getInstance('Select');
     	$prepare = $areaFilter->addFilter($prepare,'area_code');
-    	 
+
     	$customerFilter = FilterFactory::getInstance('Select');
     	$prepare = $customerFilter->addFilter($prepare,'customer_code');
-    	
+
     	$txnCodeFilter = FilterFactory::getInstance('Text');
     	$prepare = $txnCodeFilter->addFilter($prepare,'txn_number');
-    	
+
     	$reasonFilter = FilterFactory::getInstance('Text');
     	$prepare = $reasonFilter->addFilter($prepare,'reason');
-    	 
+
     	$invoiceDateFilter = FilterFactory::getInstance('Date');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date');
-    	
+
     	$dmDateFilter = FilterFactory::getInstance('Date');
     	$prepare = $dmDateFilter->addFilter($prepare,'dm_date');
-    	
-    	 
+
+
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('bounce_check.created_at','desc');
     	}
-    		 
+
     	$prepare->whereNull('bounce_check.deleted_at');
-    		 
+
     	//     	if(!$this->hasAdminRole() && auth()->user())
     	//     	{
     	//     		$reportsPresenter = PresenterFactory::getInstance('Reports');
     	//     		$codes = $reportsPresenter->getAlikeAreaCode(auth()->user()->location_assignment_code);
     	//     		$prepare->whereIn('salesman_area.area_code',$codes);
     	//     	}
-    
+
     	return $prepare;
     }
-    
+
     /**
      * get Bounce check table columns
      * @param string $export
@@ -238,14 +240,14 @@ class BounceCheckPresenter extends PresenterCore
     			['name'=>'Username','sort'=>'username'],
     			['name'=>'Action'],
     	];
-    	
+
     	if($export)
     		array_pop($columns);
-    	
+
     	return $columns;
     }
-    
-    
+
+
     /**
      * Get Invocie series select columns
      * @return string[][]
@@ -275,7 +277,7 @@ class BounceCheckPresenter extends PresenterCore
     			'username'
     	];
     }
-    
+
     /**
      * Get Invoice series filter  data
      * @return string[]|unknown[]
@@ -285,13 +287,13 @@ class BounceCheckPresenter extends PresenterCore
     	$reportPresenter = PresenterFactory::getInstance('Reports');
     	$salesman = $this->request->get('salesman_code') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman_code')] : 'All';
     	$area = $this->request->get('area_code') ? $this->getArea()[$this->request->get('area_code')] : 'All';
-    	 
+
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area
     	];
-    	 
+
     	return $filters;
     }
-    
+
 }
