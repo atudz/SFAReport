@@ -24,12 +24,16 @@ class ReportsController extends ControllerCore
 			$value = $request->get('value');
 		else
 			$value = new \DateTime($request->get('value'));
-		
+
 		$id = $request->get('id');
 		$comment = $request->get('comment');
 		$report_type = $request->has('report_type') ? $request->get('report_type') : '';
 		$report = $request->has('report') ? $request->get('report') : '';
-		
+
+		if($report == 'salescollectionreport' && $column == 'or_date' && (strtotime(date('Y-m-d',strtotime($request->get('invoice_date')))) > strtotime(date('Y-m-d',strtotime($request->get('value')))))){
+			return response()->json(['error' => 'OR Date must be same or after Invoice Date ' . date('F d,Y',strtotime($request->get('invoice_date'))) ],422);
+		}
+
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
 		$reference='';
@@ -40,7 +44,7 @@ class ReportsController extends ControllerCore
 			{
 				$stockTransNum = \DB::table($table)->where($pk,$id)->value($column);
 			}
-						
+
 			$prevData = \DB::table($table)->where($pk,$id)->first();
 			$before = isset($prevData->$column) ? $prevData->$column : '';
 			if($column == 'invoice_number')
@@ -48,13 +52,13 @@ class ReportsController extends ControllerCore
 				$prevInvoiceNum = $before;
 				$reference = isset($prevData->reference_num) ? $prevData->reference_num : '';
 			}
-		
+
 			\DB::table($table)->where($pk,$id)->lockForUpdate()->update([
 							$column => $value,
 							'updated_at' => new \DateTime(),
 							'updated_by' => auth()->user()->id,
 			]);
-		
+
 			$logId = \DB::table('table_logs')->insertGetId([
 							'table' => $table,
 							'column' => $column,
@@ -67,7 +71,7 @@ class ReportsController extends ControllerCore
 							'comment' => $comment,
 							'report_type' => $report_type,
 					]);
-						
+
 			if($logId)
 			{
 						\DB::table('report_revisions')->insert([
@@ -80,11 +84,11 @@ class ReportsController extends ControllerCore
 						]);
 			}
 		}
-		
+
 		if($table == 'txn_stock_transfer_in_header' && $stockTransNum && $column == 'stock_transfer_number')
 		{
 			$transfer = \DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->first();
-						
+
 			if($transfer)
 			{
 				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->lockForUpdate()->update([
@@ -92,7 +96,7 @@ class ReportsController extends ControllerCore
 								'updated_at' => new \DateTime(),
 								'updated_by' => auth()->user()->id,
 				]);
-							
+
 				\DB::table('table_logs')->insertGetId([
 								'table' => 'txn_stock_transfer_in_detail',
 								'column' => $column,
@@ -106,10 +110,10 @@ class ReportsController extends ControllerCore
 								'report_type' => $report_type
 						]);
 			}
-						
+
 		}
-		
-		
+
+
 		if($column == 'invoice_number' && $prevInvoiceNum)
 		{
 			$insertData = [];
@@ -119,20 +123,20 @@ class ReportsController extends ControllerCore
 				$prepare = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum);
 				if($reference)
 					$prepare->where('reference_num',$reference);
-		
+
 				$updated = $prepare->lockForUpdate()->update([
 									$column => $value,
 									'updated_at' => new \DateTime(),
 									'updated_by' => auth()->user()->id,
 							]);
-		
+
 				if(!$updated)
 					$updated = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
 										$column => $value,
 										'updated_at' => new \DateTime(),
 										'updated_by' => auth()->user()->id,
 								]);
-									
+
 				if($updated)
 				{
 					$insertData[] = [
@@ -149,8 +153,8 @@ class ReportsController extends ControllerCore
 									];
 				}
 			}
-						
-						
+
+
 			if($table != 'txn_invoice')
 			{
 				$data2 = \DB::table('txn_invoice')->where($column,$prevInvoiceNum)->first();
@@ -161,7 +165,7 @@ class ReportsController extends ControllerCore
 										'updated_at' => new \DateTime(),
 										'updated_by' => auth()->user()->id,
 								]);
-			
+
 					$insertData[] = [
 										'table' => 'txn_invoice',
 										'column' => $column,
@@ -176,19 +180,19 @@ class ReportsController extends ControllerCore
 								];
 					}
 			 }
-							
-			
+
+
 			if($insertData)
 			{
 				\DB::table('table_logs')->insert($insertData);
 			}
 		}
-		
+
 		$data['success'] = true;
 		return response()->json($data);
 	}
-	
-	
+
+
 	/**
 	 * Sync reports from SFA db
 	 * @return \Illuminate\Http\JsonResponse
@@ -205,7 +209,7 @@ class ReportsController extends ControllerCore
 			$result = LibraryFactory::getInstance('Sync')->sync();
 			$data['synching'] = false;
 			$data['logs'] = $result ? true : '';
-		}	
+		}
 		//$data['synching'] = false;
 		//$data['logs'] = true;
 		return response()->json($data);
