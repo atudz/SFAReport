@@ -69,13 +69,13 @@
 					<h4 style="margin-bottom: 20px;">Access & Location</h4>
 					{!!Html::error('locationInfoError','error_list_location')!!}
 					<div class="row form-input-field">
-						{!!Html::select('role','Role <span class="required">*</span>', array_merge($roles,[''=>'']),'')!!}
+						{!!Html::select('role','Role <span class="required">*</span>', array_merge([''=>''],$roles),'')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::select('area','Branch <span class="required">*</span>', $areas, '')!!}
+						{!!Html::select('area','Branch <span class="required">*</span>', array_merge([''=>''],$areas), '')!!}
 					</div>
 					<div class="row form-input-field">
-						{!!Html::select('assignment_type','Assignment <span class="required">*</span>', $assignmentOptions, '')!!}
+						{!!Html::select('assignment_type','Assignment <span class="required">*</span>', array_merge([''=>''],$assignmentOptions), '')!!}
 					</div>
 					<div class="row form-input-field">
 						{!!Html::datepicker('assignment_date','Date From & To', true)!!}
