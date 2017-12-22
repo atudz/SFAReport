@@ -32,19 +32,19 @@
                         {!!Html::theader($tableHeaders)!!}
                             <tbody>
                                 <tr ng-repeat="record in records|filter:query" id=[[$index]]>
-                                    <td>[[record.so_number]]</td>
-                                    <td>[[record.reference_num]]</td>
-                                    <td>[[record.sales.activity_salesman.activity_code]]</td>
-                                    <td>[[record.sales.customer_code]]</td>
-                                    <td>[[record.sales.customer.customer_name]]</td>
-                                    <td>[[record.sales.customer.customer_address]]</td>
-                                    <td>[[record.sales.activity_salesman.evaluated_objective[0].remarks]]</td>
-                                    <td>[[record.sales.van_code]]</td>
-                                    <td>[[record.sales.device_code]]</td>
-                                    <td>[[record.sales.salesman_code]]</td>
-                                    <td>[[record.sales.salesman.salesman_name]]</td>
-                                    <td>[[record.sales.customer.area.area]]</td>
-                                    <td>[[record.sales.invoice_number]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.so_number]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.reference_num]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.activity_salesman.activity_code]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer_code]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.customer_name]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.customer_address]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.activity_salesman.evaluated_objective[0].remarks]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.van_code]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.device_code]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.salesman_code]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.salesman.salesman_name]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.area.area]]</td>
+                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.invoice_number]]</td>
                                     <td>[[formatDate(record.sales.invoice_date) | date:'MM/dd/yyyy']]</td>
                                     <td>[[formatDate(record.sales.invoice_posting_date) | date:'MM/dd/yyyy']]</td>
                                     <td>[[record.gross_served_amount]]</td>

@@ -401,21 +401,36 @@ class SfiTransactionDataController extends ControllerCore
             ])
             ->select(
                 'so_number',
+                'item_code',
                 'reference_num',
-                DB::raw('SUM(gross_served_amount) as gross_served_amount'),
-                DB::raw('SUM(vat_amount) as vat_amount'),
-                DB::raw('SUM(discount_rate) as discount_rate'),
-                DB::raw('SUM(discount_amount) as discount_amount')
+                'gross_served_amount',
+                'vat_amount',
+                'discount_rate',
+                'discount_amount'
             )
-            ->distinct()
-            ->whereIn('so_number',$so_numbers)
-            ->groupBy('reference_num');
+            ->whereIn('so_number',$so_numbers);
 
 
         if(request()->has('offset')){
             $sfi_transactions = $sfi_transactions->skip(request()->get('offset'))->take(1000);
         }
 
-        return $sfi_transactions->get();
+        $results = $sfi_transactions->get();
+        $previous_invoice_number = '';
+        $current_index = 0;
+
+        foreach ($results as $key => $result) {
+            if($previous_invoice_number == $result->sales->invoice_number){
+                $results[$current_index]->row_span += 1;
+                $results[$key]->show = false;
+            } else {
+                $previous_invoice_number = $result->sales->invoice_number;
+                $current_index = $key;
+                $results[$key]->row_span = 1;
+                $results[$key]->show = true;
+            }
+        }
+
+        return $results;
     }
 }
