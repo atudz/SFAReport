@@ -549,7 +549,7 @@
 
 	function AdjustmentAdd($scope, $resource, $location, $window, $uibModal, $log, $route, $templateCache,toaster) {
 		deletePreviousCache($route,$templateCache);
-		
+
 		$('.timepicker').timepicker({
 			timeFormat: 'h:mm p',
 			interval: 30,
@@ -2123,6 +2123,7 @@
 						commentLists.push(comment);
 					});
 				}
+				console.log(data);
 
 				switch (url[4]) {
 					case "salescollection.report":
@@ -2220,6 +2221,10 @@
 						slug: slug
 				};
 
+				if(url[4] == 'salescollection.report')
+				{
+					params.invoice_date = scope.records[index].invoice_date
+				}
 
 				var modalInstance = modal.open({
 					animation: true,
@@ -2591,11 +2596,14 @@
 						}
 					}
 					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
+					$('table.table').floatThead('destroy');
+					$uibModalInstance.dismiss('cancel');
+				},function(error){
+					if(error.status == 422){
+						document.getElementById("editErrorORDate").style.display = "block";
+						document.getElementById("editErrorORDate").innerHTML = error.data.error;
+					}
 				});
-
-				$('table.table').floatThead('destroy');
-
-				$uibModalInstance.dismiss('cancel');
 			}
 		};
 
