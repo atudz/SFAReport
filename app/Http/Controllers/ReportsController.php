@@ -40,6 +40,10 @@ class ReportsController extends ControllerCore
 		$report_type = $request->has('report_type') ? $request->get('report_type') : '';
 		$report = $request->has('report') ? $request->get('report') : '';
 
+        if($report == 'salescollectionreport' && $column == 'or_date' && (strtotime(date('Y-m-d',strtotime($request->get('invoice_date')))) > strtotime(date('Y-m-d',strtotime($request->get('value')))))){
+            return response()->json(['error' => 'OR Date must be same or after Invoice Date ' . date('F d,Y',strtotime($request->get('invoice_date'))) ],422);
+        }
+
 		$stockTransNum = '';
 		$prevInvoiceNum = '';
 		$reference='';
@@ -147,7 +151,7 @@ class ReportsController extends ControllerCore
 
 				if($updated)
 				{
-					$insertData[] = [
+					$insertData = [
 							'table' => 'txn_collection_invoice',
 							'column' => $column,
 							'pk_id' => $data1->collection_invoice_id,
@@ -174,7 +178,7 @@ class ReportsController extends ControllerCore
 							'updated_by' => auth()->user()->id,
 					]);
 
-					$insertData[] = [
+					$insertData = [
 							'table' => 'txn_invoice',
 							'column' => $column,
 							'pk_id' => $data2->invoice_id,
@@ -191,8 +195,8 @@ class ReportsController extends ControllerCore
 
 			if($insertData)
 			{
-                $insertData['salesman_code'] = $this->getSalesmanCode($table,$insertData['pk_id']);
-			 	\DB::table('table_logs')->insert($insertData);
+                $insertData['salesman_code'] = $this->getSalesmanCode($insertData['table'],$insertData['pk_id']);
+                \DB::table('table_logs')->insert($insertData);
 			}
 		}
 
@@ -257,6 +261,7 @@ class ReportsController extends ControllerCore
         $salesman_code = '';
         $syncTables = config('sync.sync_tables');
         $pkColumn = array_shift($syncTables[$table]);
+
         switch($table)
         {
             case 'txn_collection_header':
