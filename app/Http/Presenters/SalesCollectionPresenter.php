@@ -37,7 +37,7 @@ class SalesCollectionPresenter extends PresenterCore
 
     	return $this->view('cashPayments');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -66,7 +66,7 @@ class SalesCollectionPresenter extends PresenterCore
 
     	return $this->view('checkPayments');
     }
-    
+
     /**
      * Get cash payments report
      * @return \Illuminate\Http\JsonResponse
@@ -74,16 +74,16 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCashPaymentReport()
     {
     	$prepare = $this->getPreparedCashPayment();
-    	$collection = $prepare->get();
-    	
+    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$result = $reportsPresenter->formatSalesCollection($collection);
-    	
+
     	$summary = '';
     	if($result)
     	{
     		$summary = $this->getCashPaymentTotal($result);
-    	}    	
+    	}
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
 
         if(!empty($data['records'])){
@@ -92,16 +92,24 @@ class SalesCollectionPresenter extends PresenterCore
                 if(!empty($value->collection_detail_id) || !is_null($value->collection_detail_id)){
                     $data['records'][$key]->payment_amount_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','payment_amount')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
                 }
+
+                $data['records'][$key]->delete_remarks_updated = '';
+                $data['records'][$key]->has_delete_remarks = '';
+                if(!empty($value->delete_remarks_id) || !is_null($value->delete_remarks_id)){
+                    $data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->delete_remarks_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
+                }
+
                 $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),40,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
             }
         }
-    	 
+
     	$data['summary'] = '';
     	if($summary)
     	{
     		$data['summary'] = $summary;
     	}
-    	
+
     	$data['total'] = count($result);
 
         ModelFactory::getInstance('UserActivityLog')->create([
@@ -110,11 +118,11 @@ class SalesCollectionPresenter extends PresenterCore
             'action_identifier' => '',
             'action'            => 'done loading Sales & Collection - Cash Payments data'
         ]);
-    	
+
     	return response()->json($data);
     }
-    
-    
+
+
     /**
      * Get check payments report
      * @return \Illuminate\Http\JsonResponse
@@ -122,11 +130,11 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCheckPaymentReport()
     {
     	$prepare = $this->getPreparedCheckPayment();
-    	$collection = $prepare->get();
-    	 
+    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
+
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$result = $reportsPresenter->formatSalesCollection($collection);
-    	 
+
     	$summary = '';
     	if($result)
     	{
@@ -142,16 +150,24 @@ class SalesCollectionPresenter extends PresenterCore
                     $data['records'][$key]->bank_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','bank')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
                     $data['records'][$key]->payment_amount_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_collection_detail')->where('column','=','payment_amount')->where('pk_id','=',$value->collection_detail_id)->count() ? 'modified' : '';
                 }
+
+                $data['records'][$key]->delete_remarks_updated = '';
+                $data['records'][$key]->has_delete_remarks = '';
+                if(!empty($value->delete_remarks_id) || !is_null($value->delete_remarks_id)){
+                    $data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->delete_remarks_id)->count() ? 'modified' : '';
+                    $data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
+                }
+
                 $data['records'][$key]->closed_period = !empty(PresenterFactory::getInstance('OpenClosingPeriod')->periodClosed($this->request->get('company_code'),41,date('n',strtotime($value->or_date)),date('Y',strtotime($value->or_date)))) ? 1 : 0;
             }
         }
-    
+
     	$data['summary'] = '';
     	if($summary)
     	{
     		$data['summary'] = $summary;
     	}
-    	 
+
     	$data['total'] = count($result);
 
         ModelFactory::getInstance('UserActivityLog')->create([
@@ -160,10 +176,10 @@ class SalesCollectionPresenter extends PresenterCore
             'action_identifier' => '',
             'action'            => 'done loading Sales & Collection - Check Payments data'
         ]);
-    	 
+
     	return response()->json($data);
     }
-    
+
     /**
      * Get cash payment total
      * @param unknown $data
@@ -175,14 +191,14 @@ class SalesCollectionPresenter extends PresenterCore
     			'payment_amount'=>0,
     			'total_invoice_net_amount'=>0,
     	];
-    	 
+
     	$cols = array_keys($summary);
     	foreach($data as $val)
     	{
     		foreach($cols as $key)
     			$summary[$key] += $val->$key;
     	}
-    	 
+
     	//format
     	foreach($cols as $key)
     	{
@@ -191,10 +207,10 @@ class SalesCollectionPresenter extends PresenterCore
     		else
     			$summary[$key] = $summary[$key];
     	}
-    
+
     	return $summary;
     }
-    
+
     /**
      * Get preapred statement for cash payment
      * @param string $summary
@@ -202,11 +218,11 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getPreparedCashPayment($summary=false)
     {
-    	$query = ' 
+    	$query = '
     			  SELECT
     			   sotbl.so_number,
     			   tas.salesman_code,
-    			   tas.customer_code,    			   
+    			   tas.customer_code,
 				   CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 	    		   IF(ac.address_1=\'\',
 	    				IF(ac.address_2=\'\',ac.address_3,
@@ -220,18 +236,20 @@ class SalesCollectionPresenter extends PresenterCore
 	    						)
 	    					)
 	    			) customer_address,
-				   remarks.remarks,    			   
-				   sotbl.invoice_number,
+				   remarks.remarks,
+                   sotbl.invoice_number,
+                   sotbl.delete_remarks,
+				   sotbl.sales_order_header_id delete_remarks_id,
 				   sotbl.so_date invoice_date,
 				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
-    			
+
 				   coltbl.or_date,
 	               UPPER(coltbl.or_number) or_number,
-				   coltbl.payment_amount,				   
-    			
+				   coltbl.payment_amount,
+
     			   coltbl.collection_detail_id,
-    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,IF(tsohd2.updated_by,\'modified\',\'\')))) updated				
-    	
+    			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,IF(tsohd2.updated_by,\'modified\',\'\')))) updated
+
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
 				   join
@@ -239,20 +257,21 @@ class SalesCollectionPresenter extends PresenterCore
 					(
 						select
     						all_so.sales_order_header_id,
-    			
+
 							all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+                            all_so.delete_remarks,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
-						
+
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
-							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,						
-    			
+							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
+
     						all_so.updated
 						from (
 								select
@@ -264,6 +283,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
 									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
@@ -280,9 +300,9 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-			
+
 								union all
-			
+
 								select
     								tsoh.sales_order_header_id,
 									tsoh.so_number,
@@ -292,6 +312,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
@@ -308,10 +329,10 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-											
+
 						) all_so
-			
-						
+
+
 						left join
 						(
 							select
@@ -321,17 +342,17 @@ class SalesCollectionPresenter extends PresenterCore
 							from txn_sales_order_header_discount
 							group by reference_num
 						) tsohd on all_so.reference_num = tsohd.reference_num
-			
-    	
+
+
 						group by all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number
-						
+
 					) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
-    	
+
 					left join txn_sales_order_header_discount tsohd2 on sotbl.reference_num = tsohd2.reference_num and tsohd2.deduction_code=\'EWT\'
 					left join
 					-- RETURN SUBTABLE
@@ -364,7 +385,7 @@ class SalesCollectionPresenter extends PresenterCore
 							trh.sfa_modified_date,
 							trh.return_slip_num
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
-    	
+
 					-- COLLECTION SUBTABLE
 					join
 					(
@@ -379,20 +400,20 @@ class SalesCollectionPresenter extends PresenterCore
     						tcd.collection_detail_id,
     						tci.invoice_number,
     						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
-			
+
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					where tcd.payment_method_code=\'CASH\'
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.invoice_number = sotbl.invoice_number
-			
+
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
 					(
 						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 					) remarks ON(remarks.reference_num=tas.reference_num)
-			
+
 					WHERE  (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
     					   OR (tas.activity_code not like \'%C%\')
@@ -400,80 +421,82 @@ class SalesCollectionPresenter extends PresenterCore
 					 		 tas.salesman_code ASC,
 							 tas.customer_code ASC
     			';
-    	
+
     	$select = '
     			collection.customer_code,
 				collection.customer_name,
     			collection.customer_address,
-				collection.remarks,
+                collection.remarks,
+				collection.delete_remarks,
 				collection.invoice_number,
 				collection.invoice_date,
 				collection.total_invoice_net_amount,
 				collection.or_date,
 	            collection.or_number,
-				collection.payment_amount,				    			
+				collection.payment_amount,
     			collection.collection_detail_id,
-    			collection.updated
-    	
+    			collection.updated,
+                collection.delete_remarks_id
+
     			';
-    	 
+
     	if($summary)
     	{
-    		$select = '    				    				
-    				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,    				
+    		$select = '
+    				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
 					SUM(collection.payment_amount) payment_amount
     				';
     	}
-    	 
+
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
-    	 
+
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
     			function($self, $model){
     				return $model->where('collection.salesman_code','=',$self->getValue());
     			});
-    	 
+
     	$companyFilter = FilterFactory::getInstance('Select');
     	$prepare = $companyFilter->addFilter($prepare,'company_code',
     			function($self, $model){
     				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
     			});
-    	 
+
     	$customerFilter = FilterFactory::getInstance('Text');
     	$prepare = $customerFilter->addFilter($prepare,'customer_code',
     			function($self, $model){
     				return $model->where('collection.customer_code',$self->getValue());
     			});
-    	
-    	 
+
+
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
     					function($self, $model){
     						return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
     				});
-    	
+
     	$orDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $orDateFilter->addFilter($prepare,'or_date',
     			function($self, $model){
     				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
     			});
-    	
+
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    		
+
     	if($sort = $this->request->get('sort'))
     	{
     		$prepare->orderBy('collection.'.$sort,$this->request->get('order'));
     	}
-    	
+
     	$prepare->orderBy('collection.invoice_number','asc');
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
-    	$prepare->orderBy('collection.so_number','asc');    	
-    		 
+    	$prepare->orderBy('collection.so_number','asc');
+
     	return $prepare;
     }
-    
+
     /**
      * Get cash payments
      * @return string[][]
@@ -491,11 +514,12 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Collection Date','sort'=>'or_date'],
     			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'Cash Amount'],
+                ['name'=>'Delete Remarks'],
     	];
-    
+
     	return $headers;
     }
-    
+
     /**
      * get Cash Payment Filter Data
      * @return string[]|unknown[]
@@ -507,22 +531,22 @@ class SalesCollectionPresenter extends PresenterCore
     	$salesman = $this->request->get('salesman') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman')] : 'All';
     	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
     	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
-    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';    	
+    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
-    	
+
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
     			'Customer Name' => $customer,
     			'Company Code' => $company_code,
     			'Invoice Date' => $invoiceDate,
-    			'Or Date' => $orDate,    			
-    	];    	
-    
+    			'Or Date' => $orDate,
+    	];
+
     	return $filters;
     }
-    
-    
+
+
     /**
      * Get preapred statement for cash payment
      * @param string $summary
@@ -549,22 +573,24 @@ class SalesCollectionPresenter extends PresenterCore
 	    					)
 	    			) customer_address,
 				   remarks.remarks,
-				   sotbl.invoice_number,
+                   sotbl.invoice_number,
+                   sotbl.delete_remarks,
+				   sotbl.sales_order_header_id delete_remarks_id,
 				   sotbl.so_date invoice_date,
 				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
-    
+
 				   coltbl.or_date,
 	               UPPER(coltbl.or_number) or_number,
-				   coltbl.payment_amount,	
-    				
+				   coltbl.payment_amount,
+
     			   IF(coltbl.payment_method_code=\'CASH\',\'\', ti.invoice_date) cm_date,
     			   coltbl.bank,
 				   coltbl.check_number,
 				   IF(coltbl.payment_method_code=\'CASH\',\'\', coltbl.check_date) check_date,
-				   
+
     			   coltbl.collection_detail_id,
     			   IF(sotbl.updated=\'modified\',sotbl.updated,IF(rtntbl.updated=\'modified\',rtntbl.updated,IF(coltbl.updated=\'modified\',coltbl.updated,IF(tsohd2.updated_by,\'modified\',\'\')))) updated
-   
+
 				   from txn_activity_salesman tas
 				   left join app_customer ac on ac.customer_code=tas.customer_code
 				   join
@@ -572,20 +598,21 @@ class SalesCollectionPresenter extends PresenterCore
 					(
 						select
     						all_so.sales_order_header_id,
-    
+
 							all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+                            all_so.delete_remarks,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
-    
+
 							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
 							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
-    
+
     						all_so.updated
 						from (
 								select
@@ -597,6 +624,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
 									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
@@ -613,9 +641,9 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-		
+
 								union all
-		
+
 								select
     								tsoh.sales_order_header_id,
 									tsoh.so_number,
@@ -625,6 +653,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
@@ -641,10 +670,10 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
 									tsoh.sfa_modified_date,
 									tsoh.invoice_number
-						
+
 						) all_so
-		
-    
+
+
 						left join
 						(
 							select
@@ -654,17 +683,17 @@ class SalesCollectionPresenter extends PresenterCore
 							from txn_sales_order_header_discount
 							group by reference_num
 						) tsohd on all_so.reference_num = tsohd.reference_num
-		
-   
+
+
 						group by all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number
-    
+
 					) sotbl on sotbl.reference_num = tas.reference_num and sotbl.salesman_code = tas.salesman_code
-   
+
 					left join txn_sales_order_header_discount tsohd2 on sotbl.reference_num = tsohd2.reference_num and tsohd2.deduction_code=\'EWT\'
 					left join
 					-- RETURN SUBTABLE
@@ -697,7 +726,7 @@ class SalesCollectionPresenter extends PresenterCore
 							trh.sfa_modified_date,
 							trh.return_slip_num
 					) rtntbl on rtntbl.reference_num = tas.reference_num and rtntbl.salesman_code = tas.salesman_code
-   
+
 					-- COLLECTION SUBTABLE
 					join
 					(
@@ -715,20 +744,20 @@ class SalesCollectionPresenter extends PresenterCore
     						tcd.collection_detail_id,
     						tci.invoice_number,
     						IF(tch.updated_by,\'modified\',IF(tcd.updated_by,\'modified\',\'\')) updated
-		
+
 						from txn_collection_header tch
 						inner join txn_collection_detail tcd on tch.reference_num = tcd.reference_num and tch.salesman_code = tcd.modified_by -- added to bypass duplicate refnums
 						left join txn_collection_invoice tci on tch.reference_num=tci.reference_num
     					where tcd.payment_method_code=\'CHECK\'
     					group by tci.invoice_number,tch.or_number,tch.reference_num,tcd.payment_method_code,tcd.collection_detail_id
 					) coltbl on coltbl.invoice_number = sotbl.invoice_number
-		
+
 					left join txn_invoice ti on coltbl.cm_number=ti.invoice_number and ti.document_type=\'CM\'
 	    			left join
 					(
 						select evaluated_objective_id,remarks,reference_num,updated_by from txn_evaluated_objective group by reference_num
 					) remarks ON(remarks.reference_num=tas.reference_num)
-		
+
 					WHERE  (tas.activity_code like \'%C%\' AND tas.activity_code not like \'%SO%\')
     					   OR (tas.activity_code like \'%SO%\')
     					   OR (tas.activity_code not like \'%C%\')
@@ -736,13 +765,14 @@ class SalesCollectionPresenter extends PresenterCore
 					 		 tas.salesman_code ASC,
 							 tas.customer_code ASC
     			';
-    	 
+
     	$select = '
     			collection.customer_code,
 				collection.customer_name,
     			collection.customer_address,
 				collection.remarks,
-				collection.invoice_number,
+                collection.invoice_number,
+				collection.delete_remarks,
 				collection.invoice_date,
 				collection.total_invoice_net_amount,
 				collection.or_date,
@@ -753,10 +783,10 @@ class SalesCollectionPresenter extends PresenterCore
     			collection.check_number,
     			collection.check_date,
     			collection.collection_detail_id,
-    			collection.updated
-   
+    			collection.updated,
+                collection.delete_remarks_id
     			';
-    
+
     	if($summary)
     	{
     		$select = '
@@ -764,57 +794,57 @@ class SalesCollectionPresenter extends PresenterCore
     				SUM(collection.payment_amount) payment_amount
     				';
     	}
-    
+
     	$prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
-    
+
     	$salesmanFilter = FilterFactory::getInstance('Select');
     	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
     			function($self, $model){
     				return $model->where('collection.salesman_code','=',$self->getValue());
     			});
-    
+
     	$companyFilter = FilterFactory::getInstance('Select');
     	$prepare = $companyFilter->addFilter($prepare,'company_code',
     			function($self, $model){
     				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
     			});
-    
+
     	$customerFilter = FilterFactory::getInstance('Text');
     	$prepare = $customerFilter->addFilter($prepare,'customer_code',
     			function($self, $model){
     				return $model->where('collection.customer_code',$self->getValue());
     			});
-    	 
-    
+
+
     	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
     			function($self, $model){
     				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
     			});
-    	 
+
     	$orDateFilter = FilterFactory::getInstance('DateRange');
     	$prepare = $orDateFilter->addFilter($prepare,'or_date',
     			function($self, $model){
     				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
     			});
-    	 
+
     	$prepare->where('collection.customer_name','not like','%Adjustment%');
     	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	
+
     	if($sort = $this->request->get('sort'))
     	{
     		$prepare->orderBy('collection.'.$sort,$this->request->get('order'));
     	}
-    	
+
     	$prepare->orderBy('collection.invoice_number','asc');
     	$prepare->orderBy('collection.invoice_date','asc');
     	$prepare->orderBy('collection.customer_name','asc');
     	$prepare->orderBy('collection.so_number','asc');
-    	
-    	
+
+
     	return $prepare;
-    }    
-    
+    }
+
     /**
      * Get cash payments
      * @return string[][]
@@ -830,17 +860,19 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
     			['name'=>'Collection Date','sort'=>'or_date'],
-    			['name'=>'OR Number','sort'=>'or_number'],    			
+                ['name'=>'OR Number','sort'=>'or_number'],
+    			['name'=>'IDK Date','sort'=>'cm_date'],
     			['name'=>'Bank Name','sort'=>'bank'],
     			['name'=>'Check No','sort'=>'check_number'],
     			['name'=>'Check Date','sort'=>'check_date'],
     			['name'=>'Check Amount'],
+                ['name'=>'Delete Remarks']
     	];
-    
+
     	return $headers;
     }
-    
-    
+
+
     /**
      * Get Cash Payment Select Columns
      * @return string[][]
@@ -857,10 +889,11 @@ class SalesCollectionPresenter extends PresenterCore
     			'total_invoice_net_amount',
     			'or_date',
     			'or_number',
-    			'payment_amount'    			
+    			'payment_amount',
+                'delete_remarks'
     	];
     }
-    
+
     /**
      * Get Cash Payment Select Columns
      * @return string[][]
@@ -875,12 +908,14 @@ class SalesCollectionPresenter extends PresenterCore
     			'invoice_number',
     			'invoice_date',
     			'total_invoice_net_amount',
+                'collection_date',
     			'or_number',
     			'cm_date',
     			'bank',
     			'check_number',
     			'check_date',
-    			'payment_amount'
+    			'payment_amount',
+                'delete_remarks'
     	];
     }
     /**
@@ -896,7 +931,7 @@ class SalesCollectionPresenter extends PresenterCore
     	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
-    	 
+
     	$filters = [
     			'Salesman' => $salesman,
     			'Area' => $area,
@@ -905,7 +940,7 @@ class SalesCollectionPresenter extends PresenterCore
     			'Invoice Date' => $invoiceDate,
     			'Or Date' => $orDate,
     	];
-    
+
     	return $filters;
     }
 }

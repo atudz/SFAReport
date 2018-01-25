@@ -6,9 +6,9 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				@if($navigationActions['show_filter'])
-					<!-- Filter -->			
+					<!-- Filter -->
 					{!!Html::fopen('Toggle Filter')!!}
-						<div class="col-md-6">						
+						<div class="col-md-6">
 							@if($isSalesman)
 								{!!Html::select('salesman_code','Salesman', $salesman,'')!!}
 							@else
@@ -16,13 +16,13 @@
 							@endif
 							{!!Html::select('area','Area', $areas)!!}
 							{!!Html::select('company_code','Company Code', $companyCode)!!}
-							{!!Html::select('customer','Customer Name', $customers)!!}													
-						</div>					
-						<div class="col-md-6">	
+							{!!Html::select('customer','Customer Name', $customers)!!}
+						</div>
+						<div class="col-md-6">
 							{!!Html::datepicker('return_date','Return Date',true)!!}
 							{!!Html::datepicker('posting_date','Posting Date',true)!!}
-							{!!Html::input('text','invoice_number','Return Slip No.')!!}													 			
-						</div>			
+							{!!Html::input('text','invoice_number','Return Slip No.')!!}
+						</div>
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
 				@endif
@@ -37,7 +37,7 @@
 							'can_sort' => $navigationActions['can_sort_columns']
 						])!!}
 							<tbody>
-								<tr ng-repeat="record in records|filter:query" class=[[record.updated]]>
+								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
 									<td>[[record.return_txn_number]]</td>
 									<td>[[record.reference_num]]</td>
 									<td>[[record.activity_code]]</td>
@@ -72,12 +72,23 @@
 										<span ng-bind="record.collective_discount_amount_formatted = negate(record.collective_discount_amount)"></span>
 									</td>
 									<td>[[record.discount_reference_num]]</td>
-									<td>[[record.discount_remarks]]</td>						
+									<td>[[record.discount_remarks]]</td>
 									<td>
 										<span ng-bind="record.total_invoice_formatted = negate(record.total_invoice)"></span>
 									</td>
+									<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
+										@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
+											<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','delete_remarks',record.return_header_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','returns-peso-value',('records-' + $index))">
+					    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+					    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+					  						</a>
+					  					@endif
+					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  						[[ record.delete_remarks ]]
+					  					@endif
+									</td>
 								</tr>
-								
+
 								<!-- Summary Total -->
 								<tr id="total_summary">
 									<th>Total</th>
@@ -91,8 +102,8 @@
 									<td></td>
 									<td></td>
 									<td></td>
-									<td></td>						
-									<td></td>												
+									<td></td>
+									<td></td>
 									<td></td>
 									<td></td>
 									<th>
@@ -110,17 +121,18 @@
 										<span ng-bind="summary.collective_discount_amount_formatted = negate(summary.collective_discount_amount)"></span>
 									</th>
 									<td></td>
-									<td></td>						
+									<td></td>
 									<th>
 										<span ng-bind="summary.total_invoice_formatted = negate(summary.total_invoice)"></span>
 									</th>
+									<td></td>
 								</tr>
-							
+
 							</tbody>
-						{!!Html::tfooter(true,24)!!}
+						{!!Html::tfooter(true,count($tableHeaders)+1)!!}
 					{!!Html::tclose()!!}
 				@endif
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>
