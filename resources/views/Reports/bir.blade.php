@@ -10,13 +10,13 @@
 					{!!Html::fopen('Toggle Filter')!!}
 						<div class="col-md-6">
 							{!!Html::select('salesman','Salesman', $salesman)!!}
-							{!!Html::select('area','Area', $area)!!}									
-							{!!Html::input('text','reference','Reference #')!!}								
-						</div>					
-						<div class="col-md-6">	
+							{!!Html::select('area','Area', $area)!!}
+							{!!Html::input('text','reference','Reference #')!!}
+						</div>
+						<div class="col-md-6">
 							{!!Html::datepicker('document_date','Document Date','true')!!}
-							{!!Html::input('text','customer_name','Customer Name')!!}						
-						</div>			
+							{!!Html::input('text','customer_name','Customer Name')!!}
+						</div>
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
 				@endif
@@ -33,10 +33,10 @@
 						<tbody>
 						<tbody ng-repeat="item in items">
 							<tbody>
-								<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
+								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
 									<td>
 										<span ng-bind="record.document_date_formatted = (formatDate(record.document_date) | date:'MM/dd/yyyy')"></span>
-									</td>						
+									</td>
 									<td>[[record.name]]</td>
 									<td>[[record.customer_address]]</td>
 									<td>[[record.depot]]</td>
@@ -46,7 +46,7 @@
 									<td>
 										<span ng-bind="record.sales_formatted = negate(record.sales)"></span>
 									</td>
-									<td></td>							
+									<td></td>
 									<td>
 										<span ng-bind="record.total_sales_formatted = negate(record.total_sales)"></span>
 									</td>
@@ -66,11 +66,22 @@
 									<td></td>
 									<td>[[record.sales_group]]</td>
 									<td>[[record.assignment]]</td>
+									<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
+										@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
+											<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.delete_remarks_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','bir',('records-' + $index))">
+					    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+					    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+					  						</a>
+					  					@endif
+					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  						[[ record.delete_remarks ]]
+					  					@endif
+									</td>
 								</tr>
-								
+
 								<!-- Summary total -->
 								<tr id="total_summary">
-									<th>Total</th>						
+									<th>Total</th>
 									<td></td>
 									<td></td>
 									<td></td>
@@ -80,7 +91,7 @@
 									<td class="bold">
 										<span ng-bind="summary.sales_formatted = negate(summary.sales)"></span>
 									</td>
-									<td></td>							
+									<td></td>
 									<td class="bold">
 										<span ng-bind="summary.total_sales_formatted = negate(summary.total_sales)"></span>
 									</td>
@@ -100,13 +111,14 @@
 									<td></td>
 									<td></td>
 									<td></td>
+									<td></td>
 								</tr>
-								
+
 							</tbody>
-						{!!Html::tfooter(true,18)!!}
-					{!!Html::tclose()!!}				
+						{!!Html::tfooter(true,count($tableHeaders)+1)!!}
+					{!!Html::tclose()!!}
 				@endif
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>

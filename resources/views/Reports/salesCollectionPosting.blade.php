@@ -11,15 +11,15 @@
 						<div class="col-md-6">
 							{!!Html::select('salesman','Salesman', $salesman,'')!!}
 							{!!Html::select('company_code','Company Code', $companyCode,'')!!}
-							{!!Html::input('text','customer_name','Customer Name')!!}						
+							{!!Html::input('text','customer_name','Customer Name')!!}
 							{!!Html::input('text','invoice_number','Invoice #')!!}
 							{!!Html::input('text','or_number','OR #')!!}
-						</div>					
-						<div class="col-md-6">	
+						</div>
+						<div class="col-md-6">
 							{!!Html::datepicker('invoice_date','Invoice Date','true')!!}
-							{!!Html::datepicker('collection_date','Collection Date','true')!!}																									 			
+							{!!Html::datepicker('collection_date','Collection Date','true')!!}
 							{!!Html::datepicker('posting_date','Posting Date','true')!!}
-						</div>			
+						</div>
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
 				@endif
@@ -32,7 +32,7 @@
 					])!!}
 					{!!Html::theader($tableHeaders)!!}
 						<tbody>
-							<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
+							<tr ng-repeat="record in records|filter:query" id="records-records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
 								<td>[[record.activity_code]]</td>
 								<td>[[record.salesman_name]]</td>
 								<td>[[record.customer_code]]</td>
@@ -57,13 +57,24 @@
 								</td>
 								<td>
 									<span ng-bind="record.collection_posting_date_formatted = (formatDate(record.collection_posting_date) | date:'MM/dd/yyyy')"></span>
-								</td>									
-							</tr>					
+								</td>
+								<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
+									@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
+										<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.sales_order_header_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','posting',('records-' + $index))">
+				    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+				    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+				  						</a>
+				  					@endif
+				  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+				  						[[ record.delete_remarks ]]
+				  					@endif
+								</td>
+							</tr>
 						</tbody>
-						{!!Html::tfooter(true,14)!!}	
-					{!!Html::tclose(false)!!}				
+						{!!Html::tfooter(true,count($tableHeaders)+1)!!}
+					{!!Html::tclose(false)!!}
 				@endif
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>

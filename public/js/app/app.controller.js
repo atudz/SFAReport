@@ -85,6 +85,8 @@
 		// main controller
 		reportController($scope,$resource,$uibModal,$window,'salescollectionposting',params,$log,toaster, TableFix);
 
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	}
 
 
@@ -1075,9 +1077,9 @@
 	/**
 	 * Unpaid Report
 	 */
-	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',Unpaid]);
+	app.controller('Unpaid',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster','TableFix',Unpaid]);
 
-	function Unpaid($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
+	function Unpaid($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster,TableFix)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1092,6 +1094,9 @@
 
 		// main controller
 		reportController($scope,$resource,$uibModal,$window,'unpaidinvoice',params,$log,toaster);
+
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	}
 
 	/**
@@ -1194,9 +1199,9 @@
 	/**
 	 * Return Report Per Material
 	 */
-	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',ReturnReportPerMaterial]);
+	app.controller('ReturnReportPerMaterial',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster','TableFix',ReturnReportPerMaterial]);
 
-	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
+	function ReturnReportPerMaterial($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster,TableFix)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1216,15 +1221,18 @@
 
 		// main controller codes
 		reportController($scope,$resource,$uibModal,$window,'returnpermaterial',params,$log,toaster);
+
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	}
 
 
 	/**
 	 * Return Report Per Peso
 	 */
-	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',ReturnReportPerPeso]);
+	app.controller('ReturnReportPerPeso',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster','TableFix',ReturnReportPerPeso]);
 
-	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
+	function ReturnReportPerPeso($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster,TableFix)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1244,6 +1252,9 @@
 
 		// main controller codes
 		reportController($scope,$resource,$uibModal,$window,'returnperpeso',params,$log,toaster);
+
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	}
 
 	/**
@@ -1326,9 +1337,9 @@
 	 * Bir controller
 	 */
 
-	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster',Bir]);
+	app.controller('Bir',['$scope','$resource','$uibModal','$window','$log','$route','$templateCache','toaster','TableFix',Bir]);
 
-	function Bir($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster)
+	function Bir($scope, $resource, $uibModal, $window, $log,$route,$templateCache,toaster,TableFix)
 	{
 		deletePreviousCache($route,$templateCache);
 
@@ -1343,6 +1354,9 @@
 
 		// main controller
 		reportController($scope,$resource,$uibModal,$window,'bir',params,$log,toaster);
+
+		//editable rows
+		editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 	}
 
 
@@ -2108,7 +2122,7 @@
 	 */
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate, slug){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate, slug, element_update_indentifier){
 			resource('/reports/synching/'+id+'/'+column + '?slug=' + slug).get().$promise.then(function(data){
 				var selectOptions = options;
 				var url = window.location.href;
@@ -2218,7 +2232,8 @@
 						report: report,
 						report_type: reportType,
 						toUpdate: toUpdate,
-						slug: slug
+						slug: slug,
+						element_update_indentifier: element_update_indentifier
 				};
 
 				if(url[4] == 'salescollection.report')
@@ -2577,9 +2592,9 @@
 						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						$('#' + $scope.params.parentIndex + '_' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
-					}
-					else {
+					} else if(($scope.params.table == 'txn_sales_order_header' || $scope.params.table == 'txn_return_header') && ($scope.params.report == 'vaninventorycanned' || $scope.params.report == 'vaninventoryfrozen')){
+						$scope.items[$scope.params.parentIndex]['records'][$scope.params.index][$scope.params.column] = $scope.params.value;
+					}else {
 						if ($scope.params.alias) {
 							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
 							if ($scope.params.getTotal)
@@ -2589,11 +2604,15 @@
 							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						$('#' + $scope.params.index + '-' + $scope.params.toUpdate).addClass('modified');
 
 						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
 						}
+					}
+
+					$('#' + $scope.params.element_update_indentifier + '-' + $scope.params.toUpdate).addClass('modified');
+					if($scope.params.column == 'delete_remarks'){
+						$('#' + $scope.params.element_update_indentifier).addClass('has-deleted-remarks');
 					}
 					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
 					$('table.table').floatThead('destroy');

@@ -48,6 +48,7 @@ class ReportsController extends ControllerCore
 		$prevInvoiceNum = '';
 		$reference='';
 		$syncTables = config('sync.sync_tables');
+
 		if($pk = array_shift($syncTables[$table]))
 		{
 			if($table == 'txn_stock_transfer_in_header')

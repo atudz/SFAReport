@@ -14,13 +14,13 @@
 							@else
 								{!!Html::select('salesman','Salesman', $salesman)!!}
 							@endif
-							{!!Html::select('company_code','Company Code', $companyCode)!!}																	
+							{!!Html::select('company_code','Company Code', $companyCode)!!}
 							{!!Html::select('customer','Customer', $customers)!!}
-						</div>					
-						<div class="col-md-6">	
+						</div>
+						<div class="col-md-6">
 							{!!Html::datepicker('invoice_date','Invoice Date','true',false,$from,$to)!!}
 							{!!Html::input('text','invoice_number','Invoice #')!!}
-						</div>			
+						</div>
 					{!!Html::fclose()!!}
 					<!-- End Filter -->
 				@endif
@@ -35,8 +35,8 @@
 						'can_sort' => $navigationActions['can_sort_columns']
 					])!!}
 						<tbody>
-							<tr ng-repeat="record in records|filter:query" id=[[$index]] class=[[record.updated]]>
-								<td>[[record.salesman_name]]</td>	
+							<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
+								<td>[[record.salesman_name]]</td>
 								<td>[[record.area_name]]</td>
 								<td>[[record.customer_code]]</td>
 								<td>[[record.customer_name]]</td>
@@ -46,17 +46,28 @@
 								<td>
 									<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
 								</td>
-								<td>							
+								<td>
 									<span ng-bind="record.original_amount_formatted = negate(record.original_amount)"></span>
 								</td>
 								<td>
 									<span ng-bind="record.balance_amount_formatted = negate(record.balance_amount)"></span>
 								</td>
+								<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
+										@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
+											<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.delete_remarks_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','unpaid-invoice',('records-' + $index))">
+					    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+					    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+					  						</a>
+					  					@endif
+					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  						[[ record.delete_remarks ]]
+					  					@endif
+									</td>
 							</tr>
-							
+
 							<!-- Summary total -->
 							<tr id="total_summary">
-								<th>Total</th>						
+								<th>Total</th>
 								<td></td>
 								<td></td>
 								<td></td>
@@ -70,13 +81,14 @@
 								<th>
 									<span ng-bind="summary.balance_amount_formatted = negate(summary.balance_amount)"></span>
 								</th>
-							</tr>					
+								<td></td>
+							</tr>
 						</tbody>
-					
-						{!!Html::tfooter(true,10)!!}
-					{!!Html::tclose()!!}				
+
+						{!!Html::tfooter(true,count($tableHeaders)+1)!!}
+					{!!Html::tclose()!!}
 				@endif
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>
