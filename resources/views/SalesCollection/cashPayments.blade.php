@@ -57,18 +57,7 @@
 					  					@if($navigationActions['show_cash_amount_column'] && !$navigationActions['edit_cash_amount_column'])
 					  						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 					  					@endif
-									</td>
-									<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
-										@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
-											<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.delete_remarks_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','cash-payments',('records-' + $index))">
-					    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
-					    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
-					  						</a>
-					  					@endif
-					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
-					  						[[ record.delete_remarks ]]
-					  					@endif
-									</td>
+									</td>									
 								</tr>
 
 								<!-- Summary -->

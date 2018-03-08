@@ -83,18 +83,7 @@
 									<td>[[record.discount_remarks]]</td>
 									<td>
 										<span ng-bind="record.total_invoice_formatted = negate(record.total_invoice)"></span>
-									</td>
-									<td id="records-[[$index]]-delete_remarks_updated" class="[[record.delete_remarks_updated]]">
-										@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
-											<a href="" class="editable-click" ng-click="editColumn('text','txn_return_header','delete_remarks',record.return_header_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','returns-per-material',('records-' + $index))">
-					    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
-					    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
-					  						</a>
-					  					@endif
-					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
-					  						[[ record.delete_remarks ]]
-					  					@endif
-									</td>
+									</td>									
 								</tr>
 
 								<!-- Summary Total -->
