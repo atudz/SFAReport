@@ -70,7 +70,11 @@
                         <td align="left" width="15"></td>
                         <td align="left" width="15">{{ date('mdy',strtotime($record->sales->invoice_date)) }}</td>
                         <td align="left" width="15">{{ !is_null($record->sales->customer->area->profit_center) ? $record->sales->customer->area->profit_center->profit_center : '' }}</td>
-                        <td align="left" width="80">{{ strtoupper($record->app_item_master->segment->abbreviation . '-' . $record->sales->customer->customer_name) }}</td>
+                        <td align="left" width="80">
+                        	@if(!is_null($record->app_item_master) && !is_null($record->app_item_master->segment))
+                        		{{ strtoupper($record->app_item_master->segment->abbreviation . '-' . $record->sales->customer->customer_name) }}
+                        	@endif 
+                        </td>
                         <td align="left" width="20">{{ $salesman }}</td>
                         <td align="left" width="15"></td>
                         <td align="left" width="15"></td>
