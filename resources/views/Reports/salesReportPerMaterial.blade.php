@@ -239,7 +239,13 @@
 									@if($navigationActions['show_total_sales_column'])
 										<span ng-bind="record.total_invoice_formatted = negate(record.total_invoice)"></span>
 									@endif
-								</td>								
+								</td>	
+								<td id="records-[[$index]]-delete_remarks_updated">
+									@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+				  						[[ record.delete_remarks ]]
+				  					@endif
+								</td>
+															
 							</tr>
 
 							<!-- Total Summary -->

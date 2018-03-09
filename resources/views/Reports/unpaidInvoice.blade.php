@@ -51,7 +51,13 @@
 								</td>
 								<td>
 									<span ng-bind="record.balance_amount_formatted = negate(record.balance_amount)"></span>
-								</td>								
+								</td>	
+								<td id="records-[[$index]]-delete_remarks_updated">										
+					  				@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  					[[ record.delete_remarks ]]
+					  				@endif
+								</td>
+															
 							</tr>
 
 							<!-- Summary total -->

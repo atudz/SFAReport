@@ -57,7 +57,13 @@
 								</td>
 								<td>
 									<span ng-bind="record.collection_posting_date_formatted = (formatDate(record.collection_posting_date) | date:'MM/dd/yyyy')"></span>
-								</td>								
+								</td>	
+								<td id="records-[[$index]]-delete_remarks_updated">
+									@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+				  						[[ record.delete_remarks ]]
+				  					@endif
+								</td>
+															
 							</tr>
 						</tbody>
 						{!!Html::tfooter(true,count($tableHeaders)+1)!!}
