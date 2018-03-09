@@ -75,7 +75,13 @@
 									<td>[[record.discount_remarks]]</td>
 									<td>
 										<span ng-bind="record.total_invoice_formatted = negate(record.total_invoice)"></span>
-									</td>									
+									</td>
+									<td id="records-[[$index]]-delete_remarks_updated">
+										@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  						[[ record.delete_remarks ]]
+					  					@endif
+									</td>
+																		
 								</tr>
 
 								<!-- Summary Total -->

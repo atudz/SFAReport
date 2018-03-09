@@ -9,7 +9,6 @@ use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
 use Carbon\Carbon;
 use App\Factories\ModelFactory;
-use PHPExcel_Shared_Date;
 
 
 class ReportsPresenter extends PresenterCore
@@ -5927,6 +5926,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'OR Amount'],
     			['name'=>'OR Date'],
     			['name'=>'Collection Posting Date'],
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;
@@ -5949,7 +5949,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Original Amount'],
-    			['name'=>'Balance Amount', 'sort'=>'balance_amount'],                
+    			['name'=>'Balance Amount', 'sort'=>'balance_amount'],
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;
@@ -6050,7 +6051,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Term-Cash'],
     			['name'=>'Term-on-Account'],
     			['name'=>'Sales Group','sort'=>'sales_group'],
-    			['name'=>'Assignment','sort'=>'assignment'],                
+    			['name'=>'Assignment','sort'=>'assignment'], 
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;
@@ -6093,6 +6095,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Sales'],
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;
@@ -6172,6 +6175,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;
@@ -6208,6 +6212,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
+    			['name'=>'Delete Remarks'],
     	];
 
     	return $headers;

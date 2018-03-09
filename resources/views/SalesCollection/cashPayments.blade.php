@@ -57,7 +57,13 @@
 					  					@if($navigationActions['show_cash_amount_column'] && !$navigationActions['edit_cash_amount_column'])
 					  						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 					  					@endif
-									</td>									
+									</td>	
+									<td id="records-[[$index]]-delete_remarks_updated">										
+					  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
+					  						[[ record.delete_remarks ]]
+					  					@endif
+									</td>
+																	
 								</tr>
 
 								<!-- Summary -->
