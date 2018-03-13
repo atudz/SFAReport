@@ -2280,12 +2280,22 @@
 					return false;
 				}
 			}
-
+			
 			$.each(filter, function(index,val){
-				if(index > 0)
-					delimeter = '&';
-				query += delimeter + val + '=' + $('#'+val).val();
+				if(val != 'undefined') {
+					if(index > 0)
+						delimeter = '&';
+					query += delimeter + val + '=' + $('#'+val).val();
+				}				
 			});
+						
+			if(report == 'sfitransactiondata') {
+				if(!scope.convertType) {
+					return false;
+				}
+				query += delimeter + 'convert=' + scope.convertType;
+			}
+						
 			url += query;
 			//log.info(url);
 
@@ -2385,6 +2395,8 @@
 				});
 				delete filter.query_strings;
 			}
+		} else if(report == 'sfitransactiondata'){
+			params = {salesman_code:$('#salesman_code').val()};
 		}
 
 		toggleLoading(true);
@@ -5945,157 +5957,47 @@
             $uibModalInstance.dismiss('cancel');
         }
 	}
-
+	
 	/**
 	 * SFI Transaction Data Controller
 	 */
-	app.controller('SFITransactionData',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SFITransactionData]);
+	app.controller('SFITransactionData',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache','toaster',SFITransactionData]);
 
-	function SFITransactionData($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
-	{
+	function SFITransactionData($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache,toaster)
+	{		
 		deletePreviousCache($route,$templateCache);
 
-		var uri = '';
+		var params = [
+				  'posting_date_from',
+				  'posting_date_to',
+				  'invoice_date_from',
+				  'invoice_date_to',
+				  'salesman_code',
+				  'area',
+				  'company_code',
+				  'invoice_number',
+				  'customer',
+				  'jr_salesman'
+		];
+		
+		$scope.convertType = '';
 
-		$scope.toggleFilter = true;
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'sfitransactiondata',params,$log,toaster);
 
-		$scope.records = [];
+		editTable($scope, $uibModal, $resource, $window, {}, $log);
 
-		$scope.range = [];
+		$scope.options = [
+			{
+				value : 'invoice_return_date',
+				name  : 'Invoice Date/Return Date'
+			},
+			{
+				value : 'invoice_return_posting_date',
+				name  : 'Invoice/Return Posting Date'
+			},
+		];		
 
-		$scope.total = [];
-
-		$scope.convert = [];
-
-		function load(){
-			toggleLoading(true);
-
-			$http
-				.get('/controller/sfi-transaction-data' + uri)
-				.then(function(response){
-					$scope.records = response.data.data;
-					$scope.range = response.data.range;
-					$scope.total = response.data.total;
-
-					toggleLoading(false);
-					if($scope.records.length){
-						$("table.table").floatThead({
-							position: "absolute",
-							autoReflow: true,
-							zIndex: "2",
-							scrollContainer: function($table){
-								return $table.closest(".wrapper");
-							}
-						});
-						$('#no_records_div').hide();
-					} else {
-						$('#no_records_div').show();
-					}
-				});
-		}
-
-		function processSearchFilter(){
-			uri = '';
-
-			if(angular.element('#salesman_code').val()){
-				uri += (uri == '' ? '?' : '&') + 'salesman_code=' + angular.element('#salesman_code').val();
-			}
-
-			if(angular.element('#area_code').val()){
-				uri += (uri == '' ? '?' : '&') + 'area_code=' + angular.element('#area_code').val();
-			}
-
-			if(angular.element('#customer_code').val()){
-				uri += (uri == '' ? '?' : '&') + 'customer_code=' + angular.element('#customer_code').val();
-			}
-
-			if(angular.element('#company_code').val()){
-				uri += (uri == '' ? '?' : '&') + 'company_code=' + angular.element('#company_code').val();
-			}
-
-	        if(angular.element('#so_date_from').val()){
-	        	uri += (uri == '' ? '?' : '&') + 'so_date_from=' + angular.element('#so_date_from').val();
-	        }
-
-	        if(angular.element('#so_date_to').val()){
-	        	uri += (uri == '' ? '?' : '&') + 'so_date_to=' + angular.element('#so_date_to').val();
-	        }
-
-	        if(angular.element('#posting_date_from').val()){
-	        	uri += (uri == '' ? '?' : '&') + 'posting_date_from=' + angular.element('#posting_date_from').val();
-	        }
-
-	        if(angular.element('#invoice_number').val()){
-	        	uri += (uri == '' ? '?' : '&') + 'invoice_number=' + angular.element('#invoice_number').val();
-	        }
-
-			if(angular.element('#convert').val()){
-				uri += (uri == '' ? '?' : '&') + 'convert=' + angular.element('#convert').val();
-				angular.element('.dropdown-toggle').removeAttr('disabled');
-			} else {
-				angular.element('.dropdown-toggle').attr('disabled','disabled');
-			}
-		}
-
-		$scope.filter = function(){
-			processSearchFilter();
-
-	        load();
-		}
-
-		$scope.selectConvert = function(){
-			processSearchFilter();
-		}
-
-		$scope.download = function(type){
-			processSearchFilter();
-
-			uri += (uri == '' ? '?' : '&') + 'download_type=' + type;
-			var url = '/controller/sfi-transaction-data/download';
-
-			if($scope.total > 1000){
-				$uibModal.open({
-						animation: true,
-						templateUrl: 'exportModalSFI',
-						controller: 'SFITransactionDataModalController',
-						resolve: {
-							params: function () {
-								return {
-									url : url,
-									uri : uri,
-									range: $scope.range,
-								};
-							}
-						}
-				});
-			} else if($scope.total < 1000){
-				$window.location.href = url + uri;
-			} else {
-				$uibModal.open({
-					animation: true,
-					templateUrl: 'Info',
-					controller: 'Info',
-					windowClass: 'center-modal',
-					size: 'sm',
-					resolve: {
-						params: function () {
-							return {
-								message: 'No data to export.'
-							};
-						}
-					}
-				});
-			}
-		}
-
-		function activate(){
-			uri = '?salesman_code=' + angular.element('#salesman_code').val();
-			load();
-			formatDate($scope);
-			angular.element('.dropdown-toggle').attr('disabled','disabled');
-		}
-
-		activate();
 	}
 
 	/**
@@ -6224,7 +6126,7 @@
 		$scope.save = function(){
 			var data = {
 				profit_center : angular.element('#profit_center').val(),
-		        area_name : angular.element('#area_name').val()
+		        area_code : angular.element('#area_code').val()
 			};
 
 			$http
@@ -6245,7 +6147,7 @@
 				.then(function(response){
 					var data = response.data.data;
 					angular.element('#profit_center').val(data.profit_center);
-			        angular.element('#area_name').val(data.area_name);
+			        angular.element('#area_code').val(data.area_code);
 				}, function(){
 
 				});

@@ -29,7 +29,7 @@ class ProfitCenterController extends ControllerCore
                 'action'            => 'done loading data for Profit Center'
             ]);
 
-            $profit_centers = ModelFactory::getInstance('ProfitCenter')->get();
+            $profit_centers = ModelFactory::getInstance('ProfitCenter')->with('area')->get();
 
             return  response()->json([
                         'success' => true,
@@ -102,7 +102,7 @@ class ProfitCenterController extends ControllerCore
         ]);
 
         try {
-            ModelFactory::getInstance('ProfitCenter')->create($request->only(['profit_center','area_name'])
+            ModelFactory::getInstance('ProfitCenter')->create($request->only(['profit_center','area_code'])
             );
 
             ModelFactory::getInstance('UserActivityLog')->create([
@@ -141,7 +141,7 @@ class ProfitCenterController extends ControllerCore
         ]);
 
         try {
-            ModelFactory::getInstance('ProfitCenter')->where('id','=',$profit_center_id)->update($request->only(['profit_center','area_name'])
+            ModelFactory::getInstance('ProfitCenter')->where('id','=',$profit_center_id)->update($request->only(['profit_center','area_code'])
             );
 
             ModelFactory::getInstance('UserActivityLog')->create([

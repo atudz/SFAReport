@@ -27,12 +27,12 @@
             <tbody>
                 @foreach($records as $index => $record)
                     <tr>
-                        <td align="left" width="30">{{ date('mdy',strtotime($record->sales->invoice_date)) }}</td>
-                        <td align="left" width="30">{{ date('mdy',strtotime($record->sales->invoice_posting_date)) }}</td>
-                        <td align="left" width="30">DR</td>
-                        <td align="left" width="30">{{ $record->sales->company_code }}</td>
-                        <td align="left" width="30">{{ $record->sales->invoice_number }}</td>
-                        <td align="left" width="30">{{ strtoupper($record->sales->van_code . '-' . $record->sales->salesman->salesman_name) }}</td>
+                        <td align="left" width="30">{{ date('mdy',strtotime($record->invoice_date)) }}</td>
+                        <td align="left" width="30">{{ date('mdy',strtotime($record->invoice_posting_date)) }}</td>
+                        <td align="left" width="30">{{ $record->document_type}}</td>
+                        <td align="left" width="30">{{ $record->company_code }}</td>
+                        <td align="left" width="30">{{ $record->invoice_number }}</td>
+                        <td align="left" width="30">{{ $record->header_text}}</td>
                         <td align="left" width="30">{{ $index + 1 }}</td>
                         <td align="left" width="30"></td>
                     </tr>

@@ -139,104 +139,104 @@ class SFITransactionDataSeeder extends Seeder
         $profit_centers = [
             [
                 'profit_center' => '1BAC0101',
-                'area_name'     => 'SFI BACOLOD'
+                'area_code'     => '300'
             ],
             [
                 'profit_center' => '1BUT0101',
-                'area_name'     => 'SFI BUTUAN'
+                'area_code'     => '400'
             ],
             [
                 'profit_center' => '1CAG0101',
-                'area_name'     => 'SFI CAGAYAN'
+                'area_code'     => '500'
             ],
             [
                 'profit_center' => '1CEB0501',
-                'area_name'     => 'SFI CEBU MAIN'
+                'area_code'     => '100'
             ],
             [
                 'profit_center' => '1DAV0101',
-                'area_name'     => 'SFI DAVAO'
+                'area_code'     => '600'
             ],
             [
                 'profit_center' => '1DUM0101',
-                'area_name'     => 'SFI DUMAGUETE'
+                'area_code'     => '700'
             ],
             [
                 'profit_center' => '1GSC0101',
-                'area_name'     => 'SFI GENERAL SANTOS'
+                'area_code'     => '800'
             ],
             [
                 'profit_center' => '1ILO0101',
-                'area_name'     => 'SFI ILOILO'
+                'area_code'     => '900'
             ],
             [
                 'profit_center' => '1MNL0101',
-                'area_name'     => 'SFI MANILA'
+                'area_code'     => '1000'
             ],
             [
                 'profit_center' => '1ORM0101',
-                'area_name'     => 'SFI ORMOC'
+                'area_code'     => '1400'
             ],
             [
                 'profit_center' => '1OZA0101',
-                'area_name'     => 'SFI OZAMIS'
+                'area_code'     => '1100'
             ],
             [
                 'profit_center' => '1ZAM0101',
-                'area_name'     => 'SFI ZAMBOANGA'
+                'area_code'     => '1300'
             ],
             [
                 'profit_center' => '2BAC0101',
-                'area_name'     => 'BACOLOD'
+                'area_code'     => '2300'
             ],
             [
                 'profit_center' => '2BUT0101',
-                'area_name'     => 'BUTUAN'
+                'area_code'     => '2400'
             ],
             [
                 'profit_center' => '2CAG0101',
-                'area_name'     => 'CAGAYAN'
+                'area_code'     => '2500'
             ],
             [
                 'profit_center' => '2CEB0501',
-                'area_name'     => 'CEBU'
+                'area_code'     => '2100'
             ],
             [
                 'profit_center' => '2DAV0101',
-                'area_name'     => 'DAVAO'
+                'area_code'     => '2600'
             ],
             [
                 'profit_center' => '2DUM0101',
-                'area_name'     => 'DUMAGUETE'
+                'area_code'     => '2700'
             ],
             [
                 'profit_center' => '2GSC0101',
-                'area_name'     => 'GENERAL SANTOS'
+                'area_code'     => '2800'
             ],
             [
                 'profit_center' => '2ILO0101',
-                'area_name'     => 'ILOILO'
+                'area_code'     => '2900'
             ],
             [
                 'profit_center' => '2MNL0101',
-                'area_name'     => 'MANILA'
+                'area_code'     => '3000'
             ],
             [
                 'profit_center' => '2ORM0101',
-                'area_name'     => 'ORMOC'
+                'area_code'     => '3400'
             ],
             [
                 'profit_center' => '2OZA0101',
-                'area_name'     => 'OZAMIS'
+                'area_code'     => '3100'
             ],
             [
                 'profit_center' => '2ZAM0101',
-                'area_name'     => 'ZAMBOANGA'
+                'area_code'     => '3300'
             ]
         ];
 
         foreach ($profit_centers as $profit_center) {
-            if(!ProfitCenter::where('profit_center','=',$profit_center['profit_center'])->where('area_name','=',$profit_center['area_name'])->count()){
+            if(!ProfitCenter::where('profit_center','=',$profit_center['profit_center'])->where('area_code','=',$profit_center['area_code'])->count()){
                 ProfitCenter::create($profit_center);
             }
         }

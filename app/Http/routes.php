@@ -285,13 +285,7 @@ Route::group(['prefix' => 'controller'],function(){
 			Route::get('/{id}/delete', ['as'=>'salescollection-monthlysummary-added-notes-delete', 'uses'=>'MonthlySummaryUpdatesController@deleteAddedNotes']);
 		});
 	});
-
-	Route::group(['prefix' => 'sfi-transaction-data'],function(){
-		Route::get('/', ['as'=>'sfi-transaction-data-index', 'uses'=>'SfiTransactionDataController@index']);
-
-		Route::get('/download', ['as'=>'sfi-transaction-data-download', 'uses'=>'SfiTransactionDataController@download']);
-	});
-
+	
 	Route::group(['prefix' => 'profit-centers'],function(){
 		Route::get('/', ['as'=>'profit-centers-index', 'uses'=>'ProfitCenterController@index']);
 

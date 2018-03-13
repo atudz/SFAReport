@@ -17,7 +17,7 @@ class CreateProfitCentersTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->string('profit_center')->unique();
-            $table->string('area_name');
+            $table->string('area_code')->index();
         });
     }
 

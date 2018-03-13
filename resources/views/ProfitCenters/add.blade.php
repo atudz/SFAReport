@@ -26,7 +26,7 @@
                                     {!!Html::input('text','profit_center','Profit Center')!!}
                                 </div>
                                 <div class="row form-input-field">
-                                    {!!Html::input('text','area_name','Area')!!}
+                                    {!!Html::select('area_code','Area',$areas, '')!!}
                                 </div>
                             </div>
                         </div>

@@ -10,13 +10,13 @@
                         <div class="col-md-6">
                             {!!Html::select('salesman_code','Salesman', $salesman,'',['onchange'=>'setSalesmanDetails(this,"jr_salesman")'])!!}
                             {!!Html::select('jr_salesman','Jr Salesman', $jrSalesmans, 'No Jr. Salesman',['disabled'=>1])!!}
-                            {!!Html::select('area_code','Area', $areas)!!}
-                            {!!Html::select('customer_code','Customer Name', $customers)!!}
+                            {!!Html::select('area','Area', $areas)!!}
+                            {!!Html::select('customer','Customer Name', $customers)!!}
                             {!!Html::select('company_code','Company Code', $companyCode,'All')!!}
                         </div>
                         <div class="col-md-6">
-                            {!!Html::datepicker('so_date','Invoice Date/Return Date','true')!!}
-                            {!!Html::datepicker('posting_date','Posting Date',false)!!}
+                            {!!Html::datepicker('invoice_date','Invoice Date/Return Date','true')!!}
+                            {!!Html::datepicker('posting_date','Posting Date',true)!!}
                             {!!Html::input('text','invoice_number','Invoice Number')!!}
                         </div>
                     {!!Html::fclose()!!}
@@ -32,41 +32,55 @@
                         {!!Html::theader($tableHeaders)!!}
                             <tbody>
                                 <tr ng-repeat="record in records|filter:query" id=[[$index]]>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.so_number]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.reference_num]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.activity_salesman.activity_code]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer_code]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.customer_name]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.customer_address]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.activity_salesman.evaluated_objective[0].remarks]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.van_code]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.device_code]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.salesman_code]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.salesman.salesman_name]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.customer.area.area]]</td>
-                                    <td rowspan="[[ record.row_span ]]" ng-if="record.show">[[record.sales.invoice_number]]</td>
-                                    <td>[[formatDate(record.sales.invoice_date) | date:'MM/dd/yyyy']]</td>
-                                    <td>[[formatDate(record.sales.invoice_posting_date) | date:'MM/dd/yyyy']]</td>
-                                    <td>[[record.gross_served_amount]]</td>
-                                    <td>[[record.vat_amount]]</td>
-                                    <td>[[record.discount_rate]]%</td>
-                                    <td>[[record.discount_amount]]</td>
-                                    <td>[[record.sales.sales_order_header_discount.hasOwnProperty('served_deduction_rate') ? record.sales.sales_order_header_discount.served_deduction_rate : 0]]%</td>
-                                    <td>[[record.collective_discount_amount]]</td>
-                                    <td>[[record.sales.sales_order_header_discount.discount_reference_num]]</td>
-                                    <td>[[record.sales.sales_order_header_discount.remarks]]</td>
-                                    <td>[[record.total_sales]]</td>
-                                    <td>[[record.app_item_master.segment_code]]</td>
-                                    <td>[[record.app_item_master.segment.abbreviation]]</td>
-                                    <td>DR</td>
-                                    <td>[[record.sales.company_code]]</td>
-                                    <td>[[record.sales.van_code + '-' + record.sales.salesman.salesman_name | uppercase]]</td>
-                                    <td ng-if="record.sales.company_code_after.substr(0, 1) == 1">110000</td>
-                                    <td ng-if="record.sales.company_code_after.substr(0, 1) == 2">110010</td>
-                                    <td ng-if="record.sales.company_code == '1000'">01</td>
-                                    <td ng-if="record.sales.company_code == '2000'">OX</td>
-                                    <td>[[record.sales.customer.area.profit_center.profit_center]]</td>
-                                    <td>[[record.app_item_master.segment.abbreviation + '-' + record.sales.customer.customer_name | uppercase]]</td>
+                                    <td>[[record.so_number]]</td>
+                                    <td>[[record.reference_num]]</td>
+                                    <td>[[record.activity_code]]</td>
+                                    <td>[[record.customer_code]]</td>
+                                    <td>[[record.customer_name]]</td>
+                                    <td>[[record.customer_address]]</td>
+                                    <td>[[record.remarks]]</td>
+                                    <td>[[record.van_code]]</td>
+                                    <td>[[record.device_code]]</td>
+                                    <td>[[record.salesman_code]]</td>
+                                    <td>[[record.salesman_name]]</td>
+                                    <td>[[record.area]]</td>
+                                    <td id="records-[[$index]]-invoice_number_updated" ng-class="[record.invoice_number_updated]">
+                                    	[[record.invoice_number]]
+                                    </td>
+                                    <td id="records-[[$index]]-invoice_date_updated" ng-class="[record.invoice_date_updated]">
+                                    	[[formatDate(record.invoice_date) | date:'MM/dd/yyyy']]
+                                    </td>
+                                    <td id="records-[[$index]]-invoice_posting_date_updated" ng-class="[record.invoice_posting_date_updated]">
+                                    	[[formatDate(record.invoice_posting_date) | date:'MM/dd/yyyy']]
+                                    </td>
+                                    <td>
+                                    	<span ng-bind="record.gross_served_amount = negate(record.gross_served_amount)"></span>
+                                    </td>
+                                    <td>
+                                    	<span ng-bind="record.vat_amount = negate(record.vat_amount)"></span>
+                                    </td>
+                                    <td>[[record.discount_rate]]</td>
+                                    <td>
+                                    	<span ng-bind="record.discount_amount = negate(record.discount_amount)"></span>
+                                    </td>
+                                    <td>[[record.collective_discount_rate]]</td>
+                                    <td>
+                                    	<span ng-bind="record.collective_discount_amount = negate(record.collective_discount_amount)"></span>
+                                    </td>
+                                    <td>[[record.discount_reference_num]]</td>
+                                    <td>[[record.discount_remarks]]</td>
+                                    <td>
+                                    	<span ng-bind="record.total_invoice = negate(record.total_invoice)"></span>
+                                    </td>
+                                    <td>[[record.item_code]]</td>
+                                    <td>[[record.segment_abbr]]</td>
+                                    <td>[[record.document_type]]</td>
+                                    <td>[[record.company_code]]</td>
+                                    <td>[[record.header_text]]</td>
+                                    <td>[[record.gl_account]]</td>
+                                    <td>[[record.tax_code]]</td>
+                                    <td>[[record.profit_center]]</td>
+                                    <td>[[record.detail_text]]</td>                                    
                                 </tr>
                             </tbody>
                         {!!Html::tfooter(true,count($tableHeaders))!!}

@@ -41,6 +41,7 @@ class ProfitCentersPresenter extends PresenterCore
      */
     public function add()
     {
+    	
         ModelFactory::getInstance('UserActivityLog')->create([
             'user_id'           => auth()->user()->id,
             'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','profit-centers')->value('id'),
@@ -48,6 +49,7 @@ class ProfitCentersPresenter extends PresenterCore
             'action'            => 'visit Profit Centers Add'
         ]);
 
+        $this->view->areas = PresenterFactory::getInstance('Reports')->getArea();        
         $this->view->state = $this->request->has('id') ? 'Edit Row' : 'Add Row';
         return $this->view('add');
     }

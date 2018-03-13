@@ -15,7 +15,7 @@
                             <tbody>
                                 <tr ng-repeat="record in records|filter:query track by $index" id=[[$index]]>
                                     <td>[[record.profit_center]]</td>
-                                    <td>[[record.area_name]]</td>
+                                    <td>[[record.area.area_name]]</td>
                                     <td>
                                         @if($navigationActions['show_edit_button'])
                                             <a href="#profit.centers.edit/[[record.id]]" uib-tooltip="Edit"><i class="fa fa-pencil-square-o fa-lg"></i></a>

@@ -18,7 +18,7 @@ class ReportsPresenter extends PresenterCore
 	 * @var unknown
 	 */
 
-	protected $validExportTypes = ['xls','xlsx','pdf'];
+	protected $validExportTypes = ['xls','xlsx','pdf','txt'];
 
     /**
      * Display main dashboard
@@ -624,6 +624,15 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
 			case 'replenishment':
 				return PresenterFactory::getInstance('VanInventory')->getReplenishmentReport();
+				
+			case 'sfitransactiondata':
+				ModelFactory::getInstance('UserActivityLog')->create([
+				'user_id'           => auth()->user()->id,
+				'navigation_id'     => ModelFactory::getInstance('Navigation')->where('slug','=','sfi-transaction-data')->value('id'),
+				'action_identifier' => '',
+				'action'            => 'done loading data for SFI Transaction Data'
+						]);
+				return PresenterFactory::getInstance('SfiTransactionData')->getSfiTransactionData();
     	}
     }
 
@@ -6387,10 +6396,10 @@ class ReportsPresenter extends PresenterCore
      */
     public function getCompanyCode()
     {
-    	return \DB::table('app_customer')
-		    			->selectRaw('DISTINCT(SUBSTRING(customer_code,1,4)) company_code')
-				    	->orderBy('company_code')
-				    	->lists('company_code','company_code');
+    	return [
+    			1000=>1000,
+    			2000=>2000    			
+    	];
     }
 
 
@@ -6981,6 +6990,9 @@ class ReportsPresenter extends PresenterCore
 				$filters = $vanInventoryPresenter->getReplenishmentFilterData();
 				$filename = 'Replenishment Report';
 				break;
+				
+			case 'sfitransactiondata':
+				return PresenterFactory::getInstance('SfiTransactionData')->download($type);
 
     		default:
     			return;
@@ -7819,6 +7831,11 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedReplenishment();
 				$total = $prepare->count();
 				break;
+			case 'sfitransactiondata':
+				$navigation_slug = 'sfi-transaction-data';
+				$prepare = PresenterFactory::getInstance('SfiTransactionData')->getPreparedSfiTransactionData();
+				$total = $prepare->count();
+				break;
     		default:
     			return;
     	}
@@ -7835,7 +7852,7 @@ class ReportsPresenter extends PresenterCore
     		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
-    	if($total > $limit)
+    	if($total > $limit && $type != 'txt')
     	{
     		$data['max_limit'] = true;
     		$counter = 0;

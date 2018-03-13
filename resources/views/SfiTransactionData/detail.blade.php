@@ -36,7 +36,7 @@
             <tbody>
                 @foreach($records as $index => $record)
                     <?php 
-                        $salesman = $record->sales->salesman->salesman_name;
+                        $salesman = $record->salesman_name;
                         $salesman_split = explode(", ", $salesman);
 
                         $salesman = $salesman_split[0];
@@ -46,35 +46,15 @@
                     ?>
                     <tr>
                         <td align="left" width="15">01</td>
-                        <td align="left" width="15">{{ $record->sales->company_code_after }}</td>
-
-                        @if(substr($record->sales->company_code_after, 0,1) == 1)
-                            <td align="left" width="15">110000</td>
-                        @endif
-
-                        @if(substr($record->sales->company_code_after, 0,1) == 2)
-                            <td align="left" width="15">110010</td>
-                        @endif
-
+                        <td align="left" width="15">{{ str_replace(['1000_','2000_'],'',$record->customer_code) }}</td>
+                        <td align="left" width="15">{{ $record->gl_account }}</td>
                         <td align="left" width="15"></td>
-                        <td align="left" width="15">{{ $record->total_sales }}</td>
-
-                        @if($record->sales->company_code == 1000)
-                            <td align="left" width="15">01</td>
-                        @endif
-
-                        @if($record->sales->company_code == 2000)
-                            <td align="left" width="15">0X</td>
-                        @endif
-
+                        <td align="left" width="15">{{ $record->total_invoice }}</td>
+                        <td align="left" width="15">{{ $record->tax_code }}</td>
                         <td align="left" width="15"></td>
-                        <td align="left" width="15">{{ date('mdy',strtotime($record->sales->invoice_date)) }}</td>
-                        <td align="left" width="15">{{ !is_null($record->sales->customer->area->profit_center) ? $record->sales->customer->area->profit_center->profit_center : '' }}</td>
-                        <td align="left" width="80">
-                        	@if(!is_null($record->app_item_master) && !is_null($record->app_item_master->segment))
-                        		{{ strtoupper($record->app_item_master->segment->abbreviation . '-' . $record->sales->customer->customer_name) }}
-                        	@endif 
-                        </td>
+                        <td align="left" width="15">{{ date('mdy',strtotime($record->invoice_date)) }}</td>
+                        <td align="left" width="15">{{ $record->profit_center }}</td>
+                        <td align="left" width="80">{{ $record->detail_text}}</td>
                         <td align="left" width="20">{{ $salesman }}</td>
                         <td align="left" width="15"></td>
                         <td align="left" width="15"></td>
@@ -86,29 +66,14 @@
                     <tr>
                         <td align="left" width="15">50</td>
                         <td align="left" width="15">400000</td>
-
-                        @if(substr($record->sales->company_code_after, 0,1) == 1)
-                            <td align="left" width="15">110000</td>
-                        @endif
-
-                        @if(substr($record->sales->company_code_after, 0,1) == 2)
-                            <td align="left" width="15">110010</td>
-                        @endif
+						<td align="left" width="15">{{ $record->gl_account }}</td>
                         <td align="left" width="15"></td>
-                        <td align="left" width="15">{{ $record->total_sales }}</td>
-
-                        @if($record->sales->company_code == 1000)
-                            <td align="left" width="15">01</td>
-                        @endif
-
-                        @if($record->sales->company_code == 2000)
-                            <td align="left" width="15">0X</td>
-                        @endif
-
+                        <td align="left" width="15">{{ $record->total_invoice }}</td>
+                        <td align="left" width="15">{{ $record->tax_code }}</td>
                         <td align="left" width="15"></td>
-                        <td align="left" width="15">{{ date('mdy',strtotime($record->sales->invoice_date)) }}</td>
-                        <td align="left" width="15">{{ !is_null($record->sales->customer->area->profit_center) ? $record->sales->customer->area->profit_center->profit_center : ''  }}</td>
-                        <td align="left" width="80">{{ strtoupper($record->app_item_master->segment->abbreviation . '-' . $record->sales->customer->customer_name) }}</td>
+                        <td align="left" width="15">{{ date('mdy',strtotime($record->invoice_date)) }}</td>
+                        <td align="left" width="15">{{ $record->profit_center }}</td>
+                        <td align="left" width="80">{{ $record->detail_text}}</td>
                         <td align="left" width="20">{{ $salesman }}</td>
                         <td align="left" width="15"></td>
                         <td align="left" width="15"></td>

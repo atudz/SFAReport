@@ -28,7 +28,7 @@ class ProfitCenterRequest extends Request
         if ( Request::isMethod('post') || Request::isMethod('patch') ) {
             $rules = [
                 'profit_center' => 'required|unique:profit_centers,profit_center',
-                'area_name'     => 'required'
+                'area_code'     => 'required'
             ];
 
             $profit_center_id = (request()->get('profit_center_id') != null) ? request()->get('profit_center_id') : $this->route('profit_center_id');

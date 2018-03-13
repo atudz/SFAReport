@@ -83,7 +83,7 @@ Html::macro('topen', function($options=[]) {
 		<div class="form-group">
 		<div class="col-xs-3 control-label"><label for="" style="line-height: 30px;">Convert</label></div>
 		<div class="col-xs-9">
-		<select id="convert" class="form-control pull-right" ng-model="convert" ng-change="selectConvert()" style="height: 30px;">
+		<select id="convert" class="form-control pull-right" ng-model="convertType" style="height: 30px;">
 			<option value="">Select</option>
 			<option value="header">SAP Header</option>
 			<option value="detail">SAP Detail</option>

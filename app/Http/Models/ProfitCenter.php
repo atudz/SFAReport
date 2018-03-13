@@ -15,5 +15,10 @@ class ProfitCenter extends ModelCore
      */
     protected $table = 'profit_centers';
 
-    protected $fillable = ['profit_center','area_name'];
+    protected $fillable = ['profit_center','area_code'];
+    
+    public function area()
+    {
+    	return $this->belongsTo(AppArea::class,'area_code','area_code');
+    }
 }
