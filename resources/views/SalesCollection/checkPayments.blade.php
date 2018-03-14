@@ -30,7 +30,7 @@
 					])!!}
 						{!!Html::theader($tableHeaders)!!}
 						<tbody>
-							<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" class="[[record.has_delete_remarks]]">
+							<tr ng-repeat="record in records|filter:query" id="records-[[$index]]">
 								<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_code]]</td>
 								<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_name]]</td>
 								<td rowspan="[[record.rowspan]]" ng-if="record.show">[[record.customer_address]]</td>

@@ -37,7 +37,7 @@
 							'can_sort' => $navigationActions['can_sort_columns']
 						])!!}
 							<tbody>
-								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
+								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated]">
 									<td>[[record.return_txn_number]]</td>
 									<td>[[record.reference_num]]</td>
 									<td>[[record.activity_code]]</td>

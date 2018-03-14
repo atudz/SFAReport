@@ -33,7 +33,7 @@
 						<tbody>
 						<tbody ng-repeat="item in items">
 							<tbody>
-								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated,record.has_delete_remarks]">
+								<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" ng-class="[record.updated]">
 									<td>
 										<span ng-bind="record.document_date_formatted = (formatDate(record.document_date) | date:'MM/dd/yyyy')"></span>
 									</td>

@@ -37,7 +37,7 @@
 							'show_mass_edit_button' => $navigationActions['show_mass_edit_button']
 						])!!}
 						<tbody>
-						<tr ng-repeat="record in records|filter:query" id="records-[[$index]]" class="[[record.has_delete_remarks]]">
+						<tr ng-repeat="record in records|filter:query" id="records-[[$index]]">
 							@if($navigationActions['show_mass_edit_button'])
 								<td>
 									<input id="mass-edit-checkbox-[[$index]]" type="checkbox" style="margin: 0 auto; display: block;" ng-if="record.closed_period == 0" ng-model="record.selected_checkbox" ng-checked="record.selected_checkbox" ng-click="checkRecord($index,record.selected_checkbox)">
