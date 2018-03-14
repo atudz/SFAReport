@@ -2622,10 +2622,7 @@
 						}
 					}
 
-					$('#' + $scope.params.element_update_indentifier + '-' + $scope.params.toUpdate).addClass('modified');
-					if($scope.params.column == 'delete_remarks'){
-						$('#' + $scope.params.element_update_indentifier).addClass('has-deleted-remarks');
-					}
+					$('#' + $scope.params.element_update_indentifier + '-' + $scope.params.toUpdate).addClass('modified');					
 					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
 					$('table.table').floatThead('destroy');
 					$uibModalInstance.dismiss('cancel');

@@ -89,7 +89,7 @@
 							</tr>
 
 							<!-- Record list -->
-							<tr ng-repeat="record in item.records|filter:query" id="records-[[$parent.$index + '-' + $index]]" ng-show="item.total" ng-class="[record.updated,record.has_delete_remarks]">
+							<tr ng-repeat="record in item.records|filter:query" id="records-[[$parent.$index + '-' + $index]]" ng-show="item.total" ng-class="[record.updated]">
 								<td>[[record.customer_name]]</td>
 								<td>
 									<span ng-bind="record.invoice_date_formatted = (formatDate(record.invoice_date) | date:'MM/dd/yyyy')"></span>
