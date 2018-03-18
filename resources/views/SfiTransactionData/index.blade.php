@@ -72,7 +72,7 @@
                                     <td>
                                     	<span ng-bind="record.total_invoice = negate(record.total_invoice)"></span>
                                     </td>
-                                    <td>[[record.item_code]]</td>
+                                    <td>[[record.segment_code]]</td>
                                     <td>[[record.segment_abbr]]</td>
                                     <td>[[record.document_type]]</td>
                                     <td>[[record.company_code]]</td>

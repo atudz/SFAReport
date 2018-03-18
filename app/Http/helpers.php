@@ -489,3 +489,16 @@ function get_time($date, $format="g:i:A")
 {
     return date_format(date_create($date), $format);
 }
+
+/**
+ * Get user status
+ * @return string[]
+ */
+function get_user_statuses()
+{
+	return [
+		'A' => 'Active',
+		'I' => 'Deactivated',
+		'D' => 'Deleted',
+	];
+}
