@@ -56,8 +56,8 @@ class VanInventoryPresenter extends PresenterCore
         $user_id = auth()->user()->id;
 
 		$reportsPresenter = PresenterFactory::getInstance('Reports');
-		$this->view->itemCodes = $this->getItemCodes();
-		$this->view->items = $reportsPresenter->getItems(true);
+		$this->view->itemCodes = array_merge([''=>'--Select--'],$this->getItemCodes());
+		$this->view->items = array_merge([''=>'--Select--'],$reportsPresenter->getItems(true));
 		$this->view->jrSalesmans = $this->getJrSalesman();
 		$this->view->vanCodes = $this->getVanCodes();
 		$this->view->salesman = $reportsPresenter->getSalesman(true);		
