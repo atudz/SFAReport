@@ -13,7 +13,7 @@
 						{!!Html::select('updated_by','User', get_users())!!}																										
 					</div>			
 					<div class="col-md-6">	
-						{!!Html::datepicker('created_at','Modified Date',true)!!}
+						{!!Html::datepicker('created_at','Reversal Date',true)!!}
 						{!!Html::input('text','revision','Reversal No.')!!}																
 					</div>
 				{!!Html::fclose()!!}

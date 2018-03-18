@@ -85,7 +85,7 @@ class ReversalPresenter extends PresenterCore
     			'Report' => $report,
     			'Branch' => $branch,
     			'User' => $user,
-    			'Modified Date' => $mDate,
+    			'Reversal Date' => $mDate,
     			'Revision' => $revision,    			    		
     	];    	
     
