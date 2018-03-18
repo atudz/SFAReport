@@ -47,10 +47,10 @@ class ReversalPresenter extends PresenterCore
     			['name'=>'Reversal No.','sort'=>'revision_number'],
     			['name'=>'Reversal Date','sort'=>'created_at'],
     			['name'=>'Type of Report','sort'=>'report_type'],
-    			['name'=>'Username','sort'=>'username'],
     			['name'=>'Original','sort'=>'before'],
     			['name'=>'Edited','sort'=>'value'],
     			['name'=>'Reason of Reversal','sort'=>'comment'],
+    			['name'=>'Username','sort'=>'username'],    			
     	];
 
     	return $headers;
