@@ -1787,11 +1787,12 @@
 	    	location_assignment_code: 'location_assignment_code',
 	    	location_assignment_type: 'location_assignment_type',
 	    	created_at_from: 'created_at_from',
-	    	created_at_to: 'created_at_to'
+	    	created_at_to: 'created_at_to',
+			status: 'status'
 	    };
 
 	    //Sort table records
-	    $scope.sortColumn = '';
+	    $scope.sortColumn = 'created_at';
 		$scope.sortDirection = 'asc';
 		sortColumn($scope,API,params,$log);
 

@@ -337,3 +337,16 @@ function get_reports()
 			'vaninventoryfrozen'=>'Van Inventory - Frozen & Kassel',
 	];
 }
+
+/**
+ * Get user status
+ * @return string[]
+ */
+function get_user_statuses()
+{
+	return [
+		'A' => 'Active',
+		'I' => 'Deactivated',
+		'D' => 'Deleted',
+	];
+}

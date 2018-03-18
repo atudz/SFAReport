@@ -14,7 +14,8 @@
 					</div>					
 					<div class="col-md-6">
 						{!!Html::datepicker('created_at','Date Created',true)!!}		
-						{!!Html::select('location_assignment_type','Assignment', $assignmentOptions)!!}				
+						{!!Html::select('location_assignment_type','Assignment', $assignmentOptions)!!}
+						{!!Html::select('status','Status', get_user_statuses())!!}										
 					</div>			
 				{!!Html::fclose()!!}
 				<!-- End Filter -->

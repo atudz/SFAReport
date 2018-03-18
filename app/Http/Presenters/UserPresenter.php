@@ -201,11 +201,13 @@ class UserPresenter extends PresenterCore
 		$assignmentFilter = FilterFactory::getInstance('Select');
 		$prepare = $assignmentFilter->addFilter($prepare,'location_assignment_type');
 		
+		$statusFilter = FilterFactory::getInstance('Select');
+		$prepare = $statusFilter->addFilter($prepare,'status');
+
 		$exclude = [1,auth()->user()->id];
 		$prepare->whereNotIn('user.id',$exclude);
 		$prepare->whereNull('user.deleted_at');
 		
-		//dd($prepare->toSql());
 		$result = $this->paginate($prepare);
 		
 		$items = $result->items();
