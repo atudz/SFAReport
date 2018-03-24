@@ -70,6 +70,7 @@ class ReportsController extends ControllerCore
 							'updated_by' => auth()->user()->id,
 							'comment' => $comment,
 							'report_type' => $report_type,
+							'salesman_code' => $this->getSalesmanCode('txn_stock_transfer_in_detail',$id)
 					]);
 
 			if($logId)
@@ -107,7 +108,8 @@ class ReportsController extends ControllerCore
 								'created_at' => new \DateTime(),
 								'updated_by' => auth()->user()->id,
 								'comment' => $comment,
-								'report_type' => $report_type
+								'report_type' => $report_type,
+								'salesman_code' => $this->getSalesmanCode('txn_stock_transfer_in_detail',$id)
 						]);
 			}
 
@@ -182,10 +184,11 @@ class ReportsController extends ControllerCore
 			 }
 
 
-			if($insertData)
-			{
-				\DB::table('table_logs')->insert($insertData);
-			}
+			 if($insertData)
+			 {
+			 	$insertData['salesman_code'] = $this->getSalesmanCode($insertData['table'],$insertData['pk_id']);
+			 	\DB::table('table_logs')->insert($insertData);
+			 }
 		}
 
 		$data['success'] = true;
@@ -213,5 +216,82 @@ class ReportsController extends ControllerCore
 		//$data['synching'] = false;
 		//$data['logs'] = true;
 		return response()->json($data);
+	}
+	
+	/**
+	 * Get Salesman Code
+	 * @param  $table  [table to search]
+	 * @param  $pk_id  [the primary key of the table]
+	 * @return String
+	 */
+	public function getSalesmanCode($table,$pk_id){
+		$salesman_code = '';
+		$syncTables = config('sync.sync_tables');
+		$pkColumn = array_shift($syncTables[$table]);
+		
+		switch($table)
+		{
+			case 'txn_collection_header':
+			case 'txn_sales_order_header':
+			case 'txn_return_header':
+			case 'txn_evaluated_objective':
+			case 'txn_stock_transfer_in_header':
+				$row = \DB::table($table)->where($pkColumn,$pk_id)->first();
+				if($row)
+				{
+					return $row->salesman_code;
+				}
+				break;
+			case 'txn_collection_detail':
+			case 'txn_collection_invoice':
+				$row = \DB::table($table)
+				->select('txn_collection_header.salesman_code')
+				->join('txn_collection_header','txn_collection_header.reference_num','=',$table.'.reference_num')
+				->where($table.'.'.$pkColumn,$pk_id)
+				->first();
+				if($row)
+				{
+					return $row->salesman_code;
+				}
+				break;
+			case 'txn_return_detail':
+				$row = \DB::table($table)
+				->select('txn_return_header.salesman_code')
+				->join('txn_return_header','txn_return_header.reference_num','=',$table.'.reference_num')
+				->where($table.'.return_detail_id',$pk_id)
+				->first();
+				$column = $table.'.return_detail_id';
+				if($row)
+				{
+					return $row->salesman_code;
+				}
+				break;
+			case 'txn_sales_order_deal':
+			case 'txn_sales_order_header_discount':
+			case 'txn_sales_order_detail':
+				$row = \DB::table($table)
+				->select('txn_sales_order_header.salesman_code')
+				->join('txn_sales_order_header','txn_sales_order_header.reference_num','=',$table.'.reference_num')
+				->where($table.'.'.$pkColumn,$pk_id)
+				->first();
+				if($row)
+				{
+					return $row->salesman_code;
+				}
+				break;
+			case 'txn_stock_transfer_in_detail':
+				$row = \DB::table($table)
+				->select('txn_stock_transfer_in_header.salesman_code')
+				->join('txn_stock_transfer_in_header','txn_stock_transfer_in_header.stock_transfer_number','=',$table.'.stock_transfer_number')
+				->where($table.'.stock_transfer_in_detail_id',$pk_id)
+				->first();
+				if($row)
+				{
+					return $row->salesman_code;
+				}
+				break;
+		}
+		
+		return $salesman_code;
 	}
 }
