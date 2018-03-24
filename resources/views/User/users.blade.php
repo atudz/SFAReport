@@ -8,6 +8,7 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">
+						{!!Html::select('salesman','Salesman', $salesman,'All')!!}
 						{!!Html::input('text','fullname','Full Name')!!}
 						{!!Html::select('user_group_id','Role', $roles)!!}
 						{!!Html::select('location_assignment_code','Branch', $areas)!!}						

@@ -257,6 +257,11 @@ class ReversalPresenter extends PresenterCore
     					->leftJoin('table_logs','table_logs.id','=','report_revisions.table_log_id')
 				    	->leftJoin('user','user.id','=','table_logs.updated_by');
     	    	
+		$salesmanFilter = FilterFactory::getInstance('Select');
+		$prepare = $salesmanFilter->addFilter($prepare,'salesman',
+						function($self, $model){
+				    		return $model->where('table_logs.salesman_code','=',$self->getValue());
+				    	});
     	
     	$reportFilter = FilterFactory::getInstance('Select');
     	$prepare = $reportFilter->addFilter($prepare,'report',

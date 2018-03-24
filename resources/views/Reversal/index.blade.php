@@ -8,6 +8,7 @@
 				<!-- Filter -->
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">	
+						{!!Html::select('salesman','Salesman', $salesman,'All')!!}
 						{!!Html::select('report','Reports', get_reports(),'All')!!}
 						{!!Html::select('branch','Branch', $areas)!!}
 						{!!Html::select('updated_by','User', get_users())!!}																										
@@ -36,7 +37,7 @@
 							<td>[[record.username]]</td>														
 						</tr>									
 					</tbody>				
-					{!!Html::tfooter(true,20)!!}
+					{!!Html::tfooter(true,9)!!}
 				{!!Html::tclose()!!}			
 			</div>			
 		</div>

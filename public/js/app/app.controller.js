@@ -2509,11 +2509,12 @@
 	function ReversalSummary($scope, $resource, $uibModal, $window, $log, TableFix)
 	{
 	    var params = [
+	    		  'salesman',
 		          'report',
 		          'branch',
 		          'updated_by',
 		          'created_at_from',
-		          'created_ate_to',
+		          'created_at_to',
 		          'revision'
 		];
 
