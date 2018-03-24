@@ -161,11 +161,11 @@ class SfiTransactionDataPresenter extends PresenterCore
 				sc.abbreviation segment_abbr,
 				\'DR\' document_type ,
 				substr(all_so.customer_code,1,4) company_code,
-				CONCAT(all_so.van_code,\'-\',ac.customer_name) header_text,
+				CONCAT(substr(all_so.customer_code,1,4) ,\'-\',ac.customer_name) header_text,
 				IF(substr(all_so.customer_code,1,1) = \'1\', \'110000\',\'110010\') gl_account,
 				IF(substr(all_so.customer_code,1,4) = \'1000\', \'O1\',\'OX\') tax_code,
 				pc.profit_center,
-				CONCAT(all_so.van_code,\'-\',ac.customer_name) detail_text,
+				CONCAT(aim.segment_code,\'-\',ac.customer_name) detail_text,
     			
 				IF(all_so.updated =\'modified\',\'modified\',\'\') updated,
     			
@@ -323,11 +323,11 @@ class SfiTransactionDataPresenter extends PresenterCore
 				sc.abbreviation segment_abbr,
 				\'DR\' document_type ,
 				substr(ac.customer_code,1,4) company_code,
-				CONCAT(trh.van_code,\'-\',ac.customer_name) header_text,
+				CONCAT(substr(ac.customer_code,1,1),\'-\',ac.customer_name) header_text,
 				IF(substr(ac.customer_code,1,1) = \'1\', \'110000\',\'110010\') gl_account,
 				IF(substr(ac.customer_code,1,4) = \'1000\', \'O1\',\'OX\') tax_code,
 				pc.profit_center,
-				CONCAT(trh.van_code,\'-\',ac.customer_name) detail_text,
+				CONCAT(aim.segment_code,\'-\',ac.customer_name) detail_text,
 			    IF(SUM(trh.updated_by),\'modified\',IF(SUM(trd.updated_by),\'modified\',\'\')) updated,
     			
 			    \'txn_return_header\' invoice_table,
