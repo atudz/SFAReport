@@ -514,7 +514,7 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Collection Date','sort'=>'or_date'],
     			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'Cash Amount'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -866,7 +866,7 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Check No','sort'=>'check_number'],
     			['name'=>'Check Date','sort'=>'check_date'],
     			['name'=>'Check Amount'], 
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;

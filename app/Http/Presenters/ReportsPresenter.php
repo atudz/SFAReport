@@ -5896,7 +5896,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'CM Date'],
     			['name'=>'CM Amount'],
                 ['name'=>'Total Collected Amount'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	if($export == 'pdf')
@@ -5926,7 +5926,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'OR Amount'],
     			['name'=>'OR Date'],
     			['name'=>'Collection Posting Date'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5950,7 +5950,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Original Amount'],
     			['name'=>'Balance Amount', 'sort'=>'balance_amount'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6022,7 +6022,7 @@ class ReportsPresenter extends PresenterCore
     		$headers[] = ['name'=>$item->name];
     	}
 
-        $headers[] = ['name'=>'Delete Remarks'];
+        $headers[] = ['name'=>'Text'];
 
     	return $headers;
     }
@@ -6052,7 +6052,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Term-on-Account'],
     			['name'=>'Sales Group','sort'=>'sales_group'],
     			['name'=>'Assignment','sort'=>'assignment'], 
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6095,7 +6095,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Sales'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6132,7 +6132,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Sales'],
-                ['name'=>'Delete Remarks'],
+                ['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6175,7 +6175,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6212,7 +6212,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
-    			['name'=>'Delete Remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
