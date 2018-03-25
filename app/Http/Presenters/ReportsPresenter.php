@@ -4264,7 +4264,7 @@ class ReportsPresenter extends PresenterCore
 
 		if(!$this->request->has('sort'))
 		{
-			$prepare->orderBy('sales.invoice_date','desc');
+			$prepare->orderBy('sales.invoice_date');
 			$prepare->orderBy('sales.invoice_number');
 		}
 
@@ -4483,7 +4483,7 @@ class ReportsPresenter extends PresenterCore
 
 		if(!$this->request->has('sort'))
 		{
-			$prepare->orderBy('txn_return_header.return_date','desc');
+			$prepare->orderBy('txn_return_header.return_date');
 		}
 		return $prepare;
 
@@ -4672,7 +4672,7 @@ class ReportsPresenter extends PresenterCore
 
     	if(!$this->request->has('sort'))
     	{
-    		$prepare->orderBy('txn_return_header.return_date','desc');
+    		$prepare->orderBy('txn_return_header.return_date');
     	}
 
     	return $prepare;
