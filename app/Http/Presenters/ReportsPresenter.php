@@ -333,7 +333,7 @@ class ReportsPresenter extends PresenterCore
     {
 
     	$prepare = $this->getPreparedSalesCollection();
-    	$collection1 = $prepare->get();
+    	$collection1 = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
 
     	$referenceNum = [];
     	$invoiceNum = [];
@@ -349,7 +349,7 @@ class ReportsPresenter extends PresenterCore
     	$except .= $invoiceNum ? ' AND coltbl.invoice_number NOT IN(\''.implode("','",$invoiceNum).'\') ' : '';
 
     	$prepare = $this->getPreparedSalesCollection2(false,$except);
-    	$collection2 = $prepare->get();
+    	$collection2 = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_invoice');
 
     	$collection = array_merge((array)$collection1,(array)$collection2);
     	$tmp = collect($collection)->sortBy('invoice_number')->toArray();
@@ -369,7 +369,6 @@ class ReportsPresenter extends PresenterCore
     	{
     		$data['summary'] = $summary1;
     	}
-
 
     	$data['total'] = count($result);
 
@@ -558,6 +557,7 @@ class ReportsPresenter extends PresenterCore
 	    			) customer_address,
 				   remarks.remarks,
 				   sotbl.invoice_number,
+				   sotbl.delete_remarks,
 				   sotbl.so_date invoice_date,
 				   coalesce(sotbl.so_total_served,0.00) so_total_served,
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
@@ -606,6 +606,7 @@ class ReportsPresenter extends PresenterCore
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+							all_so.delete_remarks,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
@@ -624,6 +625,7 @@ class ReportsPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+									tsoh.delete_remarks,
 									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
 									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
@@ -652,6 +654,7 @@ class ReportsPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+									tsoh.delete_remarks,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
@@ -776,6 +779,7 @@ class ReportsPresenter extends PresenterCore
     			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
+				collection.delete_remarks,
 				collection.invoice_date,
 				collection.so_total_served,
 				collection.so_total_item_discount,
@@ -934,6 +938,7 @@ class ReportsPresenter extends PresenterCore
 	    			) customer_address,
 				   remarks.remarks,
 				   ti.invoice_number,
+				   ti.delete_remarks,
     			   ti.invoice_date,
 				   coalesce(sotbl.so_total_served,0.00) so_total_served,
 				   coalesce(sotbl.so_total_item_discount,0.00) so_total_item_discount,
@@ -1153,6 +1158,7 @@ class ReportsPresenter extends PresenterCore
     			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
+				collection.delete_remarks,
 				collection.invoice_date,
 				collection.so_total_served,
 				collection.so_total_item_discount,
@@ -1277,7 +1283,7 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionPosting()
     {
     	$prepare = $this->getPreparedSalesCollectionPosting();
-    	$collection1 = $prepare->get();
+    	$collection1 = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');    	
 
     	$referenceNum = [];
     	foreach($collection1 as $col)
@@ -1289,7 +1295,7 @@ class ReportsPresenter extends PresenterCore
     	$except = $referenceNum ? ' AND (tas.reference_num NOT IN(\''.implode("','",$referenceNum).'\')) ' : '';
 
     	$prepare = $this->getPreparedSalesCollectionPosting2($except);
-    	$collection2 = $prepare->get();
+    	$collection2 = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_invoice');    	
 
     	$collection = array_merge((array)$collection1,(array)$collection2);
     	$invoices = [];
@@ -1313,7 +1319,7 @@ class ReportsPresenter extends PresenterCore
     	}
 		$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
-
+    	
     	return response()->json($data);
     }
 
@@ -1333,7 +1339,9 @@ class ReportsPresenter extends PresenterCore
     			ac.area_code,
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
+				sotbl.sales_order_header_id,
 				sotbl.invoice_number invoice_number,
+				sotbl.delete_remarks,
     			IF(tas.activity_code=\'O,C\',\'\',((coalesce(sotbl.so_total_served,0.00)-coalesce(sotbl.so_total_collective_discount,0.00)) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - (coalesce(rtntbl.RTN_total_gross,0.00) - coalesce(rtntbl.RTN_total_collective_discount,0.00)))) total_invoice_net_amount,
 				IF(tas.activity_code=\'O,C\',\'\',sotbl.so_date) invoice_date,
 				IF(tas.activity_code=\'O,C\',\'\',sotbl.sfa_modified_date) invoice_posting_date,
@@ -1350,11 +1358,13 @@ class ReportsPresenter extends PresenterCore
 			-- SALES ORDER SUBTABLE
 			(
 				select
+					all_so.sales_order_header_id,
 					all_so.reference_num,
 					all_so.salesman_code,
 					all_so.customer_code,
 					all_so.so_date,
 					all_so.invoice_number,
+				    all_so.delete_remarks,
 					all_so.sfa_modified_date,
 					sum(all_so.total_served) as so_total_served,
 					sum(all_so.total_discount) as so_total_item_discount,
@@ -1363,6 +1373,7 @@ class ReportsPresenter extends PresenterCore
     				all_so.updated
 				from (
 						select
+							tsoh.sales_order_header_id,
 							tsoh.so_number,
 							tsoh.reference_num,
 							tsoh.salesman_code,
@@ -1370,6 +1381,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.so_date,
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
+							tsoh.delete_remarks,
 							sum(tsod.gross_served_amount + tsod.vat_amount) as total_served,
 							sum(tsod.discount_amount) as total_discount,
     						IF(tsoh.updated_by,\'modified\',IF(tsod.updated_by,\'modified\',\'\')) updated
@@ -1386,6 +1398,7 @@ class ReportsPresenter extends PresenterCore
 						union all
 
 						select
+							tsoh.sales_order_header_id,
 							tsoh.so_number,
 							tsoh.reference_num,
 							tsoh.salesman_code,
@@ -1393,6 +1406,7 @@ class ReportsPresenter extends PresenterCore
 							tsoh.so_date,
 							tsoh.sfa_modified_date,
 							tsoh.invoice_number,
+							tsoh.delete_remarks,
 							sum(tsodeal.gross_served_amount + tsodeal.vat_served_amount) as total_served,
 							0.00 as total_discount,
     						IF(tsoh.updated_by,\'modified\',IF(tsodeal.updated_by,\'modified\',\'\')) updated
@@ -1496,6 +1510,8 @@ class ReportsPresenter extends PresenterCore
 				collection.customer_name,
 				collection.remarks,
 				collection.invoice_number,
+				collection.delete_remarks,
+				collection.sales_order_header_id,
 				collection.total_invoice_net_amount,
 				collection.invoice_date,
 				collection.invoice_posting_date,
@@ -1586,7 +1602,9 @@ class ReportsPresenter extends PresenterCore
     			ac.area_code,
 				CONCAT(ac.customer_name,ac.customer_name2) customer_name,
 				remarks.remarks,
-				ti.invoice_number,
+                ti.invoice_id,
+                ti.invoice_number,
+				ti.delete_remarks,
     			0.00 total_invoice_net_amount,
     			ti.invoice_date,
 				\'\' invoice_posting_date,
@@ -1637,6 +1655,8 @@ class ReportsPresenter extends PresenterCore
 				collection.customer_name,
 				collection.remarks,
 				collection.invoice_number,
+				collection.delete_remarks,
+                collection.invoice_id sales_order_header_id,
 				collection.total_invoice_net_amount,
 				collection.invoice_date,
 				collection.invoice_posting_date,
@@ -2325,7 +2345,7 @@ class ReportsPresenter extends PresenterCore
     	{
 	    	// Get Cusomter List
 	    	$prepare = $this->getPreparedVanInventory();
-	    	$results = $prepare->get();
+	    	$results = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
 
 	    	foreach($results as $result)
 	    	{
@@ -2389,7 +2409,7 @@ class ReportsPresenter extends PresenterCore
 
     	// Get returns
     	$prepare = $this->getPreparedVanInventoryReturns();
-    	$results = $prepare->get();
+    	$results = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_return_header');    	
 
     	if($this->request->get('return_slip_num') && !$results)
     	{
@@ -2510,8 +2530,8 @@ class ReportsPresenter extends PresenterCore
 		if (!$reports && !empty($data['records'])) {
 			$this->validateInvoiceNumber($data['records']);
 		}
-
-    	return ($reports) ? $reportRecords : response()->json($data);
+		
+		return ($reports) ? $reportRecords : response()->json($data);
     }
 
 
@@ -2821,8 +2841,10 @@ class ReportsPresenter extends PresenterCore
     {
     	$select = '
     			   app_customer.customer_name,
+				   txn_sales_order_header.sales_order_header_id delete_remarks_id,
 				   txn_sales_order_header.so_date invoice_date,
 				   txn_sales_order_header.invoice_number,
+				   txn_sales_order_header.delete_remarks,
     			   txn_sales_order_header.so_number,
     			   txn_sales_order_header.reference_num,
     			   IF(txn_sales_order_header.updated_by,\'modified\',\'\') updated
@@ -2876,7 +2898,9 @@ class ReportsPresenter extends PresenterCore
     {
     	$select = '
     			   app_customer.customer_name,
-				   txn_return_header.return_date invoice_date,
+                   txn_return_header.return_date invoice_date,
+                   txn_return_header.return_header_id delete_remarks_id,
+				   txn_return_header.delete_remarks,
 				   txn_return_header.return_slip_num,
     			   txn_return_header.return_txn_number so_number,
     			   IF(txn_return_header.updated_by,\'modified\',\'\') updated
@@ -2940,7 +2964,7 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	$data['total'] = $result->total();
-
+    	
     	return response()->json($data);
     }
 
@@ -2968,9 +2992,9 @@ class ReportsPresenter extends PresenterCore
 
     	// VW_INV temporary table
     	$queryInv = '
-    		(select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount, updated
+			(select salesman_code, customer_code, invoice_number, sum(coalesce(invoice_amount,0)) as invoice_amount, updated,delete_remarks_id,delete_remarks,delete_remarks_table
             from (
-                    select ti.salesman_code, ti.customer_code, ti.invoice_number, ti.original_amount as invoice_amount, \'\' updated
+				    select ti.invoice_id delete_remarks_id,ti.salesman_code, ti.customer_code, ti.invoice_number, ti.delete_remarks, ti.original_amount as invoice_amount, \'\' updated, \'txn_invoice\' delete_remarks_table
                   	from txn_invoice ti
     				join txn_sales_order_header tih
 					on ti.salesman_code = tih.salesman_code
@@ -2984,10 +3008,11 @@ class ReportsPresenter extends PresenterCore
 
                   	UNION ALL
 
-                  	select tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number,
+					select tsoh.sales_order_header_id delete_remarks_id,tsoh.salesman_code, tsoh.customer_code, tsoh.invoice_number, tsoh.delete_remarks,
                   	case when sum(coalesce(so_net_amt,0) + coalesce(so_deal_net_amt,0) - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) <= 0 then 0 else
                   			      sum(coalesce(so_net_amt,0) + coalesce(so_deal_net_amt,0) - coalesce(tsohd.served_deduction_amount,0) - (coalesce(trd.rtn_net_amt,0) - coalesce(trhd.deduction_amount,0))) end as invoice_amount,
-                  	IF(tsoh.updated_by,\'modified\',\'\') updated
+                  	IF(tsoh.updated_by,\'modified\',\'\') updated,
+                    \'txn_sales_order_header\' delete_remarks_table
                   	from txn_sales_order_header tsoh
 
                   	left join
@@ -3057,7 +3082,10 @@ class ReportsPresenter extends PresenterCore
 			      coalesce(txn_sales_order_header.so_date,txn_invoice.invoice_date) invoice_date,
 			      coalesce(vw_inv.invoice_amount,0) original_amount,
 			      coalesce(vw_inv.invoice_amount,0) - coalesce(vw_col.applied_amount,0) balance_amount,
-    			  vw_inv.updated
+    			  vw_inv.updated,
+                  vw_inv.delete_remarks_id,
+                  vw_inv.delete_remarks,
+                  vw_inv.delete_remarks_table
     			';
     	if($summary)
     	{
@@ -3174,7 +3202,7 @@ class ReportsPresenter extends PresenterCore
     		$prepare = $this->getPreparedBir(false,true);
     		$data['summary'] = $prepare->first();
     	}
-
+    	
     	return response()->json($data);
     }
 
@@ -3199,21 +3227,26 @@ class ReportsPresenter extends PresenterCore
 					$truncate1. '(((coalesce(SOtbl.SO_total_vat, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))/1.12)*0.12)'.$truncate2.' tax_amount,'.
 					$truncate1. '((coalesce(SOtbl.SO_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount,0.00))/1.12)'.$truncate2.' total_sales,'.
 					$truncate1. '(coalesce(SOtbl.SO_net_amount, 0.00) - coalesce(SOtbl.SO_total_collective_discount, 0.00))'.$truncate2.' total_invoice_amount,
-    				SOtbl.updated,
+					SOtbl.updated,
     				app_customer.area_code,
-					SOtbl.reference_num
+					SOtbl.reference_num,
+					SOtbl.delete_remarks,
+                    SOtbl.sales_order_header_id delete_remarks_id,
+                    \'txn_sales_order_header\' delete_remarks_table
 
 					from txn_activity_salesman ACT
 
 				join
 				(
-					select ALL_SO.so_number,
+					select ALL_SO.sales_order_header_id,
+                        ALL_SO.so_number,
 						ALL_SO.reference_num,
 						ALL_SO.salesman_code,
 						ALL_SO.customer_code,
 						ALL_SO.so_date,
 						ALL_SO.sfa_modified_date,
 						ALL_SO.invoice_number,
+						ALL_SO.delete_remarks,
 						sum(coalesce(ALL_SO.total_vat,0.00)) as SO_total_vat,
 						sum(tsohd.collective_discount_amount) as SO_total_collective_discount,
 						sum(coalesce(ALL_SO.so_amount, 0.00)) as SO_amount,
@@ -3221,13 +3254,15 @@ class ReportsPresenter extends PresenterCore
     					ALL_SO.updated
 						from (
 
-							select tsoh.so_number,
+							select tsoh.sales_order_header_id,
+                                tsoh.so_number,
 								tsoh.reference_num,
 								tsoh.salesman_code,
 								tsoh.customer_code,
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
 								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 								sum((coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as so_amount,
 								sum((tsod.gross_served_amount + tsod.vat_amount)-tsod.discount_amount) as net_amount,
@@ -3247,13 +3282,15 @@ class ReportsPresenter extends PresenterCore
 
 							union all
 
-							select tsoh.so_number,
+							select tsoh.sales_order_header_id,
+                                tsoh.so_number,
 								tsoh.reference_num,
 								tsoh.salesman_code,
 								tsoh.customer_code,
 								tsoh.so_date,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
 								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as so_amount,
 								sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as net_amount,
@@ -3311,7 +3348,11 @@ class ReportsPresenter extends PresenterCore
 					$truncate1 . '(-1*(coalesce(RTNtbl.RTN_net_amount, 0.00)-coalesce(RTNtbl.RTN_total_collective_discount, 0.00))) '.$truncate2.' total_invoice_amount,
     			    RTNtbl.updated,
 					app_customer.area_code,
-					RTNtbl.reference_num
+					RTNtbl.reference_num,
+                    RTNtbl.delete_remarks,
+                    RTNtbl.return_header_id delete_remarks_id,
+                    \'txn_return_header\' delete_remarks_table
+
 
 					from txn_activity_salesman ACT
 
@@ -3324,6 +3365,8 @@ class ReportsPresenter extends PresenterCore
 						trh.return_date,
 						trh.sfa_modified_date,
 						trh.return_slip_num,
+                        trh.delete_remarks,
+						trh.return_header_id,
 						trhd.collective_discount_amount as RTN_total_collective_discount,
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_total_vat,
 						sum((trd.gross_amount + trd.vat_amount) - trd.discount_amount) as RTN_net_amount,
@@ -3387,8 +3430,10 @@ class ReportsPresenter extends PresenterCore
 				bir.sales_group,
     			bir.updated,
 				app_salesman.salesman_name assignment,
-    			bir.area_code,
-    			remarks.remarks
+				bir.area_code,
+                bir.delete_remarks,
+                bir.delete_remarks_id,
+                bir.delete_remarks_table
     			';
 
     	if($summary)
@@ -3499,7 +3544,7 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	$data['total'] = $result->total();
-
+    	
     	return response()->json($data);
     }
 
@@ -3541,6 +3586,7 @@ class ReportsPresenter extends PresenterCore
     			aa.area_code,
 				aa.area_name area,
 				trh.return_slip_num invoice_number,
+				trh.delete_remarks,
 				trh.return_date invoice_date,
 				trh.sfa_modified_date invoice_posting_date,
 				aim.segment_code,
@@ -3636,6 +3682,7 @@ class ReportsPresenter extends PresenterCore
     			aa.area_code,
 				aa.area_name area,
 				all_so.invoice_number,
+				all_so.delete_remarks,
 				all_so.so_date invoice_date,
 				all_so.sfa_modified_date invoice_posting_date,
 				aim.segment_code,
@@ -3686,6 +3733,7 @@ class ReportsPresenter extends PresenterCore
 								tsoh.device_code,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
     							tsoh.so_date,
     							tsod.uom_code,
     							tsod.item_code,
@@ -3726,6 +3774,7 @@ class ReportsPresenter extends PresenterCore
 								tsoh.device_code,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
     							tsoh.so_date,
     							tsodeal.uom_code,
     							tsodeal.item_code,
@@ -3776,6 +3825,7 @@ class ReportsPresenter extends PresenterCore
 				sales.salesman_name,
 				sales.area,
 				sales.invoice_number,
+                sales.delete_remarks,
 				sales.invoice_date,
 				sales.invoice_posting_date,
 				sales.segment_code,
@@ -3915,7 +3965,7 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	$data['total'] = $result->total();
-
+    	
     	return response()->json($data);
     }
 
@@ -3952,6 +4002,7 @@ class ReportsPresenter extends PresenterCore
     			aa.area_code,
 				aa.area_name area,
 				all_so.invoice_number,
+				all_so.delete_remarks,
 				all_so.so_date invoice_date,
 				all_so.sfa_modified_date invoice_posting_date,
 				TRUNCATE(ROUND(coalesce(all_so.gross_served_amount,0.00),2),2) gross_served_amount,
@@ -3988,6 +4039,7 @@ class ReportsPresenter extends PresenterCore
 								tsoh.device_code,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
     							tsoh.so_date,
     							SUM(tsod.gross_served_amount) gross_served_amount,
 								SUM(tsod.vat_amount) vat_amount,
@@ -4031,6 +4083,7 @@ class ReportsPresenter extends PresenterCore
 								tsoh.device_code,
 								tsoh.sfa_modified_date,
 								tsoh.invoice_number,
+								tsoh.delete_remarks,
     							tsoh.so_date,
     							SUM(tsodeal.gross_served_amount) gross_served_amount,
 								SUM(tsodeal.vat_served_amount) vat_amount,
@@ -4096,6 +4149,7 @@ class ReportsPresenter extends PresenterCore
     			aa.area_code,
 				aa.area_name area,
 				trh.return_slip_num invoice_number,
+				trh.delete_remarks,
 				trh.return_date invoice_date,
 				trh.sfa_modified_date invoice_posting_date,
     			(-1 * TRUNCATE(ROUND(SUM(coalesce(trd.gross_amount,0.00)),2),2)) gross_served_amount,
@@ -4159,6 +4213,7 @@ class ReportsPresenter extends PresenterCore
 				sales.salesman_name,
 				sales.area,
 				sales.invoice_number,
+				sales.delete_remarks,
 				sales.invoice_date,
 				sales.invoice_posting_date,
 				sales.gross_served_amount,
@@ -4297,8 +4352,7 @@ class ReportsPresenter extends PresenterCore
     	}
 
     	$data['total'] = $result->total();
-
-
+    	
     	return response()->json($data);
     }
 
@@ -4343,6 +4397,8 @@ class ReportsPresenter extends PresenterCore
 				app_salesman.salesman_name,
 				app_area.area_name area,
 				txn_return_header.return_slip_num,
+                txn_return_header.delete_remarks,
+				txn_return_header.return_header_id,
 				txn_return_header.return_date,
 				txn_return_header.sfa_modified_date return_posting_date,
 				app_item_master.segment_code,
@@ -4506,8 +4562,7 @@ class ReportsPresenter extends PresenterCore
     		$data['summary'] = $prepare->first();
     	}
     	$data['total'] = $result->total();
-
-
+    	
     	return response()->json($data);
     }
 
@@ -4547,6 +4602,8 @@ class ReportsPresenter extends PresenterCore
 				app_salesman.salesman_name,
 				app_area.area_name area,
 				txn_return_header.return_slip_num,
+                txn_return_header.return_header_id,
+				txn_return_header.delete_remarks,
 				txn_return_header.return_date,
 				txn_return_header.sfa_modified_date return_posting_date,
 				trd.gross_amount,
@@ -5128,6 +5185,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'CM Date'],
     			['name'=>'CM Amount'],
     			['name'=>'Total Collected Amount'],
+    			['name'=>'Text'],
     	];
 
     	if($export == 'pdf')
@@ -5156,7 +5214,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'OR Number'],
     			['name'=>'OR Amount'],
     			['name'=>'OR Date'],
-    			['name'=>'Collection Posting Date']
+    			['name'=>'Collection Posting Date'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5179,7 +5238,8 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Invoice Number','sort'=>'invoice_number'],
     			['name'=>'Invoice Date','sort'=>'invoice_date'],
     			['name'=>'Original Amount'],
-    			['name'=>'Balance Amount', 'sort'=>'balance_amount']
+    			['name'=>'Balance Amount', 'sort'=>'balance_amount'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5257,6 +5317,8 @@ class ReportsPresenter extends PresenterCore
     		$headers[] = ['name'=>$item->name];
     	}
 
+    	$headers[] = ['name'=>'Text'];
+    	
     	return $headers;
     }
 
@@ -5286,6 +5348,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Sales Group','sort'=>'sales_group'],
     			['name'=>'Assignment','sort'=>'assignment'],
     			['name'=>'Remarks','sort'=>'remarks'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5328,6 +5391,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Sales'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5364,6 +5428,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Sales'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5406,6 +5471,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -5442,6 +5508,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Reference No.','sort'=>'discount_reference_num'],
     			['name'=>'Remarks'],
     			['name'=>'Total Return Net Amount'],
+    			['name'=>'Text'],
     	];
 
     	return $headers;
@@ -6211,6 +6278,7 @@ class ReportsPresenter extends PresenterCore
     		'discount_reference_num',
     		'discount_remarks',
     		'total_invoice',
+    		'delete_remarks'
     	];
     }
 
@@ -6236,6 +6304,8 @@ class ReportsPresenter extends PresenterCore
     	{
     		$columns[] = 'code_'.$item->item_code;
     	}
+    	
+    	$columns[] = 'delete_remarks';
 
     	return $columns;
     }
@@ -6278,6 +6348,8 @@ class ReportsPresenter extends PresenterCore
     			'discount_reference_num',
     			'discount_remarks',
     			'total_invoice',
+    			'delete_remarks'
+    			
     	];
     }
 
@@ -6312,6 +6384,8 @@ class ReportsPresenter extends PresenterCore
     			'discount_reference_num',
     			'discount_remarks',
     			'total_invoice',
+    			'delete_remarks'
+    			
     	];
     }
 
@@ -6346,6 +6420,8 @@ class ReportsPresenter extends PresenterCore
     			'discount_reference_num',
     			'discount_remarks',
     			'total_invoice',
+    			'delete_remarks'
+    			
     	];
     }
 
@@ -6410,7 +6486,9 @@ class ReportsPresenter extends PresenterCore
 			    'invoice_number',
 			    'invoice_date',
 			    'original_amount',
-			    'balance_amount'
+			    'balance_amount',
+    			'delete_remarks'
+    			
     	];
     }
 
@@ -6440,6 +6518,7 @@ class ReportsPresenter extends PresenterCore
     			'sales_group',
     			'assignment',
     			'remarks',
+    			'delete_remarks'
     	];
     }
 
@@ -6500,6 +6579,7 @@ class ReportsPresenter extends PresenterCore
     			'cm_date',
     			'credit_amount',
     			'total_collected_amount',
+    			'delete_remarks'
     	];
 
     	if($pdf)
@@ -6547,6 +6627,7 @@ class ReportsPresenter extends PresenterCore
     			'or_amount',
     			'or_date',
     			'collection_posting_date',
+    			'delete_remarks'
     	];
     }
 

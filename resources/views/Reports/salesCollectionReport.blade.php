@@ -177,6 +177,16 @@
 					<td rowspan="[[record.rowspan]]" ng-if="record.show">
 						<span ng-bind="record.total_collected_amount_formatted = formatNumber(record.total_collected_amount)"></span>
 					</td>
+					<td>
+						@if($isAdmin || $isAuditor)
+							<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.sales_order_header_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','report',('records-' + $index))">
+								<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+						    	<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+						  	</a>
+						@else
+					  		[[ record.delete_remarks ]]
+					  	@endif
+					</td>
 				</tr>
 
 				<!-- Summary -->
@@ -235,9 +245,10 @@
 					<td class="bold">
 						<span">[[summary.total_collected_amount]]</span>
 					</td>
+					<td></td>
 				</tr>
 				</tbody>
-				{!!Html::tfooter(true,28)!!}
+				{!!Html::tfooter(true,29)!!}
 			{!!Html::tclose(false)!!}
 
 		</div>

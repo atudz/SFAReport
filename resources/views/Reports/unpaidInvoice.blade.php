@@ -43,6 +43,7 @@
 							<td>
 								<span ng-bind="record.balance_amount_formatted = negate(record.balance_amount)"></span>
 							</td>
+							<td>[[ record.delete_remarks ]]</td>
 						</tr>
 						
 						<!-- Summary total -->
@@ -61,6 +62,7 @@
 							<th>
 								<span ng-bind="summary.balance_amount_formatted = negate(summary.balance_amount)"></span>
 							</th>
+							<td></td>
 						</tr>					
 					</tbody>
 				

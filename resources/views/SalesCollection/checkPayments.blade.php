@@ -75,7 +75,8 @@
 	  						<span ng-bind="record.payment_amount_formatted = formatNumber(record.payment_amount)"></span>
 	  					@endif
 						
-					</td>									
+					</td>
+					<td>[[ record.delete_remarks ]]</td>									
 				</tr>
 				
 				<!-- Summary -->
@@ -96,10 +97,11 @@
 					<td></td>					
 					<td class="bold">
 						<span>[[formatNumber(summary.payment_amount)]]</span>						
-					</td>									
+					</td>			
+					<td></td>						
 				</tr>
 				</tbody>
-				{!!Html::tfooter(true,13)!!}
+				{!!Html::tfooter(true,14)!!}
 			{!!Html::tclose(false)!!}
 						
 			</div>			

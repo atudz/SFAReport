@@ -50,7 +50,8 @@
 							</td>
 							<td>
 								<span ng-bind="record.collection_posting_date_formatted = (formatDate(record.collection_posting_date) | date:'MM/dd/yyyy')"></span>
-							</td>									
+							</td>
+							<td>[[ record.delete_remarks ]]</td>									
 						</tr>					
 					</tbody>
 					{!!Html::tfooter(true,14)!!}	

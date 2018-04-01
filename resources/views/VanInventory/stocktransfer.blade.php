@@ -59,7 +59,7 @@
 	  							@else
 	  								[[record.quantity]]
 	  							@endif
-							</td>
+							</td>							
 						</tr>									
 					</tbody>				
 					{!!Html::tfooter(true,11)!!}

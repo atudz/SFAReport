@@ -38,6 +38,7 @@ class ReportsController extends ControllerCore
 		$prevInvoiceNum = '';
 		$reference='';
 		$syncTables = config('sync.sync_tables');
+		$deleteRemarks = $column == 'delete_remarks';
 		if($pk = array_shift($syncTables[$table]))
 		{
 			if($table == 'txn_stock_transfer_in_header')
@@ -55,8 +56,8 @@ class ReportsController extends ControllerCore
 
 			\DB::table($table)->where($pk,$id)->lockForUpdate()->update([
 							$column => $value,
-							'updated_at' => new \DateTime(),
-							'updated_by' => auth()->user()->id,
+							'updated_at' => $deleteRemarks ? null : new \DateTime(),
+							'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 			]);
 
 			$logId = \DB::table('table_logs')->insertGetId([
@@ -94,8 +95,8 @@ class ReportsController extends ControllerCore
 			{
 				\DB::table('txn_stock_transfer_in_detail')->where($column,$stockTransNum)->lockForUpdate()->update([
 								$column => $value,
-								'updated_at' => new \DateTime(),
-								'updated_by' => auth()->user()->id,
+								'updated_at' => $deleteRemarks ? null : new \DateTime(),
+								'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 				]);
 
 				\DB::table('table_logs')->insertGetId([
@@ -128,15 +129,15 @@ class ReportsController extends ControllerCore
 
 				$updated = $prepare->lockForUpdate()->update([
 									$column => $value,
-									'updated_at' => new \DateTime(),
-									'updated_by' => auth()->user()->id,
+									'updated_at' => $deleteRemarks ? null : new \DateTime(),
+									'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 							]);
 
 				if(!$updated)
 					$updated = \DB::table('txn_collection_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
 										$column => $value,
-										'updated_at' => new \DateTime(),
-										'updated_by' => auth()->user()->id,
+										'updated_at' => $deleteRemarks ? null : new \DateTime(),
+										'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 								]);
 
 				if($updated)
@@ -164,8 +165,8 @@ class ReportsController extends ControllerCore
 				{
 					\DB::table('txn_invoice')->where($column,$prevInvoiceNum)->lockForUpdate()->update([
 										$column => $value,
-										'updated_at' => new \DateTime(),
-										'updated_by' => auth()->user()->id,
+										'updated_at' => $deleteRemarks ? null : new \DateTime(),
+										'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 								]);
 
 					$insertData[] = [

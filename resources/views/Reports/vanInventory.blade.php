@@ -40,6 +40,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td></td>
 						</tr>																	
 						
 						<!-- Stock count -->
@@ -73,6 +74,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[stock.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td></td>
 						</tr>
 						
 						<!-- Record list -->
@@ -90,6 +92,7 @@
 							@foreach($itemCodes as $item)
 								<td> [[record.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td>[[ record.delete_remarks ]]</td>
 						</tr>
 						
 						<!-- Stock on Hand -->
@@ -105,6 +108,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.stock_on_hand.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td></td>
 						</tr>
 							
 						<!-- Actual Count -->
@@ -122,6 +126,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td></td>
 						</tr>
 												
 						<!-- Short over stocks -->
@@ -137,6 +142,7 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.short_over_stocks.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td></td>
 						</tr>
 						
 						<!-- Beginning balance -->
@@ -152,11 +158,12 @@
 							@foreach($itemCodes as $item)
 								<td class="bold">[[item.replenishment.{{'code_'.$item->item_code}}]]</td>
 							@endforeach
+							<td>[[ record.delete_remarks ]]</td>
 						</tr>
 																		
 					</tbody>	
 					<tr id="no_records_div" style="background-color:white;">
-						<td colspan="{{8+count($itemCodes)}}">
+						<td colspan="{{9+count($itemCodes)}}">
 								No records found.
 						</td>
 					</tr>
