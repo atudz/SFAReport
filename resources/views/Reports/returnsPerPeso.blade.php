@@ -67,6 +67,7 @@
 						<td>
 							<span ng-bind="record.total_invoice_formatted = negate(record.total_invoice)"></span>
 						</td>
+						<td>[[ record.delete_remarks ]]</td>
 					</tr>
 					
 					<!-- Summary Total -->
@@ -105,10 +106,11 @@
 						<th>
 							<span ng-bind="summary.total_invoice_formatted = negate(summary.total_invoice)"></span>
 						</th>
+						<td></td>
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,24)!!}
+					{!!Html::tfooter(true,25)!!}
 				{!!Html::tclose()!!}
 			
 			</div>			

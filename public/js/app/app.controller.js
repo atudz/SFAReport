@@ -1240,9 +1240,9 @@
 	function editTable(scope, modal, resource, window, options, log, TableFix)
 	{
 
-		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step){
+		scope.editColumn = function(type, table, column, id, value, index, name, alias, getTotal, parentIndex, step, toUpdate, slug, element_update_indentifier){
 
-			resource('/reports/synching/'+id+'/'+column).get().$promise.then(function(data){
+			resource('/reports/synching/'+id+'/'+column + '?slug=' + slug).get().$promise.then(function(data){
 
 				var selectOptions = options;
 				var url = window.location.href;
@@ -1359,7 +1359,10 @@
 						step: stepInterval,
 						updated: updated,
 						report: report,
-						report_type: reportType
+						report_type: reportType,
+						toUpdate: toUpdate,
+						slug: slug,
+						element_update_indentifier: element_update_indentifier
 				};
 
 				if(url[4] == 'salescollection.report')
@@ -1510,6 +1513,9 @@
 	    toggleLoading(false);
 
 	    params = filter;
+	    
+	    if(report=='salescollectionposting')
+	    	$('#no_records_div').show();
 
 	    //Sort table records
 	    scope.sortColumn = '';
@@ -1627,9 +1633,9 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
+	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable','toaster', EditTableRecord]);
 
-	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
+	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable, toaster) {
 
 		$scope.change = function () {
 
@@ -1696,9 +1702,12 @@
 						} else {
 							$scope.items[$scope.params.parentIndex][stocks][$scope.params.index][$scope.params.column] = $scope.params.value;
 						}
-						$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
-					}
-					else {
+						if($scope.params.column != 'delete_remarks'){
+							$('#' + $scope.params.parentIndex + '_' + $scope.params.index).addClass('modified');
+						}
+					} else if(($scope.params.table == 'txn_sales_order_header' || $scope.params.table == 'txn_return_header') && ($scope.params.report == 'vaninventorycanned' || $scope.params.report == 'vaninventoryfrozen')){
+						$scope.items[$scope.params.parentIndex]['records'][$scope.params.index][$scope.params.column] = $scope.params.value;
+					}else {
 						if ($scope.params.alias) {
 							$scope.records[$scope.params.index][$scope.params.alias] = $scope.params.value;
 							if ($scope.params.getTotal)
@@ -1708,13 +1717,17 @@
 							if ($scope.params.getTotal)
 								$scope.summary[$scope.params.column] = Number($scope.summary[$scope.params.column]) - Number($scope.params.old) + Number($scope.params.value);
 						}
-						$('#' + $scope.params.index).addClass('modified');
+						if($scope.params.column != 'delete_remarks'){
+							$('#' + $scope.params.index).addClass('modified');
+						}
 
 						if (typeof EditableFixTable !== 'undefined') {
 							EditableFixTable.eft();
 						}
 					}
-
+					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
+					$('table.table').floatThead('destroy');
+					
 					$uibModalInstance.dismiss('cancel');
 				},function(error){
 					if(error.status == 422){

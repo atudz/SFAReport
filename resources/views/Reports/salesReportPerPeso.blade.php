@@ -88,6 +88,16 @@
 						<td>
 							<span ng-bind="record.total_invoice = negate(record.total_invoice)"></span>
 						</td>
+						<td>
+							@if($isAdmin || $isAuditor)
+								<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,'delete_remarks',record.invoice_pk_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','peso-value',('records-' + $index))">
+									<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
+							    	<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+							  	</a>
+							@else
+					  			[[ record.delete_remarks ]]
+					  		@endif
+						</td>
 					</tr>
 					
 					<!-- Total Summary -->
@@ -126,10 +136,11 @@
 						<th>
 							<span ng-bind="summary.total_invoice_formatted = negate(summary.total_invoice)"></span>
 						</th>
+						<td></td>
 					</tr>
 					
 					</tbody>
-					{!!Html::tfooter(true,24)!!}
+					{!!Html::tfooter(true,25)!!}
 				{!!Html::tclose()!!}
 				
 			</div>			

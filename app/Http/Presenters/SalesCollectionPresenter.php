@@ -49,7 +49,7 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCashPaymentReport()
     {
     	$prepare = $this->getPreparedCashPayment();
-    	$collection = $prepare->get();
+    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
     	
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$result = $reportsPresenter->formatSalesCollection($collection);
@@ -79,7 +79,7 @@ class SalesCollectionPresenter extends PresenterCore
     public function getCheckPaymentReport()
     {
     	$prepare = $this->getPreparedCheckPayment();
-    	$collection = $prepare->get();
+    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');    	
     
     	$reportsPresenter = PresenterFactory::getInstance('Reports');
     	$result = $reportsPresenter->formatSalesCollection($collection);
@@ -90,7 +90,7 @@ class SalesCollectionPresenter extends PresenterCore
     		$summary = $this->getCashPaymentTotal($result);
     	}
     	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
-    
+
     	$data['summary'] = '';
     	if($summary)
     	{
@@ -150,6 +150,8 @@ class SalesCollectionPresenter extends PresenterCore
 	    			) customer_address,
 				   remarks.remarks,    			   
 				   sotbl.invoice_number,
+				   sotbl.delete_remarks,
+				   sotbl.sales_order_header_id delete_remarks_id,
 				   sotbl.so_date invoice_date,
 				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
     			
@@ -175,6 +177,7 @@ class SalesCollectionPresenter extends PresenterCore
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+							all_so.delete_remarks,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
@@ -193,6 +196,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
 									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
@@ -221,6 +225,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+									tsoh.delete_remarks,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
@@ -336,6 +341,8 @@ class SalesCollectionPresenter extends PresenterCore
     			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
+                collection.remarks,
+				collection.delete_remarks,
 				collection.invoice_date,
 				collection.total_invoice_net_amount,
 				collection.or_date,
@@ -344,7 +351,9 @@ class SalesCollectionPresenter extends PresenterCore
 				collection.total_collected_amount,
     			
     			collection.collection_detail_id,
-    			collection.updated
+				collection.updated,
+                collection.delete_remarks_id
+
     	
     			';
     	 
@@ -417,6 +426,7 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Collection Date','sort'=>'or_date'],
     			['name'=>'OR Number','sort'=>'or_number'],
     			['name'=>'Cash Amount'],
+    			['name'=>'Text'],
     	];
     
     	return $headers;
@@ -439,7 +449,8 @@ class SalesCollectionPresenter extends PresenterCore
     			'total_invoice_net_amount',
     			'or_date',
     			'or_number',
-    			'payment_amount'    			
+    			'payment_amount',
+    			'delete_remarks'
     	];
     }
     
@@ -497,6 +508,8 @@ class SalesCollectionPresenter extends PresenterCore
 	    			) customer_address,
 				   remarks.remarks,
 				   sotbl.invoice_number,
+ 				   sotbl.delete_remarks,
+				   sotbl.sales_order_header_id delete_remarks_id,
 				   sotbl.so_date invoice_date,
 				   (coalesce((coalesce(sotbl.so_total_served,0) - coalesce(sotbl.so_total_item_discount,0) - coalesce(sotbl.so_total_collective_discount,0.00)),0.00) - coalesce(sotbl.so_total_ewt_deduction, 0.00) - coalesce((rtntbl.RTN_total_gross - rtntbl.RTN_total_collective_discount),0.00)) total_invoice_net_amount,
     
@@ -526,6 +539,7 @@ class SalesCollectionPresenter extends PresenterCore
 							all_so.customer_code,
 							all_so.so_date,
 							all_so.invoice_number,
+                            all_so.delete_remarks,
     						all_so.sfa_modified_date,
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
@@ -544,6 +558,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00)) as total_served,
 									sum(coalesce(coalesce(tsod.gross_served_amount,0.00) + coalesce(tsod.vat_amount,0.00))-coalesce(tsod.discount_amount,0.00)) as total_vat,
 									sum(coalesce(tsod.discount_amount,0.00)) as total_discount,
@@ -572,6 +587,7 @@ class SalesCollectionPresenter extends PresenterCore
 									tsoh.so_date,
     								tsoh.sfa_modified_date,
 									tsoh.invoice_number,
+                                    tsoh.delete_remarks,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_served,
 									sum(coalesce(tsodeal.gross_served_amount,0.00) + coalesce(tsodeal.vat_served_amount,0.00)) as total_vat,
 									0.00 as total_discount,
@@ -690,6 +706,7 @@ class SalesCollectionPresenter extends PresenterCore
     			collection.customer_address,
 				collection.remarks,
 				collection.invoice_number,
+				collection.delete_remarks,
 				collection.invoice_date,
 				collection.total_invoice_net_amount,
 				collection.or_date,
@@ -700,7 +717,8 @@ class SalesCollectionPresenter extends PresenterCore
     			collection.check_number,
     			collection.check_date,
     			collection.collection_detail_id,
-    			collection.updated
+    			collection.updated,
+                collection.delete_remarks_id
   
     			';
     
@@ -782,6 +800,7 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Check No','sort'=>'check_number'],
     			['name'=>'Check Date','sort'=>'check_date'],
     			['name'=>'Check Amount'],
+    			['name'=>'Text'],
     	];
     
     	return $headers;
@@ -806,7 +825,8 @@ class SalesCollectionPresenter extends PresenterCore
     			'bank',
     			'check_number',
     			'check_date',
-    			'payment_amount'
+    			'payment_amount',
+    			'delete_remarks'
     	];
     }
     
