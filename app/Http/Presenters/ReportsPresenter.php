@@ -370,19 +370,6 @@ class ReportsPresenter extends PresenterCore
     		$data['summary'] = $summary1;
     	}
 
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->ref_no_updated = '';
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
-    				$data['records'][$key]->ref_no_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_sales_order_header_discount')->where('column','=','ref_no')->where('pk_id','=',$value->reference_num)->count() ? 'modified' : '';
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->sales_order_header_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
-    	}
-
     	$data['total'] = count($result);
 
     	return response()->json($data);
@@ -1333,18 +1320,6 @@ class ReportsPresenter extends PresenterCore
 		$data['records'] = $this->validateInvoiceNumber($records);
     	$data['total'] = count($records);
     	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->sales_order_header_id) || !is_null($value->sales_order_header_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->sales_order_header_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
-    	}
-    	
-
     	return response()->json($data);
     }
 
@@ -2556,19 +2531,7 @@ class ReportsPresenter extends PresenterCore
 			$this->validateInvoiceNumber($data['records']);
 		}
 		
-		if(!empty($data['records'])){
-			foreach ($data['records'] as $key => $value) {
-				$data['records'][$key]->delete_remarks_updated = '';
-				$data['records'][$key]->has_delete_remarks = '';
-				if(!empty($value->delete_remarks_id) || !is_null($value->delete_remarks_id)){
-					$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->delete_remarks_id)->count() ? 'modified' : '';
-					$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-				}
-			}
-		}
-		
-
-    	return ($reports) ? $reportRecords : response()->json($data);
+		return ($reports) ? $reportRecords : response()->json($data);
     }
 
 
@@ -3002,17 +2965,6 @@ class ReportsPresenter extends PresenterCore
 
     	$data['total'] = $result->total();
     	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->delete_remarks_id) || !is_null($value->delete_remarks_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->delete_remarks_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
-    	}
-    	
     	return response()->json($data);
     }
 
@@ -3249,17 +3201,6 @@ class ReportsPresenter extends PresenterCore
     	{
     		$prepare = $this->getPreparedBir(false,true);
     		$data['summary'] = $prepare->first();
-    	}
-    	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->delete_remarks_id) || !is_null($value->delete_remarks_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$data['records'][$key]->delete_remarks_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->delete_remarks_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
     	}
     	
     	return response()->json($data);
@@ -3604,18 +3545,6 @@ class ReportsPresenter extends PresenterCore
 
     	$data['total'] = $result->total();
     	
-    	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}    			    			
-    		}
-    	}
-
     	return response()->json($data);
     }
 
@@ -4037,18 +3966,6 @@ class ReportsPresenter extends PresenterCore
 
     	$data['total'] = $result->total();
     	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->invoice_pk_id) || !is_null($value->invoice_pk_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=',$value->invoice_table)->where('column','=','delete_remarks')->where('pk_id','=',$value->invoice_pk_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}    			
-    		}
-    	}
-    	
-
     	return response()->json($data);
     }
 
@@ -4436,20 +4353,6 @@ class ReportsPresenter extends PresenterCore
 
     	$data['total'] = $result->total();
     	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->return_header_id) || !is_null($value->return_header_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_return_header')->where('column','=','delete_remarks')->where('pk_id','=',$value->return_header_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
-    	}
-    	
-    	
-
-
     	return response()->json($data);
     }
 
@@ -4660,18 +4563,6 @@ class ReportsPresenter extends PresenterCore
     	}
     	$data['total'] = $result->total();
     	
-    	if(!empty($data['records'])){
-    		foreach ($data['records'] as $key => $value) {
-    			$data['records'][$key]->delete_remarks_updated = '';
-    			$data['records'][$key]->has_delete_remarks = '';
-    			if(!empty($value->return_header_id) || !is_null($value->return_header_id)){
-    				$data['records'][$key]->delete_remarks_updated = ModelFactory::getInstance('TableLog')->where('table','=','txn_return_header')->where('column','=','delete_remarks')->where('pk_id','=',$value->return_header_id)->count() ? 'modified' : '';
-    				$data['records'][$key]->has_delete_remarks = ($data['records'][$key]->delete_remarks_updated == 'modified' ? 'has-deleted-remarks' : '');
-    			}
-    		}
-    	}
-
-
     	return response()->json($data);
     }
 

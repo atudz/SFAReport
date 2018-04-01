@@ -59,11 +59,10 @@
 	  							@else
 	  								[[record.quantity]]
 	  							@endif
-							</td>
-							<td>[[ record.delete_remarks ]]</td>
+							</td>							
 						</tr>									
 					</tbody>				
-					{!!Html::tfooter(true,12)!!}
+					{!!Html::tfooter(true,11)!!}
 				{!!Html::tclose()!!}			
 			</div>			
 		</div>

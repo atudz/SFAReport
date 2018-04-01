@@ -1633,9 +1633,9 @@
 	/**
 	 * Edit Table record controller
 	 */
-	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable','toaster', EditTableRecord]);
+	app.controller('EditTableRecord',['$scope','$uibModalInstance','$window','$resource','params','$log', 'EditableFixTable', EditTableRecord]);
 
-	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable, toaster) {
+	function EditTableRecord($scope, $uibModalInstance, $window, $resource, params, $log, EditableFixTable) {
 
 		$scope.change = function () {
 
@@ -1725,8 +1725,6 @@
 							EditableFixTable.eft();
 						}
 					}
-					toaster.pop('success', 'Success', 'Successfully Updated Column', 5000);
-					$('table.table').floatThead('destroy');
 					
 					$uibModalInstance.dismiss('cancel');
 				},function(error){
