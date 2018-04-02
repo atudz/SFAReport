@@ -142,7 +142,7 @@ class ReportsController extends ControllerCore
 
 				if($updated)
 				{
-					$insertData[] = [
+					$insertData = [
 											'table' => 'txn_collection_invoice',
 											'column' => $column,
 											'pk_id' => $data1->collection_invoice_id,
@@ -169,7 +169,7 @@ class ReportsController extends ControllerCore
 										'updated_by' => $deleteRemarks ? 0 : auth()->user()->id,
 								]);
 
-					$insertData[] = [
+					$insertData = [
 										'table' => 'txn_invoice',
 										'column' => $column,
 										'pk_id' => $data2->invoice_id,
