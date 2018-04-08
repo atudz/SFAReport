@@ -84,6 +84,7 @@ class SfiTransactionDataPresenter extends PresenterCore
     	$presenter = PresenterFactory::getInstance('Reports');
     	$result = $presenter->paginate($prepare);
     	$data['records'] = $presenter->validateInvoiceNumber($result->items());
+    	$data['records'] = $this->addHeaderText($data['records']);
     	
     	$data['summary'] = '';
     	$data['total'] = $result->total();
@@ -161,7 +162,7 @@ class SfiTransactionDataPresenter extends PresenterCore
 				sc.abbreviation segment_abbr,
 				\'DR\' document_type ,
 				substr(all_so.customer_code,1,4) company_code,
-				CONCAT(substr(all_so.invoice_number,2,3) ,\'-\',IF(remarks.remarks=\'\',ac.customer_name,COALESCE(remarks.remarks,ac.customer_name))) header_text,
+				\'\' header_text,
 				IF(substr(all_so.customer_code,1,1) = \'1\', \'110000\',\'110010\') gl_account,
 				IF(substr(all_so.customer_code,1,4) = \'1000\', \'O1\',\'OX\') tax_code,
 				pc.profit_center,
@@ -323,7 +324,7 @@ class SfiTransactionDataPresenter extends PresenterCore
 				sc.abbreviation segment_abbr,
 				\'DR\' document_type ,
 				substr(ac.customer_code,1,4) company_code,				
-				CONCAT(substr(trh.return_slip_num,2,3) ,\'-\',IF(remarks.remarks=\'\',ac.customer_name,COALESCE(remarks.remarks,ac.customer_name))) header_text,
+				\'\' header_text,
 				IF(substr(ac.customer_code,1,1) = \'1\', \'110000\',\'110010\') gl_account,
 				IF(substr(ac.customer_code,1,4) = \'1000\', \'O1\',\'OX\') tax_code,
 				pc.profit_center,
@@ -499,6 +500,21 @@ class SfiTransactionDataPresenter extends PresenterCore
     }
     
     /**
+     * Add header text
+     * @param unknown $data
+     */
+    protected function addHeaderText($data)
+    {
+    	foreach($data as $key => $value) {
+    		$customer = trim($value->remarks) ? $value->remarks : $value->customer_name;
+    		$data[$key]->header_text = substr($value->invoice_number, 1, 2).'-'.strtoupper($customer);
+    	}
+    	
+    	return $data;
+    }
+    
+    
+    /**
      * Download
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
@@ -514,7 +530,9 @@ class SfiTransactionDataPresenter extends PresenterCore
     	]);
     	
     	$convert = request()->get('convert');
-    	$sfi_transactions = $this->getPreparedSfiTransactionData()->get();
+    	$sfi_transactions = $this->getPreparedSfiTransactionData()->get();    
+    	$sfi_transactions = PresenterFactory::getInstance('Reports')->validateInvoiceNumber($sfi_transactions);
+    	$sfi_transactions = $this->addHeaderText($sfi_transactions);
     	
     	ModelFactory::getInstance('UserActivityLog')->create([
     			'user_id'           => auth()->user()->id,
