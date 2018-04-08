@@ -440,9 +440,9 @@ class SalesCollectionPresenter extends PresenterCore
      * Get Cash Payment Select Columns
      * @return string[][]
      */
-    function getCashPaymentSelectColumns()
+    function getCashPaymentSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'customer_code',
     			'customer_name',
     			'customer_address',
@@ -455,6 +455,11 @@ class SalesCollectionPresenter extends PresenterCore
     			'payment_amount',
     			'delete_remarks'
     	];
+    	
+    	if($pdf)
+    		unset($columns[10]);
+    	
+    	return $columns;
     }
     
     /**
@@ -816,9 +821,9 @@ class SalesCollectionPresenter extends PresenterCore
      * Get Cash Payment Select Columns
      * @return string[][]
      */
-    function getCheckPaymentSelectColumns()
+    function getCheckPaymentSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'customer_code',
     			'customer_name',
     			'customer_address',
@@ -834,6 +839,11 @@ class SalesCollectionPresenter extends PresenterCore
     			'payment_amount',
     			'delete_remarks'
     	];
+    	
+    	if($pdf)
+    		unset($columns[13]);
+    	
+    	return $columns;
     }
     
     /**
