@@ -5891,7 +5891,7 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '7px';
     			break;
     		case 'salescollectionposting':
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedSalesCollectionPosting();
     			$collection1 = $prepare->get();
 
@@ -5965,7 +5965,7 @@ class ReportsPresenter extends PresenterCore
     			$salesSummary = true;
     			break;
     		case 'bir';
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedBir(true);
     			$summary = $this->getPreparedBir(true,true)->first();
     			$rows = $this->getBirSelectColumns($pdf);
@@ -5974,7 +5974,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'BIR Report';
     			break;
     		case 'unpaidinvoice';
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedUnpaidInvoice();
     			$rows = $this->getUnpaidSelectColumns($pdf);
     			$summary = $this->getPreparedUnpaidInvoice(true)->first();
@@ -5986,7 +5986,7 @@ class ReportsPresenter extends PresenterCore
     			break;
     		case 'vaninventorycanned';
     			$vaninventory = true;
-    			$columns = $this->getVanInventoryColumns('canned');
+    			$columns = $this->getVanInventoryColumns('canned','A',$type);
 
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
@@ -6006,7 +6006,7 @@ class ReportsPresenter extends PresenterCore
 	    		break;
     		case 'vaninventoryfrozen';
     			$vaninventory = true;
-    			$columns = $this->getVanInventoryColumns('frozen');
+    			$columns = $this->getVanInventoryColumns('frozen','A',$type);
 
     			$params = $this->request->all();
     			$from = date('Y/m/d', strtotime($params['transaction_date_from']));
@@ -6025,7 +6025,7 @@ class ReportsPresenter extends PresenterCore
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
     			break;
     		case 'salesreportpermaterial';
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$rows = $this->getSalesReportMaterialSelectColumns($pdf);
 
     			$prepare = $this->getPreparedSalesReportMaterial();
@@ -6039,7 +6039,7 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '7px';
     			break;
     		case 'salesreportperpeso':
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedSalesReportPeso();
     			$rows = $this->getSalesReportPesoSelectColumns($pdf);
     			$summary = $this->getPreparedSalesReportPeso(true)->first();
@@ -6049,7 +6049,7 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '7px';
     			break;
     		case 'returnpermaterial':
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedReturnMaterial();
     			$rows = $this->getReturnReportMaterialSelectColumns($pdf);
     			$summary = $this->getPreparedReturnMaterial(true)->first();
@@ -6059,7 +6059,7 @@ class ReportsPresenter extends PresenterCore
     			$fontSize = '8px';
     			break;
     		case 'returnperpeso':
-    			$columns = $this->getTableColumns($report);
+    			$columns = $this->getTableColumns($report,$type);
     			$prepare = $this->getPreparedReturnPeso();
     			$rows = $this->getReturnReportPesoSelectColumns($pdf);
     			$summary = $this->getPreparedReturnPeso(true)->first();
@@ -6104,7 +6104,7 @@ class ReportsPresenter extends PresenterCore
 
 			case 'cashpayment':
 				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
-				$columns = $this->getTableColumns($report);
+				$columns = $this->getTableColumns($report,$type);
 				$prepare = $salesCollectionPresenter->getPreparedCashPayment();
 				$collection = $prepare->get();
 
@@ -6127,7 +6127,7 @@ class ReportsPresenter extends PresenterCore
 
 			case 'checkpayment':
 				$salesCollectionPresenter = PresenterFactory::getInstance('SalesCollection');
-				$columns = $this->getTableColumns($report);
+				$columns = $this->getTableColumns($report,$type);
 
 				$prepare = $salesCollectionPresenter->getPreparedCheckPayment();
 				$collection = $prepare->get();
