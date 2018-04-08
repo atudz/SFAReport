@@ -5114,25 +5114,25 @@ class ReportsPresenter extends PresenterCore
     		case 'salescollectionreport':
     			return $this->getSalesCollectionReportColumns($export);
     		case 'salescollectionposting':
-    			return $this->getSalesCollectionPostingColumns();
+    			return $this->getSalesCollectionPostingColumns($export);
     		case 'salescollectionsummary':
     			return $this->getSalesCollectionSummaryColumns();
     		case 'vaninventorycanned':
-    			return $this->getVanInventoryColumns();
+    			return $this->getVanInventoryColumns('canned','A',$export);
     		case 'vaninventoryfrozen':
-    			return $this->getVanInventoryColumns('frozen');
+    			return $this->getVanInventoryColumns('frozen','A',$export);
     		case 'unpaidinvoice':
-    			return $this->getUnpaidColumns();
+    			return $this->getUnpaidColumns($export);
     		case 'bir':
-    			return $this->getBirColumns();
+    			return $this->getBirColumns($export);
     		case 'salesreportpermaterial':
-    			return $this->getSalesReportMaterialColumns();
+    			return $this->getSalesReportMaterialColumns($export);
     		case 'salesreportperpeso':
-    			return $this->getSalesReportPesoColumns();
+    			return $this->getSalesReportPesoColumns($export);
     		case 'returnpermaterial':
-    			return $this->getReturnReportMaterialColumns();
+    			return $this->getReturnReportMaterialColumns($export);
     		case 'returnperpeso':
-    			return $this->getReturnReportPerPesoColumns();
+    			return $this->getReturnReportPerPesoColumns($export);
     		case 'customerlist':
     			return $this->getCustomerListColumns();
     		case 'salesmanlist':
@@ -5140,9 +5140,9 @@ class ReportsPresenter extends PresenterCore
     		case 'materialpricelist':
     			return $this->getMaterialPriceListColumns();
 			case 'cashpayment':
-				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns(true);
+				return PresenterFactory::getInstance('SalesCollection')->getCashPaymentColumns($export);
 			case 'checkpayment':
-				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns();
+				return PresenterFactory::getInstance('SalesCollection')->getCheckPaymentColumns($export);
 			case 'reversalsummary':
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
 			case 'stocktransfer':
@@ -5189,7 +5189,7 @@ class ReportsPresenter extends PresenterCore
     	];
 
     	if($export == 'pdf')
-    		unset($headers[2],$headers[6],$headers[7],$headers[8],$headers[14]);
+    		unset($headers[2],$headers[6],$headers[7],$headers[8],$headers[14], $headers[28]);
 
     	return $headers;
     }
@@ -5199,7 +5199,7 @@ class ReportsPresenter extends PresenterCore
      * Get Sales Collection Posting Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSalesCollectionPostingColumns()
+    public function getSalesCollectionPostingColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Activity Code'],
@@ -5217,6 +5217,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Collection Posting Date'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[13]);
 
     	return $headers;
     }
@@ -5226,7 +5229,7 @@ class ReportsPresenter extends PresenterCore
      * Return unpaid columns
      * @return multitype:multitype:string
      */
-    public function getUnpaidColumns()
+    public function getUnpaidColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Salesman Name','sort'=>'salesman_name'],
@@ -5241,6 +5244,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Balance Amount', 'sort'=>'balance_amount'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export=='pdf') 
+    		unset($headers[10]);
 
     	return $headers;
     }
@@ -5294,7 +5300,7 @@ class ReportsPresenter extends PresenterCore
      * Get Van Inventory Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getVanInventoryColumns($type='canned',$status='A')
+    public function getVanInventoryColumns($type='canned',$status='A',$export='xls')
     {
     	$headers = [
     			['name'=>'Customer'],
@@ -5317,7 +5323,8 @@ class ReportsPresenter extends PresenterCore
     		$headers[] = ['name'=>$item->name];
     	}
 
-    	$headers[] = ['name'=>'Text'];
+    	if($export == 'pdf')
+    		$headers[] = ['name'=>'Text'];
     	
     	return $headers;
     }
@@ -5326,7 +5333,7 @@ class ReportsPresenter extends PresenterCore
      * Get Bir Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getBirColumns()
+    public function getBirColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Document Date','sort'=>'document_date'],
@@ -5351,6 +5358,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Text'],
     	];
 
+    	if($export='pdf') 
+    		unset($headers[19]);
+    	
     	return $headers;
     }
 
@@ -5358,7 +5368,7 @@ class ReportsPresenter extends PresenterCore
      * Get Sales Report Material Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSalesReportMaterialColumns()
+    public function getSalesReportMaterialColumns($export='xls')
     {
     	$headers = [
     			['name'=>'SO number'],
@@ -5393,6 +5403,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Total Sales'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[30]);
 
     	return $headers;
     }
@@ -5401,7 +5414,7 @@ class ReportsPresenter extends PresenterCore
      * Get Sales Report Material Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getSalesReportPesoColumns()
+    public function getSalesReportPesoColumns($export='xls')
     {
     	$headers = [
     			['name'=>'SO number'],
@@ -5430,6 +5443,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Total Sales'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[24]);
 
     	return $headers;
     }
@@ -5438,7 +5454,7 @@ class ReportsPresenter extends PresenterCore
      * Get Return Report Material Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getReturnReportMaterialColumns()
+    public function getReturnReportMaterialColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Return Transaction Number'],
@@ -5473,6 +5489,10 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Total Return Net Amount'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[30]);
+    		
 
     	return $headers;
     }
@@ -5481,7 +5501,7 @@ class ReportsPresenter extends PresenterCore
      * Get Return Report Per Peso Table Headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getReturnReportPerPesoColumns()
+    public function getReturnReportPerPesoColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Return Transaction Number'],
@@ -5510,6 +5530,9 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Total Return Net Amount'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[24]);
 
     	return $headers;
     }

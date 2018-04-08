@@ -413,7 +413,7 @@ class SalesCollectionPresenter extends PresenterCore
      * Get cash payments
      * @return string[][]
      */
-    public function getCashPaymentColumns()
+    public function getCashPaymentColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Customer Code','sort'=>'customer_code'],
@@ -429,6 +429,9 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Text'],
     	];
     
+    	if($export == 'pdf')
+    		unset($headers[10]);
+    		
     	return $headers;
     }
     
@@ -784,7 +787,7 @@ class SalesCollectionPresenter extends PresenterCore
      * Get cash payments
      * @return string[][]
      */
-    public function getCheckPaymentColumns()
+    public function getCheckPaymentColumns($export='xls')
     {
     	$headers = [
     			['name'=>'Customer Code','sort'=>'customer_code'],
@@ -802,6 +805,9 @@ class SalesCollectionPresenter extends PresenterCore
     			['name'=>'Check Amount'],
     			['name'=>'Text'],
     	];
+    	
+    	if($export == 'pdf')
+    		unset($headers[13]);
     
     	return $headers;
     }
