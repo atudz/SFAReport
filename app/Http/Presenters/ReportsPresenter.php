@@ -5816,6 +5816,8 @@ class ReportsPresenter extends PresenterCore
 
     	$limit = in_array($type,['xls','xlsx']) ? config('system.report_limit_xls') : config('system.report_limit_pdf');
     	$offset = ($offset == 1 || !$offset) ? 0 : $offset-1;
+    	$pdf = !in_array($type,['xls','xlsx']);
+    	
 
     	switch($report)
     	{
@@ -5881,7 +5883,6 @@ class ReportsPresenter extends PresenterCore
     			$resultArea = $prepareArea->first();
     			$area = $resultArea ? $resultArea->area_name : '';
 
-    			$pdf = !in_array($type,['xls','xlsx']);
     			$rows = $this->getSalesCollectionSelectColumns($pdf);
     			$header = 'Sales & Collection Report';
     			$filters = $this->getSalesCollectionFilterData(true);
@@ -5929,7 +5930,7 @@ class ReportsPresenter extends PresenterCore
 
     			$records = array_splice($records, $offset, $limit);
 
-    			$rows = $this->getSalesCollectionPostingSelectColumns();
+    			$rows = $this->getSalesCollectionPostingSelectColumns($pdf);
     			$header = 'Sales & Collection Posting Date';
     			$filters = $this->getSalesCollectionFilterData();
     			$filename = 'Sales & Collection Posting Date Report';
@@ -5967,7 +5968,7 @@ class ReportsPresenter extends PresenterCore
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedBir(true);
     			$summary = $this->getPreparedBir(true,true)->first();
-    			$rows = $this->getBirSelectColumns();
+    			$rows = $this->getBirSelectColumns($pdf);
     			$header = 'BIR Report';
     			$filters = $this->getBirFilterData();
     			$filename = 'BIR Report';
@@ -5975,7 +5976,7 @@ class ReportsPresenter extends PresenterCore
     		case 'unpaidinvoice';
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedUnpaidInvoice();
-    			$rows = $this->getUnpaidSelectColumns();
+    			$rows = $this->getUnpaidSelectColumns($pdf);
     			$summary = $this->getPreparedUnpaidInvoice(true)->first();
     			$header = 'Unpaid Invoice Report';
     			$filters = $this->getUnpaidFilterData();
@@ -5998,7 +5999,7 @@ class ReportsPresenter extends PresenterCore
     				$records = array_merge($records,(array)$this->getVanInventory(true, $offset,true));
     			}
 
-	    		$rows = $this->getVanInventorySelectColumns('canned');
+	    		$rows = $this->getVanInventorySelectColumns('canned','A', $pdf);
 	    		$header = 'Canned & Mixes Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
 	    		$filename = 'Van Inventory and History Report(Canned & Mixes)';
@@ -6018,14 +6019,14 @@ class ReportsPresenter extends PresenterCore
     				$records = array_merge($records,(array)$this->getVanInventory(true, $offset, true));
     			}
 
-	    		$rows = $this->getVanInventorySelectColumns('frozen');
+	    		$rows = $this->getVanInventorySelectColumns('frozen','A',$pdf);
 	    		$header = 'Frozen & Kassel Van Inventory and History Report';
 	    		$filters = $this->getVanInventoryFilterData();
     			$filename = 'Van Inventory and History Report(Frozen & Kassel)';
     			break;
     		case 'salesreportpermaterial';
     			$columns = $this->getTableColumns($report);
-    			$rows = $this->getSalesReportMaterialSelectColumns();
+    			$rows = $this->getSalesReportMaterialSelectColumns($pdf);
 
     			$prepare = $this->getPreparedSalesReportMaterial();
     			$summary = $this->getPreparedSalesReportMaterial(true)->first();
@@ -6040,7 +6041,7 @@ class ReportsPresenter extends PresenterCore
     		case 'salesreportperpeso':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedSalesReportPeso();
-    			$rows = $this->getSalesReportPesoSelectColumns();
+    			$rows = $this->getSalesReportPesoSelectColumns($pdf);
     			$summary = $this->getPreparedSalesReportPeso(true)->first();
     			$header = 'Sales Report Per Peso';
     			$filters = $this->getSalesReportFilterData($report);
@@ -6050,7 +6051,7 @@ class ReportsPresenter extends PresenterCore
     		case 'returnpermaterial':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedReturnMaterial();
-    			$rows = $this->getReturnReportMaterialSelectColumns();
+    			$rows = $this->getReturnReportMaterialSelectColumns($pdf);
     			$summary = $this->getPreparedReturnMaterial(true)->first();
     			$header = 'Return Per Material';
     			$filters = $this->getSalesReportFilterData($report);
@@ -6060,7 +6061,7 @@ class ReportsPresenter extends PresenterCore
     		case 'returnperpeso':
     			$columns = $this->getTableColumns($report);
     			$prepare = $this->getPreparedReturnPeso();
-    			$rows = $this->getReturnReportPesoSelectColumns();
+    			$rows = $this->getReturnReportPesoSelectColumns($pdf);
     			$summary = $this->getPreparedReturnPeso(true)->first();
     			$header = 'Return Per Peso';
     			$filters = $this->getSalesReportFilterData($report);
@@ -6118,7 +6119,7 @@ class ReportsPresenter extends PresenterCore
 				$records = array_splice($records, $offset, $limit);
 				$vaninventory = true;
 
-				$rows = $salesCollectionPresenter->getCashPaymentSelectColumns();
+				$rows = $salesCollectionPresenter->getCashPaymentSelectColumns($pdf);
 				$header = 'List of Cash Payment';
 				$filters = $salesCollectionPresenter->getCashPaymentFilterData();
 				$filename = 'List of Cash Payment';
@@ -6141,7 +6142,7 @@ class ReportsPresenter extends PresenterCore
 				$records = $this->validateInvoiceNumber($result);
 				$vaninventory = true;
 
-				$rows = $salesCollectionPresenter->getCheckPaymentSelectColumns();
+				$rows = $salesCollectionPresenter->getCheckPaymentSelectColumns($pdf);
 				$header = 'List of Check Payment';
 				$filters = $salesCollectionPresenter->getCheckPaymentFilterData();
 				$filename = 'List of Check Payment';
@@ -6268,9 +6269,9 @@ class ReportsPresenter extends PresenterCore
      * Return sales material select columns
      * @return multitype:string
      */
-    public function getSalesReportMaterialSelectColumns()
+    public function getSalesReportMaterialSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     		'so_number',
     		'reference_num',
     		'activity_code',
@@ -6303,13 +6304,18 @@ class ReportsPresenter extends PresenterCore
     		'total_invoice',
     		'delete_remarks'
     	];
+    	
+    	if($pdf)
+    		unset($columns[30]);
+    	
+    	return $columns;
     }
 
     /**
      * Return van inventory select columns
      * @return multitype:string
      */
-    public function getVanInventorySelectColumns($type, $status='A')
+    public function getVanInventorySelectColumns($type, $status='A', $pdf=false)
     {
     	$columns = [
     			'customer_name',
@@ -6328,7 +6334,8 @@ class ReportsPresenter extends PresenterCore
     		$columns[] = 'code_'.$item->item_code;
     	}
     	
-    	$columns[] = 'delete_remarks';
+    	if(!$pdf)
+    		$columns[] = 'delete_remarks';
 
     	return $columns;
     }
@@ -6338,9 +6345,9 @@ class ReportsPresenter extends PresenterCore
      * Get return  material select columns
      * @return multitype:string
      */
-    public function getReturnReportMaterialSelectColumns()
+    public function getReturnReportMaterialSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'return_txn_number',
     			'reference_num',
     			'activity_code',
@@ -6374,15 +6381,20 @@ class ReportsPresenter extends PresenterCore
     			'delete_remarks'
     			
     	];
+    	
+    	if($pdf)
+    		unset($columns[30]);
+    	
+    	return $columns;
     }
 
     /**
      * Get return  peso select columns
      * @return multitype:string
      */
-    public function getReturnReportPesoSelectColumns()
+    public function getReturnReportPesoSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'return_txn_number',
     			'reference_num',
     			'activity_code',
@@ -6410,15 +6422,21 @@ class ReportsPresenter extends PresenterCore
     			'delete_remarks'
     			
     	];
+    	
+    	if($pdf)
+    		unset($columns[25]);
+    	
+    	return $columns;
     }
 
     /**
      * Return sales material select columns
      * @return multitype:string
      */
-    public function getSalesReportPesoSelectColumns()
+    public function getSalesReportPesoSelectColumns($pdf=false)
     {
-    	return [
+    	
+    	$columns = [
     			'so_number',
     			'reference_num',
     			'activity_code',
@@ -6446,6 +6464,11 @@ class ReportsPresenter extends PresenterCore
     			'delete_remarks'
     			
     	];
+    	
+    	if($pdf)
+    		unset($columns[24]);
+    	
+    	return $columns;
     }
 
 
@@ -6497,9 +6520,9 @@ class ReportsPresenter extends PresenterCore
      * Return Unpaid Select Columns
      * @return multitype:string
      */
-    public function getUnpaidSelectColumns()
+    public function getUnpaidSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'salesman_name',
 			    'area_name',
 			    'customer_code',
@@ -6513,15 +6536,19 @@ class ReportsPresenter extends PresenterCore
     			'delete_remarks'
     			
     	];
+    	if($pdf)
+    		unset($columns[10]);
+    	
+    	return  $columns;
     }
 
     /**
      * Return Bir Select Columns
      * @return multitype:string
      */
-    public function getBirSelectColumns()
+    public function getBirSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'document_date',
     			'name',
     			'customer_address',
@@ -6543,6 +6570,10 @@ class ReportsPresenter extends PresenterCore
     			'remarks',
     			'delete_remarks'
     	];
+    	if($pdf)
+    		unset($columns[19]);
+    	
+    	return $columns;
     }
 
 
@@ -6606,7 +6637,7 @@ class ReportsPresenter extends PresenterCore
     	];
 
     	if($pdf)
-    		unset($columns[2],$columns[6],$columns[7],$columns[8],$columns[14]);
+    		unset($columns[2],$columns[6],$columns[7],$columns[8],$columns[14],$columns[28]);
 
 		return $columns;
 
@@ -6634,9 +6665,9 @@ class ReportsPresenter extends PresenterCore
      * Return sales collection posting select columns
      * @return multitype:string
      */
-    public function getSalesCollectionPostingSelectColumns()
+    public function getSalesCollectionPostingSelectColumns($pdf=false)
     {
-    	return [
+    	$columns = [
     			'activity_code',
     			'salesman_name',
     			'customer_code',
@@ -6652,6 +6683,10 @@ class ReportsPresenter extends PresenterCore
     			'collection_posting_date',
     			'delete_remarks'
     	];
+    	
+    	if($pdf)
+    		unset($columns[13]);
+    	return $columns;
     }
 
 
