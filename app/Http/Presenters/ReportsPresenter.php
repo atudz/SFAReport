@@ -5323,7 +5323,7 @@ class ReportsPresenter extends PresenterCore
     		$headers[] = ['name'=>$item->name];
     	}
 
-    	if($export == 'pdf')
+    	if($export != 'pdf')
     		$headers[] = ['name'=>'Text'];
     	
     	return $headers;
