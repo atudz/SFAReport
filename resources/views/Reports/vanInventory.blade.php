@@ -102,15 +102,7 @@
 									<td ng-if="checkIfHeaderDisplayed('{{'code_'.$item->item_code}}')"> [[record.{{'code_'.$item->item_code}}]]</td>
 								@endforeach
 								<td id="records-[[$parent.$index + '-' + $index]]-delete_remarks_updated">
-									@if($navigationActions['show_delete_remarks_column'] && $navigationActions['edit_delete_remarks_column'])
-										<a href="" class="editable-click" ng-click="editColumn('text',record.delete_remarks_table,'delete_remarks',record.delete_remarks_id,record.delete_remarks,$index,'Remarks','delete_remarks',false,$parent.$index,'','delete_remarks_updated','report',('records-' + $parent.$index + '-' + $index))">
-				    						<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
-				    						<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-				  						</a>
-				  					@endif
-				  					@if($navigationActions['show_delete_remarks_column'] && !$navigationActions['edit_delete_remarks_column'])
-				  						[[ record.delete_remarks ]]
-				  					@endif
+									[[ record.delete_remarks ]]				  					
 				  				</td>
 							</tr>
 
