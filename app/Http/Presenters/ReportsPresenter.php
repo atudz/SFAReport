@@ -5358,7 +5358,7 @@ class ReportsPresenter extends PresenterCore
     			['name'=>'Text'],
     	];
 
-    	if($export='pdf') 
+    	if($export=='pdf') 
     		unset($headers[19]);
     	
     	return $headers;
