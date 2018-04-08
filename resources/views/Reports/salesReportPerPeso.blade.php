@@ -92,7 +92,7 @@
 							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,'delete_remarks',record.invoice_pk_id,record.delete_remarks,$index,'Remarks','','','','','delete_remarks_updated','peso-value',('records-' + $index))">
 									<span ng-if="record.delete_remarks.trim() != '' || record.delete_remarks != null">[[ record.delete_remarks ]]</span>
-							    	<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">Edit Delete Remarks</span>
+							    	<span ng-if="record.delete_remarks.trim() == '' || record.delete_remarks == null">------</span>
 							  	</a>
 							@else
 					  			[[ record.delete_remarks ]]
