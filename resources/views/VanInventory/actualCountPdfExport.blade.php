@@ -177,20 +177,20 @@
 				<div class="signee">
 					<p>Counted:</p>
 					<div class="signature-div">
-						<div class="name">@if($replenishment->replenish) {{$replenishment->replenish->counted}} @endif</div>						
+						<div class="name">@if($replenishment->replenish && $replenishment->replenish->counted) {{$replenishment->replenish->counted}} @else &nbsp; @endif</div>						
 					</div>
 				</div>
 				<div class="signee">	
 					<p>Confirmed:</p>
 					<div class="signature-div">
-						<div class="name">@if($replenishment->replenish){{$replenishment->replenish->confirmed}} @endif</div>
+						<div class="name">@if($replenishment->replenish && $replenishment->replenish->confirmed){{$replenishment->replenish->confirmed}} @else &nbsp;  @endif</div>
 					</div>
 				</div>
 				@if(true)
 				<div class="signee">
 					<p>Confirmed:</p>
 					<div class="signature-div">
-						<div class="name">@if($replenishment->replenish){{$replenishment->jr_salesman}} @endif</div>
+						<div class="name">@if($replenishment->replenish && $replenishment->jr_salesman){{$replenishment->jr_salesman}} @else &nbsp; @endif</div>
 					</div>
 				</div>
 				@endif
