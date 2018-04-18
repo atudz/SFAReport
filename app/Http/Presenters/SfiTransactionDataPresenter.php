@@ -490,6 +490,13 @@ class SfiTransactionDataPresenter extends PresenterCore
     		$prepare->where('sales.salesman_code',auth()->user()->salesman_code);
     	}
     	
+    	$prepare->whereNotIn('sales.customer_name',[
+    			'1000_Adjustment',
+    			'2000_Adjustment',
+    			'1000_Van to Warehouse Transaction',
+    			'2000_Van to Warehouse Transaction',
+    	]);
+    	
     	if(!$this->request->has('sort'))
     	{
     		$prepare->orderBy('sales.invoice_date','desc');
