@@ -8,7 +8,9 @@ use App\Filters\SelectFilter;
 use Illuminate\Database\Query\Builder;
 use App\Factories\PresenterFactory;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use App\Factories\ModelFactory;
+use PHPExcel_Shared_Date;
 
 
 class ReportsPresenter extends PresenterCore
