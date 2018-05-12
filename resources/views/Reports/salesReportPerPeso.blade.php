@@ -43,7 +43,7 @@
 						<td>[[record.salesman_name]]</td>
 						<td>[[record.area]]</td>
 						<td>
-							@if($isAdmin || $isAuditor || $isAccounting)
+							@if($isAdmin || $isAuditor)
 								<a href="" class="editable-click" ng-click="editColumn('text',record.invoice_table,record.invoice_number_column,record.invoice_pk_id,record.invoice_number,$index,'Invoice No/Return Slip No','invoice_number')">
 	    							[[ record.invoice_number | uppercase]]
 	  							</a>
