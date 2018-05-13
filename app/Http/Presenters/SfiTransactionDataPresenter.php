@@ -477,7 +477,7 @@ class SfiTransactionDataPresenter extends PresenterCore
     				return $model->whereBetween(\DB::raw('DATE(sales.invoice_posting_date)'),$self->formatValues($self->getValue()));
     			});
     	
-    	$prepare->orderBy('sales.invoice_date', 'desc');
+    	$prepare->orderBy('sales.invoice_date', 'asc');
     	
     	if(!$this->hasAdminRole() && auth()->user())
     	{
