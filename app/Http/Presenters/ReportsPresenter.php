@@ -3431,6 +3431,7 @@ class ReportsPresenter extends PresenterCore
     			bir.updated,
 				app_salesman.salesman_name assignment,
 				bir.area_code,
+				remarks.rermarks,
                 bir.delete_remarks,
                 bir.delete_remarks_id,
                 bir.delete_remarks_table
