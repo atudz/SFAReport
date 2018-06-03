@@ -45,24 +45,40 @@ Html::macro('topen', function($options=[]) {
 	}
 	
 	if(!$no_download)
-	{						
-		$html.= '<div class="pull-right">					
+	{
+		$label = isset($options['execute']) ? '<i class="fa fa-cog"></i> Actions' : '<i class="fa fa-download"></i> Download';
+		$html.= '<div class="pull-right">
 		      		<div class="btn-group">
 					      <button id="btn-append-to-body" data-toggle="dropdown" type="button" class="btn btn-success btn-sm dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
-					        <i class="fa fa-download"></i> Download <span class="caret"></span>
+					       '.$label.' <span class="caret"></span>
 					      </button>
 					      <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btn-append-to-body" role="menu">
 							';
 		if(!isset($options['no_xls']) || !$options['no_xls'])
 			$html .= '<li role="menuitem"><a href="" ng-click="download(\'xlsx\')">Excel</a></li>';
-		if(!isset($options['no_pdf']) || !$options['no_pdf'])
-			$html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
-							      
-		$html .= '	      </ul>
+			if(!isset($options['no_pdf']) || !$options['no_pdf'])
+				$html .= '<li role="menuitem"><a href="" ng-click="download(\'pdf\')">Print to PDF</a></li>';
+			if(array_key_exists('show_tab_delimited', $options) && $options['show_tab_delimited'])
+				$html .= '<li role="menuitem"><a href="" ng-click="download(\'txt\')">Tab Delimited</a></li>';
+					
+			if(isset($options['execute']) && $options['execute'])
+			{
+				$html .= '
+					<li role="separator" class="divider"></li>
+					<li><a href="" ng-click="seedHeader()">Seed Header</a></li>
+					<li><a href="" ng-click="seedData()">Seed Detail</a></li>
+    				<li><a href="" ng-click="exportXls()">Seed Excel File</a></li>
+					<li><a href="" ng-click="postData()">Seed Post</a></li>
+					<li><a href="" ng-click="clearData()">Seed Clear</a></li>
+				';
+			}
+					
+			$html .= '	      </ul>
     				</div>
 		      	</div>
 		      	';
 	}
+	
 	
 	if(array_key_exists('show_convert_sfi', $options) && $options['show_convert_sfi']){
 		$html .= '<div class="pull-right" style="height: 30px; overflow: hidden;">

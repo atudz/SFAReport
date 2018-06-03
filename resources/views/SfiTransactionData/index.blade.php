@@ -25,6 +25,7 @@
                         'show_tab_delimited' => true,
                         'show_convert_sfi'   => true,
                         'show_search'        => true,
+                        'no_pdf'			=> true,
                ])!!}
                         {!!Html::theader($tableHeaders)!!}
                             <tbody>

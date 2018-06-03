@@ -7484,8 +7484,12 @@ class ReportsPresenter extends PresenterCore
 			return '';
 
 		$code = (int)$chunks[0];
+		$invoiceCode = '';
 		$invoice_key = config('system.invoice_key');
-		$invoiceCode = $invoice_key[$code] . $areaCodes[$areaCode];
+		if (isset($invoice_key[$code])) {
+			$invoiceCode = $invoice_key[$code] . $areaCodes[$areaCode];
+		}
+		
 		return $invoiceCode;
 	}
 
