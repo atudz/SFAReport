@@ -6833,6 +6833,10 @@ class ReportsPresenter extends PresenterCore
 			case 'sfitransactiondata':
 				$prepare = PresenterFactory::getInstance('SfiTransactionData')->getPreparedSfiTransactionData();
 				$total = $prepare->count();
+				break;			
+			case 'invoiceseries':
+				$prepare = PresenterFactory::getInstance('Invoice')->getPreparedInvoiceSeries();
+				$total = $prepare->count();
 				break;
 				
     		default:
