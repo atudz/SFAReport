@@ -283,6 +283,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
 			case 'sfitransactiondata':				
 				return PresenterFactory::getInstance('SfiTransactionData')->getSfiTransactionData();
+			case 'invoiceseries':				
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesReport();
 				
     	}
     }
@@ -5151,6 +5153,8 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalColumns();
 			case 'stocktransfer':
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferColumns();
+			case 'invoiceseries':
+				return PresenterFactory::getInstance('Invoice')->getInvoiceSeriesColumns($export);
     	}
     }
 
@@ -6165,6 +6169,16 @@ class ReportsPresenter extends PresenterCore
 			case 'sfitransactiondata':
 				return PresenterFactory::getInstance('SfiTransactionData')->download($type);
 
+			case 'invoiceseries':
+				$invoicePresenter = PresenterFactory::getInstance('Invoice');
+				$columns = $this->getTableColumns($report, true);
+				$prepare = $invoicePresenter->getPreparedInvoiceSeries();
+				$rows = $invoicePresenter->getInvoiceSeriesSelectColumns();
+				$header = 'Invoice Series Mapping';
+				$filters = $invoicePresenter->getInvoiceSeriesFilterData();
+				$filename = 'Invoice Series Mapping';
+				$navigation_slug = 'invoice-series-mapping';
+				break;
     		default:
     			return;
     	}
@@ -6263,7 +6277,7 @@ class ReportsPresenter extends PresenterCore
     		$params['area'] = $area;
     		$params['report'] = $report;
     		$view = $report == 'salescollectionreport' ? 'exportSalesCollectionPdf' : 'exportPdf';
-    		if(in_array($report,['salescollectionsummary','reversalsummary','salesmanlist']))
+    		if(in_array($report,['salescollectionsummary','reversalsummary','salesmanlist','invoiceseries']))
     			$pdf = \PDF::loadView('Reports.'.$view, $params)->setOrientation('portrait');
     		else
     			$pdf = \PDF::loadView('Reports.'.$view, $params);
