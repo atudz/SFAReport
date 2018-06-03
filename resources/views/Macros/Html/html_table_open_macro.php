@@ -64,6 +64,22 @@ Html::macro('topen', function($options=[]) {
 		      	';
 	}
 	
+	if(array_key_exists('show_convert_sfi', $options) && $options['show_convert_sfi']){
+		$html .= '<div class="pull-right" style="height: 30px; overflow: hidden;">
+		<div class="form-group">
+		<div class="col-xs-3 control-label"><label for="" style="line-height: 30px;">Convert</label></div>
+		<div class="col-xs-9">
+		<select id="convert" class="form-control pull-right" ng-model="convertType" style="height: 30px;">
+			<option value="">Select</option>
+			<option value="header">SAP Header</option>
+			<option value="detail">SAP Detail</option>
+			<option value="both">Both</option>
+		</select>
+		</div>
+		</div>
+		</div>';
+	}
+	
 	$html .= '<div class="col-sm-7 col-sm-offset-5 '.$loading.'" id="loading_div">
 					<span><i class="fa fa-spinner fa-lg fa-pulse"></i> Loading..</span>
 				</div>				

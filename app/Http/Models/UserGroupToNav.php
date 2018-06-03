@@ -11,6 +11,16 @@ class UserGroupToNav extends ModelCore
 	 * @var $table
 	 */
 	protected $table = 'user_group_to_nav';
+	
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = [
+			'user_group_id',
+			'navigation_id'
+	];
 
 	/**
 	 * UserGroupToNav relation to user_group table

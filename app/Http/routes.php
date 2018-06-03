@@ -90,7 +90,57 @@ Route::group(['prefix' => 'controller'],function(){
 	Route::post('/resetpass', ['as'=>'password-reset', 'uses'=>'AuthController@resetPassword']);
 	
 	Route::post('/vaninventory/stocktransfer', ['as'=>'stocktransfer-save', 'uses'=>'VanInventoryController@saveStockTransfer']);
+	
+	Route::group(['prefix' => 'profit-centers'],function(){
+		Route::get('/', ['as'=>'profit-centers-index', 'uses'=>'ProfitCenterController@index']);		
+		Route::post('/create', ['as'=>'profit-centers-create', 'uses'=>'ProfitCenterController@store']);		
+		Route::group(['prefix' => '{profit_center_id}'],function(){
+			Route::get('/', ['as'=>'profit-centers-show', 'uses'=>'ProfitCenterController@show']);			
+			Route::post('/update', ['as'=>'profit-centers-update', 'uses'=>'ProfitCenterController@update']);			
+			Route::get('/delete', ['as'=>'profit-centers-delete', 'uses'=>'ProfitCenterController@destroy']);
+		});
+	});
+		
+	Route::group(['prefix' => 'gl-accounts'],function(){
+		Route::get('/', ['as'=>'gl-accounts-index', 'uses'=>'GLAccountsController@index']);
+		Route::post('/create', ['as'=>'gl-accounts-create', 'uses'=>'GLAccountsController@store']);
+		Route::group(['prefix' => '{gl_account_id}'],function(){
+		Route::get('/', ['as'=>'gl-accounts-show', 'uses'=>'GLAccountsController@show']);
+			Route::post('/update', ['as'=>'gl-accounts-update', 'uses'=>'GLAccountsController@update']);
+			Route::get('/delete', ['as'=>'gl-accounts-delete', 'uses'=>'GLAccountsController@destroy']);
+		});
+	});
+			
+	Route::group(['prefix' => 'segment-codes'],function(){
+		Route::get('/', ['as'=>'segment-codes-index', 'uses'=>'SegmentCodesController@index']);
+		Route::post('/create', ['as'=>'segment-codes-create', 'uses'=>'SegmentCodesController@store']);
+		Route::group(['prefix' => '{segment_code_id}'],function(){
+			Route::get('/', ['as'=>'segment-codes-show', 'uses'=>'SegmentCodesController@show']);
+			Route::post('/update', ['as'=>'segment-codes-update', 'uses'=>'SegmentCodesController@update']);
+			Route::get('/delete', ['as'=>'segment-codes-delete', 'uses'=>'SegmentCodesController@destroy']);
+		});
+	});
+				
+	Route::group(['prefix' => 'document-types'],function(){
+		Route::get('/', ['as'=>'document-types-index', 'uses'=>'DocumentTypesController@index']);					
+		Route::post('/create', ['as'=>'document-types-create', 'uses'=>'DocumentTypesController@store']);					
+		Route::group(['prefix' => '{document_type_id}'],function(){
+			Route::get('/', ['as'=>'document-types-show', 'uses'=>'DocumentTypesController@show']);
+			Route::post('/update', ['as'=>'document-types-update', 'uses'=>'DocumentTypesController@update']);
+			Route::get('/delete', ['as'=>'document-types-delete', 'uses'=>'DocumentTypesController@destroy']);
+		});
+	});
 });
+
+Route::get('/sfi-transaction-data', ['as'=>'sfi-transaction-data-presenter', 'uses'=>'SfiTransactionDataPresenter@index']);
+Route::get('/profit-centers', ['as'=>'profit-centers-presenter', 'uses'=>'ProfitCentersPresenter@index']);
+Route::get('/profit-centers/add', ['as'=>'profit-centers-add', 'uses'=>'ProfitCentersPresenter@add']);
+Route::get('/gl-accounts', ['as'=>'gl-accounts-presenter', 'uses'=>'GLAccountsPresenter@index']);
+Route::get('/gl-accounts/add', ['as'=>'gl-accounts-add', 'uses'=>'GLAccountsPresenter@add']);
+Route::get('/segment-codes', ['as'=>'segment-codes-presenter', 'uses'=>'SegmentCodesPresenter@index']);
+Route::get('/segment-codes/add', ['as'=>'segment-codes-add', 'uses'=>'SegmentCodesPresenter@add']);
+Route::get('/document-types', ['as'=>'document-types-presenter', 'uses'=>'DocumentTypesPresenter@index']);
+Route::get('/document-types/add', ['as'=>'document-types-add', 'uses'=>'DocumentTypesPresenter@add']);
 
 
 /*

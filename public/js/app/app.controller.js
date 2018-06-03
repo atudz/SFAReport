@@ -1429,6 +1429,13 @@
 				}
 				query += delimeter + val + '=' + value;
 			});
+			
+			if(report == 'sfitransactiondata') {
+				if(!scope.convertType) {
+					return false;
+				}
+				query += delimeter + 'convert=' + scope.convertType;
+			}
 
 			url += query;
 			//log.info(url);
@@ -1514,8 +1521,11 @@
 
 	    params = filter;
 	    
-	    if(report=='salescollectionposting')
-	    	$('#no_records_div').show();
+	    if(report=='salescollectionposting') {
+	    	$('#no_records_div').show();	    	
+		} else if(report == 'sfitransactiondata'){
+			params = {salesman_code:$('#salesman_code').val()};
+		}
 
 	    //Sort table records
 	    scope.sortColumn = '';
@@ -2536,5 +2546,597 @@
 	    editTable($scope, $uibModal, $resource, $window, {}, $log, TableFix);
 
 	}
+	
+	/**
+	 * SFI Transaction Data Controller
+	 */
+	app.controller('SFITransactionData',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',SFITransactionData]);
 
+	function SFITransactionData($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{		
+		deletePreviousCache($route,$templateCache);
+
+		var params = [
+				  'posting_date_from',
+				  'posting_date_to',
+				  'invoice_date_from',
+				  'invoice_date_to',
+				  'salesman_code',
+				  'area',
+				  'company_code',
+				  'invoice_number',
+				  'customer',
+				  'jr_salesman'
+		];
+		
+		$scope.convertType = '';
+
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'sfitransactiondata',params,$log);
+
+		editTable($scope, $uibModal, $resource, $window, {}, $log);
+
+		$scope.options = [
+			{
+				value : 'invoice_return_date',
+				name  : 'Invoice Date/Return Date'
+			},
+			{
+				value : 'invoice_return_posting_date',
+				name  : 'Invoice/Return Posting Date'
+			},
+		];		
+
+	}
+
+	/**
+	 * SFI Transaction Data Modal Controller
+	 */
+	app.controller('SFITransactionDataModalController',['$scope','$uibModalInstance','$window','params','$log','$route','$templateCache', SFITransactionDataModalController]);
+
+	function SFITransactionDataModalController($scope, $uibModalInstance, $window, params, $log,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
+		$scope.params = params;
+		$scope.offset = 0;
+
+		var uri = $scope.params.uri;
+
+		$scope.download = function () {
+			$uibModalInstance.close(true);
+			var range_selected = angular.element("input:radio[name=exportdoc]:checked").val();
+
+			uri += (uri == '' ? '?' : '&') + 'offset=' + ($scope.params.range[range_selected].from -1);
+
+			$window.location.href = $scope.params.url + uri;
+		};
+
+		$scope.cancel = function () {
+			$uibModalInstance.dismiss('cancel');
+		};
+	};
+
+	/**
+	 * Profit Centers Controller
+	 */
+	app.controller('ProfitCenter',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',ProfitCenter]);
+
+	function ProfitCenter($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/profit-centers';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Profit Center Form
+	 */
+	app.controller('ProfitCenterForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', '$routeParams', ProfitCenterForm]);
+
+	function ProfitCenterForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/profit-centers';
+
+		$scope.save = function(){
+			var data = {
+				profit_center : angular.element('#profit_center').val(),
+		        area_code : angular.element('#area_code').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){						
+						$location.path('profit.centers');
+					}
+				}, function(response){
+					//erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#profit_center').val(data.profit_center);
+			        angular.element('#area_code').val(data.area_code);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * GL Accounts Controller
+	 */
+	app.controller('GLAccount',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',GLAccount]);
+
+	function GLAccount($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/gl-accounts';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * GL Account Form
+	 */
+	app.controller('GLAccountForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', '$routeParams', GLAccountForm]);
+
+	function GLAccountForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/gl-accounts';
+
+		$scope.save = function(){
+			var data = {
+				code : angular.element('#code').val(),
+		        description : angular.element('#description').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){						
+						$location.path('gl.accounts');
+					}
+				}, function(response){
+					//erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#code').val(data.code);
+			        angular.element('#description').val(data.description);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * Segment Codes Controller
+	 */
+	app.controller('SegmentCode',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',SegmentCode]);
+
+	function SegmentCode($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/segment-codes';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Segment Code Form
+	 */
+	app.controller('SegmentCodeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', '$routeParams', SegmentCodeForm]);
+
+	function SegmentCodeForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/segment-codes';
+
+		$scope.save = function(){
+			var data = {
+				segment_code : angular.element('#segment_code').val(),
+		        description : angular.element('#description').val(),
+		        abbreviation : angular.element('#abbreviation').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){						
+						$location.path('segment.codes');
+					}
+				}, function(response){
+					//erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#segment_code').val(data.segment_code);
+			        angular.element('#description').val(data.description);
+			        angular.element('#abbreviation').val(data.abbreviation);
+				}, function(){
+
+				});
+		}
+	}
+
+	/**
+	 * Document Types Controller
+	 */
+	app.controller('DocumentType',['$scope','$http','$uibModal','$window','$log','TableFix','$route','$templateCache',DocumentType]);
+
+	function DocumentType($scope, $http, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		$scope.records = [];
+
+		var url = '/controller/document-types';
+
+		function load(){
+			toggleLoading(true);
+
+			$http
+				.get(url)
+				.then(function(response){
+					$scope.records = response.data.data;
+
+					toggleLoading(false);
+					if($scope.records.length){
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+						$('#no_records_div').hide();
+					} else {
+						$('#no_records_div').show();
+					}
+				});
+		}
+
+		function activate(){
+			load();
+		}
+
+		$scope.remove = function (id,index) {
+			var modalInstance = $uibModal.open({
+				scope: $scope,
+				animation: true,
+				templateUrl: 'Confirm',
+				controller: 'ModalInstanceCtrl',
+				windowClass: 'center-modal',
+				size: 'sm',
+				resolve: {
+					params: function () {
+						return {
+							id:id,
+							message:'Are you sure you want to delete record?'
+						};
+					}
+				}
+			});
+
+			modalInstance.result.then(function(response) {
+				$http
+					.get(url + '/' + id + '/delete')
+					.then(function(response){
+						$scope.records.splice(index,1);
+
+						$("table.table").floatThead({
+							position: "absolute",
+							autoReflow: true,
+							zIndex: "2",
+							scrollContainer: function($table){
+								return $table.closest(".wrapper");
+							}
+						});
+
+					}, function(){
+
+					});
+            });
+		};
+
+		activate();
+	};
+
+	/**
+	 * Document Type Form
+	 */
+	app.controller('DocumentTypeForm',['$scope','$resource', '$uibModal','$window','$log','TableFix', '$route', '$templateCache', '$location', '$http', '$routeParams', DocumentTypeForm]);
+
+	function DocumentTypeForm($scope, $resource, $uibModal, $window, $log, TableFix, $route, $templateCache, $location, $http, $routeParams)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var url = '/controller/document-types';
+
+		$scope.save = function(){
+			var data = {
+				type : angular.element('#type').val(),
+		        description : angular.element('#description').val()
+			};
+
+			$http
+				.post(url + '/' + ($routeParams.hasOwnProperty('id') ? ($routeParams.id + '/update') : 'create'),data)
+				.then(function(response){
+					if(response.data.success){
+						$location.path('document.types');
+					}
+				}, function(response){
+					//erroCallback(toaster,response);
+				});
+		}
+
+		if($routeParams.hasOwnProperty('id')){
+			$http
+				.get(url + '/' + $routeParams.id)
+				.then(function(response){
+					var data = response.data.data;
+					angular.element('#type').val(data.type);
+			        angular.element('#description').val(data.description);
+				}, function(){
+
+				});
+		}
+	}
+	
+	/**
+	 * Delete the Previous Cache of a page
+	 * @param  {Object} route
+	 * @param  {Object} templateCache
+	 * @return NONE
+	 */
+	function deletePreviousCache(route,templateCache){
+		var currentPageTemplate = route.current.loadedTemplateUrl;
+		templateCache.remove(currentPageTemplate);
+	}
+	
+	app.controller('ModalInstanceCtrl',['$scope','$uibModalInstance','params',ModalInstanceCtrl]);
+    function ModalInstanceCtrl($scope, $uibModalInstance, params) {
+        $scope.params = params;
+
+        $scope.ok = function(data) {
+            $uibModalInstance.close(data);
+        }
+
+        $scope.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
+        }
+    }
 })();

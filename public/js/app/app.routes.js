@@ -163,6 +163,93 @@
 					controller: 'ReversalSummary',
 					/*controllerAs: 'sync'*/
 				})
+				
+				.when('/sfi.transaction.data',{
+					templateUrl: '/sfi-transaction-data',
+					controller: 'SFITransactionData',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/profit.centers',{
+					templateUrl: '/profit-centers',
+					
+					controller: 'ProfitCenter',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/profit.centers.add',{
+					templateUrl: '/profit-centers/add',
+					controller: 'ProfitCenterForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/profit.centers.edit/:id',{
+					templateUrl: function(params) {
+					    return '/profit-centers/add?id=' + params.id ;
+					},
+					controller: 'ProfitCenterForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/gl.accounts',{
+					templateUrl: '/gl-accounts',
+					controller: 'GLAccount',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/gl.accounts.add',{
+					templateUrl: '/gl-accounts/add',
+					controller: 'GLAccountForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/gl.accounts.edit/:id',{
+					templateUrl: function(params) {
+					    return '/gl-accounts/add?id=' + params.id ;
+					},
+					controller: 'GLAccountForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/segment.codes',{
+					templateUrl: '/segment-codes',
+					controller: 'SegmentCode',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/segment.codes.add',{
+					templateUrl: '/segment-codes/add',
+					controller: 'SegmentCodeForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/segment.codes.edit/:id',{
+					templateUrl: function(params) {
+					    return '/segment-codes/add?id=' + params.id ;
+					},
+					controller: 'SegmentCodeForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/document.types',{
+					templateUrl: '/document-types',
+					controller: 'DocumentType',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/document.types.add',{
+					templateUrl: '/document-types/add',
+					controller: 'DocumentTypeForm',
+					/*controllerAs: 'sync'*/
+				})
+
+				.when('/document.types.edit/:id',{
+					templateUrl: function(params) {
+					    return '/document-types/add?id=' + params.id ;
+					},
+					controller: 'DocumentTypeForm',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'

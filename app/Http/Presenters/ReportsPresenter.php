@@ -19,7 +19,7 @@ class ReportsPresenter extends PresenterCore
 	 * @var unknown
 	 */
 
-	protected $validExportTypes = ['xls','xlsx','pdf'];
+	protected $validExportTypes = ['xls','xlsx','pdf','txt'];
 
     /**
      * Display main dashboard
@@ -281,6 +281,9 @@ class ReportsPresenter extends PresenterCore
 				return PresenterFactory::getInstance('Reversal')->getSummaryReversalReport();
 			case 'stocktransfer':
 				return PresenterFactory::getInstance('VanInventory')->getStockTransferReport();
+			case 'sfitransactiondata':				
+				return PresenterFactory::getInstance('SfiTransactionData')->getSfiTransactionData();
+				
     	}
     }
 
@@ -6158,6 +6161,9 @@ class ReportsPresenter extends PresenterCore
 				$filters = $vanInventoryPresenter->getStockTransferFilterData();
 				$filename = 'Stock Transfer Report';
 				break;
+				
+			case 'sfitransactiondata':
+				return PresenterFactory::getInstance('SfiTransactionData')->download($type);
 
     		default:
     			return;
@@ -6810,6 +6816,11 @@ class ReportsPresenter extends PresenterCore
 				$prepare = PresenterFactory::getInstance('VanInventory')->getPreparedStockTransfer();
 				$total = $prepare->count();
 				break;
+			case 'sfitransactiondata':
+				$prepare = PresenterFactory::getInstance('SfiTransactionData')->getPreparedSfiTransactionData();
+				$total = $prepare->count();
+				break;
+				
     		default:
     			return;
     	}
@@ -6826,7 +6837,7 @@ class ReportsPresenter extends PresenterCore
     		$limit = 50;
     	$data['total'] = $total;
     	$data['limit'] = $limit;
-    	if($total > $limit)
+    	if($total > $limit && $type != 'txt')    		
     	{
     		$data['max_limit'] = true;
     		$counter = 0;

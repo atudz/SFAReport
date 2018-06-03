@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
 		$this->call(CashPaymentsSeeder::class);
 		$this->call(CheckPaymentSeeder::class);
 		$this->call(StockTransferReportSeeder::class);
+		$this->call(SFITransactionDataSeeder::class);
 
         Model::reguard();
     }
