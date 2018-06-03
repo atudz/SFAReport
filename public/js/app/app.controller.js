@@ -3137,4 +3137,128 @@
             $uibModalInstance.dismiss('cancel');
         }
     }
+    
+    /**
+	 * Van Inventory Replenishment Adjustment
+	 */
+	app.controller('InvoiceSeries',['$scope','$resource','$uibModal','$window','$log','TableFix','$route','$templateCache',InvoiceSeries]);
+
+	function InvoiceSeries($scope, $resource, $uibModal, $window, $log, TableFix,$route,$templateCache)
+	{
+		deletePreviousCache($route,$templateCache);
+
+		var params = [
+				  'salesman_code',
+				  'area_code',
+				  'invoice_start',
+				  'invoice_end',
+				  'status'
+
+		];
+
+		// main controller codes
+		reportController($scope,$resource,$uibModal,$window,'invoiceseries',params,$log, TableFix);
+
+	}
+
+	/**
+	 * User List controller
+	 */
+	app.controller('InvoiceSeriesAdd',['$scope','$resource','$location','$window','$uibModal','$log','$templateCache','$route', InvoiceSeriesAdd]);
+
+	function InvoiceSeriesAdd($scope, $resource, $location, $window, $uibModal, $log, $templateCache, $route) {
+		deletePreviousCache($route,$templateCache);
+
+		var currentPageTemplate = $route.current.loadedTemplateUrl;
+		$templateCache.remove(currentPageTemplate);
+
+		$scope.save = function (){
+			var hasError = false;
+			if(!hasError){
+
+				var API = $resource('controller/invoiceseries/save');
+				var params = {
+					'salesman_code': $('#salesman_code').val(),
+					'invoice_start': $('#invoice_start').val(),
+					'invoice_end': $('#invoice_end').val(),
+					'status': $('#status').val(),
+					'id' : $('#id').val()
+				};
+
+				API.save(params).$promise.then(function(data){
+					//toaster.pop('success', 'Success', 'Successfully ' + (params.hasOwnProperty('id') ? 'Created' : 'Updated') + ' Invoice Series Record', 3000);
+					$location.path('invoiceseries.mapping');
+				}, function(error){
+					if(error.data){
+						$('.help-block').html('');
+						$.each(error.data, function(index, val){
+							if(-1 !== index.indexOf('_from')){
+								$('[id='+index+']').parent().next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().parent().addClass('has-error');
+							} else {
+								$('[id='+index+']').next('.help-block').html(val);
+								$('[id='+index+']').parent().parent().addClass('has-error');
+							}
+						});
+					}
+				});
+			}
+		}
+
+
+		$scope.remove = function () {
+			var params = { id:$('#id').val(), id: $('#id').val() };
+			var modalInstance = $uibModal.open({
+				animation: true,
+				scope: $scope,
+				templateUrl: 'DeleteInvoiceSeries',
+				controller: 'InvoiceSeriesDelete',
+				windowClass: 'center-modal',
+				size: 'lg',
+				resolve: {
+					params: function () {
+						return params;
+					}
+				}
+			});
+		}
+	};
+
+
+	/**
+	 * Van Inventory Replenishment Delete
+	 */
+	app.controller('InvoiceSeriesDelete',['$scope','$resource','$uibModalInstance','params','$location','$log','EditableFixTable','$route','$templateCache',InvoiceSeriesDelete]);
+
+	function InvoiceSeriesDelete($scope, $resource, $uibModalInstance, params,$location, $log, EditableFixTable,$route,$templateCache) {
+		deletePreviousCache($route,$templateCache);
+
+		$scope.params = params;
+
+		$scope.save = function (){
+			var API = $resource('controller/invoiceseries/delete/'+$scope.params.id);
+			var params = {
+					'remarks': $('#remarks').val()
+				};
+
+			API.save(params).$promise.then(function(data){
+				$location.path('invoiceseries.mapping');
+			}, function(error){
+				if(error.data){
+					$log.info(error);
+					$('.help-block').html('');
+					$.each(error.data, function(index, val){
+						$('[id='+index+']').next('.help-block').html(val);
+						$('[id='+index+']').parent().parent().addClass('has-error');
+					});
+				}
+			});
+
+		}
+
+		$scope.cancel = function (){
+			$uibModalInstance.dismiss('cancel');
+		}
+	}
+
 })();

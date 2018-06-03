@@ -528,7 +528,7 @@ class SfiTransactionDataPresenter extends PresenterCore
      */
     public function download($type)
     {
-    	$navigation = ModelFactory::getInstance('Navigation')->where('slug','=','sfi-transaction-data')->first();
+    	//$navigation = ModelFactory::getInstance('Navigation')->where('slug','=','sfi-transaction-data')->first();
     	
 //     	ModelFactory::getInstance('UserActivityLog')->create([
 //     			'user_id'           => auth()->user()->id,

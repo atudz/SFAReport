@@ -250,6 +250,23 @@
 					controller: 'DocumentTypeForm',
 					/*controllerAs: 'sync'*/
 				})
+				
+				.when('/invoiceseries.mapping',{
+					templateUrl: '/reports/invoiceseries',
+					controller: 'InvoiceSeries',
+					/*controllerAs: 'sync'*/
+				})
+				.when('/invoiceseries.add',{
+					templateUrl: '/reports/invoiceseries/add',
+					controller: 'InvoiceSeriesAdd',
+					/*controllerAs: 'sync'*/
+				})
+				
+				.when('/invoiceseries.edit/:id',{
+					templateUrl: function(params){ return '/reports/invoiceseries/edit/'+params.id},
+					controller: 'InvoiceSeriesAdd',
+					/*controllerAs: 'sync'*/
+				})
 
 				.otherwise({
 			        redirectTo: '/home'

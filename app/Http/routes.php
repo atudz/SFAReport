@@ -53,6 +53,44 @@ Route::group(['prefix' => 'reports'],function(){
 	Route::get('/salesman/customer/{salesman_code}', function($salesmanCode){
 		return response()->json(salesman_customer($salesmanCode));
 	});
+	
+			
+	Route::get('/salesman/area/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_area($salesmanCode));
+	});
+				
+	Route::get('/salesman/sheet/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_sheet_refno($salesmanCode));
+	});
+					
+	Route::get('/salesman/sheet/{salesman_code}/{reference}', function($salesmanCode, $ref){
+		return response()->json(salesman_sheet_date($salesmanCode,$ref));
+	});
+						
+	Route::get('/salesman/adjustment/{salesman_code}', function($salesmanCode){
+		return response()->json(salesman_sheet_refno($salesmanCode,'adjustment'));
+	});
+							
+	Route::get('/salesman/jr/{salesman_code}', function($salesmanCode){
+		return response()->json(sfa_jr_salesman($salesmanCode));
+	});
+								
+	Route::get('/customer/area/{customer_code}', function($customerCode){
+		return response()->json(customer_area($customerCode));
+	});
+									
+	Route::get('/salesman/replenishment/refs/{salesman_code}/{type?}', function($salesmanCode, $type=''){
+		return response()->json(replenishment_refs($salesmanCode,$type));
+	});
+										
+	Route::get('/salesman/replenishment/dates/{salesman_code}/{type?}', function($salesmanCode, $type=''){
+		return response()->json(replenishment_dates($salesmanCode,$type));
+	});
+	
+	Route::get('/invoiceseries', ['as'=>'invoice-series', 'uses'=>'InvoicePresenter@index']);
+	Route::get('/invoiceseries/add', ['as'=>'invoice-series-add', 'uses'=>'InvoicePresenter@create']);
+	Route::get('/invoiceseries/edit/{id}', ['as'=>'invoice-series-edit', 'uses'=>'InvoicePresenter@edit']);
+		
 });
 
 
@@ -130,6 +168,10 @@ Route::group(['prefix' => 'controller'],function(){
 			Route::get('/delete', ['as'=>'document-types-delete', 'uses'=>'DocumentTypesController@destroy']);
 		});
 	});
+	
+	Route::post('/invoiceseries/save', ['as'=>'invoiceseries-save', 'uses'=>'InvoiceController@save']);
+	Route::post('/invoiceseries/delete/{id}', ['as'=>'adjustment-delete', 'uses'=>'InvoiceController@destroy']);
+		
 });
 
 Route::get('/sfi-transaction-data', ['as'=>'sfi-transaction-data-presenter', 'uses'=>'SfiTransactionDataPresenter@index']);
