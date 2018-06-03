@@ -1523,8 +1523,6 @@
 	    
 	    if(report=='salescollectionposting') {
 	    	$('#no_records_div').show();	    	
-		} else if(report == 'sfitransactiondata'){
-			params = {salesman_code:$('#salesman_code').val()};
 		}
 
 	    //Sort table records
