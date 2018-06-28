@@ -7036,7 +7036,14 @@ class ReportsPresenter extends PresenterCore
     {
     	$filters = [];
 
-    	$salesman = $this->request->get('salesman_code') ? $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    	$salesman = 'All';
+    	if ($code = $this->request->get('salesman_code')) {
+    		$salesmans = $this->getSalesman();
+    		if (isset($salesmans[$code])) {
+    			$salesman = $salesmans[$code];
+    		}
+    	}
+    	//$salesman = $this->request->get('salesman_code') ? $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
 //    	$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
 
     	$invoiceNum = $this->request->get('invoice_number');
@@ -7495,6 +7502,10 @@ class ReportsPresenter extends PresenterCore
 	{
 		$areaCodes = $this->arrayOfAreaCodes();
 		$customerModel = $this->getCustomerAreaCode($customer, $isVan);
+		if (!$customerModel) {
+			return '';
+		}
+		
 		$areaCode = $customerModel->area_code;
 		$customerCode = $customerModel->customer_code;
 		$chunks = explode('_', $customerCode);
