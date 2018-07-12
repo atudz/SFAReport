@@ -149,7 +149,7 @@ class SfiTransactionDataPresenter extends PresenterCore
                 all_so.invoice_number,
 				all_so.delete_remarks,
 				all_so.so_date invoice_date,
-				all_so.sfa_modified_date invoice_posting_date,
+				all_so.so_date invoice_posting_date,
 				TRUNCATE(ROUND(coalesce(all_so.gross_served_amount,0.00),2),2) gross_served_amount,
     			TRUNCATE(ROUND(coalesce(all_so.vat_amount,0.00),2),2) vat_amount,
 				CONCAT(TRUNCATE(coalesce(all_so.discount_rate,0.00),0),\'%\') discount_rate,
