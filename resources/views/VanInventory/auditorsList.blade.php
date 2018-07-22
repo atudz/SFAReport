@@ -1,5 +1,5 @@
-{!!Html::breadcrumb(['Van Inventory','Auditors List'])!!}
-{!!Html::pageheader('Auditors List')!!}
+{!!Html::breadcrumb(['Van Inventory','Stock Shortage and Overage Summary'])!!}
+{!!Html::pageheader('Stock Shortage and Overage Summary')!!}
 
 <div class="row">
     <div class="col-lg-12">
