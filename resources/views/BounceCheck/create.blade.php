@@ -24,29 +24,29 @@
 							<input id="id" type="hidden" name="id" value="{{(int)$bounceCheck->id}}">
 							<input id="area" type="hidden" name="id" value="{{$bounceCheck && $bounceCheck->area ? $bounceCheck->area->area_name : ''}}">
 							<div class="row form-input-field">
-								{!!Html::select('salesman_code','Sr. Salesman <span class="required">*</span>', $salesman, 'Select Sr. Salesman',['onblur'=>'validate(this)','onchange'=>'set_customer(this)'],$bounceCheck->salesman_code)!!}
+								{!!Html::select('salesman_code','Sr. Salesman <span class="required">*</span>', $salesman, 'Select Sr. Salesman',['onblur'=>'validate(this)','onchange'=>'set_customer(this)','ng-disabled'=>$no_edit],$bounceCheck->salesman_code)!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','jr_salesman_code','Jr. Salesman',$bounceCheck->id && $bounceCheck->jr_salesman ? $bounceCheck->jr_salesman->fullname: 'No Jr.Salesman',['disabled'=>true])!!}
 							</div>
 							<div class="row form-input-field">
 								@if($bounceCheck->id)
-									{!!Html::select('customer_code','Customer <span class="required">*</span>', salesman_customer($bounceCheck->salesman_code), '',['onblur'=>'validate(this)','onchange'=>'set_area(this)'],$bounceCheck->customer_code)!!}
+									{!!Html::select('customer_code','Customer <span class="required">*</span>', salesman_customer($bounceCheck->salesman_code), '',['onblur'=>'validate(this)','onchange'=>'set_area(this)','ng-disabled'=>$no_edit],$bounceCheck->customer_code)!!}
 								@else
-									{!!Html::select('customer_code','Customer <span class="required">*</span>', [], 'Customer',['onblur'=>'validate(this)','disabled'=>true,'onchange'=>'set_area(this)'])!!}
+									{!!Html::select('customer_code','Customer <span class="required">*</span>', [], 'Customer',['onblur'=>'validate(this)','disabled'=>true,'onchange'=>'set_area(this)','ng-disabled'=>$no_edit])!!}
 								@endif
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','dm_number','DM No. <span class="required">*</span>',$bounceCheck->dm_number,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','dm_number','DM No. <span class="required">*</span>',$bounceCheck->dm_number,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::datepicker('dm_date','DM Date <span class="required">*</span>',false,false,$bounceCheck->dm_date)!!}
+								{!!Html::datepicker('dm_date','DM Date <span class="required">*</span>',false,false,$bounceCheck->dm_date,'','Calendar',false,$no_edit)!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::input('text','invoice_number','Invoice No. <span class="required">*</span>',$bounceCheck->invoice_number,['onblur'=>'validate(this)'])!!}
+								{!!Html::input('text','invoice_number','Invoice No. <span class="required">*</span>',$bounceCheck->invoice_number,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
 							</div>
 							<div class="row form-input-field">
-								{!!Html::datepicker('invoice_date','Invoice Date <span class="required">*</span>',false,false,$bounceCheck->dm_date)!!}
+								{!!Html::datepicker('invoice_date','Invoice Date <span class="required">*</span>',false,false,$bounceCheck->dm_date,'','Calendar',false,$no_edit)!!}
 							</div>
 							<div class="row form-input-field">
 								{!!Html::input('text','bank_name','Bank Name <span class="required">*</span>',$bounceCheck->bank_name,['onblur'=>'validate(this)','ng-disabled'=>$no_edit])!!}
