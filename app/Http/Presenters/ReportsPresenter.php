@@ -7122,8 +7122,9 @@ class ReportsPresenter extends PresenterCore
     {
     	$filters = [];
 
+    	$salesmanList = $this->getSalesman(false);
     	$customer = $this->request->get('company_code') ?  $this->request->get('company_code') : 'All';
-    	$salesman = $this->request->get('salesman') ? $this->getSalesman(false)[$this->request->get('salesman')] : 'All';
+    	$salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$collectiontDate = ($this->request->get('collection_date_from') && $this->request->get('collection_date_to')) ? $this->request->get('collection_date_from').' - '.$this->request->get('collection_date_to') : 'All';
     	$postingDate = ($this->request->get('posting_date_from') && $this->request->get('posting_date_to')) ? $this->request->get('posting_date_from').' - '.$this->request->get('posting_date_to') : 'All';
