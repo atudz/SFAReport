@@ -6893,7 +6893,8 @@ class ReportsPresenter extends PresenterCore
     	switch($report)
     	{
     		case 'salesreportpermaterial':
-    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$salesmanList = $this->getSalesman();
+    			$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';    			
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
@@ -6916,7 +6917,8 @@ class ReportsPresenter extends PresenterCore
     			];
     			break;
     		case 'salesreportperpeso':
-    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$salesmanList = $this->getSalesman();
+    			$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
@@ -6935,7 +6937,8 @@ class ReportsPresenter extends PresenterCore
     			];
     			break;
     		case 'returnpermaterial':
-    			$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    			$salesmanList = $this->getSalesman();
+    			$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';
     			$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     			$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     			$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
@@ -6958,7 +6961,8 @@ class ReportsPresenter extends PresenterCore
     			];
     			break;
     		case 'returnperpeso':
-    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    				$salesmanList = $this->getSalesman();
+    				$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';
     				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     				$customer = $this->request->get('customer') ? $this->getCustomer(false)[$this->request->get('customer')] : 'All';
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
@@ -6977,7 +6981,8 @@ class ReportsPresenter extends PresenterCore
     				];
     				break;
     		 case 'customerlist':
-    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    		 		$salesmanList = $this->getSalesman();
+    		 		$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';
     				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     				$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
@@ -6992,7 +6997,8 @@ class ReportsPresenter extends PresenterCore
     				];
     				break;
     		 case 'salesmanlist':
-    				$salesman = $this->request->get('salesman_code') ? $salesman = $this->getSalesman()[$this->request->get('salesman_code')] : 'All';
+    		 		$salesmanList = $this->getSalesman();
+    		 		$salesman = $this->request->get('salesman_code') && isset($salesmanList[$this->request->get('salesman_code')]) ? $salesmanList[$this->request->get('salesman_code')]: 'All';
     				$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     				$company_code = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     				$status = $this->request->get('status') ? $this->getCustomerStatus()[$this->request->get('status')] : 'All';
@@ -7074,7 +7080,8 @@ class ReportsPresenter extends PresenterCore
     {
     	$filters = [];
 
-    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$salesmanList = $this->getSalesman();
+    	$salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
     	$company = $this->request->get('company_code') ? $this->getCompanyCode()[$this->request->get('company_code')] : 'All';
     	$customer = $this->request->get('customer') ? $this->getCustomer()[$this->request->get('customer')] : 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
@@ -7100,7 +7107,8 @@ class ReportsPresenter extends PresenterCore
     	$filters = [];
 
     	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
-    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$salesmanList = $this->getSalesman();
+    	$salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
     	$documentDate = ($this->request->get('document_date_from') && $this->request->get('document_date_to')) ? $this->request->get('document_date_from').' - '.$this->request->get('document_date_to') : 'All';
     	$reference = $this->request->get('reference');
 
@@ -7121,9 +7129,9 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionFilterData($collection=false)
     {
     	$filters = [];
-
-    	$salesmanList = $this->getSalesman(false);
+    	
     	$customer = $this->request->get('company_code') ?  $this->request->get('company_code') : 'All';
+    	$salesmanList = $this->getSalesman(false);
     	$salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
     	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
     	$collectiontDate = ($this->request->get('collection_date_from') && $this->request->get('collection_date_to')) ? $this->request->get('collection_date_from').' - '.$this->request->get('collection_date_to') : 'All';
@@ -7160,9 +7168,10 @@ class ReportsPresenter extends PresenterCore
     public function getSalesCollectionSummaryFilterData()
     {
     	$filters = [];
-
+    
     	$customer = $this->request->get('customer_code') ?  $this->request->get('customer_code') : 'All';
-    	$salesman = $this->request->get('salesman') ? $this->getSalesman()[$this->request->get('salesman')] : 'All';
+    	$salesmanList = $this->getSalesman();
+    	$salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
     	$area = $this->request->get('area') ? $this->getArea()[$this->request->get('area')] : 'All';
     	$invoice = $this->request->get('invoice_date_from') ? (new Carbon($this->request->get('invoice_date_from')))->format('F Y') : '';
 
