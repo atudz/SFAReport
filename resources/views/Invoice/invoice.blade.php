@@ -8,7 +8,7 @@
 				<!-- Filter -->
 					{!!Html::fopen('Toggle Filter')!!}
 						<div class="col-md-8">							
-							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All', ['onchange'=>'set_area(this)'])!!}
+							{!!Html::select('salesman_code','Salesman', $salesman,$isSalesman ? '' : 'All Salesman', ['onchange'=>'set_area(this)'])!!}
 							{!!Html::select('area_code','Area', [],'Select Salesman',['disabled'=>true])!!}
 							{!!Html::datepicker('replenishment_date','Date Assigned',false)!!}
 							{!!Html::select('status','Status', statuses(),'Select Status')!!}						
