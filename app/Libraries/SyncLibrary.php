@@ -38,6 +38,27 @@ class SyncLibrary extends LibraryCore
 	}
 	
 	/**
+	 * Get block list 
+	 */
+	public function getBlockList()
+	{
+		$tables = DB::connection('rds_backup')->select('SHOW TABLES');
+		$mapping = [];
+		$configTables = config('sync.sync_tables');
+		foreach ($tables as $table) {
+			$keys = $configTables[$table];
+			if ($keys) {
+				$pKey = array_shift($keys);
+				$rows = DB::connection('rds_backup')->table($table)->select($pKey)->get();
+				if ($rows) {
+					$rows = collect($rows);
+					$mapping[$table] = $rows->pluck('id')->toArray();
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Sync sfa database to my database
 	 * @param string $display
 	 * @return boolean
@@ -59,7 +80,7 @@ class SyncLibrary extends LibraryCore
 			$tables = array_keys($configTables);
 			$limit = 2500;			
 			$pageLimit = 25000;
-			
+			$blockList = $this->getBlockList();
 			foreach($tables as $table)
 			{
 				
@@ -75,6 +96,10 @@ class SyncLibrary extends LibraryCore
 					{
 						$ids[] = $record->$pKey;
 					}
+				}
+				
+				if (isset($blockList[$table])) {
+					$ids = array_merge($ids, $blockList[$table]);
 				}
 				
 				if(!$pKey) {
