@@ -104,6 +104,7 @@ class SyncLibrary extends LibraryCore
 				
 				if (isset($blockList[$table])) {
 					$ids = array_merge($ids, $blockList[$table]);
+					$ids = array_unique($ids);
 				}
 				
 				if(!$pKey) {
