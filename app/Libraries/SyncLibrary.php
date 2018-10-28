@@ -47,13 +47,14 @@ class SyncLibrary extends LibraryCore
 		$mapping = [];
 		$configTables = config('sync.sync_tables');
 		foreach ($tables as $table) {
+			$table = $table->Tables_in_sfa_patch;
 			$keys = $configTables[$table];
 			if ($keys) {
 				$pKey = array_shift($keys);
 				$rows = DB::connection('rds_backup')->table($table)->select($pKey)->get();
 				if ($rows) {
 					$rows = collect($rows);
-					$mapping[$table] = $rows->pluck('id')->toArray();
+					$mapping[$table] = $rows->pluck($pKey)->toArray();
 				}
 			}
 		}
