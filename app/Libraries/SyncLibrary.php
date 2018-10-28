@@ -5,6 +5,7 @@ namespace App\Libraries;
 use App\Core\LibraryCore;
 use PDO;
 use App\Factories\PresenterFactory;
+use DB;
 
 /**
  * This is a library class for Sync
