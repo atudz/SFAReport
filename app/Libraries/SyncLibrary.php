@@ -57,6 +57,8 @@ class SyncLibrary extends LibraryCore
 				}
 			}
 		}
+		
+		return $mapping;
 	}
 	
 	/**
