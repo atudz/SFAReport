@@ -220,7 +220,7 @@ class SyncLibrary extends LibraryCore
 		{
 			foreach($value as $col=>$val)
 			{
-				if($col == $pkey && in_array($val, $modified)) {
+				if($col == $pkey && isset($modified[$val])) {
 					unset($data[$key]);
 					break;
 				}
