@@ -48,7 +48,7 @@ class SyncLibrary extends LibraryCore
 		$configTables = config('sync.sync_tables');
 		foreach ($tables as $table) {
 			$table = $table->Tables_in_sfa_patch;
-			$keys = $configTables[$table];
+			$keys = isset($configTables[$table]) ? $configTables[$table] : null;
 			if ($keys) {
 				$pKey = array_shift($keys);
 				$rows = DB::connection('rds_backup')->table($table)->select($pKey)->get();
