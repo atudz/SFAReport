@@ -163,12 +163,14 @@ class SyncLibrary extends LibraryCore
 							$this->log($msg);
 							if($display) echo $msg;
 						}
-						unset($data);
+						unset($data, $ids);
 						
 						//$offset += $pageLimit;
 					//}
 				}							
-			}			
+			}	
+			
+			unset($blockList);
 			
 		} catch (PDOException $e) {
 			$this->log('Error :'.$e->getMessage());
