@@ -54,7 +54,7 @@ class SyncLibrary extends LibraryCore
 				$rows = DB::connection('rds_backup')->table($table)->select($pKey)->get();
 				if ($rows) {
 					$rows = collect($rows);
-					$mapping[$table] = $rows->pluck($pKey)->toArray();
+					$mapping[$table] = $rows->pluck($pKey, $pKey)->toArray();
 				}
 			}
 		}
@@ -98,13 +98,12 @@ class SyncLibrary extends LibraryCore
 					$pKey = array_shift($keys);				
 					foreach($records as $record)
 					{
-						$ids[] = $record->$pKey;
+						$ids[$record->$pKey] = $record->$pKey;
 					}
 				}
 				
-				if (isset($blockList[$table])) {
-					$ids = array_merge($ids, $blockList[$table]);
-					$ids = array_unique($ids);
+				if (isset($blockList[$table])) {					
+					$ids = $ids + $blockList[$table];
 				}
 				
 				if(!$pKey) {
@@ -141,7 +140,7 @@ class SyncLibrary extends LibraryCore
 						$stmt = $dbh->prepare($newQuery);
 						$stmt->execute();
 						$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-						$data = $this->formatData($data,$pKey,$ids);
+						$this->formatData($data,$pKey,$ids);
 						
 						$count = count($data);
 						if($count > $limit)
@@ -215,7 +214,7 @@ class SyncLibrary extends LibraryCore
 	 * @param unknown $data
 	 * @return multitype:
 	 */
-	public function formatData($data, $pkey, $modified)
+	public function formatData(&$data, $pkey, &$modified)
 	{
 		foreach($data as $key=>$value)
 		{
@@ -232,7 +231,6 @@ class SyncLibrary extends LibraryCore
 				}
 			}
 		}
-		return $data;
 	}
 }
 
