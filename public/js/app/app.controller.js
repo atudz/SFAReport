@@ -271,7 +271,7 @@
 		];
 
 	    // Filter table records
-		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable);
+		filterSubmitVanInventory(scope,API,params,log, InventoryFixTable, resource, modal);
 
 	    // Download report
 	    downloadReport(scope, modal, resource, window, report, params, log);
@@ -732,7 +732,7 @@
 	/**
 	 * Centralized filter function
 	 */
-	function filterSubmitVanInventory(scope, API, filter, log, InventoryFixTable)
+	function filterSubmitVanInventory(scope, API, filter, log, InventoryFixTable, resource, modal)
 	{
 		scope.filter = function(){
 
@@ -761,31 +761,50 @@
 
 			if(!hasError)
 			{
-				if(typeof InventoryFixTable !== "undefined"){
-		    		InventoryFixTable.ift();
-		    	}
+				resource('/reports/synching/1').get().$promise.then(function(data){
+					if (data.sync_data.sync) {
+						scope.toggleFilter = true;
+						var modalInstance = modal.open({
+						 	animation: true,
+						 	scope: scope,
+							templateUrl: 'Synchronizing',
+							controller: 'EditTableRecord',
+							windowClass: 'center-modal',
+							size: 'lg',
+							resolve: {
+								params: function () {
+									return '';
+							    }
+							}
+						});
+					} else {
+						if(typeof InventoryFixTable !== "undefined"){
+				    		InventoryFixTable.ift();
+				    	}
 
-				var dateFrom = new Date($('#transaction_date_from').val());
-				var dateTo = new Date($('#transaction_date_to').val());
+						var dateFrom = new Date($('#transaction_date_from').val());
+						var dateTo = new Date($('#transaction_date_to').val());
 
-				scope.items = [];
-				scope.dateRanges = getDates(dateFrom,dateTo);
-				var maxIndex = scope.dateRanges.length - 1;
+						scope.items = [];
+						scope.dateRanges = getDates(dateFrom,dateTo);
+						var maxIndex = scope.dateRanges.length - 1;
 
-				$.each(scope.dateRanges, function(i, range){
-					toggleLoading(true);
-					setTimeout(function(){
+						$.each(scope.dateRanges, function(i, range){
+							toggleLoading(true);
+							setTimeout(function(){
 
-						if(i == maxIndex)
-						{
-							toggleLoading();
-						}
-						scope.dateValue = range;
-						scope.dateRanges.shift();
+								if(i == maxIndex)
+								{
+									toggleLoading();
+								}
+								scope.dateValue = range;
+								scope.dateRanges.shift();
 
-						fetchMore(scope, API, filter, log, InventoryFixTable);
+								fetchMore(scope, API, filter, log, InventoryFixTable);
 
-					}, i * 2000);
+							}, i * 2000);
+						});
+					}
 				});
 			}
 	    }
@@ -841,7 +860,7 @@
 	/**
 	 * Centralized filter function
 	 */
-	function filterSubmit(scope, API, filter, log, report, TableFix)
+	function filterSubmit(scope, API, filter, log, report, TableFix, resource, modal)
 	{
 		var params = {};
 
@@ -906,20 +925,39 @@
 
 			if(!hasError)
 			{
-				$('p[id$="_error"]').addClass('hide');
-				scope.toggleFilter = true;
-				toggleLoading(true);
-				API.save(params,function(data){
-		    		//log.info(data);
-			    	scope.records = data.records;
-			    	scope.total = data.total;
-			    	scope.summary = data.summary;
-			    	toggleLoading();
-			    	if(typeof value !== "undefined"){
-			    		TableFix.tableload();
-			    	}
-			    	togglePagination(data.total);
-			    });
+				resource('/reports/synching/1').get().$promise.then(function(data){
+					if (data.sync_data.sync) {
+						scope.toggleFilter = true;
+						var modalInstance = modal.open({
+						 	animation: true,
+						 	scope: scope,
+							templateUrl: 'Synchronizing',
+							controller: 'EditTableRecord',
+							windowClass: 'center-modal',
+							size: 'lg',
+							resolve: {
+								params: function () {
+									return params;
+							    }
+							}
+						});
+					} else {
+						$('p[id$="_error"]').addClass('hide');
+						scope.toggleFilter = true;
+						toggleLoading(true);
+						API.save(params,function(data){
+				    		//log.info(data);
+					    	scope.records = data.records;
+					    	scope.total = data.total;
+					    	scope.summary = data.summary;
+					    	toggleLoading();
+					    	if(typeof value !== "undefined"){
+					    		TableFix.tableload();
+					    	}
+					    	togglePagination(data.total);
+					    });
+					}
+				});
 			}
 
 	    }
@@ -1309,7 +1347,7 @@
 				var template = '';
 				var inputType = '';
 
-				if(data.sync == 1)
+				if(data.sync_data.sync == 1)
 				{
 					template = 'Synchronizing';
 				}
@@ -1397,103 +1435,123 @@
 	{
 		scope.download = function(type){
 
-			var url = '/reports/getcount/'+report+'/'+type;
-			var delimeter = '?';
-			var query = '';
-
-			if('vaninventorycanned' == report || 'vaninventoryfrozen' == report)
-			{
-				if(!$('#transaction_date_from').val() || !$('#transaction_date_to').val())
-				{
-					alert('Transaction Date field is required.');
-					return false;
-				}
-			}
-
-			$.each(filter, function(index,val){
-				if(index > 0)
-					delimeter = '&';
-				var value = $('#'+val).val();
-				if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
-					if(value) {
-						var date = new Date(value);
-						if(date){
-							value = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
-						} else {
-							value = '';
-						}
-					}
-					else {
-						value = '';
-					}
-				}
-				query += delimeter + val + '=' + value;
-			});
-			
-			if(report == 'sfitransactiondata') {
-				if(!scope.convertType) {
-					return false;
-				}
-				query += delimeter + 'convert=' + scope.convertType;
-			}
-
-			url += query;
-			//log.info(url);
-
-			var API = resource(url);
-			API.get({}, function(data){
-
-				//log.info(data);
-				if(!data.total)
-				{
-					var params = {message:'No data to export.'};
-			    	var modalInstance = modal.open({
-			    		animation: true,
-					 	templateUrl: 'Info',
-						controller: 'Info',
+			resource('/reports/synching/1').get().$promise.then(function(data){
+				if (data.sync_data.sync) {
+					var modalInstance = modal.open({
+					 	animation: true,
+					 	scope: scope,
+						templateUrl: 'Synchronizing',
+						controller: 'EditTableRecord',
 						windowClass: 'center-modal',
-						size: 'sm',
+						size: 'lg',
 						resolve: {
 							params: function () {
-								return params;
+								return '';
 						    }
 						}
 					});
-				}
-				else if(data.max_limit)
-				{
-					scope.params = {
-							chunks: data.staggered,
-							title: 'Export ' + angular.uppercase(type),
-							limit: data.limit,
-							exportType: type,
-							report: report,
-							filter: filter,
-							sort: scope.sortColumn,
-							order: scope.sortDirection,
-					};
+					
+				} else {
+					var url = '/reports/getcount/'+report+'/'+type;
+					var delimeter = '?';
+					var query = '';
 
-					var modalInstance = modal.open({
-						 	animation: true,
-							templateUrl: 'exportModal',
-							controller: 'ExportReport',
-							resolve: {
-								params: function () {
-									return scope.params;
-							    }
+					if('vaninventorycanned' == report || 'vaninventoryfrozen' == report)
+					{
+						if(!$('#transaction_date_from').val() || !$('#transaction_date_to').val())
+						{
+							alert('Transaction Date field is required.');
+							return false;
+						}
+					}
+
+					$.each(filter, function(index,val){
+						if(index > 0)
+							delimeter = '&';
+						var value = $('#'+val).val();
+						if(report == 'salescollectionsummary' && val == 'invoice_date_from'){
+							if(value) {
+								var date = new Date(value);
+								if(date){
+									value = (date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+								} else {
+									value = '';
+								}
 							}
+							else {
+								value = '';
+							}
+						}
+						query += delimeter + val + '=' + value;
 					});
-				 }
-				 else
-				 {
-					 var exportUrl = '/reports/export/'+type+'/'+report+query;
-					 if(scope.sortColumn)
-						 exportUrl += '&'+'sort='+scope.sortColumn;
-					 if(scope.sortDirection)
-						 exportUrl += '&'+'order='+scope.sortDirection;
-					 window.location.href = exportUrl;
+					
+					if(report == 'sfitransactiondata') {
+						if(!scope.convertType) {
+							return false;
+						}
+						query += delimeter + 'convert=' + scope.convertType;
+					}
+
+					url += query;
+					//log.info(url);
+
+					var API = resource(url);
+					API.get({}, function(data){
+
+						//log.info(data);
+						if(!data.total)
+						{
+							var params = {message:'No data to export.'};
+					    	var modalInstance = modal.open({
+					    		animation: true,
+							 	templateUrl: 'Info',
+								controller: 'Info',
+								windowClass: 'center-modal',
+								size: 'sm',
+								resolve: {
+									params: function () {
+										return params;
+								    }
+								}
+							});
+						}
+						else if(data.max_limit)
+						{
+							scope.params = {
+									chunks: data.staggered,
+									title: 'Export ' + angular.uppercase(type),
+									limit: data.limit,
+									exportType: type,
+									report: report,
+									filter: filter,
+									sort: scope.sortColumn,
+									order: scope.sortDirection,
+							};
+
+							var modalInstance = modal.open({
+								 	animation: true,
+									templateUrl: 'exportModal',
+									controller: 'ExportReport',
+									resolve: {
+										params: function () {
+											return scope.params;
+									    }
+									}
+							});
+						 }
+						 else
+						 {
+							 var exportUrl = '/reports/export/'+type+'/'+report+query;
+							 if(scope.sortColumn)
+								 exportUrl += '&'+'sort='+scope.sortColumn;
+							 if(scope.sortDirection)
+								 exportUrl += '&'+'order='+scope.sortDirection;
+							 window.location.href = exportUrl;
+						}
+					});
 				}
 			});
+			
 		}
 	}
 
@@ -1531,7 +1589,7 @@
 		sortColumn(scope,API,params,log, report, TableFix);
 
 	    // Filter table records
-	    filterSubmit(scope,API,params,log, report, TableFix);
+	    filterSubmit(scope,API,params,log, report, TableFix, resource, modal);
 
 	    // Paginate table records
 	    pagination(scope,API,params,log, report, TableFix);
@@ -1778,9 +1836,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log', UserList]);
+	app.controller('UserList',['$scope','$resource','$window','$uibModal','$log', 'TableFix', UserList]);
 
-	function UserList($scope, $resource, $window, $uibModal, $log) {
+	function UserList($scope, $resource, $window, $uibModal, $log, TableFix) {
 
 		// Filter flag
 		$scope.toggleFilter = true;
@@ -1816,7 +1874,7 @@
 		sortColumn($scope,API,params,$log);
 
 	    // Filter table records
-	    filterSubmit($scope,API,params,$log);
+	    filterSubmit($scope,API,params,$log, 'userlist', TableFix, $resource, $uibModal);
 
 	    // Paginate table records
 	    pagination($scope,API,params,$log);
@@ -1883,9 +1941,9 @@
 	/**
 	 * User List controller
 	 */
-	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log', UserGroupList]);
+	app.controller('UserGroupList',['$scope','$resource','$window','$uibModal','$log', 'TableFix', UserGroupList]);
 
-	function UserGroupList($scope, $resource, $window, $uibModal, $log) {
+	function UserGroupList($scope, $resource, $window, $uibModal, $log, TableFix) {
 
 		// Filter flag
 		$scope.toggleFilter = true;
@@ -1916,7 +1974,7 @@
 		sortColumn($scope,API,params,$log);
 
 	    // Filter table records
-	    filterSubmit($scope,API,params,$log);
+	    filterSubmit($scope,API,params,$log, 'usergrouplist', TableFix, $resource, $uibModal);
 
 	    // Paginate table records
 	    pagination($scope,API,params,$log);

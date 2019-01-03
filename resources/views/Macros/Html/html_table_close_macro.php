@@ -7,7 +7,7 @@ Html::macro('tclose', function($paginate=true) {
 	$html .= '
 			<script type="text/ng-template" id="Synchronizing">
         		<div class="modal-body">
-					<p class="text-center bold required">Synchronization on progess, please wait till its finished to edit.</p>
+					<h4 class="text-center bold required">Synchronization on progess, please wait till its finished.</h4>
 				</div>
     		</script>
 

@@ -11,7 +11,7 @@
 	 @if(isset($menu))
             @foreach($menu as $nav)
             {{--*/ $counter++ /*--}}
-	            <li @if(count($nav['sub'])) class="parent" href="#sub-item-{{$counter}}" @endif>
+	            <li @if($nav['sub'] && count($nav['sub'])) class="parent" href="#sub-item-{{$counter}}" @endif>
 	            	@if($nav['link'])
 			            <a target="_BLANK" href="{{$nav['url']}}"><span class="{{$nav['class']}}"></span>             
 			            	{{$nav['name']}} 
