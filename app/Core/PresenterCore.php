@@ -199,7 +199,7 @@ class PresenterCore extends Controller
 			return false;
 		
 		$group = auth()->user()->group->name;		
-		return in_array($group,['Admin','Auditor','Manager','Sales Department','Sales Accounting']);
+		return in_array($group,['Admin','Admin Readonly','Auditor','Manager','Sales Department','Sales Accounting']);
 	}
 	
 	
