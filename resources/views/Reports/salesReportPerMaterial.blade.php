@@ -11,9 +11,9 @@
 				{!!Html::fopen('Toggle Filter')!!}
 					<div class="col-md-6">						
 						@if($isSalesman)
-							{!!Html::select('salesman_code','Salesman', $salesman,'',['onchange'=>'set_customer(this)'])!!}
+							{!!Html::select('salesman_code','Salesman', $salesman,'All',['onchange'=>'set_customer(this)'])!!}
 						@else
-							{!!Html::select('salesman_code','Salesman', $salesman,'',['onchange'=>'set_customer(this)'])!!}
+							{!!Html::select('salesman_code','Salesman', $salesman,'All',['onchange'=>'set_customer(this)'])!!}
 						@endif
 						{!!Html::select('area','Area', $areas)!!}						
 						{!!Html::select('customer','Customer Name', $customers)!!}	
