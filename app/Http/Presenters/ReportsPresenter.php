@@ -5028,7 +5028,7 @@ class ReportsPresenter extends PresenterCore
     			app_item_price.effective_date_from,
     			app_item_price.effective_date_to,
     			app_area.area_name,
-    			app_item_master.sfa_modified_date,
+    			app_item_price.sfa_modified_date,
 				IF(app_item_master.status=\'A\',\'Active\',IF(app_item_master.status=\'I\',\'Inactive\',\'Deleted\')) status
     			';
 
