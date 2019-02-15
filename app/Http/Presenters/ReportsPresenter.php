@@ -5673,7 +5673,15 @@ class ReportsPresenter extends PresenterCore
 			$appArea = ModelFactory::getInstance('AppArea');
 			$areaName = $appArea->where('area_code',
 				auth()->user()->location_assignment_code)->select('area_name')->first();
-			$areaName = explode(" ", $areaName->area_name)[1];
+			
+			if( $areaName ) {
+				$areaName = explode(" ", $areaName->area_name)[1];
+			} else {
+				// hack for fail
+				$areaName = 'xxx';
+			}				
+				
+			
 			$areaCodes = $appArea->where('area_name', 'LIKE', '%' . $areaName . '%')->lists('area_code');
 			$prepare->whereIn('area_code', $areaCodes);
 		}
