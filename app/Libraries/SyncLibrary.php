@@ -192,7 +192,7 @@ class SyncLibrary extends LibraryCore
 		$this->log('Synchronization ended '.date('Y-m-d H:m:s')."\n");		
 		
 		// update report summary columns
-		PresenterFactory::getInstance('Reports')->updateReportSummary();				
+		//PresenterFactory::getInstance('Reports')->updateReportSummary();				
 		
 		return true;
 		
