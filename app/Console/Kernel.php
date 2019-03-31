@@ -46,10 +46,10 @@ class Kernel extends ConsoleKernel
         			//->withoutOverlapping()
         			->appendOutputTo(storage_path('logs/cron').'/sync1.log');
         
-		$schedule->command('sync:sfa')
-        			->dailyAt('12:00')
-        			//->withoutOverlapping()
-        			->appendOutputTo(storage_path('logs/cron').'/sync2.log');
+// 		$schedule->command('sync:sfa')
+//         			->dailyAt('12:00')
+//         			//->withoutOverlapping()
+//         			->appendOutputTo(storage_path('logs/cron').'/sync2.log');
         
         $schedule->command('reset:admin_password')
 			        ->weekly()
