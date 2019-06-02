@@ -2388,21 +2388,39 @@ class ReportsPresenter extends PresenterCore
 
 	    		foreach($deals as $deal)
 	    		{
-	    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
-	    				$col = 'trade_order_qty';
-	    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
-	    				$col = 'trade_order_qty';
-	    			else
-	    				$col = 'trade_served_qty';
-	    			if($export) {
-	    				$result->{'code_'.$deal->trade_item_code} = -1*($deal->{$col}+$deal->trade_order_qty);
-	    			} else {
-	    				$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->trade_order_qty).')';
-	    			}
-	    			if(isset($tempInvoices['code_'.$deal->trade_item_code]))
-	    				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->trade_order_qty);
-	    			else
-	    				$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col} + $deal->trade_order_qty;
+	    			if(false !== strpos($result->customer_name, '_Van to Warehouse')) {
+						$col1 = 'trade_order_qty';		
+						$col2 = 'regular_order_qty';
+					}	    				
+	    			elseif(false !== strpos($result->customer_name, '_Adjustment')) {
+						$col1 = 'trade_order_qty';
+						$col2 = 'regular_order_qty';
+					}	    				
+	    			else {
+						$col1 = 'trade_served_qty';
+						$col2 = 'regular_served_qty';
+					}
+	    				
+					if($export) {
+						$result->{'code_'.$deal->trade_item_code} = -1*($deal->{$col1});
+						$result->{'code_'.$deal->item_code} = -1*($deal->{$col2});
+					} else {
+						$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col1}).')';
+						$result->{'code_'.$deal->item_code} = '('.($deal->{$col2}).')';
+					}
+					if(isset($tempInvoices['code_'.$deal->trade_item_code])) {
+						$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col1});						
+					}
+					else {
+						$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col1};						
+					}
+
+					if(isset($tempInvoices['code_'.$deal->item_code])) {
+						$tempInvoices['code_'.$deal->item_code] += ($deal->{$col2});	
+					}
+					else {
+						$tempInvoices['code_'.$deal->item_code] = $deal->{$col2};
+					}
 	    		}
 
 	    		$records[] = $result;
@@ -2692,15 +2710,26 @@ class ReportsPresenter extends PresenterCore
 
     		foreach($deals as $deal)
     		{
-    			if(false !== strpos($result->customer_name, '_Van to Warehouse'))
-    				$col = 'trade_order_qty';
-    			elseif(false !== strpos($result->customer_name, '_Adjustment'))
-    				$col = 'trade_order_qty';
-    			else
-    				$col = 'trade_served_qty';
+    			if(false !== strpos($result->customer_name, '_Van to Warehouse')) {
+					$col1 = 'trade_order_qty';		
+					$col2 = 'regular_order_qty';
+				}    				
+    			elseif(false !== strpos($result->customer_name, '_Adjustment')) {
+					$col1 = 'trade_order_qty';
+					$col2 = 'regular_order_qty';
+				}    				
+    			else {
+					$col1 = 'trade_served_qty';
+					$col2 = 'regular_served_qty';
+				}
+    				
     			if(!isset($tempInvoices['code_'.$deal->trade_item_code]))
     				$tempInvoices['code_'.$deal->trade_item_code] = 0;
-    			$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->regular_order_qty) ;
+				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col1}) ;
+				
+				if(!isset($tempInvoices['code_'.$deal->item_code]))
+    				$tempInvoices['code_'.$deal->item_code] = 0;
+    			$tempInvoices['code_'.$deal->item_code] += ($deal->{$col2}) ;
     		}
 
     	}
