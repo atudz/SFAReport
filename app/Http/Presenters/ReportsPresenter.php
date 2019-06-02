@@ -2381,7 +2381,7 @@ class ReportsPresenter extends PresenterCore
 
 
 	    		$deals = \DB::table('txn_sales_order_deal')
-				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty'])
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty','regular_serverd_qty'])
 				    		->where('reference_num','=',$result->reference_num)
 				    		->whereIn('item_code',$codes)
 				    		->get();
@@ -2703,7 +2703,7 @@ class ReportsPresenter extends PresenterCore
     		}
 
     		$deals = \DB::table('txn_sales_order_deal')
-				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty'])
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty', 'regular_served_qty'])
 				    		->where('reference_num','=',$result->reference_num)
 				    		->whereIn('item_code',$codes)
 				    		->get();
