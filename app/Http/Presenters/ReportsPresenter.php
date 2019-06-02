@@ -2381,7 +2381,7 @@ class ReportsPresenter extends PresenterCore
 
 
 	    		$deals = \DB::table('txn_sales_order_deal')
-				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty', 'deal_order_qty'])
+				    		->select(['trade_item_code','trade_order_qty','trade_served_qty','regular_order_qty'])
 				    		->where('reference_num','=',$result->reference_num)
 				    		->whereIn('item_code',$codes)
 				    		->get();
@@ -2395,14 +2395,14 @@ class ReportsPresenter extends PresenterCore
 	    			else
 	    				$col = 'trade_served_qty';
 	    			if($export) {
-	    				$result->{'code_'.$deal->trade_item_code} = -1*($deal->{$col}+$deal->deal_order_qty);
+	    				$result->{'code_'.$deal->trade_item_code} = -1*($deal->{$col}+$deal->trade_order_qty);
 	    			} else {
-	    				$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->deal_order_qty).')';
+	    				$result->{'code_'.$deal->trade_item_code} = '('.($deal->{$col}+$deal->trade_order_qty).')';
 	    			}
 	    			if(isset($tempInvoices['code_'.$deal->trade_item_code]))
-	    				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->deal_order_qty);
+	    				$tempInvoices['code_'.$deal->trade_item_code] += ($deal->{$col} + $deal->trade_order_qty);
 	    			else
-	    				$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col} + $deal->deal_order_qty;
+	    				$tempInvoices['code_'.$deal->trade_item_code] = $deal->{$col} + $deal->trade_order_qty;
 	    		}
 
 	    		$records[] = $result;
