@@ -616,8 +616,8 @@ class ReportsPresenter extends PresenterCore
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
 
-							sum(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
-							sum(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
+							(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
+							(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
 
     						all_so.updated
 						from (
@@ -985,8 +985,8 @@ class ReportsPresenter extends PresenterCore
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
 
-							sum(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
-							sum(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
+							(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
+							(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
 
     						all_so.updated
 						from (
@@ -1351,8 +1351,8 @@ class ReportsPresenter extends PresenterCore
 					all_so.sfa_modified_date,
 					sum(all_so.total_served) as so_total_served,
 					sum(all_so.total_discount) as so_total_item_discount,
-    				sum(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
-					sum(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
+    				(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_collective_discount,
+					(case when tsohd.deduction_code = \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
 
     				all_so.updated
 				from (
@@ -3241,7 +3241,7 @@ class ReportsPresenter extends PresenterCore
 						ALL_SO.invoice_number,
 						ALL_SO.delete_remarks,
 						sum(coalesce(ALL_SO.total_vat,0.00)) as SO_total_vat,
-						sum(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as SO_total_collective_discount,
+						(case when tsohd.deduction_code <> \'EWT\' then coalesce(tsohd.served_deduction_amount,0) else 0 end) as SO_total_collective_discount,
 						sum(coalesce(ALL_SO.so_amount, 0.00)) as SO_amount,
 						sum(ALL_SO.net_amount) as SO_net_amount,
     					ALL_SO.updated
