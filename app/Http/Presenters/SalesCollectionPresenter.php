@@ -182,8 +182,8 @@ class SalesCollectionPresenter extends PresenterCore
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
 						
-							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
-							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,						
+							(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
+							(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as so_total_collective_discount,			
     			
     						all_so.updated
 						from (
@@ -246,17 +246,8 @@ class SalesCollectionPresenter extends PresenterCore
 						) all_so
 			
 						
-						left join
-						(
-							select
-								reference_num,
-								sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount,
-								sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
-							from txn_sales_order_header_discount
-							group by reference_num
-						) tsohd on all_so.reference_num = tsohd.reference_num
-			
-    	
+						left join txn_sales_order_header_discount tsohd on all_so.reference_num = tsohd.reference_num
+						
 						group by all_so.so_number,
 							all_so.reference_num,
 							all_so.salesman_code,
@@ -552,8 +543,8 @@ class SalesCollectionPresenter extends PresenterCore
 							sum(all_so.total_served) as so_total_served,
 							sum(all_so.total_discount) as so_total_item_discount,
     
-							sum(tsohd.collective_discount_amount) as so_total_collective_discount,
-							sum(tsohd.ewt_deduction_amount) as so_total_ewt_deduction,
+							(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as so_total_ewt_deduction,
+							(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as so_total_collective_discount,
     
     						all_so.updated
 						from (
@@ -616,16 +607,7 @@ class SalesCollectionPresenter extends PresenterCore
 						) all_so
     
     
-						left join
-						(
-							select
-								reference_num,
-								sum(case when deduction_code = \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as ewt_deduction_amount,
-								sum(case when deduction_code <> \'EWT\' then coalesce(served_deduction_amount,0) else 0 end) as collective_discount_amount
-							from txn_sales_order_header_discount
-							group by reference_num
-						) tsohd on all_so.reference_num = tsohd.reference_num
-    
+						left join txn_sales_order_header_discount on all_so.reference_num = tsohd.reference_num						
   
 						group by all_so.so_number,
 							all_so.reference_num,
