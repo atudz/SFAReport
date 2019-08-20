@@ -607,7 +607,7 @@ class SalesCollectionPresenter extends PresenterCore
 						) all_so
     
     
-						left join txn_sales_order_header_discount tsohd on all_so.reference_num = tsohd.reference_num						
+						left join txn_sales_order_header_discount on all_so.reference_num = tsohd.reference_num						
   
 						group by all_so.so_number,
 							all_so.reference_num,
