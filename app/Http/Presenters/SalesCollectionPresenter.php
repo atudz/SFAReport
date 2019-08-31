@@ -15,14 +15,14 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function cashpayments()
     {
-    	$reportsPresenter = PresenterFactory::getInstance('Reports');
-    	$this->view->companyCode = $reportsPresenter->getCompanyCode();
-    	$this->view->customerCode = $reportsPresenter->getCustomerCode();
-    	$this->view->salesman = $reportsPresenter->getSalesman();
-    	$this->view->areas = $reportsPresenter->getArea();
-    	$this->view->customers = $reportsPresenter->getCustomer();
-    	$this->view->tableHeaders = $this->getCashPaymentColumns();
-    	return $this->view('cashpayments');
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $this->view->companyCode = $reportsPresenter->getCompanyCode();
+        $this->view->customerCode = $reportsPresenter->getCustomerCode();
+        $this->view->salesman = $reportsPresenter->getSalesman();
+        $this->view->areas = $reportsPresenter->getArea();
+        $this->view->customers = $reportsPresenter->getCustomer();
+        $this->view->tableHeaders = $this->getCashPaymentColumns();
+        return $this->view('cashpayments');
     }
     
     /**
@@ -32,14 +32,14 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function checkpayments()
     {
-    	$reportsPresenter = PresenterFactory::getInstance('Reports');
-    	$this->view->companyCode = $reportsPresenter->getCompanyCode();
-    	$this->view->customerCode = $reportsPresenter->getCustomerCode();
-    	$this->view->salesman = $reportsPresenter->getSalesman();
-    	$this->view->areas = $reportsPresenter->getArea();
-    	$this->view->customers = $reportsPresenter->getCustomer();
-    	$this->view->tableHeaders = $this->getCheckPaymentColumns();
-    	return $this->view('checkPayments');
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $this->view->companyCode = $reportsPresenter->getCompanyCode();
+        $this->view->customerCode = $reportsPresenter->getCustomerCode();
+        $this->view->salesman = $reportsPresenter->getSalesman();
+        $this->view->areas = $reportsPresenter->getArea();
+        $this->view->customers = $reportsPresenter->getCustomer();
+        $this->view->tableHeaders = $this->getCheckPaymentColumns();
+        return $this->view('checkPayments');
     }
     
     /**
@@ -48,28 +48,26 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCashPaymentReport()
     {
-    	$prepare = $this->getPreparedCashPayment();
-    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');
-    	
-    	$reportsPresenter = PresenterFactory::getInstance('Reports');
-    	$result = $reportsPresenter->formatSalesCollection($collection);
-    	
-    	$summary = '';
-    	if($result)
-    	{
-    		$summary = $this->getCashPaymentTotal($result);
-    	}  
-    	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
-    	 
-    	$data['summary'] = '';
-    	if($summary)
-    	{
-    		$data['summary'] = $summary;
-    	}
-    	
-    	$data['total'] = count($result);
-    	
-    	return response()->json($data);
+        $prepare = $this->getPreparedCashPayment();
+        $collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(), 'txn_sales_order_header');
+        
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $result = $reportsPresenter->formatSalesCollection($collection);
+        
+        $summary = '';
+        if ($result) {
+            $summary = $this->getCashPaymentTotal($result);
+        }
+        $data['records'] = $reportsPresenter->validateInvoiceNumber($result);
+         
+        $data['summary'] = '';
+        if ($summary) {
+            $data['summary'] = $summary;
+        }
+        
+        $data['total'] = count($result);
+        
+        return response()->json($data);
     }
     
     /**
@@ -78,28 +76,26 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCheckPaymentReport()
     {
-    	$prepare = $this->getPreparedCheckPayment();
-    	$collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(),'txn_sales_order_header');    	
+        $prepare = $this->getPreparedCheckPayment();
+        $collection = PresenterFactory::getInstance('DeleteRemarks')->setDeleteRemarksTable($prepare->get(), 'txn_sales_order_header');
     
-    	$reportsPresenter = PresenterFactory::getInstance('Reports');
-    	$result = $reportsPresenter->formatSalesCollection($collection);
+        $reportsPresenter = PresenterFactory::getInstance('Reports');
+        $result = $reportsPresenter->formatSalesCollection($collection);
     
-    	$summary = '';
-    	if($result)
-    	{
-    		$summary = $this->getCashPaymentTotal($result);
-    	}
-    	$data['records'] = $reportsPresenter->validateInvoiceNumber($result);
+        $summary = '';
+        if ($result) {
+            $summary = $this->getCashPaymentTotal($result);
+        }
+        $data['records'] = $reportsPresenter->validateInvoiceNumber($result);
 
-    	$data['summary'] = '';
-    	if($summary)
-    	{
-    		$data['summary'] = $summary;
-    	}
+        $data['summary'] = '';
+        if ($summary) {
+            $data['summary'] = $summary;
+        }
     
-    	$data['total'] = count($result);
+        $data['total'] = count($result);
     
-    	return response()->json($data);
+        return response()->json($data);
     }
     
     /**
@@ -109,19 +105,19 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCashPaymentTotal($data)
     {
-    	$summary = [
-    			'payment_amount'=>0,
-    			'total_invoice_net_amount'=>0,
-    	];
-    	 
-    	$cols = array_keys($summary);
-    	foreach($data as $val)
-    	{
-    		foreach($cols as $key)
-    			$summary[$key] += $val->$key;
-    	}
-    	
-    	return $summary;
+        $summary = [
+                'payment_amount'=>0,
+                'total_invoice_net_amount'=>0,
+        ];
+         
+        $cols = array_keys($summary);
+        foreach ($data as $val) {
+            foreach ($cols as $key) {
+                $summary[$key] += $val->$key;
+            }
+        }
+        
+        return $summary;
     }
     /**
      * Get preapred statement for cash payment
@@ -130,7 +126,7 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getPreparedCashPayment($summary=false)
     {
-    	$query = ' 
+        $query = ' 
     			  SELECT
     			   sotbl.so_number,
     			   tas.salesman_code,
@@ -334,8 +330,8 @@ class SalesCollectionPresenter extends PresenterCore
 					 		 tas.salesman_code ASC,
 							 tas.customer_code ASC
     			';
-    	
-    	$select = '
+        
+        $select = '
     			collection.customer_code,
 				collection.customer_name,
     			collection.customer_address,
@@ -356,57 +352,71 @@ class SalesCollectionPresenter extends PresenterCore
 
     	
     			';
-    	 
-    	if($summary)
-    	{
-    		$select = '    				    				
+         
+        if ($summary) {
+            $select = '    				    				
     				SUM(collection.total_invoice_net_amount) total_invoice_net_amount,    				
 					SUM(collection.payment_amount) payment_amount
     				';
-    	}
-    	 
-    	$prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
-    	 
-    	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
-    			function($self, $model){
-    				return $model->where('collection.salesman_code','=',$self->getValue());
-    			});
-    	 
-    	$companyFilter = FilterFactory::getInstance('Select');
-    	$prepare = $companyFilter->addFilter($prepare,'company_code',
-    			function($self, $model){
-    				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
-    			});
-    	 
-    	$customerFilter = FilterFactory::getInstance('Text');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
-    			function($self, $model){
-    				return $model->where('collection.customer_code',$self->getValue());
-    			});
-    	
-    	 
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
-    					function($self, $model){
-    						return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
-    				});
-    	
-    	$orDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $orDateFilter->addFilter($prepare,'or_date',
-    			function($self, $model){
-    				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
-    			});
-    	
-    	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    		 
-    	$prepare->orderBy('collection.invoice_number','asc');
-    	$prepare->orderBy('collection.invoice_date','asc');
-    	$prepare->orderBy('collection.customer_name','asc');
-    	$prepare->orderBy('collection.so_number','asc');
-    		 
-    	return $prepare;
+        }
+         
+        $prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
+         
+        $salesmanFilter = FilterFactory::getInstance('Select');
+        $prepare = $salesmanFilter->addFilter(
+            $prepare,
+            'salesman',
+                function ($self, $model) {
+                    return $model->where('collection.salesman_code', '=', $self->getValue());
+                }
+        );
+         
+        $companyFilter = FilterFactory::getInstance('Select');
+        $prepare = $companyFilter->addFilter(
+            $prepare,
+            'company_code',
+                function ($self, $model) {
+                    return $model->where('collection.customer_code', 'LIKE', $self->getValue().'%');
+                }
+        );
+         
+        $customerFilter = FilterFactory::getInstance('Text');
+        $prepare = $customerFilter->addFilter(
+            $prepare,
+            'customer_code',
+                function ($self, $model) {
+                    return $model->where('collection.customer_code', $self->getValue());
+                }
+        );
+        
+         
+        $invoiceDateFilter = FilterFactory::getInstance('DateRange');
+        $prepare = $invoiceDateFilter->addFilter(
+            $prepare,
+            'invoice_date',
+                        function ($self, $model) {
+                            return $model->whereBetween('collection.invoice_date', $self->formatValues($self->getValue()));
+                        }
+        );
+        
+        $orDateFilter = FilterFactory::getInstance('DateRange');
+        $prepare = $orDateFilter->addFilter(
+            $prepare,
+            'or_date',
+                function ($self, $model) {
+                    return $model->whereBetween('collection.or_date', $self->formatValues($self->getValue()));
+                }
+        );
+        
+        $prepare->where('collection.customer_name', 'not like', '%Adjustment%');
+        $prepare->where('collection.customer_name', 'not like', '%Van to Warehouse %');
+             
+        $prepare->orderBy('collection.invoice_number', 'asc');
+        $prepare->orderBy('collection.invoice_date', 'asc');
+        $prepare->orderBy('collection.customer_name', 'asc');
+        $prepare->orderBy('collection.so_number', 'asc');
+             
+        return $prepare;
     }
     
     /**
@@ -415,24 +425,25 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCashPaymentColumns($export='xls')
     {
-    	$headers = [
-    			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address','sort'=>'customer_address'],
-    			['name'=>'Remarks','sort'=>'remarks'],
-    			['name'=>'Invoice No','sort'=>'invoice_number'],
-    			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
-    			['name'=>'Collection Date','sort'=>'or_date'],
-    			['name'=>'OR Number','sort'=>'or_number'],
-    			['name'=>'Cash Amount'],
-    			['name'=>'Text'],
-    	];
+        $headers = [
+                ['name'=>'Customer Code','sort'=>'customer_code'],
+                ['name'=>'Customer Name','sort'=>'customer_name'],
+                ['name'=>'Customer Address','sort'=>'customer_address'],
+                ['name'=>'Remarks','sort'=>'remarks'],
+                ['name'=>'Invoice No','sort'=>'invoice_number'],
+                ['name'=>'Invoice Date','sort'=>'invoice_date'],
+                ['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
+                ['name'=>'Collection Date','sort'=>'or_date'],
+                ['name'=>'OR Number','sort'=>'or_number'],
+                ['name'=>'Cash Amount'],
+                ['name'=>'Text'],
+        ];
     
-    	if($export == 'pdf')
-    		unset($headers[10]);
-    		
-    	return $headers;
+        if ($export == 'pdf') {
+            unset($headers[10]);
+        }
+            
+        return $headers;
     }
     
     
@@ -440,26 +451,27 @@ class SalesCollectionPresenter extends PresenterCore
      * Get Cash Payment Select Columns
      * @return string[][]
      */
-    function getCashPaymentSelectColumns($pdf=false)
+    public function getCashPaymentSelectColumns($pdf=false)
     {
-    	$columns = [
-    			'customer_code',
-    			'customer_name',
-    			'customer_address',
-    			'remarks',
-    			'invoice_number',
-    			'invoice_date',
-    			'total_invoice_net_amount',
-    			'or_date',
-    			'or_number',
-    			'payment_amount',
-    			'delete_remarks'
-    	];
-    	
-    	if($pdf)
-    		unset($columns[10]);
-    	
-    	return $columns;
+        $columns = [
+                'customer_code',
+                'customer_name',
+                'customer_address',
+                'remarks',
+                'invoice_number',
+                'invoice_date',
+                'total_invoice_net_amount',
+                'or_date',
+                'or_number',
+                'payment_amount',
+                'delete_remarks'
+        ];
+        
+        if ($pdf) {
+            unset($columns[10]);
+        }
+        
+        return $columns;
     }
     
     /**
@@ -468,24 +480,25 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCashPaymentFilterData()
     {
-    	$reportPresenter = PresenterFactory::getInstance('Reports');
-    	$customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
-    	$salesman = $this->request->get('salesman') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman')] : 'All';
-    	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
-    	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
-    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';    	
-    	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
-    	
-    	$filters = [
-    			'Salesman' => $salesman,
-    			'Area' => $area,
-    			'Customer Name' => $customer,
-    			'Company Code' => $company_code,
-    			'Invoice Date' => $invoiceDate,
-    			'Or Date' => $orDate,    			
-    	];    	
+        $reportPresenter = PresenterFactory::getInstance('Reports');
+        $customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
+        $salesmanList = $reportPresenter->getSalesman();
+        $salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
+        $area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
+        $company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
+        $invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
+        $orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
+        
+        $filters = [
+                'Salesman' => $salesman,
+                'Area' => $area,
+                'Customer Name' => $customer,
+                'Company Code' => $company_code,
+                'Invoice Date' => $invoiceDate,
+                'Or Date' => $orDate,
+        ];
     
-    	return $filters;
+        return $filters;
     }
     
     
@@ -496,7 +509,7 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getPreparedCheckPayment($summary=false)
     {
-    	$query = '
+        $query = '
     			  SELECT
     			   sotbl.so_number,
     			   tas.salesman_code,
@@ -708,7 +721,7 @@ class SalesCollectionPresenter extends PresenterCore
 							 tas.customer_code ASC
     			';
     
-    	$select = '
+        $select = '
     			collection.customer_code,
 				collection.customer_name,
     			collection.customer_address,
@@ -730,62 +743,75 @@ class SalesCollectionPresenter extends PresenterCore
   
     			';
     
-    	if($summary)
-    	{
-    		$select = '
+        if ($summary) {
+            $select = '
 					SUM(collection.total_invoice_net_amount) total_invoice_net_amount,
     				SUM(collection.payment_amount) payment_amount
     				';
-    	}
+        }
     
-    	$prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
+        $prepare = \DB::table(\DB::raw('('.$query.') collection'))->selectRaw($select);
     
-    	$salesmanFilter = FilterFactory::getInstance('Select');
-    	$prepare = $salesmanFilter->addFilter($prepare,'salesman',
-    			function($self, $model){
-    				return $model->where('collection.salesman_code','=',$self->getValue());
-    			});
+        $salesmanFilter = FilterFactory::getInstance('Select');
+        $prepare = $salesmanFilter->addFilter(
+            $prepare,
+            'salesman',
+                function ($self, $model) {
+                    return $model->where('collection.salesman_code', '=', $self->getValue());
+                }
+        );
     
-    	$companyFilter = FilterFactory::getInstance('Select');
-    	$prepare = $companyFilter->addFilter($prepare,'company_code',
-    			function($self, $model){
-    				return $model->where('collection.customer_code','LIKE',$self->getValue().'%');
-    			});
+        $companyFilter = FilterFactory::getInstance('Select');
+        $prepare = $companyFilter->addFilter(
+            $prepare,
+            'company_code',
+                function ($self, $model) {
+                    return $model->where('collection.customer_code', 'LIKE', $self->getValue().'%');
+                }
+        );
     
-    	$customerFilter = FilterFactory::getInstance('Text');
-    	$prepare = $customerFilter->addFilter($prepare,'customer_code',
-    			function($self, $model){
-    				return $model->where('collection.customer_code',$self->getValue());
-    			});
+        $customerFilter = FilterFactory::getInstance('Text');
+        $prepare = $customerFilter->addFilter(
+            $prepare,
+            'customer_code',
+                function ($self, $model) {
+                    return $model->where('collection.customer_code', $self->getValue());
+                }
+        );
     
     
-    	$invoiceDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $invoiceDateFilter->addFilter($prepare,'invoice_date',
-    			function($self, $model){
-    				return $model->whereBetween('collection.invoice_date',$self->formatValues($self->getValue()));
-    			});
+        $invoiceDateFilter = FilterFactory::getInstance('DateRange');
+        $prepare = $invoiceDateFilter->addFilter(
+            $prepare,
+            'invoice_date',
+                function ($self, $model) {
+                    return $model->whereBetween('collection.invoice_date', $self->formatValues($self->getValue()));
+                }
+        );
     
-    	$orDateFilter = FilterFactory::getInstance('DateRange');
-    	$prepare = $orDateFilter->addFilter($prepare,'or_date',
-    			function($self, $model){
-    				return $model->whereBetween('collection.or_date',$self->formatValues($self->getValue()));
-    			});
+        $orDateFilter = FilterFactory::getInstance('DateRange');
+        $prepare = $orDateFilter->addFilter(
+            $prepare,
+            'or_date',
+                function ($self, $model) {
+                    return $model->whereBetween('collection.or_date', $self->formatValues($self->getValue()));
+                }
+        );
     
-    	$prepare->where('collection.customer_name','not like','%Adjustment%');
-    	$prepare->where('collection.customer_name','not like','%Van to Warehouse %');
-    	 
-    	if($sort = $this->request->get('sort'))
-    	{
-    		$prepare->orderBy('collection.'.$sort,$this->request->get('order'));
-    	}
-    	 
-    	$prepare->orderBy('collection.invoice_number','asc');
-    	$prepare->orderBy('collection.invoice_date','asc');
-    	$prepare->orderBy('collection.customer_name','asc');
-    	$prepare->orderBy('collection.so_number','asc');
-    	 
-    	 
-    	return $prepare;
+        $prepare->where('collection.customer_name', 'not like', '%Adjustment%');
+        $prepare->where('collection.customer_name', 'not like', '%Van to Warehouse %');
+         
+        if ($sort = $this->request->get('sort')) {
+            $prepare->orderBy('collection.'.$sort, $this->request->get('order'));
+        }
+         
+        $prepare->orderBy('collection.invoice_number', 'asc');
+        $prepare->orderBy('collection.invoice_date', 'asc');
+        $prepare->orderBy('collection.customer_name', 'asc');
+        $prepare->orderBy('collection.so_number', 'asc');
+         
+         
+        return $prepare;
     }
     
     /**
@@ -794,56 +820,58 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCheckPaymentColumns($export='xls')
     {
-    	$headers = [
-    			['name'=>'Customer Code','sort'=>'customer_code'],
-    			['name'=>'Customer Name','sort'=>'customer_name'],
-    			['name'=>'Customer Address','sort'=>'customer_address'],
-    			['name'=>'Remarks','sort'=>'remarks'],
-    			['name'=>'Invoice No','sort'=>'invoice_number'],
-    			['name'=>'Invoice Date','sort'=>'invoice_date'],
-    			['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
-    			['name'=>'Collection Date','sort'=>'or_date'],
-    			['name'=>'OR Number','sort'=>'or_number'],
-    			['name'=>'Bank Name','sort'=>'bank'],
-    			['name'=>'Check No','sort'=>'check_number'],
-    			['name'=>'Check Date','sort'=>'check_date'],
-    			['name'=>'Check Amount'],
-    			['name'=>'Text'],
-    	];
-    	
-    	if($export == 'pdf')
-    		unset($headers[13]);
+        $headers = [
+                ['name'=>'Customer Code','sort'=>'customer_code'],
+                ['name'=>'Customer Name','sort'=>'customer_name'],
+                ['name'=>'Customer Address','sort'=>'customer_address'],
+                ['name'=>'Remarks','sort'=>'remarks'],
+                ['name'=>'Invoice No','sort'=>'invoice_number'],
+                ['name'=>'Invoice Date','sort'=>'invoice_date'],
+                ['name'=>'Invoice Collectible Amount','sort'=>'total_invoice_net_amount'],
+                ['name'=>'Collection Date','sort'=>'or_date'],
+                ['name'=>'OR Number','sort'=>'or_number'],
+                ['name'=>'Bank Name','sort'=>'bank'],
+                ['name'=>'Check No','sort'=>'check_number'],
+                ['name'=>'Check Date','sort'=>'check_date'],
+                ['name'=>'Check Amount'],
+                ['name'=>'Text'],
+        ];
+        
+        if ($export == 'pdf') {
+            unset($headers[13]);
+        }
     
-    	return $headers;
+        return $headers;
     }
     
     /**
      * Get Cash Payment Select Columns
      * @return string[][]
      */
-    function getCheckPaymentSelectColumns($pdf=false)
+    public function getCheckPaymentSelectColumns($pdf=false)
     {
-    	$columns = [
-    			'customer_code',
-    			'customer_name',
-    			'customer_address',
-    			'remarks',
-    			'invoice_number',
-    			'invoice_date',
-    			'total_invoice_net_amount',
-    			'or_date',
-    			'or_number',    			    			
-    			'bank',
-    			'check_number',
-    			'check_date',
-    			'payment_amount',
-    			'delete_remarks'
-    	];
-    	
-    	if($pdf)
-    		unset($columns[13]);
-    	
-    	return $columns;
+        $columns = [
+                'customer_code',
+                'customer_name',
+                'customer_address',
+                'remarks',
+                'invoice_number',
+                'invoice_date',
+                'total_invoice_net_amount',
+                'or_date',
+                'or_number',
+                'bank',
+                'check_number',
+                'check_date',
+                'payment_amount',
+                'delete_remarks'
+        ];
+        
+        if ($pdf) {
+            unset($columns[13]);
+        }
+        
+        return $columns;
     }
     
     /**
@@ -852,24 +880,24 @@ class SalesCollectionPresenter extends PresenterCore
      */
     public function getCheckPaymentFilterData()
     {
-    	$reportPresenter = PresenterFactory::getInstance('Reports');
-    	$customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
-    	$salesman = $this->request->get('salesman') ? $salesman = $reportPresenter->getSalesman()[$this->request->get('salesman')] : 'All';
-    	$area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
-    	$company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
-    	$invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
-    	$orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
+        $reportPresenter = PresenterFactory::getInstance('Reports');
+        $customer = $this->request->get('customer_code') ? $reportPresenter->getCustomer(false)[$this->request->get('customer_code')] : 'All';
+        $salesmanList = $reportPresenter->getSalesman();
+        $salesman = $this->request->get('salesman') && isset($salesmanList[$this->request->get('salesman')]) ? $salesmanList[$this->request->get('salesman')]: 'All';
+        $area = $this->request->get('area_code') ? $reportPresenter->getArea()[$this->request->get('area_code')] : 'All';
+        $company_code = $this->request->get('company_code') ? $reportPresenter->getCompanyCode()[$this->request->get('company_code')] : 'All';
+        $invoiceDate = ($this->request->get('invoice_date_from') && $this->request->get('invoice_date_to')) ? $this->request->get('invoice_date_from').' - '.$this->request->get('invoice_date_to') : 'All';
+        $orDate = ($this->request->get('or_date_from') && $this->request->get('or_date_to')) ? $this->request->get('or_date_from').' - '.$this->request->get('or_date_to') : 'All';
     
-    	$filters = [
-    			'Salesman' => $salesman,
-    			'Area' => $area,
-    			'Customer Name' => $customer,
-    			'Company Code' => $company_code,
-    			'Invoice Date' => $invoiceDate,
-    			'Collection Date' => $orDate,
-    	];
+        $filters = [
+                'Salesman' => $salesman,
+                'Area' => $area,
+                'Customer Name' => $customer,
+                'Company Code' => $company_code,
+                'Invoice Date' => $invoiceDate,
+                'Collection Date' => $orDate,
+        ];
     
-    	return $filters;
+        return $filters;
     }
-    
 }
